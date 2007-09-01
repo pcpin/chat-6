@@ -1,0 +1,454 @@
+/**
+ *    This file is part of "PCPIN Chat 6".
+ *
+ *    "PCPIN Chat 6" is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    "PCPIN Chat 6" is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+html, body, pre {
+  margin: 0px;
+  padding: 0px;
+  background-color: #ffffff;
+  color: #000000;
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  overflow: auto;
+}
+
+form {
+  padding: 0px;
+  margin: 0px;
+}
+
+textarea {
+  overflow: auto;
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+}
+
+button {
+  text-align: center;
+  border: solid 1px #7f9db9;
+  background-color: #ffffff;
+  vertical-align: middle;
+  height: 22px;
+  font-size: 13px;
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+  padding: 0px;
+  padding-left: 3px;
+  padding-right: 3px;
+  cursor: pointer;
+  background-image: url(./pic/button_background_1x100.gif);
+  background-repeat: repeat-x;
+  background-position: center center;
+}
+
+label {
+  cursor: pointer;
+}
+
+input {
+  vertical-align: middle;
+  height: 21px;
+  font-size: 13px;
+  padding: 0px;
+  padding-top: 1px;
+  font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
+}
+
+button:hover {
+  background-color: #d0fcf7;
+}
+
+img {
+  border: 0px;
+}
+
+a {
+  color: #003060;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #119911;
+}
+
+/* Selection DIV element */
+.div_selection_scrollable {
+  background-color: #ffffff;
+  color: #000000;
+  padding: 3px;
+  border: solid 1px #000000;
+  overflow: auto;
+  width: 98%;
+  height: 230px;
+}
+
+/* Links in selection DIV element */
+.div_selection_scrollable_link {
+  text-decoration: none;
+  color: #000000;
+}
+
+/* Active element in DIV element */
+.div_selection_scrollable_active {
+  background-color: #cccccc;
+}
+
+/* Inactive element in DIV element */
+.div_selection_scrollable_inactive {
+  background-color: #ffffff;
+}
+
+
+/* Messages area in Chat room */
+/* DO NOT change "margin" or "padding" properties of this class, use "chatroom_messages_contents" class instead */
+/* Please note, that text and background colors must be configured in Admin Panel only */
+#chatroom_messages {
+  position: absolute;
+  overflow: auto;
+  border: 0px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  padding: 0px;
+  margin: 0px;
+}
+#chatroom_messages_contents {
+  padding-left: 3px;
+  padding-right: 1px;
+  padding-top: 2px;
+  padding-bottom: 3px;
+}
+/* Links in Messages area */
+#chatroom_messages a {
+  color: #111199;
+  font-weight: bold;
+  text-decoration: none;
+}
+#chatroom_messages a:hover {
+  color: #119911;
+}
+
+/* Userlist area in Chat room */
+/* DO NOT change "margin" or "padding" properties of this class, use "chatroom_userlist_contents" class instead */
+#chatroom_userlist {
+  position: absolute;
+  overflow: auto;
+  border: 0px;
+  background-color: #f1f1f1;
+  padding: 0px;
+  margin: 0px;
+  background-image: url(./pic/userlist_background_640x1.gif);
+}
+#chatroom_userlist_contents {
+  font-size: 13px;
+  width: 95%;
+  padding: 2px;
+  text-align: center;
+  font-weight: bold;
+}
+/* User records in userlist area */
+#chatroom_userlist_list {
+  font-size: 13px;
+  padding: 0px;
+  padding-right: 4px;
+  text-align: left;
+  font-weight: normal;
+  margin: 5px;
+}
+#chatroom_userlist_list a {
+  text-decoration: none;
+  font-weight: normal;
+}
+
+/* Toolbar area in Chat room */
+/* DO NOT change "margin" or "padding" properties of this class, use "chatroom_controls_contents" class instead */
+#chatroom_controls {
+  position: absolute;
+  overflow: hidden;
+  border: 0px;
+  background-color: #ffffff;
+  padding: 0px;
+  margin: 0px;
+  background-image: url(./pic/controls_background_1280x1.gif);
+  background-repeat: repeat-y;
+  background-position: top right;
+}
+#chatroom_controls_contents {
+  padding: 3px;
+}
+
+/* Top banner area */
+#chatroom_top_banner {
+  position: absolute;
+  overflow: hidden;
+  border: 0px;
+  padding: 0px;
+  margin: 0px;
+}
+
+/* Bottom banner area */
+#chatroom_bottom_banner {
+  position: absolute;
+  overflow: hidden;
+  border: 0px;
+  padding: 0px;
+  margin: 0px;
+}
+
+/* Color selection box */
+#color_selection_box {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 292px;
+  height: 196px;
+  background-color: #ffffff;
+}
+
+/* Color selection box */
+#smilie_selection_box {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  border: solid 1px #999999;
+  background-color: #f9f9ff;
+  overflow: hidden;
+  margin: 0px;
+  padding: 0px;
+}
+
+/* Password field box */
+#password_field_box {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  border: solid 1px #002d96;
+  background-color: #ffffff;
+  padding: 3px;
+  text-align: center;
+}
+
+/* Online status selection box */
+#online_status_selection_box {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  padding: 0px;
+  margin: 0px;
+}
+
+/* Help box */
+#help_box {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  padding: 0px;
+  margin: 0px;
+}
+
+/* Context menu table */
+.context_menu_table {
+  border: solid 1px #aca899;
+  background-color: #ffffff;
+  padding: 0px;
+}
+
+/* Context menu table header */
+.context_menu_table_header {
+  background-color: #002d96;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 3px;
+  margin: 0px;
+}
+
+/* Context menu table row */
+.context_menu_table_row {
+  background-color: #ffffff;
+  color: #000000;
+  font-size: 12px;
+  font-weight: normal;
+  text-align: left;
+  vertical-align: middle;
+  margin: 0px;
+  padding: 0px;
+  cursor: pointer;
+}
+
+/* Context menu table highlighted row */
+.context_menu_table_hrow {
+  background-color: #ffeec2;
+}
+
+/* Context menu table disabled row */
+.context_menu_table_disabled_row {
+  background-color: #ffffff;
+  color: #afafaf;
+  font-weight: normal;
+  text-align: left;
+  vertical-align: middle;
+  margin: 0px;
+  padding: 0px;
+  cursor: default;
+}
+
+/* Context menu table "separator" row */
+.context_menu_table_separator_row {
+  background-color: #aca899;
+  margin: 0px;
+  padding: 0px;
+  cursor: default;
+  height: 1px;
+}
+
+/* Nickname colorizer preview */
+#nickname_preview {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* User options context menu */
+#user_options_box {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  padding: 0px;
+  margin: 0px;
+}
+
+.tbl {
+  background-color: #ffffff;
+  border: solid 1px #003366;
+}
+/* Table main header */
+.tbl_header_main {
+  background-image: url(./pic/table_main_header_1x25.gif);
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 14px;
+  text-align: left;
+  margin: 0px;
+  padding: 3px;
+  vertical-align: middle;
+  background-color: #003399;
+}
+.tbl_header_main_link {
+  color: #ffffff;
+}
+/* Table sub header */
+.tbl_header_sub {
+  background-image: url(./pic/table_sub_header_1x25.gif);
+  color: #000000;
+  font-weight: bold;
+  font-size: 14px;
+  text-align: left;
+  margin: 0px;
+  padding: 3px;
+  vertical-align: middle;
+  background-color: #cbeafe;
+}
+.tbl_header_sub_link {
+  color: #002050;
+  font-size: 12px;
+  font-weight: normal;
+  text-decoration: underline;
+}
+/* Table row */
+.tbl_row {
+  background-color: #ffffff;
+  color: #000000;
+  font-weight: normal;
+  font-size: 13px;
+  text-align: left;
+  margin: 0px;
+  padding: 3px;
+  vertical-align: middle;
+  background-image: url(./pic/tbl_row_398x1.gif);
+  background-repeat: repeat-x;
+}
+
+.tbl_row_link {
+  color: #003060;
+  font-size: 12px;
+  font-weight: normal;
+  text-decoration: underline;
+}
+
+/* Status:Error text message */
+.statustext_error {
+  color: #dd0000;
+}
+
+/* Status:Success text message */
+.statustext_success {
+  color: #008800;
+}
+
+#progressBar {
+  position: absolute;
+  background-color:#ffffff;
+  border: solid 1px #002d96;
+  font-size: 13px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+/* Page numbers area */
+#page_numbers {
+  font-weight: normal;
+  font-size: 12px;
+  width: 100%;
+  text-align: right;
+  padding: 2px;
+}
+#page_numbers a {
+  text-decoration: underline;
+  font-weight: normal;
+}
+
+/* Banner popup */
+#banner_popup {
+  position: absolute;
+  overflow: hidden;
+  border: solid 1px #000000;
+  background-color: #ffffde;
+  padding: 2px;
+  margin: 0px;
+  text-align: right;
+}
+#banner_popup_frame {
+  position: absolute;
+  overflow: hidden;
+  border: solid 1px #000000;
+  background-color: #ffffde;
+  padding: 0px;
+  margin: 0px;
+  text-align: right;
+  top: 22px;
+  left: 8px;
+}
+
+
+/* Chat summary area at the login page */
+#chat_summary {
+  border: 0px;
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+  position: absolute;
+}

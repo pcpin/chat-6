@@ -1,0 +1,132 @@
+===================================================================================
+                 PCPIN Chat 6 (BETA) installation instructions.
+    Read carefully before you begin with PCPIN Chat 6 installation or upgrade!
+===================================================================================
+
+
+
+
+-----------------------
+ System requirements
+-----------------------
+
+Absolutely required:
+
+ - PHP 4.3 or newer.
+ - MySQL 4.0.15 or newer.
+
+
+Not required, but recommended:
+
+ - GD PHP extension version 2.0 or newer.
+ - mbstring PHP extension.
+
+
+
+
+--------------------
+ Before you begin
+--------------------
+
+ 1. Backup your database and files!
+    If something goes wrong, you will be able to roll-back to previous installation
+    without data loss.
+
+ 2. Please note that you need a browser that supports JavaScript and frames.
+    All modern browsers do that (if you haven't deactivated these features manually).
+
+
+
+
+------------------------
+ Upgrade instructions
+------------------------
+
+If you have PCPIN Chat 5.xx installed on your server and you want to import
+existing users, settings and other data into the new version, follow these steps:
+
+ 1. Delete existing chat files and directories, EXCEPTING /images directory.
+    The directory /images contains user avatars, smilies and room background images
+    that may be required during installation.
+
+ 2. Upload new chat files to your server.
+
+ 3. Move directory /images with all contents (see step 1) into the directory /install/import/
+
+ 4. Make the file /config/db.inc.php writeable for the web server (CHMOD 666 is a good choice).
+    The installation script will try to store database connection data into that file.
+    If you can't or don't want to make this file writeable, then you must edit it manually before
+    you start the installation.
+
+ 5. Now you are ready to start the installation. Point your brouser to /install.php
+    file in your chat root directory and follow onscreen instructions.
+
+
+
+
+----------------------------------
+ Fresh installation instructions
+----------------------------------
+
+ 1. Delete all existing chat files and directories.
+
+ 2. Upload new chat files to your server.
+
+ 3. Make the file /config/db.inc.php writeable for the web server (CHMOD 666 is a good choice).
+    The installation script will try to store database connection data into that file.
+    If you can't or don't want to make this file writeable, then you must edit it manually before
+    you start the installation.
+
+ 4. Now you are ready to start the installation. Point your brouser to /install.php
+    file in your chat root directory and follow onscreen instructions.
+
+
+
+
+-----------------------------
+ Troubleshooting: Short FAQ
+-----------------------------
+
+ Q: Why does install.php shows only a white screen?
+ A: Your browser does not supports JavaScript. Enable JavaScript support in your browser.
+
+ Q: I see the GD library WARNING "Some image features will be not available".
+    What does it means? Can PCPIN Chat be installed onto my server?
+ A: PCPIN Chat can be installed onto your server.
+    GD is a PHP extension used for image manipulation. PCPIN Chat uses it for image
+    thumbnails creation. If this library is not installed, then no image thumbnails
+    will be available.
+
+ Q: I see the Multibyte support WARNING. What does it means? Can PCPIN Chat be
+    installed onto my server?
+ A: PCPIN Chat can be installed onto your server.
+    mbstring is a PHP extension used for multibyte charset manipulations. PCPIN Chat
+    is multilingual and uses UTF8 encoding. If there are no mbstring features available,
+    then PCPIN Chat will use standard PHP ISO mechanisms.
+
+ Q: Installation script asks me to enter database connection data. Where can i found it?
+ A: Ask your hosting provider or server administrator.
+
+ Q: What is "Name prefix for all tables used by chat"?
+ A: In order to avoid conflicts with any other software that uses the same database as
+    PCPIN Chat, all database tables in PCPIN Chat may have the name prefix. You don't need
+    to change the proposed value.
+
+ Q: Do I need to set some write permissions on files or directories used by PCPIN Chat?
+ A: No. PCPIN Chat stores all data into database and don't needs writeable directories or
+    files.
+
+
+If you have any other questions regarding PCPIN Chat, then visit our community forums:
+http://community.pcpin.com/
+
+
+
+
+
+Enjoy!
+
+
+Kind Regards,
+Kanstantin Reznichak
+PCPIN Chat developer.

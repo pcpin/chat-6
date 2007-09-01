@@ -1,0 +1,1 @@
+If you are upgrading from PCPIN Chat 5.xx: copy the /images directory here.

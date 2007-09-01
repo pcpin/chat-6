@@ -1,0 +1,67 @@
+<?php
+/**
+ *    This file is part of "PCPIN Chat 6".
+ *
+ *    "PCPIN Chat 6" is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    "PCPIN Chat 6" is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/**
+ * @param   string    $abuse_nickname
+ * @param   string    $abuse_category
+ * @param   string    $abuse_description
+ */
+
+$message=$l->g('access_denied');
+$status='-1'; // -1: Session is invalid
+
+_pcpin_loadClass('message'); $msg=new PCPIN_Message($session);
+_pcpin_loadClass('room'); $room=new PCPIN_Room($session);
+
+if (!isset($abuse_nickname)) $abuse_nickname='-';
+if (!isset($abuse_category)) $abuse_category=0;
+if (!isset($abuse_description)) $abuse_description='';
+
+if (!empty($current_user->id)) {
+  // Get moderators
+  if (empty($session->_s_room_id)) {
+    // User is not in room
+    $message=$l->g('error');
+    $status=1;
+  } else {
+    $message=$l->g('abuse_report_sent');
+    $status=0;
+    $moderators=$room->getModerators($session->_s_room_id);
+    if (empty($moderators)) {
+      // Room has no moderators. Admin(s) will receive an abuse then.
+      $moderators=$current_user->getAdmins();
+    }
+    // Create message body
+    $body=$current_user->id.'/'.$session->_s_room_id.'/'.($abuse_category*1).'/'.trim(str_replace('/', ' ', $abuse_nickname)).'/'.trim($abuse_description);
+    foreach ($moderators as $data) {
+      if (!empty($data['is_online'])) {
+        // User is online
+        $msg->addMessage(4001, 'n', $session->_s_user_id, $current_nickname, 0, $data['id'], $body, date('Y-m-d H:i:s'), 2);
+      }
+      // Add offline message
+//      $msg->addMessage(4001, 'y', $session->_s_user_id, $current_nickname, 0, $data['id'], $body, date('Y-m-d H:i:s'), 2);
+    }
+  }
+}
+echo '<?xml version="1.0" encoding="UTF-8"?>
+<pcpin_xml>
+<message>'.htmlspecialchars($message).'</message>
+<status>'.htmlspecialchars($status).'</status>
+</pcpin_xml>';
+die();
+?>
