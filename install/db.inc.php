@@ -35,11 +35,11 @@ if (!isset($database)) $database='';
 if (!isset($prefix)) $prefix='';
 
 if ($src=file_get_contents('./database/db.inc.php_')) {
-  $src=str_replace('{{HOST}}', $host, $src);
-  $src=str_replace('{{USER}}', $user, $src);
-  $src=str_replace('{{PASSWORD}}', $password, $src);
-  $src=str_replace('{{DATABASE}}', $database, $src);
-  $src=str_replace('{{PREFIX}}', $prefix, $src);
+  $src=str_replace('{{HOST}}', str_replace("'", '\\\'', $host), $src);
+  $src=str_replace('{{USER}}', str_replace("'", '\\\'', $user), $src);
+  $src=str_replace('{{PASSWORD}}', str_replace("'", '\\\'', $password), $src);
+  $src=str_replace('{{DATABASE}}', str_replace("'", '\\\'', $database), $src);
+  $src=str_replace('{{PREFIX}}', str_replace("'", '\\\'', $prefix), $src);
   echo $src;
 }
 die();

@@ -91,11 +91,11 @@ if (!empty($conn)) {
       // Trying to save database config file
       if ($status==10) {
         if ($src=file_get_contents('../database/db.inc.php_')) {
-          $src=str_replace('{{HOST}}', $host, $src);
-          $src=str_replace('{{USER}}', $user, $src);
-          $src=str_replace('{{PASSWORD}}', $password, $src);
-          $src=str_replace('{{DATABASE}}', $database, $src);
-          $src=str_replace('{{PREFIX}}', $prefix, $src);
+          $src=str_replace('{{HOST}}', str_replace("'", '\\\'', $host), $src);
+          $src=str_replace('{{USER}}', str_replace("'", '\\\'', $user), $src);
+          $src=str_replace('{{PASSWORD}}', str_replace("'", '\\\'', $password), $src);
+          $src=str_replace('{{DATABASE}}', str_replace("'", '\\\'', $database), $src);
+          $src=str_replace('{{PREFIX}}', str_replace("'", '\\\'', $prefix), $src);
           if ($out=fopen('../../config/db.inc.php', 'wb')) {
             if (fwrite($out, $src)) {
               $status=0;

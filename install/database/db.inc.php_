@@ -22,19 +22,19 @@
 
 // Database server host name.
 // Examples: 'localhost' or 'db.myhost.com'
-$_pcpin_db_server = 'localhost';
+$_pcpin_db_server = '{{HOST}}';
 
 // Database username
-$_pcpin_db_user = 'root';
+$_pcpin_db_user = '{{USER}}';
 
 // Database password
-$_pcpin_db_password = '';
+$_pcpin_db_password = '{{PASSWORD}}';
 
 // Database name
-$_pcpin_db_database = 'chat';
+$_pcpin_db_database = '{{DATABASE}}';
 
 // Prefix for all chat table names
-$_pcpin_db_tbl_prefix = 'pcpin_';
+$_pcpin_db_tbl_prefix = '{{PREFIX}}';
 
 
 
