@@ -675,10 +675,12 @@ function setAreas() {
     $('chatroom_bottom_banner').style.left='0px';
     $('chatroom_bottom_banner').style.height=BottomBannerHeight+'px';
     userlist_width=parseInt($('chatroom_userlist').style.width);
-    if (userlist_width>50) {
-      $('chatroom_userlist_room_selection').style.width=(userlist_width-40)+'px';
-    } else {
-      $('chatroom_userlist_room_selection').style.width=userlist_width+'px';
+    if ($('chatroom_userlist_room_selection')) {
+      if (userlist_width>50) {
+        $('chatroom_userlist_room_selection').style.width=(userlist_width-40)+'px';
+      } else {
+        $('chatroom_userlist_room_selection').style.width=userlist_width+'px';
+      }
     }
 
     // Smilies row
