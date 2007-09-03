@@ -2171,12 +2171,14 @@ function displayAttachments() {
   } else {
     $('attached_files').style.display='none';
   }
-  if (MsgAttachments.length>=MsgAttachmentsLimit) {
-    $('msg_attachment_btn').style.backgroundImage='url(./pic/attachment_disabled_15x15.gif)';
-    $('msg_attachment_btn').disabled=true;
-  } else {
-    $('msg_attachment_btn').style.backgroundImage='url(./pic/attachment_15x15.gif)';
-    $('msg_attachment_btn').disabled=false;
+  if ($('msg_attachment_btn')) {
+    if (MsgAttachments.length>=MsgAttachmentsLimit) {
+      $('msg_attachment_btn').style.backgroundImage='url(./pic/attachment_disabled_15x15.gif)';
+      $('msg_attachment_btn').disabled=true;
+    } else {
+      $('msg_attachment_btn').style.backgroundImage='url(./pic/attachment_15x15.gif)';
+      $('msg_attachment_btn').disabled=false;
+    }
   }
   window.onresize();
 }
