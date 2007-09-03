@@ -39,11 +39,13 @@ function initCMBox() {
   };
 
   // Set window status
-  setDefaultWindowStatus('SOS '.PCPIN_WINDOW_TITLE_SEPARATOR.' '+getLng('cal_moderator'));
+  setDefaultWindowStatus('SOS :: '+getLng('cal_moderator'));
 
   // Log by opener window
   opener.moderatorCallWindow=window;
 
+  // Resize window
+  setTimeout('resizeForDocumentHeight(10)', 100);
   // Get focus
   window.focus();
 }
