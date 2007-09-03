@@ -40,6 +40,8 @@ function initAbuseWindow() {
   $('enter_room_btn').title=$('enter_room_btn').innerHTML;
   eval("$('enter_room_btn').onclick=function() { if (window.opener.enterChatRoom) { window.opener.enterChatRoom(null, null, "+abuse_data['room_id']+"); } }");
 
+  // Resize window
+  setTimeout('resizeForDocumentHeight(10)', 100);
   // Get focus
   window.focus();
 }

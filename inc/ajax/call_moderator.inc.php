@@ -47,6 +47,9 @@ if (!empty($current_user->id)) {
       $moderators=$current_user->getAdmins();
     }
     _pcpin_loadClass('nickname'); $nickname=new PCPIN_Nickname($session);
+    if ($session->_s_language_id!=$session->_conf_all['default_language']) {
+      $l->setLanguage($session->_conf_all['default_language']);
+    }
     // Create message body
     $body=$current_user->id.'/'.$session->_s_room_id.'/'.($abuse_category*1).'/'.trim(str_replace('/', ' ', $abuse_nickname)).'/'.trim($abuse_description);
     foreach ($moderators as $data) {
@@ -58,9 +61,6 @@ if (!empty($current_user->id)) {
       } else {
         // Add offline message
 //      $msg->addMessage(4001, 'y', $session->_s_user_id, $current_nickname, 0, $data['id'], $body, date('Y-m-d H:i:s'), 2);
-      }
-      if ($session->_s_language_id!=$session->_conf_all['default_language']) {
-        $l->setLanguage($session->_conf_all['default_language']);
       }
       $violation_category='';
       switch ($abuse_category) {
