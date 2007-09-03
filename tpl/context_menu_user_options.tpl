@@ -18,6 +18,12 @@
     <tr id="context_menu_unmute_locally" title="{LNG_STOP_IGNORING}" class="context_menu_table_row" onmouseover="setCssClass(this, '.context_menu_table_hrow')" onmouseout="setCssClass(this, '.context_menu_table_row')" onclick="hideUserOptionsBox(4)">
       <td nowrap="nowrap">&nbsp;{LNG_STOP_IGNORING}&nbsp;</td>
     </tr>
+    <tr id="context_menu_cmd_say" title="/say ..." class="context_menu_table_row" onmouseover="setCssClass(this, '.context_menu_table_hrow')" onmouseout="setCssClass(this, '.context_menu_table_row')" onclick="hideUserOptionsBox(13)" style="display:none">
+      <td nowrap="nowrap">&nbsp;/say ...&nbsp;</td>
+    </tr>
+    <tr id="context_menu_cmd_whisper" title="/whisper ..." class="context_menu_table_row" onmouseover="setCssClass(this, '.context_menu_table_hrow')" onmouseout="setCssClass(this, '.context_menu_table_row')" onclick="hideUserOptionsBox(14)" style="display:none">
+      <td nowrap="nowrap">&nbsp;/whisper ...&nbsp;</td>
+    </tr>
     <PCPIN:TPL name="moderator_user_options" type="simplecondition" requiredvars="DISPLAY">
       <tr>
         <td class="context_menu_table_separator_row"></td>

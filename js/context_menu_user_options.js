@@ -62,6 +62,8 @@ function showUserOptionsBox(user_id, user_nickname) {
   } else {
     nickname=user_nickname;
   }
+  $('context_menu_cmd_say').style.display='none';
+  $('context_menu_cmd_whisper').style.display='none';
   if ($('user_options_box').style.display=='none' && typeof(user_id)!='undefined') {
     disableSelection();
     $('user_options_box').targetUserId=user_id;
@@ -221,6 +223,12 @@ function showUserOptionsBox(user_id, user_nickname) {
           $('context_menu_client_info').onmouseover=function() { return false; }
           $('context_menu_client_info').onmouseout=function() { return false; }
           $('context_menu_client_info').onclick=function() { return false; }
+        }
+      } else {
+        // User is online
+        if (typeof(openPMbox)!='undefined' && $('main_input_textarea')!=null && currentUserId!=urec.ID) {
+          $('context_menu_cmd_say').style.display='';
+          $('context_menu_cmd_whisper').style.display='';
         }
       }
     }
@@ -411,6 +419,20 @@ function hideUserOptionsBox(selected_option) {
         if (urec!=null) {
           sendInvitation(user_id);
           callback_needed=false;
+        }
+      break;
+
+      case 13 : // "/say" command
+        if (urec!=null && $('main_input_textarea')) {
+          $('main_input_textarea').value='/say '+coloredToPlain(urec.getNickname(), false)+' '+$('main_input_textarea').value;
+          $('main_input_textarea').focus();
+        }
+      break;
+
+      case 14 : // "/whisper" command
+        if (urec!=null && $('main_input_textarea')) {
+          $('main_input_textarea').value='/whisper '+coloredToPlain(urec.getNickname(), false)+' '+$('main_input_textarea').value;
+          $('main_input_textarea').focus();
         }
       break;
 
