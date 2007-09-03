@@ -381,7 +381,7 @@ class PCPIN_User extends PCPIN_Session {
       if ($this->date_format!='') {
         $date=date($this->date_format, $timestamp);
       } else {
-        $date=date($this->_conf_all['date_format'], $timestamp+60*$this->time_zone_offset);
+        $date=date($this->_conf_all['date_format'], $timestamp+$this->time_zone_offset-date('Z'));
       }
     }
     return $date;

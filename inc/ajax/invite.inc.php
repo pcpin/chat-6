@@ -31,7 +31,7 @@ if (!empty($current_user->id)) {
 
   if ($current_user->global_muted_until>date('Y-m-d H:i:s')) {
     $message=$l->g('you_are_muted_until');
-    $message=str_replace('[EXPIRATION_DATE]', $current_user->makeDate(PCPIN_Common::datetimeToTimestamp($current_user->global_muted_until)+$current_user->time_zone_offset-date('Z')), $message);
+    $message=str_replace('[EXPIRATION_DATE]', $current_user->makeDate(PCPIN_Common::datetimeToTimestamp($current_user->global_muted_until)), $message);
   } elseif ($current_user->global_muted_permanently=='y') {
     $message=$l->g('you_are_muted_permanently');
   } else {
