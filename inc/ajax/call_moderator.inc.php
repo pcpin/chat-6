@@ -48,6 +48,7 @@ if (!empty($current_user->id)) {
     }
     _pcpin_loadClass('nickname'); $nickname=new PCPIN_Nickname($session);
     if ($session->_s_language_id!=$session->_conf_all['default_language']) {
+      // Load default language
       $l->setLanguage($session->_conf_all['default_language']);
     }
     // Create message body
@@ -104,6 +105,10 @@ if (!empty($current_user->id)) {
                   .$l->g('violation_description').":\n\n".$abuse_description."\n"
                   ;
       PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $tmp_user->email, $session->_conf_all['chat_name'].': '.$l->g('abuse_arrived'), null, null, $email_body);
+    }
+    if ($session->_s_language_id!=$session->_conf_all['default_language']) {
+      // Restore session language
+      $l->setLanguage($session->_s_language_id);
     }
   }
 }
