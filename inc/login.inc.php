@@ -49,6 +49,7 @@ if (!empty($session->_conf_all['allow_language_selection']) && !empty($session->
   if (empty($preselect_language)) {
     $preselect_language=$session->_conf_all['default_language'];
   }
+  $l->setLanguage($preselect_language);
 }
 
 _pcpin_loadClass('pcpintpl'); $tpl=new PcpinTpl();
