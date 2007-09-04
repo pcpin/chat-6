@@ -24,7 +24,7 @@ if (!defined('PCPIN_INSTALL_MODE') || true!==PCPIN_INSTALL_MODE) {
 error_reporting(E_ALL); ini_set('display_errors', 'on');
 #error_reporting(0);
 
-define('PCPIN_INSTALL_VERSION', '6.00');
+define('PCPIN_INSTALL_VERSION', '6.01');
 define('PCPIN_REQUIRESPHP', '4.3.3');
 define('PCPIN_REQUIRESMYSQL', '4.0.15');
 

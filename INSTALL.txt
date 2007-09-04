@@ -42,24 +42,41 @@ Not required, but recommended:
  Upgrade instructions
 ------------------------
 
-If you have PCPIN Chat 5.xx installed on your server and you want to import
-existing users, settings and other data into the new version, follow these steps:
+1. Upgrading from PCPIN Chat 5.xx
 
- 1. Delete existing chat files and directories, EXCEPTING /images directory.
-    The directory /images contains user avatars, smilies and room background images
-    that may be required during installation.
+  If you have PCPIN Chat 5.xx installed on your server and you want to import
+  existing users, settings and other data into the new version, follow these steps:
 
- 2. Upload new chat files to your server.
+   a. Delete existing chat files and directories, EXCEPTING /images directory.
+      The directory /images contains user avatars, smilies and room background images
+      that may be required during installation.
 
- 3. Move directory /images with all contents (see step 1) into the directory /install/import/
+   b. Upload new chat files to your server.
 
- 4. Make the file /config/db.inc.php writeable for the web server (CHMOD 666 is a good choice).
-    The installation script will try to store database connection data into that file.
-    If you can't or don't want to make this file writeable, then you must edit it manually before
-    you start the installation.
+   c. Move directory /images with all contents (see step 1) into the directory /install/import/
 
- 5. Now you are ready to start the installation. Point your brouser to /install.php
-    file in your chat root directory and follow onscreen instructions.
+   d. Make the file /config/db.inc.php writeable for the web server (CHMOD 666 is a good choice).
+      The installation script will try to store database connection data into that file.
+      If you can't or don't want to make this file writeable, then you must edit it manually before
+      you start the installation.
+
+   e. Now you are ready to start the installation. Point your brouser to /install.php
+      file in your chat root directory and follow onscreen instructions.
+
+
+
+2. Upgrading from PCPIN Chat 6.xx
+
+  If you have PCPIN Chat 6.xx installed and you want to keep existing users, settings
+  and other data, follow these steps:
+
+   a. Delete existing chat files and directories.
+
+   b. Upload new chat files to your server.
+
+   c. Edit file /config/db.inc.php end enter there your database connection data.
+      You don't need to execute installer script. Installation is finished.
+
 
 
 
@@ -68,16 +85,16 @@ existing users, settings and other data into the new version, follow these steps
  Fresh installation instructions
 ----------------------------------
 
- 1. Delete all existing chat files and directories.
+ a. Delete all existing chat files and directories.
 
- 2. Upload new chat files to your server.
+ b. Upload new chat files to your server.
 
- 3. Make the file /config/db.inc.php writeable for the web server (CHMOD 666 is a good choice).
+ c. Make the file /config/db.inc.php writeable for the web server (CHMOD 666 is a good choice).
     The installation script will try to store database connection data into that file.
     If you can't or don't want to make this file writeable, then you must edit it manually before
     you start the installation.
 
- 4. Now you are ready to start the installation. Point your brouser to /install.php
+ d. Now you are ready to start the installation. Point your brouser to /install.php
     file in your chat root directory and follow onscreen instructions.
 
 
