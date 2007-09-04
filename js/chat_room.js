@@ -1767,6 +1767,22 @@ function openOnlineStatusBox(openerObj) {
     $('online_status_2_pointer').src='./pic/clearpixel_1x1.gif';
     $('online_status_3_pointer').src='./pic/clearpixel_1x1.gif';
     $('online_status_'+online_status_code+'_pointer').src='./pic/point_10x10.gif';
+    setTimeout('fixOnlineStatusBox()', 15);
+  }
+}
+
+/**
+ * Fix online status selection box position
+ */
+function fixOnlineStatusBox() {
+  winWidth=getWinWidth();
+  winHeight=getWinHeight();
+  if ($('online_status_selection_box')) {
+    if ($('online_status_selection_box').scrollWidth+mouseX+5>winWidth) {
+      $('online_status_selection_box').style.left=(winWidth-$('online_status_selection_box').scrollWidth-5)+'px';
+    } else {
+      $('online_status_selection_box').style.left=mouseX+'px';
+    }
   }
 }
 
@@ -2053,8 +2069,26 @@ function showHelpBox(openerObj) {
     setTimeout('document.onkeypress=function() { closeHelpBox() }', 10);
     $('help_box').style.display='none';
     setTimeout("$('help_box').style.display='';", 10);
+    setTimeout('fixHelpBox()', 15);
   }
 }
+
+
+/**
+ * Fix online status selection box position
+ */
+function fixHelpBox() {
+  winWidth=getWinWidth();
+  winHeight=getWinHeight();
+  if ($('help_box')) {
+    if ($('help_box').scrollWidth+mouseX+5>winWidth) {
+      $('help_box').style.left=(winWidth-$('help_box').scrollWidth-5)+'px';
+    } else {
+      $('help_box').style.left=mouseX+'px';
+    }
+  }
+}
+
 
 /**
  * Hide help box
