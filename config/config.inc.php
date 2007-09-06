@@ -121,8 +121,9 @@ define('PCPIN_CATEGORY_NAME_LENGTH_MAX', 16);
 
 /**
  * URL of version checker server
+ * You don't need to change this value!
  */
-define('PCPIN_VERSIONCHECKER_URL', 'http://chat.versioncheck.pcpin.com/');
+define('PCPIN_VERSIONCHECKER_URL', 'https://https.pcpin.com/versions/chat/');
 
 
 /**

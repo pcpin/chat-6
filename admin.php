@@ -65,7 +65,7 @@ if (!empty($sk) && !empty($nv) && !empty($dl)) {
     $new_version_url=$version->_db_list[0]['new_version_url'];
     $version_check_key=$version->_db_list[0]['version_check_key'];
   } else {
-    $current_version=6.0;
+    $current_version=6.00;
     $last_check=$l->g('never');
     $new_version_available=$current_version;
     $new_version_url='';
@@ -75,20 +75,16 @@ if (!empty($sk) && !empty($nv) && !empty($dl)) {
   // Check security key
   if (!empty($version_check_key) && md5($sk)==$version_check_key) {
     if ($session->_db_getList('_s_id', '_s_security_code = '.$version_check_key, 1)) {
-      // Security key check passed. Check referer.
+      // Security key check passed
       $old_session=$session->_db_list[0]['_s_id'];
-      $referer=parse_url($_SERVER['HTTP_REFERER']);
-      if ($referer['host']==$_SERVER['HTTP_HOST']) {
-        // Referer host is OK
-        // Save version number
-        $version->setLastVersionCheckTime();
-        $version->setNewestAvailableVersion($nv);
-        $version->setVersionCheckKey();
-        $version->setNewVersionDownloadUrl(base64_decode($dl));
-        $session->_s_updateSession($old_session, false, true, null, null, null, '');
-        header('Location: '.PCPIN_ADMIN_FORMLINK.'?s_id='.$old_session.'&ainc=versions&version_checked');
-        die();
-      }
+      // Save version number
+      $version->setLastVersionCheckTime();
+      $version->setNewestAvailableVersion($nv);
+      $version->setVersionCheckKey();
+      $version->setNewVersionDownloadUrl(base64_decode($dl));
+      $session->_s_updateSession($old_session, false, true, null, null, null, '');
+      header('Location: '.PCPIN_ADMIN_FORMLINK.'?s_id='.$old_session.'&ainc=versions&version_checked');
+      die();
     }
   }
 }
