@@ -247,7 +247,7 @@ function startMousePosCapture() {
       if (MouseMoveFunc) {
         MouseMoveFunc();
       }
-      return false;
+      return true;
     }
   } else {
     // Mozilla
@@ -257,7 +257,7 @@ function startMousePosCapture() {
       if (MouseMoveFunc) {
         MouseMoveFunc();
       }
-      return false;
+      return true;
     }
   }
 }
