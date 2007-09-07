@@ -55,7 +55,7 @@ define('PCPIN_DEBUGMODE', false);
  * Filename to log PHP errors into. If not empty, then errors WILL BE NOT DISPLAYED and strored into that file.
  * NOTE: Requires activated PCPIN_DEBUGMODE
  */
-define('PCPIN_ERRORLOG', 'PHP_ERRORS.log');
+define('PCPIN_ERRORLOG', './PHP_ERRORS.log');
 
 
 /**
@@ -95,7 +95,7 @@ define('PCPIN_SHOW_SLOW_QUERIES', 0.1);
  * Value "*" will redirect output to client's browser
  * NOTE: If value is empty, then NO logging will be performed
  */
-define('PCPIN_SQL_LOGFILE', 'SQL.log');
+define('PCPIN_SQL_LOGFILE', './SQL.log');
 
 
 /**

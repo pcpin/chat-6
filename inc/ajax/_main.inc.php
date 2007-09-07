@@ -33,152 +33,152 @@ if (!empty($ajax)) {
 
     case 'add_avatar_gallery':
       // Add new avatar into Avatar gallery
-      require_once('inc/ajax/add_avatar_gallery.inc.php');
+      require_once('./inc/ajax/add_avatar_gallery.inc.php');
     break;
 
     case 'add_banner':
       // Add new banner
-      require_once('inc/ajax/add_banner.inc.php');
+      require_once('./inc/ajax/add_banner.inc.php');
     break;
 
     case 'add_disallowed_name':
       // Add new disallowed username
-      require_once('inc/ajax/add_disallowed_name.inc.php');
+      require_once('./inc/ajax/add_disallowed_name.inc.php');
     break;
 
     case 'add_filtered_word':
       // Add new bad word to filter
-      require_once('inc/ajax/add_filtered_word.inc.php');
+      require_once('./inc/ajax/add_filtered_word.inc.php');
     break;
 
     case 'add_nickname':
       // Add new nickname
-      require_once('inc/ajax/add_nickname.inc.php');
+      require_once('./inc/ajax/add_nickname.inc.php');
     break;
 
     case 'add_smilie':
       // Add new smilie
-      require_once('inc/ajax/add_smilie.inc.php');
+      require_once('./inc/ajax/add_smilie.inc.php');
     break;
 
     case 'activate_user':
       // Manually activate user account
-      require_once('inc/ajax/activate_user.inc.php');
+      require_once('./inc/ajax/activate_user.inc.php');
     break;
 
     case 'ban':
       // Ban user / IP address
-      require_once('inc/ajax/ban.inc.php');
+      require_once('./inc/ajax/ban.inc.php');
     break;
 
     case 'call_moderator':
       // "Call moderator"
-      require_once('inc/ajax/call_moderator.inc.php');
+      require_once('./inc/ajax/call_moderator.inc.php');
     break;
 
     case 'change_email':
       // Change email address
-      require_once('inc/ajax/change_email.inc.php');
+      require_once('./inc/ajax/change_email.inc.php');
     break;
 
     case 'change_email_visibility':
       // Change email address visibility
-      require_once('inc/ajax/change_email_visibility.inc.php');
+      require_once('./inc/ajax/change_email_visibility.inc.php');
     break;
 
     case 'change_online_status':
       // Change online status
-      require_once('inc/ajax/change_online_status.inc.php');
+      require_once('./inc/ajax/change_online_status.inc.php');
     break;
 
     case 'change_password':
       // Change password
-      require_once('inc/ajax/change_password.inc.php');
+      require_once('./inc/ajax/change_password.inc.php');
     break;
 
     case 'chat_updater':
       // Chat updater request
-      require_once('inc/ajax/chat_updater.inc.php');
+      require_once('./inc/ajax/chat_updater.inc.php');
     break;
 
     case 'create_category':
       // Create new chat category
-      require_once('inc/ajax/create_category.inc.php');
+      require_once('./inc/ajax/create_category.inc.php');
     break;
 
     case 'create_room':
       // Create new chat room
-      require_once('inc/ajax/create_room.inc.php');
+      require_once('./inc/ajax/create_room.inc.php');
     break;
 
     case 'create_user_room':
       // Create user room
-      require_once('inc/ajax/create_user_room.inc.php');
+      require_once('./inc/ajax/create_user_room.inc.php');
     break;
 
     case 'copy_language':
       // Copy a language
-      require_once('inc/ajax/copy_language.inc.php');
+      require_once('./inc/ajax/copy_language.inc.php');
     break;
 
     case 'delete_avatar':
       // Delete avatar
-      require_once('inc/ajax/delete_avatar.inc.php');
+      require_once('./inc/ajax/delete_avatar.inc.php');
     break;
 
     case 'delete_avatar_gallery':
       // Delete avatar from Avatar Gallery
-      require_once('inc/ajax/delete_avatar_gallery.inc.php');
+      require_once('./inc/ajax/delete_avatar_gallery.inc.php');
     break;
 
     case 'delete_banner':
       // Delete banner
-      require_once('inc/ajax/delete_banner.inc.php');
+      require_once('./inc/ajax/delete_banner.inc.php');
     break;
 
     case 'delete_disallowed_name':
       // Delete disallowed name
-      require_once('inc/ajax/delete_disallowed_name.inc.php');
+      require_once('./inc/ajax/delete_disallowed_name.inc.php');
     break;
 
     case 'delete_category':
       // Delete chat category
-      require_once('inc/ajax/delete_category.inc.php');
+      require_once('./inc/ajax/delete_category.inc.php');
     break;
 
     case 'delete_filtered_word':
       // Delete bad word from filter
-      require_once('inc/ajax/delete_filtered_word.inc.php');
+      require_once('./inc/ajax/delete_filtered_word.inc.php');
     break;
 
     case 'delete_language':
       // Delete language
-      require_once('inc/ajax/delete_language.inc.php');
+      require_once('./inc/ajax/delete_language.inc.php');
     break;
 
     case 'delete_msg_attachment':
       // Delete temporary message attachment
-      require_once('inc/ajax/delete_msg_attachment.inc.php');
+      require_once('./inc/ajax/delete_msg_attachment.inc.php');
     break;
 
     case 'delete_nickname':
       // Delete nickname
-      require_once('inc/ajax/delete_nickname.inc.php');
+      require_once('./inc/ajax/delete_nickname.inc.php');
     break;
 
     case 'delete_room':
       // Delete chat room
-      require_once('inc/ajax/delete_room.inc.php');
+      require_once('./inc/ajax/delete_room.inc.php');
     break;
 
     case 'delete_smilie':
       // Delete smilie
-      require_once('inc/ajax/delete_smilie.inc.php');
+      require_once('./inc/ajax/delete_smilie.inc.php');
     break;
 
     case 'delete_user':
       // Delete user
-      require_once('inc/ajax/delete_user.inc.php');
+      require_once('./inc/ajax/delete_user.inc.php');
     break;
 
     case 'do_login':
@@ -192,232 +192,232 @@ if (!empty($ajax)) {
 </pcpin_xml>';
         die();
       }
-      require_once('inc/ajax/do_login.inc.php');
+      require_once('./inc/ajax/do_login.inc.php');
     break;
 
     case 'do_logout':
       // Log out
-      require_once('inc/ajax/do_logout.inc.php');
+      require_once('./inc/ajax/do_logout.inc.php');
     break;
 
     case 'do_reset_password':
       // Reset password
-      require_once('inc/ajax/do_reset_password.inc.php');
+      require_once('./inc/ajax/do_reset_password.inc.php');
     break;
 
     case 'do_register':
       // Register new account
-      require_once('inc/ajax/do_register.inc.php');
+      require_once('./inc/ajax/do_register.inc.php');
     break;
 
     case 'enter_chat_room':
       // Enter chat room
-      require_once('inc/ajax/enter_chat_room.inc.php');
+      require_once('./inc/ajax/enter_chat_room.inc.php');
     break;
 
     case 'get_avatars':
       // Get avatars
-      require_once('inc/ajax/get_avatars.inc.php');
+      require_once('./inc/ajax/get_avatars.inc.php');
     break;
 
     case 'get_avatars_gallery':
       // Get avatar gallery
-      require_once('inc/ajax/get_avatars_gallery.inc.php');
+      require_once('./inc/ajax/get_avatars_gallery.inc.php');
     break;
 
     case 'get_banners':
       // Get banners
-      require_once('inc/ajax/get_banners.inc.php');
+      require_once('./inc/ajax/get_banners.inc.php');
     break;
 
     case 'get_client_info':
       // Get client info
-      require_once('inc/ajax/get_client_info.inc.php');
+      require_once('./inc/ajax/get_client_info.inc.php');
     break;
 
     case 'get_disallowed_names':
       // Get disallowed names
-      require_once('inc/ajax/get_disallowed_names.inc.php');
+      require_once('./inc/ajax/get_disallowed_names.inc.php');
     break;
 
     case 'get_filtered_words':
       // Get word blacklist
-      require_once('inc/ajax/get_filtered_words.inc.php');
+      require_once('./inc/ajax/get_filtered_words.inc.php');
     break;
 
     case 'get_invitations':
       // Get new invitations
-      require_once('inc/ajax/get_invitations.inc.php');
+      require_once('./inc/ajax/get_invitations.inc.php');
     break;
 
     case 'get_languages':
       // Get available languages list
-      require_once('inc/ajax/get_languages.inc.php');
+      require_once('./inc/ajax/get_languages.inc.php');
     break;
 
     case 'get_member_data':
       // Get member data
-      require_once('inc/ajax/get_member_data.inc.php');
+      require_once('./inc/ajax/get_member_data.inc.php');
     break;
 
     case 'get_memberlist':
       // Get memberlist
-      require_once('inc/ajax/get_memberlist.inc.php');
+      require_once('./inc/ajax/get_memberlist.inc.php');
     break;
 
     case 'get_nicknames':
       // Get nicknames list
-      require_once('inc/ajax/get_nicknames.inc.php');
+      require_once('./inc/ajax/get_nicknames.inc.php');
     break;
 
     case 'get_public_profile_data':
       // Get public profile information
-      require_once('inc/ajax/get_public_profile_data.inc.php');
+      require_once('./inc/ajax/get_public_profile_data.inc.php');
     break;
 
     case 'get_ping':
       // Get ping
-      require_once('inc/ajax/get_ping.inc.php');
+      require_once('./inc/ajax/get_ping.inc.php');
     break;
 
     case 'get_settings':
       // Get settings
-      require_once('inc/ajax/get_settings.inc.php');
+      require_once('./inc/ajax/get_settings.inc.php');
     break;
 
     case 'get_slave_mode_masters':
       // Get master modules for slave mode
-      require_once('inc/ajax/get_slave_mode_masters.inc.php');
+      require_once('./inc/ajax/get_slave_mode_masters.inc.php');
     break;
 
     case 'get_smilies':
       // Get smilies
-      require_once('inc/ajax/get_smilies.inc.php');
+      require_once('./inc/ajax/get_smilies.inc.php');
     break;
 
     case 'get_room_structure':
       // Get room tree
-      require_once('inc/ajax/get_room_structure.inc.php');
+      require_once('./inc/ajax/get_room_structure.inc.php');
     break;
 
     case 'get_new_messages':
       // Get new messages (called from outside of chat room)
-      require_once('inc/ajax/get_new_messages.inc.php');
+      require_once('./inc/ajax/get_new_messages.inc.php');
     break;
 
     case 'globalmute':
       // Global mute/unmute user
-      require_once('inc/ajax/globalmute.inc.php');
+      require_once('./inc/ajax/globalmute.inc.php');
     break;
 
     case 'invite':
       // Invite user to join a room
-      require_once('inc/ajax/invite.inc.php');
+      require_once('./inc/ajax/invite.inc.php');
     break;
 
     case 'ip_filter_add_address':
       // Add new address to IP filter
-      require_once('inc/ajax/ip_filter_add_address.inc.php');
+      require_once('./inc/ajax/ip_filter_add_address.inc.php');
     break;
 
     case 'ip_filter_delete_address':
       // Delete IP addresses from filter table
-      require_once('inc/ajax/ip_filter_delete_address.inc.php');
+      require_once('./inc/ajax/ip_filter_delete_address.inc.php');
     break;
 
     case 'ip_filter_get_addresses':
       // Get filtered IP addresses
-      require_once('inc/ajax/ip_filter_get_addresses.inc.php');
+      require_once('./inc/ajax/ip_filter_get_addresses.inc.php');
     break;
 
     case 'kick':
       // Kick user out of chat
-      require_once('inc/ajax/kick.inc.php');
+      require_once('./inc/ajax/kick.inc.php');
     break;
 
     case 'load_banner':
       // Load banner data
-      require_once('inc/ajax/load_banner.inc.php');
+      require_once('./inc/ajax/load_banner.inc.php');
     break;
 
     case 'manage_language_expressions':
       // Manage expressions for selected language
-      require_once('inc/ajax/manage_language_expressions.inc.php');
+      require_once('./inc/ajax/manage_language_expressions.inc.php');
     break;
 
     case 'mute_unmute_locally':
       // Mute or unmute user locally
-      require_once('inc/ajax/mute_unmute_locally.inc.php');
+      require_once('./inc/ajax/mute_unmute_locally.inc.php');
     break;
 
     case 'set_avatar_from_gallery':
       // Set avatar from Avatar Gallery
-      require_once('inc/ajax/set_avatar_from_gallery.inc.php');
+      require_once('./inc/ajax/set_avatar_from_gallery.inc.php');
     break;
 
     case 'set_default_nickname':
       // Set new default nickname
-      require_once('inc/ajax/set_default_nickname.inc.php');
+      require_once('./inc/ajax/set_default_nickname.inc.php');
     break;
 
     case 'set_primary_avatar':
       // Set new primary avatar
-      require_once('inc/ajax/set_primary_avatar.inc.php');
+      require_once('./inc/ajax/set_primary_avatar.inc.php');
     break;
 
     case 'set_primary_avatar_gallery':
       // Set new primary Gallery Avatar
-      require_once('inc/ajax/set_primary_avatar_gallery.inc.php');
+      require_once('./inc/ajax/set_primary_avatar_gallery.inc.php');
     break;
 
     case 'set_user_level':
       // Set new user level
-      require_once('inc/ajax/set_user_level.inc.php');
+      require_once('./inc/ajax/set_user_level.inc.php');
     break;
 
     case 'unban':
       // Ban user
-      require_once('inc/ajax/unban.inc.php');
+      require_once('./inc/ajax/unban.inc.php');
     break;
 
     case 'update_banner':
       // Update banner data
-      require_once('inc/ajax/update_banner.inc.php');
+      require_once('./inc/ajax/update_banner.inc.php');
     break;
 
     case 'update_category':
       // Update category data
-      require_once('inc/ajax/update_category.inc.php');
+      require_once('./inc/ajax/update_category.inc.php');
     break;
 
     case 'update_language':
       // Update language data
-      require_once('inc/ajax/update_language.inc.php');
+      require_once('./inc/ajax/update_language.inc.php');
     break;
 
     case 'update_moderator':
       // Update moderator data
-      require_once('inc/ajax/update_moderator.inc.php');
+      require_once('./inc/ajax/update_moderator.inc.php');
     break;
 
     case 'update_nickname':
       // Update nickname
-      require_once('inc/ajax/update_nickname.inc.php');
+      require_once('./inc/ajax/update_nickname.inc.php');
     break;
 
     case 'update_room':
       // Update room data
-      require_once('inc/ajax/update_room.inc.php');
+      require_once('./inc/ajax/update_room.inc.php');
     break;
 
     case 'update_settings':
       // Update settings
-      require_once('inc/ajax/update_settings.inc.php');
+      require_once('./inc/ajax/update_settings.inc.php');
     break;
 
     case 'update_userdata':
       // Update userdata (in "userdata" table)
-      require_once('inc/ajax/update_userdata.inc.php');
+      require_once('./inc/ajax/update_userdata.inc.php');
     break;
 
   }

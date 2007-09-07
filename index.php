@@ -17,7 +17,7 @@
  */
 
 // Initialize
-require_once('init.inc.php');
+require_once('./init.inc.php');
 
 
 // Get session handler
@@ -58,19 +58,19 @@ if (!empty($session->_s_user_id)) {
 
 if (!empty($b_id)) {
   // Binary file requested
-  require_once('inc/get_binary.inc.php');
+  require_once('./inc/get_binary.inc.php');
   die();
 } elseif (!empty($ajax)) {
   // AJAX request
-  require_once('inc/ajax/_main.inc.php');
+  require_once('./inc/ajax/_main.inc.php');
   die();
 } elseif (!empty($external_url)) {
   // Redirect to an external URL
-  require_once('inc/url_redirection.inc.php');
+  require_once('./inc/url_redirection.inc.php');
   die();
 } elseif (!empty($load_banner)) {
   // Load banner
-  require_once('inc/load_banner.inc.php');
+  require_once('./inc/load_banner.inc.php');
   die();
 }
 
@@ -176,14 +176,14 @@ unset($smilies);
 if (empty($session->_s_user_id)) {
   if (!empty($activation_code)) {
     // Something to activate...
-    require_once('inc/activation.inc.php');
+    require_once('./inc/activation.inc.php');
   } else {
     // Login page
     if (PCPIN_SLAVE_MODE) {
       header('Location: '.PCPIN_SLAVE_LOGIN_PATH);
       die();
     } else {
-      require_once('inc/login.inc.php');
+      require_once('./inc/login.inc.php');
       $_body_onload[]='checkOpener(true)';
     }
   }
@@ -193,78 +193,78 @@ if (empty($session->_s_user_id)) {
 
     case 'abuse':
       // Abuse window
-      require_once('inc/abuse.inc.php');
+      require_once('./inc/abuse.inc.php');
     break;
 
     case 'avatar_gallery':
       // Avatar Gallery
-      require_once('inc/avatar_gallery.inc.php');
+      require_once('./inc/avatar_gallery.inc.php');
     break;
 
     case 'call_moderator':
       // "Call moderator" window
-      require_once('inc/call_moderator.inc.php');
+      require_once('./inc/call_moderator.inc.php');
     break;
 
     case 'chat_room':
       // Chat room page
-      require_once('inc/chat_room.inc.php');
+      require_once('./inc/chat_room.inc.php');
     break;
 
     case 'client_info':
       // Client info page
-      require_once('inc/client_info.inc.php');
+      require_once('./inc/client_info.inc.php');
     break;
 
     case 'create_user_room':
       // "Create user room" page
-      require_once('inc/create_user_room.inc.php');
+      require_once('./inc/create_user_room.inc.php');
     break;
 
     case 'do_logout':
       // Log out window
-      require_once('inc/do_logout.inc.php');
+      require_once('./inc/do_logout.inc.php');
     break;
 
     case 'dummy':
       // Dummy frame
-      require_once('inc/dummy.inc.php');
+      require_once('./inc/dummy.inc.php');
     break;
 
     case 'invitation':
       // An invitation arrived
-      require_once('inc/invitation.inc.php');
+      require_once('./inc/invitation.inc.php');
     break;
 
     case 'memberlist':
       // Display memberlist
-      require_once('inc/memberlist.inc.php');
+      require_once('./inc/memberlist.inc.php');
     break;
 
     case 'pm_box':
       // PM box
-      require_once('inc/pm_box.inc.php');
+      require_once('./inc/pm_box.inc.php');
     break;
 
     case 'profile_main':
     default :
       // User profile page
-      require_once('inc/profile_main.inc.php');
+      require_once('./inc/profile_main.inc.php');
     break;
 
     case 'profile_public':
       // User public profile page
-      require_once('inc/profile_public.inc.php');
+      require_once('./inc/profile_public.inc.php');
     break;
 
     case 'show_image':
       // Image window
-      require_once('inc/show_image.inc.php');
+      require_once('./inc/show_image.inc.php');
     break;
 
     case 'upload':
       // File upload window
-      require_once('inc/file_upload.inc.php');
+      require_once('./inc/file_upload.inc.php');
     break;
 
   }

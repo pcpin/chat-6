@@ -147,7 +147,7 @@ $__pcpin_init_class->_cache=array(); // Cahced data (to be used by all child obj
 
 
 // Connect to database
-require_once('config/db.inc.php');
+require_once('./config/db.inc.php');
 _pcpin_loadClass('db'); new PCPIN_DB($__pcpin_init_class, ${$_pcpin_dbcn});
 unset(${$_pcpin_dbcn});
 unset($_pcpin_dbcn);

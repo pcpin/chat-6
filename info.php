@@ -37,7 +37,7 @@ $_pcpin_old_display_errors=ini_get('display_errors');
 if (!defined('PCPIN_NO_SESSION')) define('PCPIN_NO_SESSION', true);
 
 // Initialize
-require('init.inc.php');
+require('./init.inc.php');
 
 // Load required classes
 _pcpin_loadClass('user'); $_pcpin_user=new PCPIN_User($_pcpin_init_session);
@@ -98,6 +98,6 @@ chdir($pcpin_old_cwd); unset($pcpin_old_cwd);
 unset($_GET['_pcpin_log_mysql_usage']);
 
 // Load and display info template
-require('info_template.php');
+require('./info_template.php');
 
 ?>

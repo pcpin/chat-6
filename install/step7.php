@@ -20,7 +20,7 @@ if (!defined('PCPIN_INSTALL_MODE') || true!==PCPIN_INSTALL_MODE) {
   header('Location: ../install.php');
   die();
 }
-$js_files[]='step7.js';
+$js_files[]='./step7.js';
 $body_onload[]='initFinalCheckTables()';
 
 

@@ -137,7 +137,7 @@ if (PCPIN_SLAVE_MODE && !empty($_pcpin_slave_userdata) && !empty($session) && is
     }
   }
   // Log user in
-  require('inc/ajax/do_login.inc.php');
+  require('./inc/ajax/do_login.inc.php');
   if ($status==0) {
     header('Location: '.PCPIN_FORMLINK.'?s_id='.urlencode($session->_s_id));
     die();

@@ -91,14 +91,14 @@ if (!empty($sk) && !empty($nv) && !empty($dl)) {
 
 if (!empty($b_id)) {
   // Binary file requested
-  require_once('inc/get_binary.inc.php');
+  require_once('./inc/get_binary.inc.php');
   die();
 } elseif (!empty($ajax)) {
   // AJAX request
-  require_once('inc/ajax/_main.inc.php');
+  require_once('./inc/ajax/_main.inc.php');
   die();
 } elseif (!empty($external_url)) {
-  require_once('inc/url_redirection.inc.php');
+  require_once('./inc/url_redirection.inc.php');
   die();
 }
 
@@ -176,7 +176,7 @@ if (empty($session->_s_user_id)) {
   // Login page
   $hide_account_options=true;
   $admin_login=true;
-  require_once('inc/login.inc.php');
+  require_once('./inc/login.inc.php');
   $_body_onload[]='checkOpener(true)';
 } else {
   $_body_onload[]='checkOpener()';
@@ -186,107 +186,107 @@ if (empty($session->_s_user_id)) {
 
       default:
         // Invalid call
-        require_once('inc/dummy.inc.php');
+        require_once('./inc/dummy.inc.php');
       break;
 
       case 'avatar_gallery':
         // Manage avatar gallery
-        require_once('inc/admin/avatar_gallery.inc.php');
+        require_once('./inc/admin/avatar_gallery.inc.php');
       break;
 
       case 'ban_control':
         // Manage banned users
-        require_once('inc/admin/ban_control.inc.php');
+        require_once('./inc/admin/ban_control.inc.php');
       break;
 
       case 'banners':
         // Manage banners
-        require_once('inc/admin/banners.inc.php');
+        require_once('./inc/admin/banners.inc.php');
       break;
 
       case 'db_backup':
         // Backup database
-        require_once('inc/admin/db_backup.inc.php');
+        require_once('./inc/admin/db_backup.inc.php');
       break;
 
       case 'db_restore':
         // Restore database
-        require_once('inc/admin/db_restore.inc.php');
+        require_once('./inc/admin/db_restore.inc.php');
       break;
 
       case 'disallow_names':
         // Manage disallowed usernames
-        require_once('inc/admin/disallow_names.inc.php');
+        require_once('./inc/admin/disallow_names.inc.php');
       break;
 
       case 'do_logout':
         // Log out window
-        require_once('inc/do_logout.inc.php');
+        require_once('./inc/do_logout.inc.php');
       break;
 
       case 'edit_moderator':
         // Edit moderators
-        require_once('inc/admin/edit_moderator.inc.php');
+        require_once('./inc/admin/edit_moderator.inc.php');
       break;
 
       case 'header_frame':
         // Header frame
-        require_once('inc/admin/header.inc.php');
+        require_once('./inc/admin/header.inc.php');
       break;
 
       case 'ip_filter':
         // IP filter
-        require_once('inc/admin/ip_filter.inc.php');
+        require_once('./inc/admin/ip_filter.inc.php');
       break;
 
       case 'languages':
         // Manage languages
-        require_once('inc/admin/languages.inc.php');
+        require_once('./inc/admin/languages.inc.php');
       break;
 
       case 'navigation_frame':
         // Navigation frame
-        require_once('inc/admin/navigation.inc.php');
+        require_once('./inc/admin/navigation.inc.php');
       break;
 
       case 'settings':
         // Settings
-        require_once('inc/admin/settings.inc.php');
+        require_once('./inc/admin/settings.inc.php');
       break;
 
       case 'rooms':
         // Manage rooms
-        require_once('inc/admin/rooms.inc.php');
+        require_once('./inc/admin/rooms.inc.php');
       break;
 
       case 'show_image':
         // Image window
-        require_once('inc/show_image.inc.php');
+        require_once('./inc/show_image.inc.php');
       break;
 
       case 'smilies':
         // Smilies management
-        require_once('inc/admin/smilies.inc.php');
+        require_once('./inc/admin/smilies.inc.php');
       break;
 
       case 'translate':
         // Create / edit language translation
-        require_once('inc/admin/translate.inc.php');
+        require_once('./inc/admin/translate.inc.php');
       break;
 
       case 'versions':
         // Version check
-        require_once('inc/admin/versions.inc.php');
+        require_once('./inc/admin/versions.inc.php');
       break;
 
       case 'upload':
         // File upload window
-        require_once('inc/file_upload.inc.php');
+        require_once('./inc/file_upload.inc.php');
       break;
 
       case 'word_blacklist':
         // Word blacklist
-        require_once('inc/admin/word_blacklist.inc.php');
+        require_once('./inc/admin/word_blacklist.inc.php');
       break;
 
     }
