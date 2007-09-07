@@ -101,20 +101,24 @@ function _CALLBACK_getPublicProfileData(user_id) {
         avatar_height=stringToNumber(actionHandler.getCdata('height', 0, avatar));
         if (avatar_nr==1) {
           // First avatar
-          $('avatar_image').innerHTML='<img id="avatar_img" src="'+htmlspecialchars(formlink)+'?b_id='+htmlspecialchars(avatar_binaryfile_id)+'&amp;s_id='+htmlspecialchars(s_id)+'&amp;b_x=120&amp;b_y=85" border="0" alt="'+htmlspecialchars(getLng('avatar'))+'" title="'+htmlspecialchars(getLng('avatar'))+'" style="cursor:pointer" />';
+          $('avatar_image').innerHTML='<img id="avatar_img" onload="setTimeout(\'resizeForDocumentHeight(10)\', 100);" src="'+htmlspecialchars(formlink)+'?b_id='+htmlspecialchars(avatar_binaryfile_id)+'&amp;s_id='+htmlspecialchars(s_id)+'&amp;b_x=120&amp;b_y=85" border="0" alt="'+htmlspecialchars(getLng('avatar'))+'" title="'+htmlspecialchars(getLng('avatar'))+'" style="cursor:pointer" />';
           $('avatar_img').binaryfile_id=avatar_binaryfile_id;
           $('avatar_img').ow_width=avatar_width;
           $('avatar_img').ow_height=avatar_height;
         }
 
         // Display thumb
-        $('avatar_thumbs').innerHTML+='<img id="avatar_thumb_'+htmlspecialchars(avatar_id)+'" src="'+formlink+'?b_id='+htmlspecialchars(avatar_binaryfile_id)+'&amp;s_id='+htmlspecialchars(s_id)+'&amp;b_x=50&amp;b_y=43'+'" border="0" alt="'+htmlspecialchars(getLng('avatar'))+'" title="'+htmlspecialchars(getLng('avatar'))+'" onmouseover="$(\'avatar_img\').src=\''+formlink+'?b_id='+htmlspecialchars(avatar_binaryfile_id)+'&amp;s_id='+htmlspecialchars(s_id)+'&amp;b_x=120&amp;b_y=85'+'\'; $(\'avatar_img\').binaryfile_id='+htmlspecialchars(avatar_binaryfile_id)+'; $(\'avatar_img\').ow_width='+htmlspecialchars(avatar_width)+'; $(\'avatar_img\').ow_height='+htmlspecialchars(avatar_height)+';" />'
+        $('avatar_thumbs').innerHTML+='<img id="avatar_thumb_'+htmlspecialchars(avatar_id)+'" src="'+formlink+'?b_id='+htmlspecialchars(avatar_binaryfile_id)+'&amp;s_id='+htmlspecialchars(s_id)+'&amp;b_x=50&amp;b_y=43'+'" border="0" alt="'+htmlspecialchars(getLng('avatar'))+'" title="'+htmlspecialchars(getLng('avatar'))+'" onmouseover="$(\'avatar_img\').onload=\'\'; $(\'avatar_img\').src=\''+formlink+'?b_id='+htmlspecialchars(avatar_binaryfile_id)+'&amp;s_id='+htmlspecialchars(s_id)+'&amp;b_x=120&amp;b_y=85'+'\'; $(\'avatar_img\').binaryfile_id='+htmlspecialchars(avatar_binaryfile_id)+'; $(\'avatar_img\').ow_width='+htmlspecialchars(avatar_width)+'; $(\'avatar_img\').ow_height='+htmlspecialchars(avatar_height)+';" />'
                                     + '<img src="./pic/clearpixel_1x1.gif" width="5" height="1" alt="" />';
         $('avatar_img').onclick=function() {
           openWindow(formlink+'?inc=show_image&img_b_id='+this.binaryfile_id+'&s_id='+s_id, '', this.ow_width, this.ow_height, false, false, false, false, true);
           return false;
         };
 
+      }
+      if (avatar_nr==2) {
+        // There is only one avatar. Hide thumb.
+        $('avatar_thumb_'+htmlspecialchars(avatar_id)).style.display='none';
       }
 
       // Online status
