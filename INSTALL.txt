@@ -77,11 +77,9 @@ Not required, but recommended:
    c. Edit file /config/db.inc.php end enter there your database connection data.
       YOU DON'T NEED TO EXECUTE INSTALLER SCRIPT!
 
-   d. Delete file /upgrade.php
+   d. Delete directory /install
 
-   e. Delete directory /install
-
-   f. Upgrade is finished now.
+   e. Upgrade is finished now.
 
 
 
