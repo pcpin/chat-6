@@ -1,6 +1,6 @@
 ===================================================================================
                  PCPIN Chat 6 (BETA) installation instructions.
-    Read carefully before you begin with PCPIN Chat 6 installation or upgrade!
+   Read *carefully* before you begin with PCPIN Chat 6 installation or upgrade!
 ===================================================================================
 
 
@@ -70,12 +70,18 @@ Not required, but recommended:
   If you have PCPIN Chat 6.xx installed and you want to keep existing users, settings
   and other data, follow these steps:
 
-   a. Delete existing chat files and directories.
+   a. Delete *all* existing chat files and directories.
 
    b. Upload new chat files to your server.
 
    c. Edit file /config/db.inc.php end enter there your database connection data.
-      You don't need to execute installer script. Installation is finished.
+      YOU DON'T NEED TO EXECUTE INSTALLER SCRIPT!
+
+   d. Delete file /upgrade.php
+
+   e. Delete directory /install
+
+   f. Upgrade is finished now.
 
 
 

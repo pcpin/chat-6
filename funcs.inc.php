@@ -85,12 +85,7 @@ if (!function_exists('_pcpin_loadClass')) {
    * @param   string    $class      Class name
    */
   function _pcpin_loadClass($class='') {
-    $class_file='./class/'.strtolower(trim($class)).'.class.php';
-    if (!file_exists($class_file) || !is_file($class_file) || !is_readable($class_file) || false===$result=@include_once($class_file)) {
-      // Failed to include file
-      trigger_error("Failed to load class file $class_file", E_USER_ERROR);
-      die("<b>Fatal error:</b> failed to load class file <b>$class_file</b>");
-    }
+    require_once('./class/'.strtolower(trim($class)).'.class.php');
   }
 }
 

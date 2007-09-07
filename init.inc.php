@@ -146,11 +146,19 @@ $__pcpin_init_class=new stdClass();
 $__pcpin_init_class->_cache=array(); // Cahced data (to be used by all child objects)
 
 
-// Connect to database and load configuration
+// Connect to database
 require_once('config/db.inc.php');
-_pcpin_loadClass('db'); _pcpin_loadClass('config'); new PCPIN_Config($__pcpin_init_class, ${$_pcpin_dbcn});
+_pcpin_loadClass('db'); new PCPIN_DB($__pcpin_init_class, ${$_pcpin_dbcn});
 unset(${$_pcpin_dbcn});
 unset($_pcpin_dbcn);
+
+// Finish upgrade, if needed
+if (file_exists('./upgrade.php')) {
+  include('./upgrade.php');
+}
+
+// Load configuration
+_pcpin_loadClass('config'); new PCPIN_Config($__pcpin_init_class);
 
 // Define "Slave mode" flag
 define('PCPIN_SLAVE_MODE', !empty($__pcpin_init_class->_conf_all['slave_mode']) && trim($__pcpin_init_class->_conf_all['slave_mode_master'])!='');

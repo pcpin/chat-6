@@ -89,12 +89,10 @@ class PCPIN_Config extends PCPIN_DB {
   /**
    * Constructor
    * @param   object  &$caller        Caller object
-   * @param   array   $db_conndata    Database connection data
    */
-  function PCPIN_Config(&$caller, $db_conndata) {
-    // Initialize database layer and connect to database
-    _pcpin_loadClass('db'); new PCPIN_DB($this, $db_conndata);
-    unset($db_conndata);
+  function PCPIN_Config(&$caller) {
+    // Get parent properties
+    $this->_db_pass_vars($caller, $this);
     // Load dynamic configuration.
     if ($this->_db_getList('_conf_group ASC', '_conf_subgroup ASC', '_conf_id ASC')) {
       foreach ($this->_db_list as $conf) {

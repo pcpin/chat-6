@@ -159,7 +159,7 @@ class PCPIN_Session extends PCPIN_Config {
     } else {
       $this->_db_pass_vars($config, $this, true);
     }
-    if (!$skip_cleanup) {
+    if (true!==$skip_cleanup) {
       // Delete old sessions
       $this->_s_cleanUp();
     }
