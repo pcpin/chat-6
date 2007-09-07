@@ -37,12 +37,17 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
     // Database upgrade needed
     switch ($__pcpin_upgrade['db_version']) {
 
-      default:
-        // All versions
-        $__pcpin_upgrade['version']->setVersion($__pcpin_upgrade['file_version']);
+      case 6.00:
+      case 6.01:
+        // Add more font sizes. See http://bugs.pcpin.com/view.php?id=224
+        $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."config` SET `_conf_choices` = '9=9|10=10|11=11|12=12|13=13|14=14|15=15|16=16|17=17|18=18|19=19|20=20' WHERE `_conf_name` = 'default_font_size' LIMIT 1");
+        $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."config` SET `_conf_choices` = '9=9|10=10|11=11|12=12|13=13|14=14|15=15|16=16|17=17|18=18|19=19|20=20' WHERE `_conf_name` = 'font_sizes' LIMIT 1");
       break;
 
     }
+    // All versions: Store new version number
+    $__pcpin_upgrade['session']->_db_query('DELETE FROM `'.PCPIN_DB_PREFIX.'version`');
+    $__pcpin_upgrade['session']->_db_query('INSERT INTO `'.PCPIN_DB_PREFIX.'version` ( `version`, `version_check_key`, `last_version_check` ) VALUES ( "'.$__pcpin_upgrade['session']->_db_escapeStr($__pcpin_upgrade['file_version'], false).'", "-", NOW() )');
   }
 } else {
   die('Fatal error: Your installation is broken. Reinstall needed!');
