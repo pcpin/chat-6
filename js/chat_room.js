@@ -795,6 +795,8 @@ function sendUpdaterRequest(full_request, first_request, get_last_msgs, show_pro
     } else {
       ajaxUpdater.sendData('_CALLBACK_sendUpdaterRequest('+(show_progressbar? 'true' : 'false')+')', 'POST', formlink, 'ajax='+urlencode('chat_updater')+'&s_id='+urlencode(s_id)+'&room_id='+urlencode(currentRoomID)+'&pref_timestamp='+(displayTimeStamp? '1' : '0')+'&pref_message_color='+urlencode(outgoingMessageColor)+(full_request? '&full_request=1' : '')+(first_request? '&first_request=1' : '')+'&get_last_msgs='+get_last_msgs+((postMessages.length>0)? '&'+postMessages.join('&') : ''), show_progressbar);
     }
+  } else {
+    startUpdater(true, first_request? true:false);
   }
 }
 /**
@@ -990,7 +992,7 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
   if (typeof(show_progressbar)=='boolean' && show_progressbar==true) {
     toggleProgressBar(false);
   }
-  startUpdater();
+  startUpdater(outgoingMessages.length>0);
 }
 
 
