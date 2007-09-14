@@ -26,7 +26,9 @@ $install_possible=false;
 // Get PHP version
 $php_ok=false;
 $_pcpin_php_needed=explode('.', PCPIN_REQUIRESPHP);
-$_pcpin_php_exists=explode('.', phpversion());
+$_pcpin_php_exists_str=phpversion();
+$_pcpin_php_exists_str='4.3.10-18';
+$_pcpin_php_exists=explode('.', $_pcpin_php_exists_str);
 define('PCPIN_PHP5', $_pcpin_php_exists[0]==5);
 foreach ($_pcpin_php_needed as $_pcpin_key=>$_pcpin_val) {
   if (!isset($_pcpin_php_exists[$_pcpin_key])) {
@@ -35,6 +37,13 @@ foreach ($_pcpin_php_needed as $_pcpin_key=>$_pcpin_val) {
     $install_possible=true;
     break;
   } else {
+    $l=strlen($_pcpin_php_exists[$_pcpin_key]);
+    for ($i=0; $i<$l; $i++) {
+      if ($_pcpin_php_exists[$_pcpin_key]{$i}!=='0' && ($_pcpin_php_exists[$_pcpin_key]{$i}<1 || $_pcpin_php_exists[$_pcpin_key]{$i}>9)) {
+        $_pcpin_php_exists[$_pcpin_key]=substr($_pcpin_php_exists[$_pcpin_key], 0, $i);
+        break;
+      }
+    }
     if ($_pcpin_val>$_pcpin_php_exists[$_pcpin_key]) {
       break;
       // PHP version is too old
@@ -101,7 +110,7 @@ if (function_exists('mysql_connect')) {
       PHP engine version
     </td>
     <td class="tbl_row" style="text-align:center">
-      <?php echo htmlspecialchars(phpversion()) ?>
+      <?php echo htmlspecialchars($_pcpin_php_exists_str) ?>
     </td>
     <td class="tbl_row" style="text-align:center">
       <?php echo htmlspecialchars(PCPIN_REQUIRESPHP) ?>
