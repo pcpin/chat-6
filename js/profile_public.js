@@ -116,9 +116,12 @@ function _CALLBACK_getPublicProfileData(user_id) {
         };
 
       }
-      if (avatar_nr==2) {
+      if (avatars_count==1) {
         // There is only one avatar. Hide thumb.
         $('avatar_thumb_'+htmlspecialchars(avatar_id)).style.display='none';
+      } else if (avatars_count==0) {
+        // No avatars
+        setTimeout('resizeForDocumentHeight(10)', 200);
       }
 
       // Online status
@@ -178,6 +181,4 @@ function _CALLBACK_getPublicProfileData(user_id) {
     }
   }
   toggleProgressBar(false);
-  // Resize window
-  setTimeout('resizeForDocumentHeight(10)', 100);
 }
