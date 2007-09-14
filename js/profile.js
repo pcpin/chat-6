@@ -154,11 +154,10 @@ var avatarGalleryAllowed=false;
  * @param   boolean   userlist_privileged           Flag: if TRUE, then "Admin" and "Moderator" flags will be displayed in userlist
  * @param   boolean   edit_by_admin                 Optional. Flag: if TRUE, no room structure will be loaded and user data will be displayed
  * @param   boolean   profile_user_id               User ID
- * @param   string    profile_user_login            Profile user' login name (urlencoded)
  * @param   boolean   skip_rooms                    Optional. Flag: if TRUE, then no room structure will be loaded
  * @param   boolean   avatar_gallery_allowed        Optional. Flag: if TRUE, then avatar gallery is allowed
  */
-function initProfile(nickname_length_min_, nickname_length_max_, homepage, gender, updater_interval, default_nickname_color, hide_email, avatars_max_count, nicknames_max_count, room_selection_display_type, userlist_gender, userlist_avatar, userlist_privileged, edit_by_admin, profile_user_id, profile_user_login, skip_rooms, avatar_gallery_allowed) {
+function initProfile(nickname_length_min_, nickname_length_max_, homepage, gender, updater_interval, default_nickname_color, hide_email, avatars_max_count, nicknames_max_count, room_selection_display_type, userlist_gender, userlist_avatar, userlist_privileged, edit_by_admin, profile_user_id, skip_rooms, avatar_gallery_allowed) {
   profileUserId=profile_user_id;
   if (isAdmin && edit_by_admin) {
     // Get member data
@@ -201,7 +200,7 @@ function initProfile(nickname_length_min_, nickname_length_max_, homepage, gende
   userlistGender=userlist_gender;
   userlistAvatar=userlist_avatar;
   userlistPrivileged=userlist_privileged;
-  profileUserLogin=unescape(profile_user_login);
+  profileUserLogin=$('profile_username_hidden').value;
   avatarGalleryAllowed=avatar_gallery_allowed;
   document.onkeyup=function(e) {
     switch (getKC(e)) {

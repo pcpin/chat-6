@@ -33,7 +33,7 @@
     <td class="tbl_row">
       <b>{LNG_LEVEL}:</b>
       <span id="member_level">
-        <input type="hidden" name="member_level_id" value="" />
+        <input type="hidden" name="member_level_id" id="member_level_id" value="" />
         <span id="member_level_name"></span>
         &nbsp;
         <a href=":" onclick="showMemberLevelForm(); return false;" title="{LNG_EDIT}">
@@ -412,5 +412,5 @@
     </td>
   </tr>
 </table>
-
+<input type="hidden" id="profile_username_hidden" value="{PROFILE_USERNAME_HIDDEN}" />
 </PCPIN:TPL>

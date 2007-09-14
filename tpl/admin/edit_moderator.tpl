@@ -24,7 +24,7 @@
   </tr>
   <tr id="user_name_row" style="display:none">
     <td class="tbl_row" colspan="3" style="text-align:center">
-      <input type="hidden" name="moderator_user_id" value="" />
+      <input type="hidden" name="moderator_user_id" id="moderator_user_id" value="" />
       <b>
         {LNG_USER}:
         <span id="moderator_user_nick"></span>

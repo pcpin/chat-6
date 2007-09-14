@@ -90,7 +90,6 @@ $_body_onload[1000000]='initProfile('.$session->_conf_all['nickname_length_min']
                                      .((!empty($session->_conf_all['userlist_privileged_flags']) && 2==PCPIN_Image::whichGD())? 'true' : 'false').','
                                      .((isset($do_edit))? 'true' : 'false').','
                                      .$profile_user_id.','
-                                     .'\''.urlencode($profile_user->login).'\','
                                      .((isset($own_profile))? 'true' : 'false').','
                                      .($show_avatar_gallery_link? 'true' : 'false')
                                      .')';
@@ -226,6 +225,7 @@ $tpl->addVars('main', array('welcome_message'=>htmlspecialchars(str_replace('[US
                             'interests'=>htmlspecialchars($profile_userdata->interests),
                             'hide_email'=>htmlspecialchars(!empty($profile_user->hide_email)? $l->g('yes') : $l->g('no')),
                             'online_seconds'=>htmlspecialchars($online_seconds),
+                            'profile_username_hidden'=>htmlspecialchars($profile_user->login)
                             ));
 
 // Show total online time
