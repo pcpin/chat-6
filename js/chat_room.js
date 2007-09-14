@@ -393,12 +393,14 @@ function initChatRoom(room_id,
     AreaBorders['chatroom_userlist']=getObjectBorders($('chatroom_userlist'));
     // Messages area backgroud color
     $('chatroom_messages').style.backgroundColor='#'+messagesAreaBGColor;
+    // Disable scrollbars
+    $$('HTML')[0].style.overflow='hidden';
     // Set initial size and position of all areas in chat room window
     setAreas();
     // Set onResize window handler
     window.onresize=function() {
       clearTimeout(windowResizeTimeoutHandler);
-      windowResizeTimeoutHandler=setTimeout('setAreas(); setAreas();', 200);
+      windowResizeTimeoutHandler=setTimeout('setAreas();', 200);
       if ($('main_input_textarea').click) {
         $('main_input_textarea').click();
       }
@@ -600,6 +602,7 @@ function setAreas() {
   var bottom_offset=0;
   var controlsHeight_local=controlsHeight;
   var userlist_width=0;
+  var SmiliesRowHeight_local=SmiliesRowHeight;
 
 //  try {
     if ($('attached_files').style.display!='none') {
@@ -635,6 +638,7 @@ function setAreas() {
 
       case  0:
         // Hide userlist
+        userlistWidth=0;
         $('chatroom_userlist').style.display='none';
         $('chatroom_messages').style.width=(winWidth-AreaBorders['chatroom_messages'][1]-AreaBorders['chatroom_messages'][3]+2)+'px';
         $('chatroom_messages').style.left='0px';
@@ -652,6 +656,11 @@ function setAreas() {
         $('chatroom_controls').style.width=(winWidth-userlistWidth-AreaBorders['chatroom_controls'][1]-AreaBorders['chatroom_controls'][3]+2)+'px';
       break;
 
+    }
+
+    if (SmiliesPosition==0 && (winWidth-userlistWidth-10)<$('smilie_selection_box').scrollWidth) {
+      SmiliesRowHeight_local+=20;
+      controlsHeight_local+=20;
     }
 
     $('chatroom_messages').style.fontFamily=defaultFontFamily;
@@ -690,9 +699,11 @@ function setAreas() {
       $('smilie_selection_box').style.border='0px';
       $('smilie_selection_box').style.top=(getTopPos($('main_input_textarea'))+controlsHeight-SmiliesRowHeight+(isIE? 2 : 0)-32)+'px';
       $('smilie_selection_box').style.left=getLeftPos($('main_input_textarea'))+'px';
-      $('smilie_selection_box').style.height=SmiliesRowHeight+'px';
       $('smilie_selection_box').style.width=(winWidth-userlistWidth-10)+'px';
       $('smilie_selection_box').style.backgroundColor='transparent';
+      $('smilie_selection_box').style.overflowY='hidden';
+      $('smilie_selection_box').style.overflowX='auto';
+      $('smilie_selection_box').style.height=SmiliesRowHeight_local+'px';
     } else {
       $('smilies_btn').style.display='';
     }
