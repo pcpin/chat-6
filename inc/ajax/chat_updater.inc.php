@@ -93,7 +93,6 @@ if (!empty($room_id) && !empty($current_user->id)) {
             $target_room_id=isset($data['target_room_id'])? $data['target_room_id'] : $session->_s_room_id;
             $target_user_id=isset($data['target_user_id'])? $data['target_user_id'] : 0;
             $body=_pcpin_substr($data['body'], 0, $session->_conf_all['message_length_max']);
-            $date=!empty($data['date'])? $data['date'] : time();
             $privacy=isset($data['privacy'])? $data['privacy'] : 0;
             $css_properties=isset($data['css_properties'])? $data['css_properties'] : '';
 
@@ -171,7 +170,7 @@ if (!empty($room_id) && !empty($current_user->id)) {
                                $target_room_id,
                                $target_user_id,
                                $body,
-                               date('Y-m-d H:i:s', $date),
+                               date('Y-m-d H:i:s'),
                                $privacy,
                                $css_properties);
               // Attachments?
