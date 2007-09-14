@@ -27,7 +27,6 @@ $install_possible=false;
 $php_ok=false;
 $_pcpin_php_needed=explode('.', PCPIN_REQUIRESPHP);
 $_pcpin_php_exists_str=phpversion();
-$_pcpin_php_exists_str='4.3.10-18';
 $_pcpin_php_exists=explode('.', $_pcpin_php_exists_str);
 define('PCPIN_PHP5', $_pcpin_php_exists[0]==5);
 foreach ($_pcpin_php_needed as $_pcpin_key=>$_pcpin_val) {
