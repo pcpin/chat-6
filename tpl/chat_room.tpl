@@ -85,6 +85,8 @@
               <td style="width:1px"><img src="./pic/clearpixel_1x1.gif" alt="" width="5" height="1" /></td>
               <td><button type="button" style="width:23px;background-image:url(./pic/help_18x18.gif);background-repeat:no-repeat;background-position:center center;" onclick="showHelpBox(this)" title="{LNG_HELP}" onfocus="blur()"></button></td>
               <td style="width:1px"><img src="./pic/clearpixel_1x1.gif" alt="" width="5" height="1" /></td>
+              <td><button type="button" style="width:23px;background-image:url(./pic/close_red_18x18.gif);background-repeat:no-repeat;background-position:center center;" onclick="_cmd_logout()" title="{LNG_LOG_OUT}" onfocus="blur()"></button></td>
+              <td style="width:1px"><img src="./pic/clearpixel_1x1.gif" alt="" width="5" height="1" /></td>
               <td><button type="button" id="scroll_ctl_btn" style="width:11px;background-image:url(./pic/scroll_active_5x18.gif);background-repeat:no-repeat;background-position:center center;" onclick="setAutoScroll()" title="" onfocus="blur()"></button></td>
             </tr>
           </table>
