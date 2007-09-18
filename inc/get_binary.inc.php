@@ -95,6 +95,9 @@ if (!empty($b_id) && is_scalar($b_id) && $binaryfile->_db_getList('protected, mi
     header('Content-Length: '.strlen($thumb_img));
     echo $thumb_img;
   } else {
+    if (!empty($filename)) {
+      header('Content-Disposition: inline; filename="'.$filename.'"');
+    }
     header('Content-type: '.$binaryfile->_db_list[0]['mime_type']);
     header('Content-Length: '.$binaryfile->_db_list[0]['size']);
     echo $binaryfile->_db_list[0]['body'];

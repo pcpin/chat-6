@@ -1610,7 +1610,7 @@ function displayMessage(author, message, css_properties, show_date, timestamp, t
     // Display attachments
     for (var i in attachments) {
       message+='&nbsp;&nbsp;'
-              +'<a href="'+formlink+'?s_id='+htmlspecialchars(s_id)+'&amp;b_id='+htmlspecialchars(attachments[i]['binaryfile_id'])+'" target="_blank" title="'+htmlspecialchars(getLng('attachment')+': '+attachments[i]['filename'])+'">'
+              +'<a href="'+formlink+'?s_id='+htmlspecialchars(s_id)+'&amp;b_id='+urlencode(attachments[i]['binaryfile_id'])+'&amp;filename='+urlencode(attachments[i]['filename'])+'" target="_blank" title="'+htmlspecialchars(getLng('attachment')+': '+attachments[i]['filename'])+'">'
               +'<img src="./pic/attachment_10x10.gif" title="'+htmlspecialchars(getLng('attachment'))+'" alt="'+htmlspecialchars(getLng('attachment'))+'" />'
               +htmlspecialchars(attachments[i]['filename'])
               +'</a>';
