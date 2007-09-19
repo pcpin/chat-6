@@ -1297,7 +1297,9 @@ class PCPIN_DB {
                                 `us`.`ban_reason` AS `ban_reason`,
                                 IF( `curr_us`.`is_admin` = "y", `us`.`banned_by`, "" ) AS `banned_by`,
                                 IF( `curr_us`.`is_admin` = "y", `us`.`banned_by_username`, "" ) AS `banned_by_username`,
-                                `ud`.`gender` AS `gender`';
+                                `ud`.`gender` AS `gender`,
+                                IF( `us`.`is_guest` = "y", 1, 0 ) AS `is_guest`
+                                ';
                       $groupby=' GROUP BY `us`.`id` ';
                     }
                     if (!empty($argv[3])) {

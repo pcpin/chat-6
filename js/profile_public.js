@@ -76,7 +76,11 @@ function _CALLBACK_getPublicProfileData(user_id) {
         $('profile_email_link').title=$('profile_email_link').innerHTML;
         $('profile_email_link').href='mailto:'+actionHandler.getCdata('email', 0, profile_data);
       }
-      $('profile_registration_date').innerHTML=htmlspecialchars(date(dateFormat, actionHandler.getCdata('registration_date', 0, profile_data)));
+      if ('y'==actionHandler.getCdata('is_guest', 0, profile_data)) {
+        $('profile_registration_date').innerHTML=htmlspecialchars('- ('+getLng('guest')+')');
+      } else {
+        $('profile_registration_date').innerHTML=htmlspecialchars(date(dateFormat, actionHandler.getCdata('registration_date', 0, profile_data)));
+      }
       // Time spent online
       $('profile_time_spent_online').innerHTML='';
       seconds_online=actionHandler.getCdata('time_online', 0, profile_data);

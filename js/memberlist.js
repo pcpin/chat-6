@@ -209,7 +209,8 @@ function _CALLBACK_getMemberlist() {
                            actionHandler.getCdata('banned_by_username', 0, member, ''),
                            stringToNumber(actionHandler.getCdata('global_muted_by', 0, member, 0)),
                            actionHandler.getCdata('global_muted_by_username', 0, member, ''),
-                           actionHandler.getCdata('global_muted_reason', 0, member, '')
+                           actionHandler.getCdata('global_muted_reason', 0, member, ''),
+                           '1'==actionHandler.getCdata('is_guest', 0, member)
                            );
         category_nr=0;
         while (null!=(category_name=actionHandler.getCdata('moderated_category', category_nr++, member))) {
@@ -429,7 +430,7 @@ function _CALLBACK_getMemberlist() {
       }
       // Nickname
       urec=urec.split('[NICKNAME_PLAIN]').join('"'+coloredToPlain(members[i].Nickname, true)+'"');
-      urec=urec.split('[NICKNAME_COLORED]').join(coloredToHTML(members[i].Nickname));
+      urec=urec.split('[NICKNAME_COLORED]').join(coloredToHTML(members[i].Nickname)+(members[i].IsGuest? htmlspecialchars(' ('+getLng('guest')+')') : ''));
       // Admin
       if (userlistPrivileged && members[i].IsAdmin) {
         urec=urec.split('_admin_section').join(' onclick="alert(getLng(\'user_is_admin\').split(\'[USER]\').join(\''+htmlspecialchars(coloredToPlain(members[i].Nickname, false))+'\')); return false;" ');

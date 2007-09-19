@@ -51,8 +51,9 @@ UserList.initialize();
  * @param   int       global_muted_by           If user is global muted - Who muted him? (User ID)
  * @param   int       global_muted_by_username  If user is global muted - Who muted him? (Username)
  * @param   string    global_muted_reason       If user global muted: reason
+ * @param   boolean   is_guest                  TRUE, if user is guest
  */
-function User(id, nickname, online_status, online_status_message, muted_locally, global_muted, global_muted_until, ip_address, gender, avatar_bid, is_admin, is_moderator, joined, last_visit, time_online, banned, banned_until, ban_reason, banned_by, banned_by_username, global_muted_by, global_muted_by_username, global_muted_reason) {
+function User(id, nickname, online_status, online_status_message, muted_locally, global_muted, global_muted_until, ip_address, gender, avatar_bid, is_admin, is_moderator, joined, last_visit, time_online, banned, banned_until, ban_reason, banned_by, banned_by_username, global_muted_by, global_muted_by_username, global_muted_reason, is_guest) {
 
   /**
    * User ID
@@ -191,6 +192,12 @@ function User(id, nickname, online_status, online_status_message, muted_locally,
    * @var   string
    */
   this.GlobalMutedByUsername=global_muted_by_username;
+
+  /**
+   * TRUE, if user is guest
+   * @var   string
+   */
+  this.IsGuest=is_guest;
 
 
 
@@ -405,8 +412,9 @@ function UserList() {
    * @param   int       global_muted_by           If user is global muted - Who muted him? (User ID)
    * @param   int       global_muted_by_username  If user is global muted - Who muted him? (Username)
    * @param   string    global_muted_reason       If user global muted: reason
+   * @param   boolean   is_guest                  TRUE, if user is guest
    */
-  this.addRecord=function(id, nickname, online_status, online_status_message, muted_locally, global_muted, global_muted_until, ip_address, gender, avatar_bid, is_admin, is_moderator, joined, last_visit, time_online, banned, banned_until, ban_reason, banned_by, banned_by_username, global_muted_by, global_muted_by_username, global_muted_reason) {
+  this.addRecord=function(id, nickname, online_status, online_status_message, muted_locally, global_muted, global_muted_until, ip_address, gender, avatar_bid, is_admin, is_moderator, joined, last_visit, time_online, banned, banned_until, ban_reason, banned_by, banned_by_username, global_muted_by, global_muted_by_username, global_muted_reason, is_guest) {
     if (typeof(id)=='string') {
       id=stringToNumber(id);
     }
@@ -487,8 +495,11 @@ function UserList() {
     if (typeof(global_muted_reason)!='string') {
       global_muted_reason='';
     }
+    if (typeof(is_guest)!='boolean') {
+      is_guest=false;
+    }
     if (typeof(this.records[id])!='object' || this.records[id]==null) {
-      this.records[id]=new User(id, nickname, online_status, online_status_message, muted_locally, global_muted, global_muted_until, ip_address, gender, avatar_bid, is_admin, is_moderator, joined, last_visit, time_online, banned, banned_until, ban_reason, banned_by, banned_by_username, global_muted_by, global_muted_by_username, global_muted_reason);
+      this.records[id]=new User(id, nickname, online_status, online_status_message, muted_locally, global_muted, global_muted_until, ip_address, gender, avatar_bid, is_admin, is_moderator, joined, last_visit, time_online, banned, banned_until, ban_reason, banned_by, banned_by_username, global_muted_by, global_muted_by_username, global_muted_reason, is_guest);
       this.recordsCount++;
     }
   }

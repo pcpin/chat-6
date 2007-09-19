@@ -36,6 +36,7 @@ $_js_lng[]='invite_user_to_your_room';
 $_js_lng[]='gender_m';
 $_js_lng[]='gender_f';
 $_js_lng[]='gender_-';
+$_js_lng[]='guest';
 
 
 if (!isset($user_id)) $user_id=0;

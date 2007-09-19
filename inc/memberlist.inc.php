@@ -80,6 +80,7 @@ $_js_lng[]='moderators_only';
 $_js_lng[]='admins_only';
 $_js_lng[]='never';
 $_js_lng[]='not_activated_accounts';
+$_js_lng[]='guest';
 
 $_body_onload[]='initMemberlist('.(!empty($session->_conf_all['userlist_gender_icon'])? 'true' : 'false').','
                                  .((!empty($session->_conf_all['userlist_avatar_thumb']) && 2==PCPIN_Image::whichGD())? 'true' : 'false').','

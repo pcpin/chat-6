@@ -27,7 +27,7 @@ $profile_data_xml='';
 
 
 // Get user data
-$current_user->_db_getList('email, hide_email, joined, time_online, global_muted_until, global_muted_permanently', 'id = '.$user_id, 1);
+$current_user->_db_getList('email, hide_email, joined, time_online, global_muted_until, global_muted_permanently, is_guest', 'id = '.$user_id, 1);
 
 if (is_object($session) && !empty($current_user->_db_list)) {
   $message='OK';
@@ -58,6 +58,7 @@ if (is_object($session) && !empty($current_user->_db_list)) {
                   'global_muted'=>$current_user->_db_list[0]['global_muted_until']>date('Y-m-d H:i:s') || $current_user->_db_list[0]['global_muted_permanently']=='y',
                   'global_muted_until'=>PCPIN_Common::datetimeToTimestamp($current_user->_db_list[0]['global_muted_until']),
                   'ip_address'=>'',
+                  'is_guest'=>$current_user->_db_list[0]['is_guest'],
                   );
   $current_user->_db_freeList();
   $userdata['header']=str_replace('[USER]', $nickname->coloredToPlain($userdata['nickname'], false), $l->g('users_profile'));
