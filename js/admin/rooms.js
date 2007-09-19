@@ -302,7 +302,7 @@ function showEditRoomForm(id) {
   if (id>0) {
     hideCategories();
     $('edit_room_tbl').style.display='';
-    $('edit_room_tbl_header').innerHTML=htmlspecialchars(getLng('edit_room').split('[NAME]').join(Rooms[id]['name']));
+    $('edit_room_tbl_header').innerHTML=htmlspecialchars(getLng('edit_room').split('[ROOM]').join(Rooms[id]['name']));
 
     $('edit_room_id').value=id;
     $('edit_room_name').value=Rooms[id]['name'];
