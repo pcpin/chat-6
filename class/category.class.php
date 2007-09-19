@@ -117,6 +117,7 @@ class PCPIN_Category extends PCPIN_Session {
                          'gender'=>$data['gender'],
                          'is_admin'=>$data['is_admin'],
                          'is_moderator'=>$data['is_moderator'],
+                         'is_guest'=>$data['is_guest'],
                          );
         $room_data=array('name'=>$data['room_name'],
                          'description'=>$data['room_description'],

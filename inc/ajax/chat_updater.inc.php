@@ -401,6 +401,7 @@ if (!empty($room_id) && !empty($current_user->id)) {
         <avatar_bid>'.htmlspecialchars($user_data['avatar_bid']).'</avatar_bid>
         <is_admin>'.htmlspecialchars($user_data['is_admin']).'</is_admin>
         <is_moderator>'.htmlspecialchars($user_data['is_moderator']).'</is_moderator>
+        <is_guest>'.htmlspecialchars($user_data['is_guest']).'</is_guest>
       </user>';
             }
             $full_data.='

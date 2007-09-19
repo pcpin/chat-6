@@ -1043,6 +1043,7 @@ class PCPIN_DB {
                                    `se`.`_s_online_status_message` AS `online_status_message`,
                                    `us`.`global_muted_permanently`,
                                    IF( `us`.`is_admin` = "y", 1, 0) AS `is_admin`,
+                                   IF( `us`.`is_guest` = "y", 1, 0) AS `is_guest`,
                                    IF( `curr_se`.`_s_room_id` > 0 AND `curr_se`.`_s_room_id` = `se`.`_s_room_id` AND FIND_IN_SET( `se`.`_s_room_id`, `us`.`moderated_rooms` ) > 0, 1, 0) AS `is_moderator`,
                                    IF( `us`.`global_muted_until` > CURDATE() OR `us`.`global_muted_permanently` = "y", `us`.`global_muted_by`, 0) AS `global_muted_by`,
                                    IF( `us`.`global_muted_until` > CURDATE() OR `us`.`global_muted_permanently` = "y", `us`.`global_muted_by_username`, "") AS `global_muted_by_username`,

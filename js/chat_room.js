@@ -909,7 +909,19 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
                                ajaxUpdater.getCdata('gender', 0, user),
                                ajaxUpdater.getCdata('avatar_bid', 0, user),
                                '1'==ajaxUpdater.getCdata('is_admin', 0, user),
-                               '1'==ajaxUpdater.getCdata('is_moderator', 0, user)
+                               '1'==ajaxUpdater.getCdata('is_moderator', 0, user),
+                               null,
+                               null,
+                               null,
+                               null,
+                               null,
+                               null,
+                               null,
+                               null,
+                               null,
+                               null,
+                               null,
+                               '1'==ajaxUpdater.getCdata('is_guest', 0, user)
                                );
           }
           if (false==welcomeMessageDisplayed) {
