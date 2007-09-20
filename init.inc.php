@@ -161,7 +161,7 @@ unset($_pcpin_dbcn);
 
 // Finish upgrade, if needed
 if (file_exists('./upgrade.php')) {
-  include('./upgrade.php');
+  @include('./upgrade.php');
 }
 
 // Load configuration
