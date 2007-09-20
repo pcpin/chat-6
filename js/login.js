@@ -49,7 +49,7 @@ function initLoginForm(login_length_min, login_length_max, admin_login) {
   }
 
   // Check for parent frameset
-  if (window.parent && window.parent.frames.length>0 && window.parent.frames[0].name!='chat_summary_frame') {
+  if (window.parent && window.parent.frames.length>0 && window.parent.appName_=='pcpin_chat' && window.parent.frames[0].name!='chat_summary_frame') {
     window.parent.document.location.href=formlink;
   }
 
