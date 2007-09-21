@@ -182,6 +182,11 @@ function _CALLBACK_getPublicProfileData(user_id) {
       // Display table
       $('profile_table').style.display='';
       $('close_window_btn_tbl').style.display='';
+    } else {
+      if (message!=null) {
+        alert(message);
+      }
+      window.close();
     }
   }
   toggleProgressBar(false);
