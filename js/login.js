@@ -49,9 +49,11 @@ function initLoginForm(login_length_min, login_length_max, admin_login) {
   }
 
   // Check for parent frameset
-  if (window.parent && window.parent.frames.length>0 && window.parent.appName_=='pcpin_chat' && window.parent.frames[0].name!='chat_summary_frame') {
-    window.parent.document.location.href=formlink;
-  }
+  try {
+    if (window.parent && window.parent.frames.length>0 && window.parent.appName_=='pcpin_chat' && window.parent.frames[0].name!='chat_summary_frame') {
+      window.parent.document.location.href=formlink;
+    }
+  } catch (e) {}
 
   window.onresize=function() {
     setTimeout("centerLoginTable()", 30);

@@ -1531,6 +1531,7 @@ function displayMessage(author, message, css_properties, show_date, timestamp, t
   var css_attr_value='';
   var css_array=null;
   var last_span=null;
+  var now=new Date();
 
   if (typeof(message)=='string' && message!='' || attachments && attachments.length>0) {
     if ((typeof(show_date)!='boolean' || show_date) && typeof(timestamp)=='number' && timestamp>0) {
@@ -1627,20 +1628,25 @@ function displayMessage(author, message, css_properties, show_date, timestamp, t
               +htmlspecialchars(attachments[i]['filename'])
               +'</a>';
     }
-    msg_span.innerHTML=nl2br(message);
+    msg_span.innerHTML=nl2br(message)+'<br />';
     $('chatroom_messages_contents', tgt_doc).appendChild(msg_span);
-    $('chatroom_messages_contents', tgt_doc).appendChild(tgt_doc.createElement('BR'));
-    last_span=tgt_doc.createElement('SPAN');
-    $('chatroom_messages_contents', tgt_doc).appendChild(last_span);
     if (tgt_window.AutoScroll) {
-      last_span.scrollIntoView();
+      try {
+        if (window.parent && window.parent.frames && window.parent.frames.length>0 && window.parent.frames[0].name!='chatroom_top_banner') {
+          // Chat is running in an IFRAME
+          $('chatroom_messages', tgt_doc).scrollTop=$('chatroom_messages', tgt_doc).scrollHeight;      
+        } else {
+          msg_span.scrollIntoView(false);
+        }
+      } catch (e) {
+        msg_span.scrollIntoView(false);
+      }
     }
     if (typeof(do_focus)=='boolean' && do_focus==true) {
       tgt_window.focus();
     }
   }
 }
-
 
 /**
  * Post a message
