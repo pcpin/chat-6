@@ -100,7 +100,7 @@ if (empty($_pcpin_init_session->_s_user_id)) {
     $_pcpin_slave_userdata['is_admin']          = (defined('ADMIN') && $phpbb_userdata['user_level']==ADMIN)? 'y' : 'n';
     $_pcpin_slave_userdata['time_zone_offset']  = $phpbb_userdata['user_timezone']*3600;
     $_pcpin_slave_userdata['is_guest']          = 'n';
-    $_pcpin_slave_userdata['homapage']          = $phpbb_userdata['user_website'];
+    $_pcpin_slave_userdata['homepage']          = $phpbb_userdata['user_website'];
     $_pcpin_slave_userdata['icq']               = $phpbb_userdata['user_icq'];
     $_pcpin_slave_userdata['msn']               = $phpbb_userdata['user_msnm'];
     $_pcpin_slave_userdata['aim']               = $phpbb_userdata['user_aim'];
