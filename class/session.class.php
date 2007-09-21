@@ -242,7 +242,7 @@ class PCPIN_Session extends PCPIN_Config {
       }
     }
     // Set "Away" online status for sessions with ping older than (updater_interval+N) seconds
-    if ($this->_db_getList('_s_online_status != 3', '_s_last_ping < '.(date('Y-m-d H:i:s', time()-$this->_conf_all['updater_interval']*2)))) {
+    if ($this->_db_getList('_s_online_status != 3', '_s_last_ping < '.(date('Y-m-d H:i:s', time()-$this->_conf_all['updater_interval']*4)))) {
       $sessions=$this->_db_list;
       $this->_db_freeList();
       _pcpin_loadClass('session'); $session=new PCPIN_Session($this, '', true);
