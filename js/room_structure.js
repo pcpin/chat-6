@@ -339,7 +339,9 @@ function makeCategoryTreeHtml(cats, depth) {
  * @param   int     cat_id    Category ID
  */
 function openCategoryFolder(cat_id) {
-  CategoryTree[cat_id]['opened']=true;
+  try {
+    CategoryTree[cat_id]['opened']=true;
+  } catch (e) {}
   displayCategoryTree();
 }
 
@@ -349,13 +351,15 @@ function openCategoryFolder(cat_id) {
  * @param   int     cat_id    Category ID
  */
 function closeCategoryFolder(cat_id) {
-  CategoryTree[cat_id]['opened']=false;
-  for (var i=0; i<CategoryTree[cat_id]['child_ids'].length; i++) {
-    if (CategoryTree[cat_id]['child_ids'][i]==ActiveCategoryId) {
-      setActiveCategoryId(cat_id);
-      break;
+  try {
+    CategoryTree[cat_id]['opened']=false;
+    for (var i=0; i<CategoryTree[cat_id]['child_ids'].length; i++) {
+      if (CategoryTree[cat_id]['child_ids'][i]==ActiveCategoryId) {
+        setActiveCategoryId(cat_id);
+        break;
+      }
     }
-  }
+  } catch (e) {}
   displayCategoryTree();
 }
 
