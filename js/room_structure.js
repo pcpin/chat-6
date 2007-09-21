@@ -365,20 +365,22 @@ function closeCategoryFolder(cat_id) {
  * @param   int       category_id     Category ID
  */
 function showCategoryRooms(category_id) {
-  var div_top=$('chat_rooms_list').scrollTop;
-  if (typeof(category_id)!='number') {
-    category_id=ActiveCategoryId;
-  }
-  if (category_id>0) {
-    var rooms_div_height=stringToNumber($('chat_rooms_list').style.height.substring(0, $('chat_rooms_list').style.height.length-2));
-    $('chat_rooms_list').innerHTML=makeCategoryRoomsHTML(category_id);
-    $('chat_rooms_list').scrollTop=div_top;
-    setTimeout("$('chat_rooms_list').scrollTop="+div_top+";", 1);
-    $('chat_rooms_list').style.height=(rooms_div_height-1)+'px';
-    setTimeout('$(\'chat_rooms_list\').style.height=\''+rooms_div_height+'px\';', 20);
-    // Update onMouseOver status
-    setMouseoverStatus();
-  }
+  try {
+    var div_top=$('chat_rooms_list').scrollTop;
+    if (typeof(category_id)!='number') {
+      category_id=ActiveCategoryId;
+    }
+    if (category_id>0) {
+      var rooms_div_height=stringToNumber($('chat_rooms_list').style.height.substring(0, $('chat_rooms_list').style.height.length-2));
+      $('chat_rooms_list').innerHTML=makeCategoryRoomsHTML(category_id);
+      $('chat_rooms_list').scrollTop=div_top;
+      setTimeout("$('chat_rooms_list').scrollTop="+div_top+";", 1);
+      $('chat_rooms_list').style.height=(rooms_div_height-1)+'px';
+      setTimeout('$(\'chat_rooms_list\').style.height=\''+rooms_div_height+'px\';', 20);
+      // Update onMouseOver status
+      setMouseoverStatus();
+    }
+  } catch (e) {}
 }
 
 /**
@@ -545,7 +547,9 @@ function makeCategoryRoomsHTML(category_id) {
  * @param   boolean   open          If TRUE, then room will be opened, if FALSE - closed
  */
 function openCloseRoom(room_id, category_id, open) {
-  CategoryTree[category_id]['rooms'][room_id]['opened']=open;
+  try {
+    CategoryTree[category_id]['rooms'][room_id]['opened']=open;
+  } catch (e) {}
 }
 
 
@@ -745,14 +749,18 @@ function showNewRoomBox(category_id) {
  * Set active room ID
  */
 function setActiveRoomId(id) {
-  ActiveRoomId_previous=ActiveRoomId;
-  ActiveRoomId=stringToNumber(id);
+  try {
+    ActiveRoomId_previous=ActiveRoomId;
+    ActiveRoomId=stringToNumber(id);
+  } catch (e) {}
 }
 
 /**
  * Set active category ID
  */
 function setActiveCategoryId(id) {
-  ActiveCategoryId_previous=ActiveCategoryId;
-  ActiveCategoryId=stringToNumber(id);
+  try {
+    ActiveCategoryId_previous=ActiveCategoryId;
+    ActiveCategoryId=stringToNumber(id);
+  } catch (e) {}
 }
