@@ -380,9 +380,9 @@ function makeSettingInput(id, val, type, choices, description) {
               choice_parts[1]=getLng('unlimited');
             }
             input_html+='&nbsp;('
-                       +urlencode(choice_parts[0])
+                       +htmlspecialchars(choice_parts[0])
                        +' .. '
-                       +urlencode(choice_parts[1])
+                       +htmlspecialchars(choice_parts[1])
                        +')'
                        ;
           }
