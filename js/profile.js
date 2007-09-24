@@ -135,6 +135,12 @@ var roomSelectionDisplayType=0;
  */
 var avatarGalleryAllowed=false;
 
+/**
+ * Current nicknames count
+ * @var int
+ */
+var nicknamesCount=0;
+
 
 
 /**
@@ -638,6 +644,7 @@ function _CALLBACK_getNickNames() {
   var nickname_nr=0;
   var nickname=null;
   var status=actionHandler.getCdata('status');
+  nicknamesCount=0;
   if (status=='-1') {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
@@ -678,6 +685,7 @@ function flushNickNamesTable() {
   $('nicknames_area').innerHTML=$('nicknames_area').innerHTML;
 
   while (nickname=actionHandler.getElement('nickname', i)) {
+    nicknamesCount++;
     nick_id=actionHandler.getCdata('id', 0, nickname);
     nick=actionHandler.getCdata('nickname', 0, nickname);
     nick_plain=actionHandler.getCdata('nickname_plain', 0, nickname);
@@ -1017,7 +1025,7 @@ function showNicknameForm(nickname_id) {
 function hideNicknameForm() {
   $('nickname_colorizer_table').style.display='none';
   $('nicknames_table').style.display='';
-  $('new_nickname_link_row').style.display='';
+  $('new_nickname_link_row').style.display=nicknamesCount<nicknamesMaxCount? '' : 'none';
 }
 
 
