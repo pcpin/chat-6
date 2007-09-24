@@ -644,7 +644,6 @@ function _CALLBACK_getNickNames() {
   var nickname_nr=0;
   var nickname=null;
   var status=actionHandler.getCdata('status');
-  nicknamesCount=0;
   if (status=='-1') {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
@@ -674,6 +673,7 @@ function flushNickNamesTable() {
   var is_default='n';
   var nickNamesTbl=$('nicknames_table');
 
+  nicknamesCount=0;
   CurrentNicknameID=0;
   for (var ii=nickNamesTbl.rows.length-1; ii>0; ii--) {
     if (nickNamesTbl.rows[ii] && nickNamesTbl.rows[ii].id.indexOf('nickname_row_')==0) {
