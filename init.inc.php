@@ -214,7 +214,7 @@ if (!defined('PCPIN_NO_SESSION') && empty($_GET['external_url'])) {
 
 // Load language
 if (!defined('PCPIN_NO_SESSION')) {
-  if (empty($b_id) && empty($_GET['external_url'])) {
+  if (empty($_GET['b_id']) && empty($_GET['external_url'])) {
     _pcpin_loadClass('language'); $l=new PCPIN_Language($_pcpin_init_session);
     $_pcpin_set_language=$_pcpin_init_session->_s_language_id;
     if (!empty($_pcpin_init_session->_conf_all['allow_language_selection']) && !empty($_POST['language_id'])) {
