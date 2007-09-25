@@ -29,6 +29,7 @@ if (!isset($description)) $description='';
 
 if (!empty($current_user->id) && $current_user->is_admin==='y') {
 
+  $status=1;
   if ($code=='') {
     $errortext[]=$l->g('smilie_code_empty_error');
   }
@@ -56,7 +57,6 @@ if (!empty($current_user->id) && $current_user->is_admin==='y') {
       $status=0;
       $message=$l->g('smilie_added');
     } else {
-      $status=1;
       $message=$l->g('error');
     }
   } else {
