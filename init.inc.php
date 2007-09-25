@@ -179,7 +179,7 @@ if (isset($_GET['s_id']) && is_scalar($_GET['s_id'])) {
 }/* elseif (isset($_COOKIE['s_id']) && is_scalar($_COOKIE['s_id'])) {
   $s_id=$_COOKIE['s_id'];
 }*/
-_pcpin_loadClass('session'); $_pcpin_init_session=new PCPIN_Session($__pcpin_init_class, $s_id, !empty($_GET['b_id']) || !empty($_GET['$external_url']) || !empty($_GET['load_banner']) || defined('PCPIN_NO_SESSION'));
+_pcpin_loadClass('session'); $_pcpin_init_session=new PCPIN_Session($__pcpin_init_class, $s_id, !empty($_GET['b_id']) || !empty($_GET['external_url']) || !empty($_GET['load_banner']) || defined('PCPIN_NO_SESSION'));
 
 // Kill init class (session is a root class now)
 unset($__pcpin_init_class);
@@ -200,7 +200,7 @@ if (PCPIN_SLAVE_MODE && empty($_GET['b_id']) && empty($_GET['external_url']) && 
 
 
 // Get software version
-if (!defined('PCPIN_NO_SESSION')) {
+if (!defined('PCPIN_NO_SESSION') && empty($_GET['external_url'])) {
   _pcpin_loadClass('version'); $_pcpin_version=new PCPIN_Version($_pcpin_init_session);
   if ($_pcpin_version->_db_getList('version', 1)) {
     define('PCPIN_VERSION', number_format($_pcpin_version->_db_list[0]['version'], 2, '.', ''));
@@ -214,7 +214,7 @@ if (!defined('PCPIN_NO_SESSION')) {
 
 // Load language
 if (!defined('PCPIN_NO_SESSION')) {
-  if (empty($b_id)) {
+  if (empty($b_id) && empty($_GET['external_url'])) {
     _pcpin_loadClass('language'); $l=new PCPIN_Language($_pcpin_init_session);
     $_pcpin_set_language=$_pcpin_init_session->_s_language_id;
     if (!empty($_pcpin_init_session->_conf_all['allow_language_selection']) && !empty($_POST['language_id'])) {
