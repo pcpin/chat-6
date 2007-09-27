@@ -183,7 +183,7 @@ if (!empty($ajax)) {
 
     case 'do_login':
       // Login attempt
-      if (PCPIN_SLAVE_MODE) {
+      if (PCPIN_SLAVE_MODE && empty($admin_login)) {
         // Not allowed in Slave mode
         echo '<?xml version="1.0" encoding="UTF-8"?>
 <pcpin_xml>

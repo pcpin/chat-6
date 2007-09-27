@@ -25,13 +25,13 @@
 $_pcpin_db_server = 'localhost';
 
 // Database username
-$_pcpin_db_user = 'root';
+$_pcpin_db_user = 'reznichak';
 
 // Database password
 $_pcpin_db_password = '';
 
 // Database name
-$_pcpin_db_database = 'chat';
+$_pcpin_db_database = 'test2';
 
 // Prefix for all chat table names
 $_pcpin_db_tbl_prefix = 'pcpin_';

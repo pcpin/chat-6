@@ -154,10 +154,8 @@ $__pcpin_init_class->_cache=array(); // Cahced data (to be used by all child obj
 
 
 // Connect to database
-require_once('./config/db.inc.php');
+require('./config/db.inc.php');
 _pcpin_loadClass('db'); new PCPIN_DB($__pcpin_init_class, ${$_pcpin_dbcn});
-unset(${$_pcpin_dbcn});
-unset($_pcpin_dbcn);
 
 // Finish upgrade, if needed
 if (file_exists('./upgrade.php')) {
@@ -184,7 +182,6 @@ _pcpin_loadClass('session'); $_pcpin_init_session=new PCPIN_Session($__pcpin_ini
 // Kill init class (session is a root class now)
 unset($__pcpin_init_class);
 
-
 // Slave mode?
 if (PCPIN_SLAVE_MODE && empty($_GET['b_id']) && empty($_GET['external_url']) && empty($_GET['load_banner']) && !defined('PCPIN_NO_SESSION')) {
   // Check mod file
@@ -195,9 +192,17 @@ if (PCPIN_SLAVE_MODE && empty($_GET['b_id']) && empty($_GET['external_url']) && 
   } else {
     // Load mod file
     require($_pcpin_mod_filename);
+    // Reinit session
+    $__pcpin_init_class=new stdClass();
+    $__pcpin_init_class->_cache=array();
+    new PCPIN_DB($__pcpin_init_class, ${$_pcpin_dbcn});
+    new PCPIN_Config($__pcpin_init_class);
+    $_pcpin_init_session=new PCPIN_Session($__pcpin_init_class, $s_id, !empty($_GET['b_id']) || !empty($_GET['external_url']) || !empty($_GET['load_banner']) || defined('PCPIN_NO_SESSION'));
+    unset($__pcpin_init_class);
   }
 }
-
+unset(${$_pcpin_dbcn});
+unset($_pcpin_dbcn);
 
 // Get software version
 if (!defined('PCPIN_NO_SESSION') && empty($_GET['external_url'])) {

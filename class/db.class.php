@@ -51,9 +51,9 @@ class PCPIN_DB {
    */
   function PCPIN_DB(&$caller, $db_conndata) {
     // Query args separator. DO NOT CHANGE!!!
-    define('PCPIN_SQLQUERY_ARG_SEPARATOR_START', chr(0).chr(255).PCPIN_Common::randomString(10));
+    if (!defined('PCPIN_SQLQUERY_ARG_SEPARATOR_START')) define('PCPIN_SQLQUERY_ARG_SEPARATOR_START', chr(0).chr(255).PCPIN_Common::randomString(10));
     // Query args separator. DO NOT CHANGE!!!
-    define('PCPIN_SQLQUERY_ARG_SEPARATOR_END', chr(255).chr(0).PCPIN_Common::randomString(10));
+    if (!defined('PCPIN_SQLQUERY_ARG_SEPARATOR_END')) define('PCPIN_SQLQUERY_ARG_SEPARATOR_END', chr(255).chr(0).PCPIN_Common::randomString(10));
     // Connect to database
     if (empty($this->_db_conn)) {
       if (!function_exists('mysql_connect')) {
@@ -91,10 +91,9 @@ class PCPIN_DB {
           $this->_db_close();
         } else {
           // Define database table names prefix
-          define('PCPIN_DB_PREFIX', $db_conndata['tbl_prefix']);
+          if (!defined('PCPIN_DB_PREFIX')) define('PCPIN_DB_PREFIX', $db_conndata['tbl_prefix']);
         }
       }
-      // Create dummy connection
     }
     unset($db_conndata);
     $this->_cache['_db_tabledata']=array(); // Cached table information ($this->_cache is a property of the parent class)
