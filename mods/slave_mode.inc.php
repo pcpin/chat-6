@@ -47,7 +47,7 @@ if (PCPIN_SLAVE_MODE && !empty($_pcpin_slave_userdata) && !empty($session) && is
       } else {
         // User is not logged in yet
         $login=$current_user_set['login'];
-        $password=PCPIN_Common::randomString(32);
+        $_pcpin_slave_userdata_md5_password=$_pcpin_slave_userdata['password'];
         // Update user main data
         $update_args=array();
         foreach ($_pcpin_slave_userdata as $key=>$val) {
@@ -55,7 +55,6 @@ if (PCPIN_SLAVE_MODE && !empty($_pcpin_slave_userdata) && !empty($session) && is
             $update_args[$key]=$val;
           }
         }
-        $update_args['password']=md5($password);
         // Moderator?
         $update_args['moderated_rooms']='';
         $update_args['moderated_categories']='';
@@ -103,15 +102,17 @@ if (PCPIN_SLAVE_MODE && !empty($_pcpin_slave_userdata) && !empty($session) && is
     } else {
       // User not exists yet
       $login=$_pcpin_slave_userdata['login'];
-      $password=PCPIN_Common::randomString(32);
       // Create new user
       $current_user->newUser($_pcpin_slave_userdata['login'],
-                             $password,
+                             PCPIN_Common::randomString(32),
                              $_pcpin_slave_userdata['email'],
                              $_pcpin_slave_userdata['hide_email'],
                              'n',
                              ''
                              );
+      $current_user->password=$_pcpin_slave_userdata['password'];
+      $_pcpin_slave_userdata_md5_password=$_pcpin_slave_userdata['password'];
+      $current_user->_db_updateObj($current_user->id);
       // Userdata
       $current_userdata->_db_getList('user_id = '.$current_user->id, 1);
       $current_userdata_set=$current_userdata->_db_list[0];

@@ -52,14 +52,14 @@ if (false!==$blocked=$ipfilter->isBlocked(PCPIN_CLIENT_IP)) {
     }
     $message=str_replace('[DATE]', $banned_until_str, $message);
   }
-} elseif ($login!='' && $password!='') {
+} elseif ($login!='' && ($password!='' || PCPIN_SLAVE_MODE && $_pcpin_slave_userdata_md5_password!='')) {
   // Registered user login
   if ($current_user->_db_getList('login =# '.$login, 1)) {
     // User exists
     $userdata=$current_user->_db_list[0];
     $current_user->_db_freeList();
     // Check password
-    if (md5($password)==$userdata['password']) {
+    if (md5($password)==$userdata['password'] || PCPIN_SLAVE_MODE && $_pcpin_slave_userdata_md5_password!='' && $_pcpin_slave_userdata_md5_password==$userdata['password']) {
       // Password OK
       $password_ok=true;
     } elseif (md5($password)==$userdata['password_new']) {
