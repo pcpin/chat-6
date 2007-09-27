@@ -1630,16 +1630,20 @@ function displayMessage(author, message, css_properties, show_date, timestamp, t
     }
     msg_span.innerHTML=nl2br(message)+'<br />';
     $('chatroom_messages_contents', tgt_doc).appendChild(msg_span);
+    last_span=tgt_doc.createElement('SPAN');
+    last_span.style.position='absolute';
+    last_span.style.left='0px';
+    $('chatroom_messages_contents', tgt_doc).appendChild(last_span);
     if (tgt_window.AutoScroll) {
       try {
         if (window.parent && window.parent.frames && window.parent.frames.length>0 && window.parent.frames[0].name!='chatroom_top_banner') {
           // Chat is running in an IFRAME
-          $('chatroom_messages', tgt_doc).scrollTop=$('chatroom_messages', tgt_doc).scrollHeight;      
+          $('chatroom_messages', tgt_doc).scrollTop=$('chatroom_messages', tgt_doc).scrollHeight;
         } else {
-          msg_span.scrollIntoView(false);
+          last_span.scrollIntoView(false);
         }
       } catch (e) {
-        msg_span.scrollIntoView(false);
+        last_span.scrollIntoView(false);
       }
     }
     if (typeof(do_focus)=='boolean' && do_focus==true) {
