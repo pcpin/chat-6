@@ -54,12 +54,12 @@ if (empty($_pcpin_init_session->_s_user_id)) {
   /**
    * phpBB root page
    */
-  define('PCPIN_SLAVE_MASTER_PATH', $phpbb_root_path);
+  if (!defined('PCPIN_SLAVE_MASTER_PATH')) define('PCPIN_SLAVE_MASTER_PATH', $phpbb_root_path);
 
   /**
    * phpBB LogIn page
    */
-  define('PCPIN_SLAVE_LOGIN_PATH', $phpbb_root_path.'login.'.$phpEx.'?redirect='.$phpbb_to_chat_path);
+  if (!defined('PCPIN_SLAVE_LOGIN_PATH')) define('PCPIN_SLAVE_LOGIN_PATH', $phpbb_root_path.'login.'.$phpEx.'?redirect='.$phpbb_to_chat_path);
 
   // Supported data
   $_pcpin_slave_userdata=array('login'            =>  null,
