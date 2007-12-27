@@ -579,7 +579,7 @@ function addSlashes(str) {
  */
 function checkEmail(email) {
   var result=false;
-  var reg=new RegExp(/^([a-zA-Z0-9]+[\._-]{0,1}[a-zA-Z0-9]+)+@(([a-zA-Z0-9]+-{0,1}[a-zA-Z0-9])+\.)+([a-zA-Z]{2,4})$/);
+  var reg=new RegExp(/^([a-zA-Z0-9]+[\._-]?)+[a-zA-Z0-9]+@(((([a-zA-Z0-9]+-?)+[a-zA-Z0-9]+)|([a-zA-Z0-9]{2,}))+\.)+[a-zA-Z]{2,4}$/);
   if (typeof(email)=='string' && email!='') {
     result=(null!=email.match(reg));
   }

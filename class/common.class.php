@@ -130,7 +130,7 @@ class PCPIN_Common {
       $valid=true;
       if ($level>=1) {
         // Well-formness check
-        $valid=(boolean)ereg('^([a-zA-Z0-9]+[\._-]{0,1}[a-zA-Z0-9]+)+@(([a-zA-Z0-9]+-{0,1}[a-zA-Z0-9])+\.)+([a-zA-Z]{2,4})$', $email);
+        $valid=(boolean)ereg('^([a-zA-Z0-9]+[\._-]?)+[a-zA-Z0-9]+@(((([a-zA-Z0-9]+-?)+[a-zA-Z0-9]+)|([a-zA-Z0-9]{2,}))+\.)+[a-zA-Z]{2,4}$', $email);
         if ($valid && $level>=2) {
           // Hostname (or DNS record, if Hostname failed) resolution
           $hostname=strtolower(substr($email, strpos($email, '@')+1));
