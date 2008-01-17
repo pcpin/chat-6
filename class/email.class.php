@@ -170,7 +170,7 @@ class PCPIN_Email {
           }
         }
         $message.= '--'.$boundary."\n"
-                  .'Content-Type: text/plain'."\n"
+                  .'Content-Type: text/plain; charset=utf-8;'."\n"
                   .'Content-Transfer-Encoding: base64'."\n\n"
                   .$encoded_body
                   ."\n";
