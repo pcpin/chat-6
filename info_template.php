@@ -38,7 +38,20 @@
 | $_pcpin_rooms                      | Chat rooms' names.                                         |
 +------------------------------------+------------------------------------------------------------+
 */
+
+
+header('Content-Type: text/html; charset=UTF-8');
+header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
+header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+header('Pragma: public');
+
 ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/xml; charset=utf-8" />
+</head>
+<body>
 <div align="center">
   <h2>This is an example page. You may edit it as you need.</h2>
   <table border="1" cellspacing="0" cellpadding="5">
@@ -76,3 +89,5 @@
     </tr>
   </table>
 </div>
+</body>
+</html>
