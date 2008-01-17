@@ -214,7 +214,7 @@ class PCPIN_Avatar extends PCPIN_Session {
     $avatars=array();
     _pcpin_loadClass('binaryfile'); $binaryfile=new PCPIN_BinaryFile($this);
     if (!empty($user_id)) {
-      if ($this->_db_getList('id, primary, binaryfile_id', 'user_id = '.$user_id, 'id ASC')) {
+      if ($this->_db_getList('id, primary, binaryfile_id', 'user_id = '.$user_id, 'primary ASC', 'id ASC')) {
         foreach ($this->_db_list as $data) {
           if ($binaryfile->_db_getList('width, height', 'id = '.$data['binaryfile_id'])) {
             $data['width']=$binaryfile->_db_list[0]['width'];

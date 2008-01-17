@@ -374,7 +374,7 @@ if (!empty($room_id) && !empty($current_user->id)) {
                   $ip_address='';
                 }
                 // Get first avatar
-                if ($avatar->_db_getList('binaryfile_id', 'user_id = '.$user_id, 'id ASC')) {
+                if ($avatar->_db_getList('binaryfile_id', 'user_id = '.$user_id, 'primary = y', 1)) {
                   // User has avatars
                   $user_data['avatar_bid']=$avatar->_db_list[0]['binaryfile_id'];
                 } else {
