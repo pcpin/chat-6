@@ -143,6 +143,7 @@ function _CALLBACK_getCategoryTree() {
             Rooms[room_id]['background_image_width']=stringToNumber(actionHandler.getCdata('background_image_width', 0, room));
             Rooms[room_id]['background_image_height']=stringToNumber(actionHandler.getCdata('background_image_height', 0, room));
             Rooms[room_id]['password_protected']='1'==actionHandler.getCdata('password_protected', 0, room);
+            Rooms[room_id]['default_message_color']=actionHandler.getCdata('default_message_color', 0, room);
 
             tr=categories_tbl.insertRow(-1);
 
@@ -348,6 +349,8 @@ function showEditRoomForm(id) {
     $('edit_room_password_protected').value=Rooms[id]['password_protected']? '1' : '0';
     togglePasswordLink(Rooms[id]['password_protected']);
     togglePasswordFields(false);
+    $('edit_room_default_message_color').value=Rooms[id]['default_message_color'];
+    $('setting_color_edit_room_default_message_color').style.backgroundColor='#'+Rooms[id]['default_message_color'];
   }
 }
 
@@ -604,6 +607,7 @@ function updateRoom() {
                                                         +'&change_password='+urlencode($('edit_room_password_changed').value)
                                                         +'&password='+urlencode(base64encode($('edit_room_password_1').value))
                                                         +'&image='+urlencode($('edit_room_background_image').binaryfile_id)
+                                                        +'&default_message_color='+urlencode($('edit_room_default_message_color').value)
                                                         );
   }
 }
@@ -790,6 +794,9 @@ function showCreateRoomForm(category_id) {
 
     $('create_room_password_protected').value='0';
 
+    $('create_room_default_message_color').value=$('create_room_default_message_color_global').value;
+    $('setting_color_create_room_default_message_color').style.backgroundColor='#'+$('create_room_default_message_color_global').value;
+
     toggleNewRoomPasswordFields(false);
   }
 }
@@ -836,7 +843,9 @@ function createRoom() {
                                                         +'&description='+urlencode($('create_room_description').value)
                                                         +'&password_protect='+urlencode($('create_room_password_protected').value)
                                                         +'&password='+urlencode(base64encode($('create_room_password_1').value))
-                                                        +'&image='+($('create_room_background_image').binaryfile_id!=''? '1' : '0'));
+                                                        +'&image='+($('create_room_background_image').binaryfile_id!=''? '1' : '0')
+                                                        +'&default_message_color='+urlencode($('create_room_default_message_color').value)
+                                                        );
   }
 }
 function _CALLBACK_createRoom() {

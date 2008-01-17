@@ -92,7 +92,8 @@ function makeCategoriesXML($categories, $depth) {
                                                          || false!==strpos(','.$current_user->moderated_rooms.',', ','.$room_id.',')
                                                          )? '1' : '').'</moderated_by_me>
   '.$depth_pad.'    <name>'.htmlspecialchars($room_data['name']).'</name>
-  '.$depth_pad.'    <description>'.htmlspecialchars($room_data['description']).'</description>';
+  '.$depth_pad.'    <description>'.htmlspecialchars($room_data['description']).'</description>
+  '.$depth_pad.'    <default_message_color>'.htmlspecialchars($room_data['default_message_color']).'</default_message_color>';
       foreach ($room_data['users'] as $user_id=>$user_data) {
         if ($user_data['global_muted_until']>date('Y-m-d H:i:s')) {
           $global_muted='1';

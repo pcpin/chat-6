@@ -66,4 +66,6 @@ foreach ($tpl->tpl_vars_plain as $var) {
   }
 }
 
+$tpl->addVar('main', 'default_message_color', $session->_conf_all['default_message_color']);
+
 ?>

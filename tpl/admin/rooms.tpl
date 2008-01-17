@@ -187,6 +187,17 @@
         </td>
       </tr>
       <tr>
+        <td class="tbl_row">
+          <b>{LNG__CONF_DEFAULT_MESSAGE_COLOR}</b>
+        </td>
+        <td class="tbl_row">
+          <input type="hidden" id="edit_room_default_message_color" value="" />
+          <div id="setting_color_edit_room_default_message_color" style="border: solid 1px #000000; cursor:pointer; width:60px; height: 20px;" title="{LNG__CONF_DEFAULT_MESSAGE_COLOR}" onclick="openColorBox('setting_color_edit_room_default_message_color', 'background-color', this, '$(\'edit_room_default_message_color\').value', true); return false;">
+            &nbsp;
+          </div>
+        </td>
+      </tr>
+      <tr>
         <td colspan="2" class="tbl_row" style="text-align:center">
           <button type="submit" title="{LNG_SAVE_CHANGES}">{LNG_SAVE_CHANGES}</button>
           &nbsp;&nbsp;
@@ -256,6 +267,18 @@
               </td>
             </tr>
           </table>
+        </td>
+      </tr>
+      <tr>
+        <td class="tbl_row">
+          <b>{LNG__CONF_DEFAULT_MESSAGE_COLOR}</b>
+        </td>
+        <td class="tbl_row">
+          <input type="hidden" id="create_room_default_message_color_global" value="{DEFAULT_MESSAGE_COLOR}" />
+          <input type="hidden" id="create_room_default_message_color" value="" />
+          <div id="setting_color_create_room_default_message_color" style="border: solid 1px #000000; cursor:pointer; width:60px; height: 20px;" title="{LNG__CONF_DEFAULT_MESSAGE_COLOR}" onclick="openColorBox('setting_color_create_room_default_message_color', 'background-color', this, '$(\'create_room_default_message_color\').value', true); return false;">
+            &nbsp;
+          </div>
         </td>
       </tr>
       <tr>
