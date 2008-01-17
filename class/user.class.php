@@ -568,11 +568,13 @@ class PCPIN_User extends PCPIN_Session {
    * @param   boolean   $moderators_only      Optional. If TRUE, then only moderators will be returned
    * @param   boolean   $admins_only          Optional. If TRUE, then only admins will be returned
    * @param   boolean   $not_activated_only   Optional. If TRUE, then only not activated user accounts will be returned
+   * @param   boolean   $registered_only      Optional. If TRUE, then only registered user accounts will be returned (guest accounts will be omitted)
+   * @param   boolean   $guests_only          Optional. If TRUE, then only guest accounts will be returned
    * @return  mixed
    */
-  function getMemberlist($count_only=false, $limitstart=0, $limitlength=0, $sort_by=0, $sort_dir=0, $nickname='', $banned_only=false, $muted_only=false, $moderators_only=false, $admins_only=false, $not_activated_only=false) {
+  function getMemberlist($count_only=false, $limitstart=0, $limitlength=0, $sort_by=0, $sort_dir=0, $nickname='', $banned_only=false, $muted_only=false, $moderators_only=false, $admins_only=false, $not_activated_only=false, $registered_only=false, $guests_only=false) {
     $users=array();
-    $query=$this->_db_makeQuery(1900, $count_only, $limitstart, $limitlength, $sort_by, $sort_dir, $nickname, $this->_s_user_id, $banned_only==true, $muted_only==true, $moderators_only==true, $admins_only==true, $not_activated_only==true);
+    $query=$this->_db_makeQuery(1900, $count_only, $limitstart, $limitlength, $sort_by, $sort_dir, $nickname, $this->_s_user_id, $banned_only==true, $muted_only==true, $moderators_only==true, $admins_only==true, $not_activated_only==true, $registered_only==true, $guests_only==true);
     if ($result=$this->_db_query($query)) {
       if (true===$count_only) {
         $data=$this->_db_fetch($result);

@@ -51,11 +51,14 @@ $_pcpin_online_users_colored=array();
 $_pcpin_registered_users_count=0;
 $_pcpin_registered_users=array();
 $_pcpin_registered_users_colored=array();
+$_pcpin_guests_count=0;
+$_pcpin_guests=array();
+$_pcpin_guests_colored=array();
 $_pcpin_rooms_count=0;
 $_pcpin_rooms=array();
 
 // Get full memberlist
-$_pcpin_memberlist=$_pcpin_user->getMemberlist(false, 0, 0, 1, 0);
+$_pcpin_memberlist=$_pcpin_user->getMemberlist(false, 0, 0, 1, 0, '', false, false, false, false, false, true);
 $_pcpin_registered_users_count=count($_pcpin_memberlist);
 foreach ($_pcpin_memberlist as $_pcpin_data) {
   if ($_pcpin_data['online_status']>0) {
@@ -67,6 +70,22 @@ foreach ($_pcpin_memberlist as $_pcpin_data) {
   $_pcpin_registered_users_colored[]=$_pcpin_nickname->coloredToHTML($_pcpin_data['nickname']);
 }
 unset($_pcpin_memberlist);
+
+// Get guests
+$_pcpin_guestlist=$_pcpin_user->getMemberlist(false, 0, 0, 1, 0, '', false, false, false, false, false, false, true);
+$_pcpin_guests_count=count($_pcpin_guestlist);
+foreach ($_pcpin_guestlist as $_pcpin_data) {
+  if ($_pcpin_data['online_status']>0) {
+    $_pcpin_online_users_count++;
+    $_pcpin_online_users[]=htmlspecialchars($_pcpin_data['nickname_plain']);
+    $_pcpin_online_users_colored[]=$_pcpin_nickname->coloredToHTML($_pcpin_data['nickname']);
+  }
+  $_pcpin_guests[]=htmlspecialchars($_pcpin_data['nickname_plain']);
+  $_pcpin_guests_colored[]=$_pcpin_nickname->coloredToHTML($_pcpin_data['nickname']);
+}
+unset($_pcpin_guestlist);
+
+
 unset($_pcpin_user);
 unset($_pcpin_nickname);
 
