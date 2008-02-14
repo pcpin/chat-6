@@ -30,6 +30,7 @@ _pcpin_loadClass('room'); $room=new PCPIN_Room($session);
 _pcpin_loadClass('category'); $category=new PCPIN_Category($session);
 
 if (PCPIN_SLAVE_MODE && !empty($_pcpin_slave_userdata) && !empty($session) && is_object($session)) {
+  $language_id=$_pcpin_slave_userdata['language'];
   if ($_pcpin_slave_userdata['is_guest']!=='n') {
     // User is guest
     $guest_login=1;
@@ -143,6 +144,7 @@ if (PCPIN_SLAVE_MODE && !empty($_pcpin_slave_userdata) && !empty($session) && is
     header('Location: '.PCPIN_FORMLINK.'?s_id='.urlencode($session->_s_id));
     die();
   }
+  
 }
 
 ?>

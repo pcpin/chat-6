@@ -42,6 +42,12 @@ class PCPIN_DB {
    */
   var $_db_list_count=0;
 
+  /**
+   * Original client-server charsets
+   * @var   array
+   */
+  var $_db_client_server_charsets=null;
+
 
   /**
    * Constructor.
@@ -64,7 +70,9 @@ class PCPIN_DB {
         PCPIN_Common::dieWithError(1, '<b>Fatal error</b>: Failed to connect database server');
       } else {
         // Database server connected
-        $this->_db_query('SET NAMES "utf8"');
+        // Set UTF-8 character set for client-server communication
+        $this->_db_setCharsets();
+        // Disable MySQL strict mode
         $this->_db_query('SET SESSION sql_mode=""');
         // Check MySQL server version
         $mysql_version=$this->_db_mysql_version();
@@ -98,6 +106,39 @@ class PCPIN_DB {
     unset($db_conndata);
     $this->_cache['_db_tabledata']=array(); // Cached table information ($this->_cache is a property of the parent class)
     $this->_db_pass_vars($this, $caller);
+  }
+
+
+  /**
+   * Set UTF-8 character set for client-server communication
+   */
+  function _db_setCharsets() {
+    // Store original charset settings
+    if (empty($this->_db_client_server_charsets)) {
+      $this->_db_client_server_charsets=array();
+      $result=$this->_db_query('SHOW VARIABLES LIKE "character\_set\_%"');
+      while ($data=$this->_db_fetch($result, MYSQL_NUM)) {
+        $this->_db_client_server_charsets[$data[0]]=$data[1];
+      }
+    }
+    // Set new charsets
+    $this->_db_query('SET NAMES "utf8"');
+  }
+
+
+  /**
+   * Restore original character sets for client-server communication
+   */
+  function _db_restoreCharsets() {
+    if (!empty($this->_db_client_server_charsets)) {
+      $result=$this->_db_query('SHOW VARIABLES LIKE "character\_set\_%"');
+      while ($data=$this->_db_fetch($result, MYSQL_NUM)) {
+        if (isset($this->_db_client_server_charsets[$data[0]]) && $this->_db_client_server_charsets[$data[0]]!=$data[1]) {
+          $this->_db_query('SET '.$data[0].' = "'.$this->_db_client_server_charsets[$data[0]].'"');
+        }
+      }
+    }
+    $this->_db_client_server_charsets=array();
   }
 
 

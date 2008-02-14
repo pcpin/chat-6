@@ -28,12 +28,12 @@ Not required, but recommended:
  Before you begin
 --------------------
 
- 1. Backup your database and files!
-    If something goes wrong, you will be able to roll-back to previous installation
-    without data loss.
+     1.	Backup your database and files!
+	If something goes wrong, you will be able to roll-back to previous installation
+	without data loss.
 
- 2. Please note that you need a browser that supports JavaScript and frames.
-    All modern browsers do that (if you haven't deactivated these features manually).
+     2.	Please note that you need a browser that supports JavaScript and frames.
+	All modern browsers do that (if you haven't deactivated these features manually).
 
 
 
@@ -47,22 +47,21 @@ Not required, but recommended:
   If you have PCPIN Chat 5.xx installed on your server and you want to import
   existing users, settings and other data into the new version, follow these steps:
 
-   a. Delete existing chat files and directories, EXCEPTING /images directory.
-      The directory /images contains user avatars, smilies and room background images
-      that may be required during installation.
+   1.1.	Delete existing chat files and directories, EXCEPTING /images directory.
+	The directory /images contains user avatars, smilies and room background images
+	that may be required during installation.
 
-   b. Upload new chat files to your server.
+   1.2.	Upload new chat files to your server.
 
-   c. Move directory /images with all contents (see step 1) into the directory /install/import/
+   1.3.	Move directory /images with all contents (see step 1) into the directory /install/import/
 
-   d. Make the file /config/db.inc.php writeable for the web server (CHMOD 666 is a good choice).
-      The installation script will try to store database connection data into that file.
-      If you can't or don't want to make this file writeable, then you must edit it manually before
-      you start the installation.
+   1.4.	Make the file /config/db.inc.php writeable for the web server (CHMOD 666 is a good choice).
+	The installation script will try to store database connection data into that file.
+	If you can't or don't want to make this file writeable, then you must edit it manually before
+	you start the installation.
 
-   e. Now you are ready to start the installation. Point your brouser to /install.php
-      file in your chat root directory and follow onscreen instructions.
-
+   1.5.	Now you are ready to start the installation. Point your brouser to /install.php
+	file in your chat root directory and follow onscreen instructions.
 
 
 2. Upgrading from PCPIN Chat 6.xx
@@ -70,43 +69,63 @@ Not required, but recommended:
   If you have PCPIN Chat 6.xx installed and you want to keep existing users, settings
   and other data, follow these steps:
 
-   a. Delete *all* existing chat files and directories.
+   2.1.	Delete *all* existing chat files and directories.
 
-   b. Upload new chat files to your server.
+   2.2.	Upload new chat files to your server.
 
-   c. Edit file /config/db.inc.php end enter there your database connection data.
-      YOU DON'T NEED TO EXECUTE INSTALLER SCRIPT!
+   2.3.	Delete directory /install (YOU DON'T NEED TO EXECUTE INSTALLER SCRIPT!)
 
-   d. Delete directory /install
+   2.4.	Edit file /config/db.inc.php end enter there your database connection data.
 
-   e. Upgrade is finished now.
-
+   2.5.	Upgrade is finished now.
 
 
 
 
-----------------------------------
+-----------------------------------
  Fresh installation instructions
-----------------------------------
+-----------------------------------
 
- a. Delete all existing chat files and directories.
+     1.	Delete all existing chat files and directories.
 
- b. Upload new chat files to your server.
+     2.	Upload new chat files to your server.
 
- c. Make the file /config/db.inc.php writeable for the web server (CHMOD 666 is a good choice).
-    The installation script will try to store database connection data into that file.
-    If you can't or don't want to make this file writeable, then you must edit it manually before
-    you start the installation.
+     3.	Make the file /config/db.inc.php writeable for the web server (CHMOD 666 is a good choice).
+	The installation script will try to store database connection data into that file.
+	If you can't or don't want to make this file writeable, then you must edit it manually before
+	you start the installation.
 
- d. Now you are ready to start the installation. Point your brouser to /install.php
-    file in your chat root directory and follow onscreen instructions.
-
-
+     4.	Now you are ready to start the installation. Point your brouser to /install.php
+	file in your chat root directory and follow onscreen instructions.
 
 
------------------------------
+
+
+-----------------------------------------
+ Installing PCPIN Chat as phpBB module
+-----------------------------------------
+
+     1.	Create the directory named "chat" in your phpBB root directory and upload PCPIN Chat files into it.
+
+     2.	Make the file /config/db.inc.php writeable for the web server (CHMOD 666 is a good choice).
+	The installation script will try to store database connection data into that file.
+	If you can't or don't want to make this file writeable, then you must edit it manually before
+	you start the installation.
+
+     3.	Now you are ready to start the installation. Point your brouser to /install.php
+	file in your chat root directory and follow onscreen instructions.
+
+     4.	Log in as administrator and open Admin Panel. In the Navigation frame
+	select "Settings" -> "Slave mode". Slave mode configuration will appear.
+	Select "phpbb2" from "Slave mode master" list, set "Activate slave mode" to "Yes"
+	and click "Save changes". Slave mode is now active.
+
+
+
+
+------------------------------
  Troubleshooting: Short FAQ
------------------------------
+------------------------------
 
  Q: Why does install.php shows only a white screen?
  A: Your browser does not supports JavaScript. Enable JavaScript support in your browser.
@@ -123,7 +142,8 @@ Not required, but recommended:
  A: PCPIN Chat can be installed onto your server.
     mbstring is a PHP extension used for multibyte charset manipulations. PCPIN Chat
     is multilingual and uses UTF8 encoding. If there are no mbstring features available,
-    then PCPIN Chat will use standard PHP ISO mechanisms.
+    then PCPIN Chat will use standard PHP ISO mechanisms which is slower and may cause
+    incorrect charset conversions.
 
  Q: Installation script asks me to enter database connection data. Where can i found it?
  A: Ask your hosting provider or server administrator.
@@ -134,8 +154,7 @@ Not required, but recommended:
     to change the proposed value.
 
  Q: Do I need to set some write permissions on files or directories used by PCPIN Chat?
- A: No. PCPIN Chat stores all data into database and don't needs writeable directories or
-    files.
+ A: No. PCPIN Chat stores all data into database.
 
 
 If you have any other questions regarding PCPIN Chat, then visit our community forums:

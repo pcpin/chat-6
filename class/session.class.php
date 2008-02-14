@@ -393,7 +393,7 @@ class PCPIN_Session extends PCPIN_Config {
         // New session ID is unique
         // Check language
         _pcpin_loadClass('language'); $language=new PCPIN_Language($this);
-        if (empty($this->_conf_all['allow_language_selection']) || true!==$language->checkLanguage($language_id)) {
+        if (empty($this->_conf_all['allow_language_selection']) || 0==$language_id=$language->checkLanguage($language_id)) {
           $language_id=$this->_conf_all['default_language'];
         }
         // Set all object properties up

@@ -180,7 +180,16 @@ if (empty($session->_s_user_id)) {
   } else {
     // Login page
     if (PCPIN_SLAVE_MODE) {
-      header('Location: '.PCPIN_SLAVE_LOGIN_PATH);
+      header('Content-Type: text/html; charset=UTF-8');
+      header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
+      echo '<html><head><meta http-equiv="Content-Type" content="text/xml; charset=utf-8" /></head><body onload="rdrForm.submit()"><form id="rdrForm" action="'.PCPIN_SLAVE_LOGIN_PATH.'" method="'.PCPIN_SLAVE_LOGIN_METHOD.'">';
+      if (PCPIN_SLAVE_LOGIN_VARS!='') {
+        $pairs=explode('&', PCPIN_SLAVE_LOGIN_VARS);
+        foreach ($pairs as $pair) {
+          echo '<input type="hidden" name="'.htmlspecialchars(substr($pair, 0, strpos($pair, '='))).'" value="'.htmlspecialchars(substr($pair, strpos($pair, '=')+1)).'" />';
+        }
+      }
+      echo '</form></body></html>';
       die();
     } else {
       require_once('./inc/login.inc.php');

@@ -18,13 +18,14 @@
 
 // Get available languages
 if (!isset($language_id)) $language_id=0;
+
 $languages=array();
 if (!empty($session->_conf_all['allow_language_selection']) && !empty($session->_conf_all['login_language_selection'])) {
   $languages=$l->getLanguages(false);
   // Any language already selected
   if (!empty($language_id)) {
     foreach ($languages as $data) {
-      if ($language_id==$data['id']) {
+      if ($language_id==$data['id'] || $language_id==$data['iso_name']) {
         $preselect_language=$data['id'];
         break;
       }

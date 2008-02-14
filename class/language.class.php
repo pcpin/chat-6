@@ -72,7 +72,7 @@ class PCPIN_Language extends PCPIN_Session {
 
   /**
    * Set language
-   * @param   int       $language_id    Language ID
+   * @param   mixed     $language_id    Language ID or ISO name
    * @return  boolean   TRUE on success or FALSE on error
    */
   function setLanguage($language_id=0) {
@@ -82,6 +82,18 @@ class PCPIN_Language extends PCPIN_Session {
     if (empty($this->_conf_all['allow_language_selection']) && $language_id!=$this->_conf_all['default_language']) {
       // Language selection is disallowed. Using default language.
       $language_id=$this->_conf_all['default_language'];
+    } else {
+      if (!pcpin_ctype_digit($language_id)) {
+        // ISO name submitted, get ID for this language
+        if ($this->_db_getList('id', 'iso_name = '.$language_id, 1)) {
+          // Specified language exists
+          $language_id=$this->_db_list[0]['id'];
+          $this->_db_freeList();
+        } else {
+          // Specified language not found, using default language
+          $language_id=$this->_conf_all['default_language'];
+        }
+      }
     }
     // Load language data
     if (empty($language_id) || !$this->_db_getList('id = '.$language_id, 'active = y', 1)) {
@@ -166,16 +178,19 @@ class PCPIN_Language extends PCPIN_Session {
 
   /**
    * Check the language for availability
-   * @param   int   $language_id    Language ID
-   * @return  boolean TRUE, if language is available or FLASE, if not
+   * @param   mixed     $language_id    Language ID or ISO name
+   * @return  int   Language ID, if language is available or 0, if not
    */
   function checkLanguage($id=0) {
-    $available=false;
-    if (!empty($id) && $this->_db_getList('id = '.$id, 'active = y', 1)) {
-      $available=true;
-      $this->_db_freeList();
+    $available_id=0;
+    if (!empty($id)) {
+      if (   !pcpin_ctype_digit($id) && $this->_db_getList('id', 'iso_name = '.$id, 'active = y', 1)
+          || pcpin_ctype_digit($id) && $this->_db_getList('id', 'id = '.$id, 'active = y', 1)) {
+        $available_id=$this->_db_list[0]['id'];
+        $this->_db_freeList();
+      }
     }
-    return $available;
+    return $available_id;
   }
 
 
