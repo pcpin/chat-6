@@ -1481,15 +1481,6 @@ function parseMessage(body) {
             }
           }
           if (found==false) {
-            for (var code in SmilieList.SmilieList) {
-              if (msg_parts[i]==':'+SmilieList.SmilieList[code].id+':') {
-                msg_parts[i]='<img src="'+SmilieList.SmilieList[code].source+'" alt="'+code+'" title="'+code+'" />';
-                found=true;
-                break;
-              }
-            }
-          }
-          if (found==false) {
             msg_parts[i]=htmlspecialchars(msg_parts[i]);
           }
         }
