@@ -120,6 +120,7 @@ a:hover {
   border: 0px;
   background-repeat: no-repeat;
   background-position: center center;
+  background-attachment: fixed;
   padding: 0px;
   margin: 0px;
 }

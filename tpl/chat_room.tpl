@@ -190,4 +190,7 @@
   </PCPIN:TPL>
 </div>
 
+<!-- DUMMY CONTAINER FOR ROOM BACKGROUND IMAGE -->
+<span id="dummy_background_image_container" style="display:none"><img id="dummy_background_image" src="./pic/clearpixel_1x1.gif" alt="" border="0" /></span>
+
 </PCPIN:TPL>

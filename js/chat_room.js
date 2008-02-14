@@ -391,7 +391,7 @@ function initChatRoom(room_id,
     AreaBorders['chatroom_messages']=getObjectBorders($('chatroom_messages'));
     AreaBorders['chatroom_controls']=getObjectBorders($('chatroom_controls'));
     AreaBorders['chatroom_userlist']=getObjectBorders($('chatroom_userlist'));
-    // Messages area backgroud color
+    // Messages area background color
     $('chatroom_messages').style.backgroundColor='#'+messagesAreaBGColor;
     // Disable scrollbars
     $$('HTML')[0].style.overflow='hidden';
@@ -707,6 +707,9 @@ function setAreas() {
     } else {
       $('smilies_btn').style.display='';
     }
+    if ($('dummy_background_image') && $('dummy_background_image').onload) {
+      $('dummy_background_image').onload();
+    }
 //  } catch (e) {}
 }
 
@@ -891,6 +894,17 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
           $('message_colors_btn').style.backgroundColor='#'+outgoingMessageColor;
           if (room_background_image>0) {
             $('chatroom_messages').style.backgroundImage='url('+formlink+'?s_id='+s_id+'&b_id='+room_background_image+')';
+            // Load image into dummy container
+            $('dummy_background_image').onload=function() {
+              $('dummy_background_image_container').style.display='';
+              $('chatroom_messages').style.backgroundPosition=Math.round((parseInt($('chatroom_messages').style.width)-this.width)/2)+'px '
+                                                             +Math.round((parseInt($('chatroom_messages').style.height)-this.height)/2)+'px';
+              $('dummy_background_image_container').style.display='none';
+              // Suppress "onresize" event
+              setTimeout('clearTimeout(windowResizeTimeoutHandler)', 10);
+              return false;
+            }
+            $('dummy_background_image').src=formlink+'?s_id='+s_id+'&b_id='+room_background_image;
           }
           // Users
           userlist_refresh_needed=true;
