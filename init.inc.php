@@ -69,47 +69,6 @@ if (PCPIN_DEBUGMODE) {
 }
 
 
-// Minimum required PHP version
-// DO NOT CHANGE !!!
-define('PCPIN_REQUIRESPHP', '4.3.3');
-
-
-// Minimum required MySQL version
-// DO NOT CHANGE !!!
-define('PCPIN_REQUIRESMYSQL', '4.0.15');
-
-
-// Check PHP version
-$_pcpin_php_needed=explode('.', PCPIN_REQUIRESPHP);
-$_pcpin_php_exists=explode('.', phpversion());
-define('PCPIN_PHP5', $_pcpin_php_exists[0]==5);
-foreach ($_pcpin_php_needed as $_pcpin_key=>$_pcpin_val) {
-  if (!isset($_pcpin_php_exists[$_pcpin_key])) {
-    // Installed PHP version is OK
-    break;
-  } else {
-    $l=strlen($_pcpin_php_exists[$_pcpin_key]);
-    for ($i=0; $i<$l; $i++) {
-      if ($_pcpin_php_exists[$_pcpin_key]{$i}!=='0' && ($_pcpin_php_exists[$_pcpin_key]{$i}<1 || $_pcpin_php_exists[$_pcpin_key]{$i}>9)) {
-        $_pcpin_php_exists[$_pcpin_key]=substr($_pcpin_php_exists[$_pcpin_key], 0, $i);
-        break;
-      }
-    }
-    if ($_pcpin_val>$_pcpin_php_exists[$_pcpin_key]) {
-      // PHP version is too old
-      die("<b>Fatal error</b>: Installed PHP version is <b>".phpversion()."</b> (minimum required PHP version is <b>".PCPIN_REQUIRESPHP."</b>)");
-    } elseif ($_pcpin_val<$_pcpin_php_exists[$_pcpin_key]) {
-      // Installed PHP version is OK
-      break;
-    }
-  }
-}
-unset($_pcpin_key);
-unset($_pcpin_val);
-unset($_pcpin_php_needed);
-unset($_pcpin_php_exists);
-
-
 // Load static classes
 if (false&& PCPIN_PHP5) { // Todo
   // Load static classes for PHP5 (we want to avoid E_STRICT errors)

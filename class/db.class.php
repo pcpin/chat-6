@@ -74,24 +74,6 @@ class PCPIN_DB {
         $this->_db_setCharsets();
         // Disable MySQL strict mode
         $this->_db_query('SET SESSION sql_mode=""');
-        // Check MySQL server version
-        $mysql_version=$this->_db_mysql_version();
-        $mysql_exists=explode('.', $mysql_version);
-        $mysql_needed=explode('.', PCPIN_REQUIRESMYSQL);
-        foreach ($mysql_needed as $key=>$val) {
-          if (!isset($mysql_exists[$key])) {
-            // Installed MySQL version is OK
-            break;
-          } else {
-            if ($val>$mysql_exists[$key]) {
-              // MySQL version is too old
-              PCPIN_Common::dieWithError(1, '<b>Fatal error</b>: Installed MySQL server version is <b>'.$mysql_version.'</b> (minimum required MySQL version is <b>'.PCPIN_REQUIRESMYSQL.'</b>)');
-            } elseif ($val<$mysql_exists[$key]) {
-              // Installed MySQL version is OK
-              break;
-            }
-          }
-        }
         // Trying do select database
         if (!mysql_select_db($db_conndata['database'], $this->_db_conn)) {
           // Failed to select database
