@@ -424,14 +424,14 @@ function hideUserOptionsBox(selected_option) {
 
       case 13 : // "/say" command
         if (urec!=null && $('main_input_textarea')) {
-          $('main_input_textarea').value='/say '+coloredToPlain(urec.getNickname(), false)+' '+$('main_input_textarea').value;
+          $('main_input_textarea').value='/say "'+coloredToPlain(urec.getNickname(), false)+'" '+$('main_input_textarea').value;
           $('main_input_textarea').focus();
         }
       break;
 
       case 14 : // "/whisper" command
         if (urec!=null && $('main_input_textarea')) {
-          $('main_input_textarea').value='/whisper '+coloredToPlain(urec.getNickname(), false)+' '+$('main_input_textarea').value;
+          $('main_input_textarea').value='/whisper "'+coloredToPlain(urec.getNickname(), false)+'" '+$('main_input_textarea').value;
           $('main_input_textarea').focus();
         }
       break;

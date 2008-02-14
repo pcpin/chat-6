@@ -171,10 +171,23 @@ function _cmd_ban(args) {
   if (args_str!='') {
     // There are some arguments
     var urec=null;
-    var nickname_plain=args.shift();
-    if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
-      if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-        urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
+    var first_index=args_str.indexOf('"');
+    var last_index=args_str.lastIndexOf('"');
+    if (first_index>=0 && last_index>first_index) {
+      urec=UserList.findRecordByNicknameInString(args_str, true, true);
+      if (typeof(urec)=='object' && urec) {
+        var nickname_plain=coloredToPlain(urec.getNickname());
+        var parts=args_str.split('"'+nickname_plain+'"');
+        args_str=parts.shift()+parts.join('"'+nickname_plain+'"');
+        args=args_str.split(' ');
+      }
+    }
+    if (urec==null) {
+      var nickname_plain=args.shift();
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+        if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
+          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+        }
       }
     }
     if (urec==null) {
@@ -276,10 +289,23 @@ function _cmd_mute(args) {
   if (args_str!='') {
     // There are some arguments
     var urec=null;
-    var nickname_plain=args.shift();
-    if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
-      if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-        urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
+    var first_index=args_str.indexOf('"');
+    var last_index=args_str.lastIndexOf('"');
+    if (first_index>=0 && last_index>first_index) {
+      urec=UserList.findRecordByNicknameInString(args_str, true, true);
+      if (typeof(urec)=='object' && urec) {
+        var nickname_plain=coloredToPlain(urec.getNickname());
+        var parts=args_str.split('"'+nickname_plain+'"');
+        args_str=parts.shift()+parts.join('"'+nickname_plain+'"');
+        args=args_str.split(' ');
+      }
+    }
+    if (urec==null) {
+      var nickname_plain=args.shift();
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+        if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
+          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+        }
       }
     }
     if (urec==null) {
@@ -324,10 +350,23 @@ function _cmd_unmute(args) {
   if (args_str!='') {
     // There are some arguments
     var urec=null;
-    var nickname_plain=args.shift();
-    if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
-      if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-        urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
+    var first_index=args_str.indexOf('"');
+    var last_index=args_str.lastIndexOf('"');
+    if (first_index>=0 && last_index>first_index) {
+      urec=UserList.findRecordByNicknameInString(args_str, true, true);
+      if (typeof(urec)=='object' && urec) {
+        var nickname_plain=coloredToPlain(urec.getNickname());
+        var parts=args_str.split('"'+nickname_plain+'"');
+        args_str=parts.shift()+parts.join('"'+nickname_plain+'"');
+        args=args_str.split(' ');
+      }
+    }
+    if (urec==null) {
+      var nickname_plain=args.shift();
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+        if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
+          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+        }
       }
     }
     if (urec==null) {
@@ -366,10 +405,23 @@ function _cmd_ipban(args) {
   if (args_str!='') {
     // There are some arguments
     var urec=null;
-    var nickname_plain=args.shift();
-    if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
-      if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-        urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
+    var first_index=args_str.indexOf('"');
+    var last_index=args_str.lastIndexOf('"');
+    if (first_index>=0 && last_index>first_index) {
+      urec=UserList.findRecordByNicknameInString(args_str, true, true);
+      if (typeof(urec)=='object' && urec) {
+        var nickname_plain=coloredToPlain(urec.getNickname());
+        var parts=args_str.split('"'+nickname_plain+'"');
+        args_str=parts.shift()+parts.join('"'+nickname_plain+'"');
+        args=args_str.split(' ');
+      }
+    }
+    if (urec==null) {
+      var nickname_plain=args.shift();
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+        if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
+          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+        }
       }
     }
     if (urec==null) {
@@ -445,10 +497,23 @@ function _cmd_kick(args) {
   if (args_str!='') {
     // There are some arguments
     var urec=null;
-    var nickname_plain=args.shift();
-    if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
-      if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-        urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
+    var first_index=args_str.indexOf('"');
+    var last_index=args_str.lastIndexOf('"');
+    if (first_index>=0 && last_index>first_index) {
+      urec=UserList.findRecordByNicknameInString(args_str, true, true);
+      if (typeof(urec)=='object' && urec) {
+        var nickname_plain=coloredToPlain(urec.getNickname());
+        var parts=args_str.split('"'+nickname_plain+'"');
+        args_str=parts.shift()+parts.join('"'+nickname_plain+'"');
+        args=args_str.split(' ');
+      }
+    }
+    if (urec==null) {
+      var nickname_plain=args.shift();
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+        if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
+          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+        }
       }
     }
     if (urec==null) {
@@ -495,10 +560,23 @@ function _cmd_ignore(args) {
   if (args_str!='') {
     // There are some arguments
     var urec=null;
-    var nickname_plain=args.shift();
-    if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
-      if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-        urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
+    var first_index=args_str.indexOf('"');
+    var last_index=args_str.lastIndexOf('"');
+    if (first_index>=0 && last_index>first_index) {
+      urec=UserList.findRecordByNicknameInString(args_str, true, true);
+      if (typeof(urec)=='object' && urec) {
+        var nickname_plain=coloredToPlain(urec.getNickname());
+        var parts=args_str.split('"'+nickname_plain+'"');
+        args_str=parts.shift()+parts.join('"'+nickname_plain+'"');
+        args=args_str.split(' ');
+      }
+    }
+    if (urec==null) {
+      var nickname_plain=args.shift();
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+        if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
+          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+        }
       }
     }
     if (urec==null) {
@@ -544,10 +622,23 @@ function _cmd_say(args) {
   if (args_str!='' && args.length>=2) {
     // There are some arguments
     var urec=null;
-    var nickname_plain=args.shift();
-    if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
-      if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-        urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
+    var first_index=args_str.indexOf('"');
+    var last_index=args_str.lastIndexOf('"');
+    if (first_index>=0 && last_index>first_index) {
+      urec=UserList.findRecordByNicknameInString(args_str, true, true);
+      if (typeof(urec)=='object' && urec) {
+        var nickname_plain=coloredToPlain(urec.getNickname());
+        var parts=args_str.split('"'+nickname_plain+'"');
+        args_str=parts.shift()+parts.join('"'+nickname_plain+'"');
+        args=args_str.split(' ');
+      }
+    }
+    if (urec==null) {
+      var nickname_plain=args.shift();
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+        if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
+          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+        }
       }
     }
     if (urec==null) {
@@ -609,10 +700,23 @@ function _cmd_unignore(args) {
   if (args_str!='') {
     // There are some arguments
     var urec=null;
-    var nickname_plain=args.shift();
-    if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
-      if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-        urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
+    var first_index=args_str.indexOf('"');
+    var last_index=args_str.lastIndexOf('"');
+    if (first_index>=0 && last_index>first_index) {
+      urec=UserList.findRecordByNicknameInString(args_str, true, true);
+      if (typeof(urec)=='object' && urec) {
+        var nickname_plain=coloredToPlain(urec.getNickname());
+        var parts=args_str.split('"'+nickname_plain+'"');
+        args_str=parts.shift()+parts.join('"'+nickname_plain+'"');
+        args=args_str.split(' ');
+      }
+    }
+    if (urec==null) {
+      var nickname_plain=args.shift();
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+        if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
+          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+        }
       }
     }
     if (urec==null) {
@@ -650,10 +754,24 @@ function _cmd_whisper(args) {
   if (args_str!='' && args.length>=2) {
     // There are some arguments
     var urec=null;
-    var nickname_plain=args.shift();
-    if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
-      if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-        urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
+
+    var first_index=args_str.indexOf('"');
+    var last_index=args_str.lastIndexOf('"');
+    if (first_index>=0 && last_index>first_index) {
+      urec=UserList.findRecordByNicknameInString(args_str, true, true);
+      if (typeof(urec)=='object' && urec) {
+        var nickname_plain=coloredToPlain(urec.getNickname());
+        var parts=args_str.split('"'+nickname_plain+'"');
+        args_str=parts.shift()+parts.join('"'+nickname_plain+'"');
+        args=args_str.split(' ');
+      }
+    }
+    if (urec==null) {
+      var nickname_plain=args.shift();
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+        if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
+          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+        }
       }
     }
     if (urec==null) {

@@ -546,9 +546,9 @@ function UserList() {
   /**
    * Find exactly one user record by plain nickname
    * @param   string      nickname_plain    Plain nickname or part of it.
-   * @param   boolean     match_case        Wether to perform case-sensitive search. Default: TRUE.
+   * @param   boolean     match_case        DEPRECATED AND IGNORED, always TRUE.
    * @param   boolean     strict            If TRUE: nickname (plain) must be exactly equal to supplied
-   *                                        nickname_plain argument (case sensitive). Default: FALSE.
+   *                                        nickname_plain argument. Default: FALSE.
    * @return  mixed   (object) user record if *exactly* one user found
    *                  (boolean) FALSE if more than one user found
    *                  (NULL) NULL if no users found
@@ -556,24 +556,15 @@ function UserList() {
   this.findRecordByNickname=function(nickname_plain, match_case, strict) {
     var result=null;
     var plain='';
-    if (typeof(strict)=='boolean') {
-      if (strict==true) {
-        match_case=true;
-      }
-    } else {
+    if (typeof(strict)!='boolean') {
       strict=false;
     }
-    if (typeof(match_case)!='boolean') {
-      match_case=true;
-    } else if (false==match_case) {
+    if (typeof(match_case)=='boolean' && false==match_case) {
       nickname_plain=nickname_plain.toLowerCase();
     }
     if (typeof(nickname_plain)=='string' && nickname_plain!='') {
       for (var id in this.records) {
-        plain=coloredToPlain(this.records[id].Nickname);
-        if (false==match_case) {
-          plain=plain.toLowerCase();
-        }
+        plain=coloredToPlain(this.records[id].Nickname).toLowerCase();
         if (true==strict) {
           // Strict mode
           if (plain==nickname_plain) {
@@ -592,6 +583,37 @@ function UserList() {
             }
           }
         }
+      }
+    }
+    return result;
+  }
+
+
+  /**
+   * Find exactly one user record by enclosed into doublequotes " plain nickname contained in a specified string
+   * @param   string      search_str        String that contain a nickname
+   * @param   boolean     match_case        DEPRECATED AND IGNORED, always TRUE.
+   * @param   boolean     strict            If TRUE: nickname (plain) must be exactly equal to supplied
+   *                                        nickname_plain argument. Default: FALSE.
+   * @return  mixed   (object) user record if *exactly* one user found
+   *                  (boolean) FALSE if more than one user found
+   *                  (NULL) NULL if no users found
+   */
+  this.findRecordByNicknameInString=function(search_str, match_case, strict) {
+    var result=null;
+    if (typeof(strict)!='boolean') {
+      strict=null;
+    }
+    if (typeof(search_str)=='string' && search_str!='') {
+      var parts=search_str.split('"');
+      if (parts.length>=3) {
+        parts.pop();
+        parts.shift();
+        do {
+          if (null==(result=this.findRecordByNickname(parts.join('"'), true, strict))) {
+            parts.pop();
+          }
+        } while (result==null && parts.length>0);
       }
     }
     return result;
