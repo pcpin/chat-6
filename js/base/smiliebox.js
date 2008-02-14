@@ -77,7 +77,7 @@ var SmilieList=new function() {
    * Total smilies count
    * @var object
    */
-  this.SmilieListLength=new Array();
+  this.SmilieListLength=0;
 
   /**
    * Top-Position of smilie list opener object
@@ -115,6 +115,7 @@ var SmilieList=new function() {
     this.OpenerTop=opener_top;
     this.OpenerLeft=opener_left;
     this.LoadedSmiliesCount=0;
+    this.NoResizeMove=false;
   }
 
 
@@ -153,10 +154,9 @@ var SmilieList=new function() {
         }
       }
       toggleProgressBar(false);
-      sb.style.display='none'; setTimeout("$('smilie_selection_box').style.display='';", 10); // IE hack
+      sb.style.display='none'; setTimeout("$('smilie_selection_box').style.display=''", 10); // IE hack
     }
   }
-
 }
 
 
@@ -182,7 +182,7 @@ function initSmilieList(opener_top, opener_left) {
         SmilieList.SetPosition();
       } else {
         // Assign onload event
-        eval('$(\''+smiliebox_smilies[added_smilies[i]].id+'\').onload=function() { SmilieList.SetPosition(\'smilie_selection_box\') };');
+        eval('$(\''+smiliebox_smilies[added_smilies[i]].id+'\').onload=function() { SmilieList.SetPosition() };');
       }
       smiliebox_smilies[added_smilies[i]].onclick=function() {
         MouseMoveFunc=null;

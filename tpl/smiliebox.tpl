@@ -1,5 +1,5 @@
 <PCPIN:TPL name="smiliebox_table" type="simplecondition" requiredvars="DISPLAY">
-  <div align="center">
+  <div align="center" id="smiliebox_container">
     <table border="0" cellspacing="0" cellpadding="0">
       <PCPIN:TPL name="smiliebox_header_row" type="simplecondition" requiredvars="HEADER_ROW_COLSPAN">
         <tr>

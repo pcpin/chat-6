@@ -56,6 +56,7 @@ var userlistPosition=0;
  * @var int
  */
 var controlsHeight=0;
+var controlsHeightInit=0;
 
 /**
  * Timeout handler for startUpdater() calls
@@ -303,6 +304,18 @@ var SmiliesRowHeight=0;
  */
 var AreaBorders=new Array();
 
+/**
+ * Handler for fixSmilieRow() interval
+ * @var int
+ */
+var FixSmilieRowInterval=null;
+
+/**
+ * Smiliebox container div handler
+ * @var object
+ */
+var SmilieBoxContainer=null;
+
 
 /**
  * Initialize client in the chat room
@@ -381,6 +394,7 @@ function initChatRoom(room_id,
     SmiliesPosition=smilies_position;
     SmiliesRowHeight=SmiliesPosition==0? smilies_row_height : 0;
     controlsHeight=controls_height+SmiliesRowHeight;
+    controlsHeightInit=controlsHeight;
     // Initialize "Timestamp" button
     invertTimeStampView();
     // Set CSS classes
@@ -710,7 +724,32 @@ function setAreas() {
     if ($('dummy_background_image') && $('dummy_background_image').onload) {
       $('dummy_background_image').onload();
     }
+    if (SmiliesPosition==0) {
+      clearInterval(FixSmilieRowInterval);
+      FixSmilieRowInterval=setInterval('fixSmilieRow()', 500);
+    }
 //  } catch (e) {}
+}
+
+
+/**
+ * Fix smilies row in toolbar
+ */
+function fixSmilieRow() {
+  if (SmiliesPosition==0) {
+    if (SmilieBoxContainer==null) {
+      SmilieBoxContainer=$('smiliebox_container');
+    }
+    if (SmilieBoxContainer!=null) {
+      var containerHeight=SmilieBoxContainer.scrollHeight;
+      var bottom_overhead=winHeight-getTopPos(SmilieBoxContainer)-containerHeight;
+      if (bottom_overhead<0) {
+        SmiliesRowHeight=containerHeight;
+        controlsHeight=controlsHeightInit+SmiliesRowHeight;
+        window.onresize();
+      }
+    }
+  }
 }
 
 
