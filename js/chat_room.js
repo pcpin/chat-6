@@ -316,6 +316,24 @@ var FixSmilieRowInterval=null;
  */
 var SmilieBoxContainer=null;
 
+/**
+ * Room background image ID
+ * @var int
+ */
+var BackgroundImageID=0;
+
+/**
+ * Room background image width
+ * @var int
+ */
+var BackgroundImageWidth=0;
+
+/**
+ * Room background image height
+ * @var int
+ */
+var BackgroundImageHeight=0;
+
 
 /**
  * Initialize client in the chat room
@@ -412,9 +430,13 @@ function initChatRoom(room_id,
     // Set initial size and position of all areas in chat room window
     setAreas();
     // Set onResize window handler
-    window.onresize=function() {
+    window.onresize=function(force) {
       clearTimeout(windowResizeTimeoutHandler);
-      windowResizeTimeoutHandler=setTimeout('setAreas();', 200);
+      if (typeof(force)=='boolean' && force==true) {
+        setAreas();
+      } else {
+        windowResizeTimeoutHandler=setTimeout('setAreas()', 200);
+      }
       if ($('main_input_textarea').click) {
         $('main_input_textarea').click();
       }
@@ -721,9 +743,8 @@ function setAreas() {
     } else {
       $('smilies_btn').style.display='';
     }
-    if ($('dummy_background_image') && $('dummy_background_image').onload) {
-      $('dummy_background_image').onload();
-    }
+    // Adjust background image position
+    fixBackgroundImagePos();
     if (SmiliesPosition==0) {
       clearInterval(FixSmilieRowInterval);
       FixSmilieRowInterval=setInterval('fixSmilieRow()', 500);
@@ -853,7 +874,6 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
   var room_id=0;
   var room_name='';
   var room_description='';
-  var room_background_image=0;
   var users=null;
   var user=null;
   var user_id=0;
@@ -924,27 +944,16 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
           room_name=ajaxUpdater.getCdata('name', 0, room);
           $('chatroom_userlist_room_name').innerHTML=htmlspecialchars(room_name);
           room_description=ajaxUpdater.getCdata('description', 0, room, '');
-          room_background_image=stringToNumber(ajaxUpdater.getCdata('background_image', 0, room, 0));
+          BackgroundImageID=stringToNumber(ajaxUpdater.getCdata('background_image', 0, room, 0));
+          BackgroundImageWidth=stringToNumber(ajaxUpdater.getCdata('background_image_width', 0, room, 0));
+          BackgroundImageHeight=stringToNumber(ajaxUpdater.getCdata('background_image_height', 0, room, 0));
+          fixBackgroundImagePos();
           defaultMessageColor=ajaxUpdater.getCdata('default_message_color', 0, room);
           if (outgoingMessageColor=='') {
             outgoingMessageColor=defaultMessageColor;
           }
           $('main_input_textarea').style.color='#'+outgoingMessageColor;
           $('message_colors_btn').style.backgroundColor='#'+outgoingMessageColor;
-          if (room_background_image>0) {
-            $('chatroom_messages').style.backgroundImage='url('+formlink+'?s_id='+s_id+'&b_id='+room_background_image+')';
-            // Load image into dummy container
-            $('dummy_background_image').onload=function() {
-              $('dummy_background_image_container').style.display='';
-              $('chatroom_messages').style.backgroundPosition=Math.round((parseInt($('chatroom_messages').style.width)-this.width)/2)+'px '
-                                                             +Math.round((parseInt($('chatroom_messages').style.height)-this.height)/2)+'px';
-              $('dummy_background_image_container').style.display='none';
-              // Suppress "onresize" event
-              setTimeout('clearTimeout(windowResizeTimeoutHandler)', 10);
-              return false;
-            }
-            $('dummy_background_image').src=formlink+'?s_id='+s_id+'&b_id='+room_background_image;
-          }
           // Users
           userlist_refresh_needed=true;
           UserList.initialize();
@@ -1058,6 +1067,21 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
     toggleProgressBar(false);
   }
   startUpdater(outgoingMessages.length>0);
+}
+
+
+/**
+ * Adjust room background image position
+ * @param   boolean   force   If TRUE, background image will be reloaded. Default: FALSE.
+ */
+function fixBackgroundImagePos() {
+  if (BackgroundImageID>0) {
+    var cm=$('chatroom_messages');
+    if (BackgroundImageWidth>0 && BackgroundImageHeight>0) {
+      cm.style.backgroundPosition=Math.round((parseInt(cm.style.width)-BackgroundImageWidth)/2)+'px '
+                                 +Math.round((parseInt(cm.style.height)-BackgroundImageHeight)/2+(isIE? 0 : TopBannerHeight))+'px';
+    }
+  }
 }
 
 
@@ -2350,7 +2374,7 @@ function enableBanner(display_type) {
   }
   if (banner_area) {
     loadBanner(banner_area, display_type);
-    window.onresize();
+    window.onresize(true);
   }
 }
 
@@ -2415,10 +2439,10 @@ function _CALLBACK_loadMsgBanner() {
 //debug(ajaxBannersHandler.getResponseString()); return false;
   var message=ajaxBannersHandler.getCdata('message');
   var status=ajaxBannersHandler.getCdata('status');
-
   var banner_data=null;
   var banner_span='';
-
+  var cm=$('chatroom_messages');
+  var cmc=$('chatroom_messages_contents');
   if (status=='-1') {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
@@ -2435,10 +2459,16 @@ function _CALLBACK_loadMsgBanner() {
                          +' width="'+htmlspecialchars(ajaxBannersHandler.getCdata('width', 0, banner_data))+'"'
                          +' height="'+htmlspecialchars(ajaxBannersHandler.getCdata('height', 0, banner_data))+'"'
                          +' style="padding:0px;margin:0px;"'
-                         +'></iframe>';
+                         +'></iframe><br />';
   }
-  $('chatroom_messages_contents').appendChild(banner_span);
-  $('chatroom_messages_contents').appendChild(document.createElement('BR'));
+  cmc.appendChild(banner_span);
+  if (AutoScroll) {
+    try {
+      cm.scrollTop=cm.scrollHeight;
+    } catch (e) {
+      banner_span.scrollIntoView(false);
+    }
+  }
 }
 
 

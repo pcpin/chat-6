@@ -321,6 +321,8 @@ if (!empty($room_id) && !empty($current_user->id)) {
       <room>
         <id>'.htmlspecialchars($room_id).'</id>
         <background_image>'.htmlspecialchars($room_data['background_image']).'</background_image>
+        <background_image_width>'.htmlspecialchars($room_data['background_image_width']).'</background_image_width>
+        <background_image_height>'.htmlspecialchars($room_data['background_image_height']).'</background_image_height>
         <password_protected>'.htmlspecialchars($room_data['password_protected']).'</password_protected>
         <name>'.htmlspecialchars($room_data['name']).'</name>
         <description>'.htmlspecialchars($room_data['description']).'</description>
@@ -340,6 +342,8 @@ if (!empty($room_id) && !empty($current_user->id)) {
       <id>'.htmlspecialchars($session->_s_room_id).'</id>
       <name>'.htmlspecialchars($room_data['name']).'</name>
       <background_image>'.htmlspecialchars($room_data['background_image']).'</background_image>
+      <background_image_width>'.htmlspecialchars($room_data['background_image_width']).'</background_image_width>
+      <background_image_height>'.htmlspecialchars($room_data['background_image_height']).'</background_image_height>
       <description>'.htmlspecialchars($room_data['description']).'</description>
       <default_message_color>'.htmlspecialchars($room_data['default_message_color']).'</default_message_color>
     </room>

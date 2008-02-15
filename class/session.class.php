@@ -387,7 +387,7 @@ class PCPIN_Session extends PCPIN_Config {
     $max_attempts=100;
     do {
       // Generate new session ID
-      $this->_s_id=PCPIN_Common::randomString(PCPIN_SID_LENGTH, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-()[].,');
+      $this->_s_id=PCPIN_Common::randomString(PCPIN_SID_LENGTH, 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789');
       // Check new session ID
       if (!$this->_db_getList('_s_id', '_s_id = '.$this->_s_id, 1)) {
         // New session ID is unique

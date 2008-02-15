@@ -99,7 +99,7 @@
 </div>
 
 <!-- MESSAGES AREA -->
-<div id="chatroom_messages">
+<div id="chatroom_messages" style="background-image:url({ROOM_BACKGROUND_IMAGE_URL})">
   <div id="chatroom_messages_contents"></div>
 </div>
 
@@ -182,9 +182,6 @@
     <span id="error_record_cmd_{CMD}">{TEXT}</span>
   </PCPIN:TPL>
 </div>
-
-<!-- DUMMY CONTAINER FOR ROOM BACKGROUND IMAGE -->
-<span id="dummy_background_image_container" style="display:none"><img id="dummy_background_image" src="./pic/clearpixel_1x1.gif" alt="" border="0" /></span>
 
 <!-- POPUP BANNER AREA -->
 <div id="banner_popup" style="display:none">

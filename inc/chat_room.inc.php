@@ -27,6 +27,11 @@ if (empty($current_user->id) || $session->_s_user_id!=$current_user->id || empty
 _pcpin_loadClass('tmpdata'); $tmpdata=new PCPIN_TmpData($session);
 $tmpdata->deleteUserRecords($current_user->id, 3);
 
+// Get room background image
+_pcpin_loadClass('room'); $room=new PCPIN_Room($session);
+$room->_db_getList('background_image', 'id = '.$session->_s_room_id, 1);
+$background_image=$room->_db_list[0]['background_image'];
+$room->_db_freeList();
 
 // JS files to load
 $_js_files[]='./js/user.js';
@@ -180,6 +185,14 @@ $tpl->addVar('your_profile_link', 'display', !PCPIN_SLAVE_MODE);
 // Room selection
 $tpl->addVar('room_selection', 'display', empty($session->_conf_all['default_room']));
 
+// Room background image
+if (!empty($background_image)) {
+  $tpl->addVar('main', 'room_background_image_url', PCPIN_FORMLINK.'?s_id='.$session->_s_id.'&b_id='.$background_image);
+} else {
+  $tpl->addVar('main', 'room_background_image_url', './pic/clearpixel_1x1.gif');
+}
+
+// Admin and moderator controls
 $tpl->addVar('admin_btn', 'display', $current_user->is_admin==='y');
 $template->addVar('moderator_user_options', 'display', true===$_is_moderator || $current_user->is_admin==='y');
 $template->addVar('admin_user_options', 'display', $current_user->is_admin==='y');

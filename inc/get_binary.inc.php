@@ -22,11 +22,6 @@ _pcpin_loadClass('binaryfile'); $binaryfile=new PCPIN_BinaryFile($session);
 if (!empty($b_id) && is_scalar($b_id) && $binaryfile->_db_getList('protected, mime_type, size, body', 'id = '.$b_id, 1)) {
   if ($binaryfile->_db_list[0]['protected']!='') {
     // Binaryfile is protected
-    // Get userdata
-    _pcpin_loadClass('user'); $current_user=new PCPIN_User($session);
-    if (!empty($session->_s_user_id)) {
-      $current_user->_db_loadObj($session->_s_user_id);
-    }
     $protection_parts=explode('/', $binaryfile->_db_list[0]['protected']);
     foreach ($protection_parts as $part) {
       switch ($part) {

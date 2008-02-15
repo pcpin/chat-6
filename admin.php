@@ -24,26 +24,9 @@ $session=&$_pcpin_init_session;
 unset($_pcpin_init_session);
 
 // Current user data
-$_is_moderator=false;
-$current_nickname='';
-$current_room_name='';
 _pcpin_loadClass('user'); $current_user=new PCPIN_User($session);
-_pcpin_loadClass('userdata'); $current_userdata=new PCPIN_UserData($session);
 if (!empty($session->_s_user_id)) {
   $current_user->_db_loadObj($session->_s_user_id);
-  $current_userdata->_db_loadObj($current_user->id, 'user_id');
-  if (!empty($session->_s_room_id) && $current_user->moderated_rooms!='') {
-    $_is_moderator=false!==strpos(','.$current_user->moderated_rooms.',', ','.$session->_s_room_id.',');
-  }
-  _pcpin_loadClass('nickname'); $nickname_=new PCPIN_Nickname($session);
-  $current_nickname=$nickname_->getDefaultNickname($current_user->id);
-  unset($nickname_);
-  if (!empty($session->_s_room_id)) {
-    _pcpin_loadClass('room'); $room_=new PCPIN_Room($session);
-    if ($room_->_db_getList('name', 'id = '.$session->_s_room_id, 1)) {
-      $current_room_name=$room_->_db_list[0]['name'];
-    }
-  }
   if ($current_user->is_admin!=='y') {
     $session->_s_logOut(true);
     header('Location: '.PCPIN_FORMLINK);
