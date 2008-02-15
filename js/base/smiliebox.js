@@ -156,7 +156,7 @@ var SmilieList=new function() {
       toggleProgressBar(false);
       sb.style.display='none';
       if (!SmilieBoxNoResizeMove) {
-        setSmilieBoxSizes();
+        setTimeout('setSmilieBoxSizes()', 100);
       } else {
         setTimeout("$('smilie_selection_box').style.display='';", 10);
       }
@@ -285,13 +285,8 @@ function openSmilieBox(tgt_obj_id, tgt_var, openerObj, no_resize) {
 /**
  * Set smilie box width and height (if displayed not in tool bar)
  */
-var aaaa=null;
 function setSmilieBoxSizes() {
   if (!SmilieBoxNoResizeMove) {
-    if (aaaa==null) {
-      aaaa=setTimeout('setSmilieBoxSizes()', 100);
-      return false;
-    }
     var newWidth=0;
     var newHeight=0;
     var container=$('smiliebox_container');

@@ -738,7 +738,7 @@ function setAreas() {
 function fixSmilieRow() {
   if (SmiliesPosition==0) {
     if (SmilieBoxContainer==null) {
-      SmilieBoxContainer=$('smiliebox_container');
+      SmilieBoxContainer=$('smilie_selection_box');
     }
     if (SmilieBoxContainer!=null) {
       var containerHeight=SmilieBoxContainer.scrollHeight;
