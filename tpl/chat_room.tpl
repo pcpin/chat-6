@@ -7,7 +7,7 @@
 
 <!-- POPUP BANNER AREA -->
 <div id="banner_popup" style="display:none">
-  <img src="./pic/close_18x18.gif" alt="{LNG_CLOSE_WINDOW}" title="{LNG_CLOSE_WINDOW}" style="corsor:pointer" onclick="hidePopupBanner()" />
+  <img src="./pic/close_18x18.gif" alt="{LNG_CLOSE_WINDOW}" title="{LNG_CLOSE_WINDOW}" style="cursor:pointer" onclick="hidePopupBanner()" />
   <br />
   <iframe id="banner_popup_frame" name="banner_popup_frame" src="dummy.html" scrolling="No" frameborder="0"></iframe>
 </div>
