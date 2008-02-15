@@ -154,7 +154,12 @@ var SmilieList=new function() {
         }
       }
       toggleProgressBar(false);
-      sb.style.display='none'; setTimeout("$('smilie_selection_box').style.display=''", 10); // IE hack
+      sb.style.display='none';
+      if (!SmilieBoxNoResizeMove) {
+        setSmilieBoxSizes();
+      } else {
+        setTimeout("$('smilie_selection_box').style.display='';", 10);
+      }
     }
   }
 }
@@ -273,6 +278,42 @@ function openSmilieBox(tgt_obj_id, tgt_var, openerObj, no_resize) {
     }
     smiliebox_tgt_obj_id=tgt_obj_id;
     smiliebox_tgt_tgt_var=tgt_var;
+  }
+}
+
+
+/**
+ * Set smilie box width and height (if displayed not in tool bar)
+ */
+var aaaa=null;
+function setSmilieBoxSizes() {
+  if (!SmilieBoxNoResizeMove) {
+    if (aaaa==null) {
+      aaaa=setTimeout('setSmilieBoxSizes()', 100);
+      return false;
+    }
+    var newWidth=0;
+    var newHeight=0;
+    var container=$('smiliebox_container');
+    var sb=$('smilie_selection_box');
+    sb.style.display='';
+    newWidth=sb.scrollWidth;
+    newHeight=sb.scrollHeight;
+    sb.style.display='none';
+    if (newWidth>winWidth-100) {
+      newWidth=winWidth-100;
+      newHeight+=30;
+    }
+    if (newHeight>winHeight-100) {
+      newHeight=winHeight-100;
+      newWidth+=30;
+    }
+    container.style.width=newWidth+'px';
+    container.style.height=newHeight+'px';
+    container.style.overflow='auto';
+    $('smiliebox_header').style.width=newWidth+'px';
+    sb.style.display='';
+    moveToCenter(sb);
   }
 }
 
