@@ -5,13 +5,6 @@
 <!-- BOTTOM BANNER AREA -->
 <iframe id="chatroom_bottom_banner" name="chatroom_bottom_banner" src="dummy.html" scrolling="No" frameborder="0"></iframe>
 
-<!-- POPUP BANNER AREA -->
-<div id="banner_popup" style="display:none">
-  <img src="./pic/close_18x18.gif" alt="{LNG_CLOSE_WINDOW}" title="{LNG_CLOSE_WINDOW}" style="cursor:pointer" onclick="hidePopupBanner()" />
-  <br />
-  <iframe id="banner_popup_frame" name="banner_popup_frame" src="dummy.html" scrolling="No" frameborder="0"></iframe>
-</div>
-
 <!-- USERLIST AREA -->
 <div id="chatroom_userlist">
   <div id="chatroom_userlist_contents">
@@ -192,5 +185,12 @@
 
 <!-- DUMMY CONTAINER FOR ROOM BACKGROUND IMAGE -->
 <span id="dummy_background_image_container" style="display:none"><img id="dummy_background_image" src="./pic/clearpixel_1x1.gif" alt="" border="0" /></span>
+
+<!-- POPUP BANNER AREA -->
+<div id="banner_popup" style="display:none">
+  <img src="./pic/close_18x18.gif" alt="{LNG_CLOSE_WINDOW}" title="{LNG_CLOSE_WINDOW}" style="cursor:pointer" onclick="hidePopupBanner()" />
+  <br />
+  <iframe id="banner_popup_frame" name="banner_popup_frame" src="dummy.html" scrolling="No" frameborder="0"></iframe>
+</div>
 
 </PCPIN:TPL>

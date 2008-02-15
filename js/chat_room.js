@@ -2472,7 +2472,7 @@ function _CALLBACK_loadPopupBanner() {
     $('banner_popup_frame').style.width=width+'px';
     $('banner_popup_frame').style.height=height+'px';
 
-    $('banner_popup_frame').src=formlink+'?load_banner=m&banner_id='+ajaxBannersHandler.getCdata('id', 0, banner_data);
+    $('banner_popup_frame').src=formlink+'?load_banner=m&banner_id='+ajaxBannersHandler.getCdata('id', 0, banner_data)+(isOpera? '&killCache='+unixTimeStamp() : '');
     $('banner_popup').style.display='';
     moveToCenter($('banner_popup'));
   }

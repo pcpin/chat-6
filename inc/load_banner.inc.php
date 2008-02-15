@@ -40,6 +40,14 @@ if (empty($banner_data)) {
     break;
 
     case 'c':
+      header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
+      if (PCPIN_CLIENT_AGENT_NAME=='IE') {
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: public');
+      }else{
+        header('Pragma: no-cache');
+      }
+      header('Expires: '.gmdate('D, d M Y H:i:s', time()-86400).' GMT');
       echo $banner_data['source']; die();
     break;
 
