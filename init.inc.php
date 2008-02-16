@@ -56,12 +56,12 @@ if (PCPIN_DEBUGMODE) {
   }
   if (PCPIN_ERRORLOG!='') {
     // Log errors into file using custom error handler function
-    ini_set('display_errors', 'off');
+    @ini_set('display_errors', 'off');
     if (function_exists('PCPIN_ErrorHandler')) {
       set_error_handler('PCPIN_ErrorHandler');
     }
   } else {
-    ini_set('display_errors', 'on');
+    @ini_set('display_errors', 'on');
   }
 } else {
   // No errors will be displayed

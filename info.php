@@ -88,7 +88,7 @@ unset($_pcpin_init_session);
 
 // Restore original error reporting settings
 error_reporting($_pcpin_old_error_reporting); unset($_pcpin_old_error_reporting);
-ini_set('display_errors', $_pcpin_old_display_errors); unset($_pcpin_old_display_errors);
+@ini_set('display_errors', $_pcpin_old_display_errors); unset($_pcpin_old_display_errors);
 
 // Restore original error handler
 restore_error_handler();
