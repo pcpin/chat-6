@@ -21,11 +21,13 @@ function initAdminAccountForm() {
     window.parent.admin_account['create']=true;
     window.parent.admin_account['username']='';
     window.parent.admin_account['password']='';
+    window.parent.admin_account['password2']='';
     window.parent.admin_account['email']='';
   }
 
   $('admin_account_username').value=window.parent.admin_account['username'];
   $('admin_account_password').value=window.parent.admin_account['password'];
+  $('admin_account_password2').value=window.parent.admin_account['password2'];
   $('admin_account_email').value=window.parent.admin_account['email'];
 
 
@@ -52,6 +54,10 @@ function setAdminPassword(obj) {
   window.parent.admin_account['password']=obj.value;
 }
 
+function setAdminPassword2(obj) {
+  window.parent.admin_account['password2']=obj.value;
+}
+
 function setAdminEmail(obj) {
   obj.value=trimString(obj.value);
   window.parent.admin_account['email']=obj.value;
@@ -65,7 +71,9 @@ function validateAdminAccount() {
     if (window.parent.admin_account['username'].length<3) {
       errors.push('Adminitrator username too short');
     }
-    if (window.parent.admin_account['password'].length<3) {
+    if (window.parent.admin_account['password'] != window.parent.admin_account['password2']) {
+      errors.push('Adminitrator passwords are not ident');
+    } else if (window.parent.admin_account['password'].length<3) {
       errors.push('Adminitrator password too short');
     }
     if (!checkEmail(window.parent.admin_account['email'])) {

@@ -57,6 +57,14 @@ $body_onload[]='initAdminAccountForm()';
   </tr>
   <tr>
     <td class="tbl_row" style="text-align:right">
+      Confirm Administrator password:
+    </td>
+    <td class="tbl_row">
+      <input type="password" id="admin_account_password2" size="32" maxlength="32" onchange="setAdminPassword2(this)" />
+    </td>
+  </tr>
+  <tr>
+    <td class="tbl_row" style="text-align:right">
       Administrator E-Mail address:
     </td>
     <td class="tbl_row">

@@ -32,12 +32,14 @@ if (empty($step)) {
 <html>
 <head>
   <title>PCPIN Chat <?php echo htmlspecialchars(PCPIN_INSTALL_VERSION) ?> installation</title>
-  <script type="text/javascript" src="./js/base/screen.js"></script>
-  <script type="text/javascript" src="./js/base/strings.js"></script>
-  <script type="text/javascript" src="./js/base/time.js"></script>
-  <script type="text/javascript" src="./js/base/xmlhttprequest.js"></script>
-  <script type="text/javascript" src="./js/base/connectionstatus.js"></script>
-  <script type="text/javascript" src="./js/base/global.js"></script>
+  <script type="text/javascript" src="./js/base/screen.js?<?php echo md5(filemtime('./js/base/screen.js')); ?>"></script>
+  <script type="text/javascript" src="./js/base/strings.js?<?php echo md5(filemtime('./js/base/strings.js')); ?>"></script>
+  <script type="text/javascript" src="./js/base/time.js?<?php echo md5(filemtime('./js/base/time.js')); ?>"></script>
+  <script type="text/javascript" src="./js/base/xmlhttprequest.js?<?php echo md5(filemtime('./js/base/xmlhttprequest.js')); ?>"></script>
+<!--
+  <script type="text/javascript" src="./js/base/connectionstatus.js?<?php echo md5(filemtime('./js/base/connectionstatus.js')); ?>"></script>
+-->
+  <script type="text/javascript" src="./js/base/global.js?<?php echo md5(filemtime('./js/base/global.js')); ?>"></script>
   <script type="text/javascript">
     var lastStep=0;
     function setStep(step) {
@@ -151,16 +153,18 @@ if (empty($step)) {
     }
   </style>
   <link rel="stylesheet" type="text/css" href="./main.css" />
-  <script type="text/javascript" src="./js/base/screen.js"></script>
-  <script type="text/javascript" src="./js/base/strings.js"></script>
-  <script type="text/javascript" src="./js/base/time.js"></script>
-  <script type="text/javascript" src="./js/base/xmlhttprequest.js"></script>
-  <script type="text/javascript" src="./js/base/connectionstatus.js"></script>
-  <script type="text/javascript" src="./js/base/global.js"></script>
+  <script type="text/javascript" src="./js/base/screen.js?<?php echo md5(filemtime('./js/base/screen.js')); ?>"></script>
+  <script type="text/javascript" src="./js/base/strings.js?<?php echo md5(filemtime('./js/base/strings.js')); ?>"></script>
+  <script type="text/javascript" src="./js/base/time.js?<?php echo md5(filemtime('./js/base/time.js')); ?>"></script>
+  <script type="text/javascript" src="./js/base/xmlhttprequest.js?<?php echo md5(filemtime('./js/base/xmlhttprequest.js')); ?>"></script>
+<!--
+  <script type="text/javascript" src="./js/base/connectionstatus.js?<?php echo md5(filemtime('./js/base/connectionstatus.js')); ?>"></script>
+-->
+  <script type="text/javascript" src="./js/base/global.js?<?php echo md5(filemtime('./js/base/global.js')); ?>"></script>
 <?php
 foreach ($js_files as $file) {
 ?>
-  <script type="text/javascript" src="./install/js/<?php echo $file; ?>"></script>
+  <script type="text/javascript" src="./install/js/<?php echo $file.'?'.md5(filemtime('./install/js/'.$file)); ?>"></script>
 <?php
 }
 ?>
