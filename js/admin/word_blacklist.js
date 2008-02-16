@@ -79,7 +79,6 @@ function _CALLBACK_getFilteredWords() {
     }
   }
   toggleProgressBar(false);
-  setMouseoverStatus();
 }
 
 

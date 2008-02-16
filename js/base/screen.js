@@ -32,18 +32,18 @@ var winHeight=getWinHeight();
  * @param   object    wh    Window handler. Default: current window
  * @return  int   Window width in pixels
  */
-function getWinWidth(wh){
+function getWinWidth(wh) {
   var winWidth=-1;
-  if(typeof(wh)=='undefined'){
+  if (typeof(wh)=='undefined') {
     wh=window;
   }
-  if(typeof(wh.innerWidth)=='number'){
+  if (typeof(wh.innerWidth)=='number') {
     // Non-IE browser
     winWidth=wh.innerWidth;
-  }else if(wh.document.documentElement && (wh.document.documentElement.clientWidth || wh.document.documentElement.clientHeight)){
+  } else if (wh.document.documentElement && (wh.document.documentElement.clientWidth || wh.document.documentElement.clientHeight)) {
     // IE 6+ browser in 'standards compliant mode'
     winWidth=wh.document.documentElement.clientWidth;
-  }else if(wh.document.body && (wh.document.body.clientWidth || wh.document.body.clientHeight)){
+  } else if (wh.document.body && (wh.document.body.clientWidth || wh.document.body.clientHeight)) {
     // IE 4 compatible browser
     winWidth=wh.document.body.clientWidth;
   }
@@ -55,18 +55,18 @@ function getWinWidth(wh){
  * @param   object    wh    Window handler. Default: current window
  * @return  int   Window height in pixels
  */
-function getWinHeight(wh){
+function getWinHeight(wh) {
   var winHeight=-1;
-  if(typeof(wh)=='undefined'){
+  if (typeof(wh)=='undefined') {
     wh=window;
   }
-  if(typeof(wh.innerHeight)=='number'){
+  if (typeof(wh.innerHeight)=='number') {
     // Non-IE browser
     winHeight=wh.innerHeight;
-  }else if(wh.document.documentElement && (wh.document.documentElement.clientHeight || wh.document.documentElement.clientHeight)){
+  } else if (wh.document.documentElement && (wh.document.documentElement.clientHeight || wh.document.documentElement.clientHeight)) {
     // IE 6+ browser in 'standards compliant mode'
     winHeight=wh.document.documentElement.clientHeight;
-  }else if(wh.document.body && (wh.document.body.clientHeight || wh.document.body.clientHeight)){
+  } else if (wh.document.body && (wh.document.body.clientHeight || wh.document.body.clientHeight)) {
     // IE 4 compatible browser
     winHeight=wh.document.body.clientHeight;
   }
@@ -79,14 +79,14 @@ function getWinHeight(wh){
  * @param   object    wh    Window handler. Default: current window
  * @return  int   Document width
  */
-function getUsedWidth(wh){
+function getUsedWidth(wh) {
   var usedWidth=-1;
-  if(typeof(wh)=='undefined'){
+  if (typeof(wh)=='undefined') {
     wh=window;
   }
-  try{
+  try {
     usedWidth=wh.document.documentElement.scrollWidth;
-  }catch(e){}
+  } catch (e) {}
   return usedWidth;
 }
 
@@ -96,14 +96,14 @@ function getUsedWidth(wh){
  * @param   object    wh    Window handler. Default: current window
  * @return  int   Document height
  */
-function getUsedHeight(wh){
+function getUsedHeight(wh) {
   var usedHeight=-1;
-  if(typeof(wh)=='undefined'){
+  if (typeof(wh)=='undefined') {
     wh=window;
   }
-  try{
+  try {
     usedHeight=wh.document.documentElement.scrollHeight;
-  }catch(e){}
+  } catch (e) {}
   return usedHeight;
 }
 
@@ -120,6 +120,7 @@ function getTopPos(tgt_element) {
     while (tgt_element=tgt_element.offsetParent) {
       pos+=tgt_element.offsetTop;
     }
+    if (typeof(pos)!='number') pos=0;
   }
   return pos;
 }
@@ -136,6 +137,7 @@ function getLeftPos(tgt_element) {
     while (tgt_element=tgt_element.offsetParent) {
       pos+=tgt_element.offsetLeft;
     }
+    if (typeof(pos)!='number') pos=0;
   }
   return pos;
 }

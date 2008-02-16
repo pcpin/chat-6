@@ -105,7 +105,6 @@ function _CALLBACK_getSmilies() {
     }
   }
   toggleProgressBar(false);
-  setMouseoverStatus();
 }
 
 /**
@@ -148,8 +147,6 @@ function parseUploadResponse(code, message, binaryfile_id, width, height, filena
 
     }
   }
-  // Reset window status resolution
-  setMouseoverStatus();
 }
 
 /**

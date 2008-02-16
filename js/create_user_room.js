@@ -125,8 +125,6 @@ function parseUploadResponse(code, message, binaryfile_id, width, height, filena
 
     }
   }
-  // Reset window status resolution
-  setMouseoverStatus();
 }
 
 /**

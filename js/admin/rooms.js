@@ -216,7 +216,6 @@ function _CALLBACK_getCategoryTree() {
       }
     }
   }
-  setMouseoverStatus();
   toggleProgressBar(false);
 }
 
@@ -506,7 +505,6 @@ function parseUploadResponse(code, message, binaryfile_id, width, height, filena
     }
   }
   // Reset window status resolution
-  setMouseoverStatus();
 }
 
 

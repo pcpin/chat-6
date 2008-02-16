@@ -10,7 +10,8 @@
       <td class="tbl_row" colspan="2">
         <b>{LNG_READ_BEFORE_FILLING_FORM}:</b>
         <br />
-        <pre>{LNG_CALL_MODERATOR_RULES}</pre>
+        {LNG_CALL_MODERATOR_RULES}
+        <br /><br />
       </td>
     </tr>
     <tr>

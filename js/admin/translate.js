@@ -264,7 +264,6 @@ function showEditPage() {
   $('page_numbers').innerHTML=pages_html;
 
   expr_tbl.style.display='';
-  setMouseoverStatus();
   toggleProgressBar(false);
 }
 

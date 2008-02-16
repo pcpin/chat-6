@@ -202,11 +202,8 @@ function showBanners() {
       }
       setCssClass(td, '.tbl_row');
       td.style.textAlign='center';
-
     }
   }
-
-  setMouseoverStatus();
 }
 
 

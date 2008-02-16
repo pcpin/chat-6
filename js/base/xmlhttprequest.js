@@ -78,7 +78,7 @@ function reqStateHandlerTpl(rn, useState) {
               break;
     case 1 :  // Loading
               // Update connection status
-              updateConnectionStatus(2, useState);
+//              updateConnectionStatus(2, useState);
               break;
     case 2 :  // Headers loaded
               break;
@@ -86,7 +86,7 @@ function reqStateHandlerTpl(rn, useState) {
               break;
     case 4 :  // Completed
               // Update connection status
-              updateConnectionStatus(0, useState);
+//              updateConnectionStatus(0, useState);
               if (useState) {
                 reqHttpStatusCode[rn]=rh.status;
                 reqHttpStatusText[rn]=rh.statusText;
@@ -207,7 +207,7 @@ function PCPIN_XmlHttpRequest() {
           reqHandler[this.reqHandlerNr].setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         }
         // Update connection status
-        updateConnectionStatus(1, true);
+//        updateConnectionStatus(1, true);
         // Send data
         reqHandler[this.reqHandlerNr].send(data);
       }

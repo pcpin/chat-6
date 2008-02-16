@@ -17,7 +17,7 @@
       </tr>
     </PCPIN:TPL>
   </table>
-  <div id="smiliebox_container" style="text-align:center">
+  <div id="smiliebox_container" style="text-align:left">
     <table border="0" cellspacing="0" cellpadding="0">
       <PCPIN:TPL name="smiliebox_row">
         <tr>

@@ -280,8 +280,6 @@ function displayCategoryTree(cats, depth) {
   $('chat_categories_list').innerHTML=makeCategoryTreeHtml(cats, depth);
   $('chat_categories_list').scrollTop=div_top;
   setTimeout("$('chat_categories_list').scrollTop="+div_top+";", 1);
-  // Update onMouseOver status
-  setMouseoverStatus();
 }
 
 
@@ -370,19 +368,18 @@ function closeCategoryFolder(cat_id) {
  */
 function showCategoryRooms(category_id) {
   try {
-    var div_top=$('chat_rooms_list').scrollTop;
+    var chat_rooms_list=$('chat_rooms_list');
+    var div_top=chat_rooms_list.scrollTop;
     if (typeof(category_id)!='number') {
       category_id=ActiveCategoryId;
     }
     if (category_id>0) {
-      var rooms_div_height=stringToNumber($('chat_rooms_list').style.height.substring(0, $('chat_rooms_list').style.height.length-2));
-      $('chat_rooms_list').innerHTML=makeCategoryRoomsHTML(category_id);
-      $('chat_rooms_list').scrollTop=div_top;
+      var rooms_div_height=stringToNumber(chat_rooms_list.style.height.substring(0, chat_rooms_list.style.height.length-2));
+      chat_rooms_list.innerHTML=makeCategoryRoomsHTML(category_id);
+      chat_rooms_list.scrollTop=div_top;
       setTimeout("$('chat_rooms_list').scrollTop="+div_top+";", 1);
-      $('chat_rooms_list').style.height=(rooms_div_height-1)+'px';
+      chat_rooms_list.style.height=(rooms_div_height-1)+'px';
       setTimeout('$(\'chat_rooms_list\').style.height=\''+rooms_div_height+'px\';', 20);
-      // Update onMouseOver status
-      setMouseoverStatus();
     }
   } catch (e) {}
 }
@@ -574,8 +571,6 @@ function displaySimpleCategoryTree(cats) {
   $('chat_rooms_list_simplified').innerHTML=makeSimpleCategoryTreeHtml(cats);
   $('chat_rooms_list_simplified').scrollTop=div_top;
   setTimeout("$('chat_rooms_list_simplified').scrollTop="+div_top+";", 1);
-  // Update onMouseOver status
-  setMouseoverStatus();
 }
 
 /**

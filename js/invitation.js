@@ -25,12 +25,13 @@ function acceptInvitation(room_id) {
 function _CALLBACK_acceptInvitation() {
   var message=actionHandler.getCdata('message');
   var status=actionHandler.getCdata('status');
+  var dummy_form=$('dummyform', opener.document);
   if (status=='0') {
     // Room changed. Load room page.
-    $('dummyform', opener.document).s_id.value=s_id;
-    $('dummyform', opener.document).inc.value='chat_room';
-    $('dummyform', opener.document).ts.value=unixTimeStamp();
-    $('dummyform', opener.document).submit();
+    dummy_form.s_id.value=s_id;
+    dummy_form.inc.value='chat_room';
+    dummy_form.ts.value=unixTimeStamp();
+    dummy_form.submit();
   }
   window.close();
 }

@@ -278,16 +278,12 @@ function stopMousePosCapture() {
  * @return    object    Specified object or NULL if noting found
  */
 function $(elementId, targetDoc) {
-  var el=null;
-  if (typeof(targetDoc)!='object' || targetDoc==null) {
-    targetDoc=document;
+  if (typeof(targetDoc)!='object' || targetDoc==null || !targetDoc.getElementById) {
+    return document.getElementById(elementId);
+  } else {
+    return targetDoc.getElementById(elementId);
   }
-  try {
-    el=targetDoc.getElementById(elementId);
-  } catch (e) { }
-  return el;
 }
-
 
 /**
  * [document.]getElementsByTagName() wrapper
@@ -301,7 +297,7 @@ function $$(tag, parent_) {
       parent_=document;
     }
     try {
-      eval('elements=parent_.getElementsByTagName(\''+tag+'\')');
+      elements=parent_.getElementsByTagName(tag);
     } catch (e) {
       elements=null;
     }
@@ -440,116 +436,18 @@ function setDateFormat(date_format) {
 
 
 /**
- * Set default text for window status bar
- * @param   string    default_status    Status text
- */
-function setDefaultWindowStatus(default_status) {
-  if (typeof(default_status)!='string') {
-    default_status='';
-  }
-  window.defaultStatus=default_status;
-  showWindowStatus();
-}
-
-
-/**
- * Show window status text
- * @param   string    status_text    Status text. If empty, then default window status text will be used
- */
-function showWindowStatus(status_text) {
-  if (typeof(status_text)!='string' || status_text=='') {
-    window.status=window.defaultStatus;
-  } else {
-    window.status=status_text;
-  }
-}
-
-
-/**
- * Set window status text from object's "title" attribute
- */
-function setWindowStatusFromObj() {
-  if (typeof(this.title)=='string') {
-    if (this.tagName.toLowerCase()=='img' && this.name=='img_hover') {
-      if (typeof(this.src_original)!='string') {
-        this.src_original=this.src;
-      }
-      if (typeof(this.src_hover)!='string') {
-        this.src_hover=this.src.substring(0, this.src.lastIndexOf('.'))+'_hover'+this.src.substring(this.src.lastIndexOf('.'));
-      }
-      this.src=this.src_hover;
-      this.onmouseout=function() {
-        this.src=this.src_original;
-        showWindowStatus();
-      }
-    }
-    if (this.title!='') {
-      showWindowStatus(this.title);
-    }
-  } else {
-    showWindowStatus();
-  }
-  return true;
-}
-
-
-/**
- * Assign onMouseover event to different document elements
- */
-function setMouseoverStatus() {
-  // Images
-  for (var i=0; i<document.images.length; i++) {
-    document.images[i].onmouseover=setWindowStatusFromObj;
-    document.images[i].onmouseout=showWindowStatus;
-  }
-  // Buttons
-  var buttons=document.getElementsByTagName('BUTTON');
-  for (var i=0; i<buttons.length; i++) {
-    buttons[i].onmouseover=setWindowStatusFromObj;
-    buttons[i].onmouseout=showWindowStatus;
-  }
-  // "INPUT" elements
-  var inputs=document.getElementsByTagName('INPUT');
-  for (var i=0; i<inputs.length; i++) {
-    inputs[i].onmouseover=setWindowStatusFromObj;
-    inputs[i].onmouseout=showWindowStatus;
-  }
-  // "TEXTAREA" elements
-  var inputs=document.getElementsByTagName('TEXTAREA');
-  for (var i=0; i<inputs.length; i++) {
-    inputs[i].onmouseover=setWindowStatusFromObj;
-    inputs[i].onmouseout=showWindowStatus;
-  }
-  // "LABEL" elements
-  var inputs=document.getElementsByTagName('LABEL');
-  for (var i=0; i<inputs.length; i++) {
-    inputs[i].onmouseover=setWindowStatusFromObj;
-    inputs[i].onmouseout=showWindowStatus;
-  }
-  // Links
-  for (var i=0; i<document.links.length; i++) {
-    document.links[i].onmouseover=setWindowStatusFromObj;
-    document.links[i].onmouseout=showWindowStatus;
-  }
-}
-
-
-/**
  * Get language expression
  * @param   string    lng_id    Language expression ID
  * @return  string
  */
 function getLng(lng_id) {
-  var lng_val='';
-  if(typeof(lng_id)=='string' && lng_id!='') {
-    if (typeof(lngExpressions[lng_id])!='undefined' && lngExpressions[lng_id]!='') {
-      lng_val=lngExpressions[lng_id];
-    } else {
-      lng_val=lng_id;
-    }
+  if(typeof(lng_id)=='string' && typeof(lngExpressions[lng_id])=='string') {
+    return lngExpressions[lng_id];
+  } else {
+    return lng_id;
   }
-  return lng_val;
 }
+
 
 /**
  * Display progress bar and send HTTP request using default XMLHttpRequest handler
@@ -597,13 +495,11 @@ function toggleProgressBar(newState){
   if(pb!=null){
     if(!progressBarState && newState){
       // Show Progress bar
-//      $('body_contents').style.display='none';
       pb.style.display='';
       moveToCenter(pb);
       progressBarState=true;
-    }else if(progressBarState && !newState){
+    } else if(progressBarState && !newState){
       // Hide Progress bar
-//      $('body_contents').style.display='';
       pb.style.display='none';
       progressBarState=false;
     }
@@ -640,7 +536,6 @@ function checkOpener(force) {
  */
 function setCssClass(targetElement, cssName, skipCache) {
   if (typeof(targetElement)=='object' && targetElement && targetElement.style && typeof(cssName)=='string' && cssName!='') {
-    cssName=cssName.toLowerCase();
     var css_text='';
     var css_rules_array=null;
     var css_rules=null;
@@ -654,6 +549,7 @@ function setCssClass(targetElement, cssName, skipCache) {
     var property_name='';
     var property_value='';
     var original_value=null;
+    cssName=cssName.toLowerCase();
     if ((typeof(skipCache)!='boolean' || skipCache==false) && typeof(setCss_cache[cssName])=='object' && setCss_cache[cssName]) {
       css_found=true;
       css_rules_array=setCss_cache[cssName];
@@ -772,12 +668,12 @@ function debug(text) {
  * @return  string
  */
 function coloredToHTML(colored, tag) {
-  if (typeof(tag)=='undefined') {
-    tag='span';
-  }
   var html='';
   var color='';
   var parts=colored.split('^');
+  if (typeof(tag)!='string' || tag=='') {
+    tag='span';
+  }
   if (parts.length==1) {
     html=htmlspecialchars(parts[0]).split(' ').join('&nbsp;');
   } else {
@@ -1051,37 +947,38 @@ function openWindow(w_url,
  * @param   string    box_title         String that will be displayed at title box title
  */
 function showPasswordFieldBox(posX, posY, callBackOk, callBackCancel, box_title) {
+  var password_field_box=$('password_field_box');
   $('password_field_box_input').value='';
-  $('password_field_box').style.display='';
-  $('password_field_box').style.left='0px';
-  $('password_field_box').style.top='0px';
+  password_field_box.style.display='';
+  password_field_box.style.left='0px';
+  password_field_box.style.top='0px';
   if (typeof(box_title)=='string' && box_title!='') {
     $('password_field_box_title').innerHTML=htmlspecialchars(box_title);
   } else {
     $('password_field_box_title').innerHTML=htmlspecialchars(getLng('password'));
   }
 
-  var maxAllowedLeft=getUsedWidth()-$('password_field_box').scrollWidth-10;
-  var maxAllowedTop=getUsedHeight()-$('password_field_box').scrollHeight-10;
+  var maxAllowedLeft=getUsedWidth()-password_field_box.scrollWidth-10;
+  var maxAllowedTop=getUsedHeight()-password_field_box.scrollHeight-10;
   if (posX>maxAllowedLeft) {
     posX=maxAllowedLeft;
   }
   if (posY>maxAllowedTop) {
     posY=maxAllowedTop;
   }
-  $('password_field_box').style.left=posX+'px';
-  $('password_field_box').style.top=posY+'px';
+  password_field_box.style.left=posX+'px';
+  password_field_box.style.top=posY+'px';
 
   if (typeof(callBackOk)=='string') {
-    $('password_field_box').callback_ok=callBackOk;
+    password_field_box.callback_ok=callBackOk;
   } else {
-    $('password_field_box').callback_ok='';
+    password_field_box.callback_ok='';
   }
 
   if (typeof(callBackCancel)=='string') {
-    $('password_field_box').callback_cancel=callBackCancel;
+    password_field_box.callback_cancel=callBackCancel;
   } else {
-    $('password_field_box').callback_cancel='';
+    password_field_box.callback_cancel='';
   }
   $('password_field_box_input').onkeyup=function(e) {
     switch (getKC(e)) {
@@ -1105,24 +1002,25 @@ function showPasswordFieldBox(posX, posY, callBackOk, callBackCancel, box_title)
  * Hide "Enter password" box
  */
 function hidePasswordFieldBox(submitted) {
-  $('password_field_box').style.display='none';
+  var password_field_box=$('password_field_box');
+  password_field_box.style.display='none';
   if (typeof(submitted)=='boolean' && submitted) {
-    if ($('password_field_box').callback_ok!='') {
+    if (password_field_box.callback_ok!='') {
       try {
-        $('password_field_box').callback_ok=$('password_field_box').callback_ok.split('/RESULT/').join($('password_field_box_input').value.split('\'').join('\\\''));
-        eval($('password_field_box').callback_ok);
+        password_field_box.callback_ok=password_field_box.callback_ok.split('/RESULT/').join($('password_field_box_input').value.split('\'').join('\\\''));
+        eval(password_field_box.callback_ok);
       } catch (e) {}
     }
   } else {
-    if ($('password_field_box').callback_cancel!='') {
+    if (password_field_box.callback_cancel!='') {
       try {
-        $('password_field_box').callback_cancel=$('password_field_box').callback_cancel.split('/RESULT/').join($('password_field_box_input').value.split('\'').join('\\\''));
-        eval($('password_field_box').callback_cancel);
+        password_field_box.callback_cancel=password_field_box.callback_cancel.split('/RESULT/').join($('password_field_box_input').value.split('\'').join('\\\''));
+        eval(password_field_box.callback_cancel);
       } catch (e) {}
     }
   }
-  $('password_field_box').callback_ok='';
-  $('password_field_box').callback_cancel='';
+  password_field_box.callback_ok='';
+  password_field_box.callback_cancel='';
   $('password_field_box_input').value='';
 }
 

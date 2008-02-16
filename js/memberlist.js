@@ -553,6 +553,5 @@ function _CALLBACK_getMemberlist() {
 
     }
   }
-  setMouseoverStatus();
   toggleProgressBar(false);
 }

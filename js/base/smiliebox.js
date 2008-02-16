@@ -235,7 +235,6 @@ function initSmilieList(opener_top, opener_left) {
 
     }
   }
-  setMouseoverStatus();
 }
 
 
@@ -248,7 +247,7 @@ function initSmilieList(opener_top, opener_left) {
  */
 function openSmilieBox(tgt_obj_id, tgt_var, openerObj, no_resize) {
   var smilie_img=null;
-  if (typeof(openerObj)!='undefined' && openerObj) {
+  if (typeof(openerObj)!='undefined' && openerObj && openerObj.onmouseout) {
     openerObj.onmouseout();
   }
   if (typeof(no_resize)!='boolean') {
@@ -258,7 +257,7 @@ function openSmilieBox(tgt_obj_id, tgt_var, openerObj, no_resize) {
   SmilieList.NoResizeMove=SmilieBoxNoResizeMove;
   if (SmilieList.SmilieListLength>0) {
     toggleProgressBar(true);
-    initSmilieList(1*getTopPos(openerObj), 1*getLeftPos(openerObj));
+    initSmilieList(getTopPos(openerObj), getLeftPos(openerObj));
     for (var i in SmilieList.SmilieList) {
       if (smilie_img=$('smilie_image_'+SmilieList.SmilieList[i].id)) {
         if (smilie_img.src!=smilie_img.name) {

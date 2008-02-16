@@ -33,6 +33,23 @@ var initialControlsHeight=0;
  */
 var AutoScroll=true;
 
+/**
+ * Main input text area handler
+ * @var object
+ */
+var MainInputTextArea=null;
+
+/**
+ * Chat messages area handler
+ * @var object
+ */
+var ChatMessagesArea=null;
+
+/**
+ * Controls area handler
+ * @var object
+ */
+var ChatControlsArea=null;
 
 
 /**
@@ -49,6 +66,10 @@ function initPMBox(user_id, controls_height) {
     window.close();
     return false;
   }
+
+  MainInputTextArea=$('main_input_textarea');
+  ChatMessagesArea=$('chatroom_messages');
+  ChatControlsArea=$('chatroom_controls');
 
   // Get client data
   getUserDataPM(user_id);
@@ -68,7 +89,7 @@ function initPMBox(user_id, controls_height) {
   opener.pmOpened(window);
 
   // Messages area backgroud color
-  $('chatroom_messages').style.backgroundColor='#'+window.opener.messagesAreaBGColor;
+  ChatMessagesArea.style.backgroundColor='#'+window.opener.messagesAreaBGColor;
 
   // Prepare areas
   setAreas();
@@ -77,13 +98,13 @@ function initPMBox(user_id, controls_height) {
   window.onresize=function() {
     clearTimeout(windowResizeTimeoutHandler);
     windowResizeTimeoutHandler=setTimeout('setAreas()', 200);
-    $('main_input_textarea').click();
+    MainInputTextArea.click();
   };
 
   // Set message history handler
-  $('main_input_textarea').msgHistorie=new Array();
-  $('main_input_textarea').msgHistoriePtr=0;
-  $('main_input_textarea').addMsgHistorie=function(msg) {
+  MainInputTextArea.msgHistorie=new Array();
+  MainInputTextArea.msgHistoriePtr=0;
+  MainInputTextArea.addMsgHistorie=function(msg) {
     msg=trimString(msg);
     if (msg!='') {
       this.msgHistoriePtr=0;
@@ -95,7 +116,7 @@ function initPMBox(user_id, controls_height) {
       }
     }
   }
-  $('main_input_textarea').fromMsgHistorie=function(direction) {
+  MainInputTextArea.fromMsgHistorie=function(direction) {
     if (this.msgHistorie.length) {
       this.msgHistoriePtr+=direction;
       if (direction>0 && this.msgHistoriePtr>=this.msgHistorie.length) {
@@ -109,7 +130,7 @@ function initPMBox(user_id, controls_height) {
     }
   }
   // Set onkeyup handler for input area
-  $('main_input_textarea').onkeydown=function(e) {
+  MainInputTextArea.onkeydown=function(e) {
     var kk=0;
     if(!e) {
       if(window.event) {
@@ -144,7 +165,7 @@ function initPMBox(user_id, controls_height) {
     return true;
   };
   // Set onmouseup handler for input area
-  $('main_input_textarea').onmouseup=function(e) {
+  MainInputTextArea.onmouseup=function(e) {
     if (this.value.length>opener.messageLengthMax) {
       this.value=this.value.substring(0, opener.messageLengthMax);
     }
@@ -168,14 +189,14 @@ function initPMBox(user_id, controls_height) {
       }
     }
     if (sel.options.length>0) {
-      $('main_input_textarea').style.fontFamily=sel.options[sel.selectedIndex].value;
+      MainInputTextArea.style.fontFamily=sel.options[sel.selectedIndex].value;
       sel.onchange=function() {
         this.style.fontFamily=this.value;
-        $('main_input_textarea').style.fontFamily=this.value;
+        MainInputTextArea.style.fontFamily=this.value;
         if (isOpera) {
           // Opera hack
-          $('main_input_textarea').style.display='none';
-          setTimeout('$(\'main_input_textarea\').style.display=\'\'; setAreas();', 1);
+          MainInputTextArea.style.display='none';
+          setTimeout('MainInputTextArea.style.display=\'\'; setAreas();', 1);
         } else {
           setAreas();
         }
@@ -185,9 +206,9 @@ function initPMBox(user_id, controls_height) {
         this.onchange;
         if (isOpera) {
           // Opera hack
-          setTimeout('$(\'main_input_textarea\').focus()', 1);
+          setTimeout('MainInputTextArea.focus()', 1);
         } else {
-          $('main_input_textarea').focus();
+          MainInputTextArea.focus();
         }
       };
       sel.onkeyup=sel.onchange;
@@ -206,13 +227,13 @@ function initPMBox(user_id, controls_height) {
         }
       }
       if (sel.options.length>0) {
-        $('main_input_textarea').style.fontSize=sel.options[sel.selectedIndex].value+'px';
+        MainInputTextArea.style.fontSize=sel.options[sel.selectedIndex].value+'px';
         sel.onchange=function() {
-          $('main_input_textarea').style.fontSize=this.value+'px';
+          MainInputTextArea.style.fontSize=this.value+'px';
           if (isOpera) {
             // Opera hack
-            $('main_input_textarea').style.display='none';
-            setTimeout('$(\'main_input_textarea\').style.display=\'\'; setAreas();', 1);
+            MainInputTextArea.style.display='none';
+            setTimeout('MainInputTextArea.style.display=\'\'; setAreas();', 1);
           } else {
             setAreas();
           }
@@ -222,9 +243,9 @@ function initPMBox(user_id, controls_height) {
           this.onchange;
           if (isOpera) {
             // Opera hack
-            setTimeout('$(\'main_input_textarea\').focus()', 1);
+            setTimeout('MainInputTextArea.focus()', 1);
           } else {
-            $('main_input_textarea').focus();
+            MainInputTextArea.focus();
           }
         };
         sel.onkeyup=sel.onchange;
@@ -235,12 +256,12 @@ function initPMBox(user_id, controls_height) {
   // Set color to button
   $('message_colors_btn').style.backgroundColor='#'+opener.outgoingMessageColor;
   // Set color to input area
-  $('main_input_textarea').style.color='#'+opener.outgoingMessageColor;
+  MainInputTextArea.style.color='#'+opener.outgoingMessageColor;
   // Set focus to input area
-  $('main_input_textarea').focus();
+  MainInputTextArea.focus();
   if (!isMozilla) {
     // Assign "onfocus" window event
-    window.onfocus=function() { $('main_input_textarea').focus(); }
+    window.onfocus=function() { MainInputTextArea.focus(); }
   }
 
   // Activate auto-scroll
@@ -255,15 +276,15 @@ function setAreas() {
   try {
     winWidth=getWinWidth()-2;
     winHeight=getWinHeight()-2;
-    $('chatroom_messages').style.top='0px';
-    $('chatroom_controls').style.height=initialControlsHeight+'px';
-    $('chatroom_controls').style.left='0px';
-    $('chatroom_messages').style.width=(winWidth+(isIE? 2 : 0))+'px';
-    $('chatroom_messages').style.left='0px';
-    $('chatroom_messages').style.height=(winHeight-initialControlsHeight+1+(isIE? 2 : 0))+'px';
-    $('chatroom_controls').style.top=(winHeight-initialControlsHeight+(isIE? 2 : 0))+'px';
-    $('chatroom_controls').style.width=(winWidth+(isIE? 2 : 1))+'px';
-    $('main_input_textarea').style.width=(winWidth-$('mainSendMessageButton').scrollWidth-35)+'px';
+    ChatMessagesArea.style.top='0px';
+    ChatControlsArea.style.height=initialControlsHeight+'px';
+    ChatControlsArea.style.left='0px';
+    ChatMessagesArea.style.width=(winWidth+(isIE? 2 : 0))+'px';
+    ChatMessagesArea.style.left='0px';
+    ChatMessagesArea.style.height=(winHeight-initialControlsHeight+1+(isIE? 2 : 0))+'px';
+    ChatControlsArea.style.top=(winHeight-initialControlsHeight+(isIE? 2 : 0))+'px';
+    ChatControlsArea.style.width=(winWidth+(isIE? 2 : 1))+'px';
+    MainInputTextArea.style.width=(winWidth-$('mainSendMessageButton').scrollWidth-35)+'px';
     if (isIE) {
       $('scroll_ctl_btn').style.marginRight='5px';
     }
@@ -313,7 +334,5 @@ function _CALLBACK_getUserDataPM(user_id) {
                          );
     }
   }
-  // Set window status
-  setDefaultWindowStatus(getLng('private_message')+': '+coloredToPlain(nickname, false));
   toggleProgressBar(false);
 }

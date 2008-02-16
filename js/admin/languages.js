@@ -70,7 +70,6 @@ function showLanguages() {
 
   }
   showLanguagesTable();
-  setMouseoverStatus();
 }
 
 /**

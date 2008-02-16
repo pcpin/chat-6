@@ -87,9 +87,6 @@ $_body_onload=array('setSid(\''.$session->_s_id.'\')',
                     'setUserId('.$session->_s_user_id.')',
                     'setImgResizeFlag('.(('2'==PCPIN_Image::whichGD())? 'true' : 'false').')',
                     'window.appName_=\'pcpin_chat\'', // <-- DO NOT CHANGE THIS LINE!!!
-                    'setDefaultWindowStatus(\''.str_replace('\'', '\\\'', $session->_conf_all['chat_name']).'\')',
-                    'setMouseoverStatus()',
-                    'initSmilieList()',
                     'setDateFormat(\''.str_replace('\'', '\\\'', ($current_user->date_format!='')? $current_user->date_format : $session->_conf_all['date_format']).'\')',
                     'setAdminFlag('.($current_user->is_admin==='y'? 'true' : 'false').')',
                     'startMousePosCapture()',
@@ -100,7 +97,7 @@ $_js_files=array('./js/base/screen.js',
                  './js/base/strings.js',
                  './js/base/time.js',
                  './js/base/xmlhttprequest.js',
-                 './js/base/connectionstatus.js',
+//                 './js/base/connectionstatus.js',
                  './js/base/global.js',
                  './js/base/main.js',
                  './js/base/colorbox.js',
@@ -126,51 +123,6 @@ $template->addVar('main', 'iso_lng', $l->iso_name);
 
 // Default inc
 if (!isset($inc)) $inc='';
-
-// Add smilies to the main template
-_pcpin_loadClass('smilie'); $smilie=new PCPIN_Smilie($session);
-$smilies=$smilie->getSmilies();
-if (!empty($smilies)) {
-  // Append empty elements to smilies array
-  $smilies_append=$session->_conf_all['smilies_per_row']-count($smilies)%$session->_conf_all['smilies_per_row'];
-  if ($smilies_append!=$session->_conf_all['smilies_per_row'] && $smilies_append>0) {
-    for ($i=0; $i<$smilies_append; $i++) {
-      array_push($smilies, array('id'=>'',
-                                 'binaryfile_id'=>'',
-                                 'code'=>'',
-                                 'description'=>'',
-                                 ));
-    }
-  }
-  $template->addVar('smiliebox_table', 'display', true);
-  $col=1;
-  $maxcol=0;
-  foreach ($smilies as $smilie_data) {
-    $template->addVars('smiliebox_col', array('id'=>htmlspecialchars($smilie_data['id']),
-                                              'binaryfile_id'=>htmlspecialchars($smilie_data['binaryfile_id']),
-                                              'code'=>htmlspecialchars($smilie_data['code']),
-                                              'description'=>htmlspecialchars($smilie_data['description']),
-                                              's_id'=>htmlspecialchars($session->_s_id),
-                                              'padding_top'=>htmlspecialchars($inc=='pm_box' || $session->_conf_all['smilies_position']!=0? 8 : 0),
-                                              'padding_bottom'=>htmlspecialchars($inc=='pm_box' || $session->_conf_all['smilies_position']!=0? 8 : 0),
-                                              'padding_left'=>htmlspecialchars($inc=='pm_box' || $session->_conf_all['smilies_position']!=0? 8 : 0),
-                                              'padding_right'=>htmlspecialchars(8),
-                                              ));
-    $template->parseTemplate('smiliebox_col', 'a');
-    if ($col>$maxcol) {
-      $maxcol=$col;
-    }
-    if (++$col>$session->_conf_all['smilies_per_row'] && ($inc=='pm_box' || $session->_conf_all['smilies_position']!=0)) {
-      $template->parseTemplate('smiliebox_row', 'a');
-      $template->clearTemplate('smiliebox_col', 'a');
-      $col=1;
-    }
-  }
-  if ($inc=='pm_box' || $session->_conf_all['smilies_position']!=0) {
-    $template->addVar('smiliebox_header_row', 'header_row_colspan', htmlspecialchars($maxcol));
-  }
-}
-unset($smilies);
 
 // Specify the page to load
 if (empty($session->_s_user_id)) {

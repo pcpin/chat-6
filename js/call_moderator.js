@@ -38,9 +38,6 @@ function initCMBox() {
     }
   };
 
-  // Set window status
-  setDefaultWindowStatus('SOS :: '+getLng('cal_moderator'));
-
   // Log by opener window
   opener.moderatorCallWindow=window;
 

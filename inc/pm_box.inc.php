@@ -39,6 +39,7 @@ $tpl->readTemplatesFromFile('./pm_box.tpl');
 if (empty($target_user_id) || $target_user_id==$current_user->id || !$current_user->_db_getList('id', 'id = '.$target_user_id, 1)) {
   $_body_onload[]='window.close()';
 } else {
+  $_body_onload[]='initSmilieList()';
   $current_user->_db_freeList();
   $target_user_nickname=$nickname->getDefaultNickname($target_user_id);
   $_body_onload[]='initPMBox('.$target_user_id.', 60)';
@@ -61,5 +62,50 @@ foreach ($tpl->tpl_vars_plain as $var) {
 // Display fonts
 $tpl->addVar('fonts', 'fonts', htmlspecialchars($session->_conf_all['font_families']));
 $tpl->addVar('fonts', 'font_sizes', htmlspecialchars($session->_conf_all['font_sizes']));
+
+// Add smilies to the main template
+_pcpin_loadClass('smilie'); $smilie=new PCPIN_Smilie($session);
+$smilies=$smilie->getSmilies();
+if (!empty($smilies)) {
+  // Append empty elements to smilies array
+  $smilies_append=$session->_conf_all['smilies_per_row']-count($smilies)%$session->_conf_all['smilies_per_row'];
+  if ($smilies_append!=$session->_conf_all['smilies_per_row'] && $smilies_append>0) {
+    for ($i=0; $i<$smilies_append; $i++) {
+      array_push($smilies, array('id'=>'',
+                                 'binaryfile_id'=>'',
+                                 'code'=>'',
+                                 'description'=>'',
+                                 ));
+    }
+  }
+  $template->addVar('smiliebox_table', 'display', true);
+  $col=1;
+  $maxcol=0;
+  foreach ($smilies as $smilie_data) {
+    $template->addVars('smiliebox_col', array('id'=>htmlspecialchars($smilie_data['id']),
+                                              'binaryfile_id'=>htmlspecialchars($smilie_data['binaryfile_id']),
+                                              'code'=>htmlspecialchars($smilie_data['code']),
+                                              'description'=>htmlspecialchars($smilie_data['description']),
+                                              's_id'=>htmlspecialchars($session->_s_id),
+                                              'padding_top'=>htmlspecialchars($inc=='pm_box' || $session->_conf_all['smilies_position']!=0? 8 : 0),
+                                              'padding_bottom'=>htmlspecialchars($inc=='pm_box' || $session->_conf_all['smilies_position']!=0? 8 : 0),
+                                              'padding_left'=>htmlspecialchars($inc=='pm_box' || $session->_conf_all['smilies_position']!=0? 8 : 0),
+                                              'padding_right'=>htmlspecialchars(8),
+                                              ));
+    $template->parseTemplate('smiliebox_col', 'a');
+    if ($col>$maxcol) {
+      $maxcol=$col;
+    }
+    if (++$col>$session->_conf_all['smilies_per_row'] && ($inc=='pm_box' || $session->_conf_all['smilies_position']!=0)) {
+      $template->parseTemplate('smiliebox_row', 'a');
+      $template->clearTemplate('smiliebox_col', 'a');
+      $col=1;
+    }
+  }
+  if ($inc=='pm_box' || $session->_conf_all['smilies_position']!=0) {
+    $template->addVar('smiliebox_header_row', 'header_row_colspan', htmlspecialchars($maxcol));
+  }
+}
+unset($smilies);
 
 ?>

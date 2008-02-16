@@ -334,6 +334,30 @@ var BackgroundImageWidth=0;
  */
 var BackgroundImageHeight=0;
 
+/**
+ * Handler for chatroom messages area
+ * @var object
+ */
+var ChatroomMessages=null;
+
+/**
+ * Handler for chatroom controls area
+ * @var object
+ */
+var ChatroomControls=null;
+
+/**
+ * Handler for chatroom userlist area
+ * @var object
+ */
+var ChatroomUserlist=null;
+
+/**
+ * Handler for main input text area
+ * @var object
+ */
+var MainInputTextArea=null;
+
 
 /**
  * Initialize client in the chat room
@@ -413,18 +437,22 @@ function initChatRoom(room_id,
     SmiliesRowHeight=SmiliesPosition==0? smilies_row_height : 0;
     controlsHeight=controls_height+SmiliesRowHeight;
     controlsHeightInit=controlsHeight;
+    ChatroomMessages=$('chatroom_messages');
+    ChatroomControls=$('chatroom_controls');
+    ChatroomUserlist=$('chatroom_userlist');
+    MainInputTextArea=$('main_input_textarea');
     // Initialize "Timestamp" button
     invertTimeStampView();
     // Set CSS classes
-    setCssClass($('chatroom_messages'), '#chatroom_messages');
-    setCssClass($('chatroom_controls'), '#chatroom_controls');
-    setCssClass($('chatroom_userlist'), '#chatroom_userlist');
+    setCssClass(ChatroomMessages, '#chatroom_messages');
+    setCssClass(ChatroomControls, '#chatroom_controls');
+    setCssClass(ChatroomUserlist, '#chatroom_userlist');
     // Get border width of all areas
-    AreaBorders['chatroom_messages']=getObjectBorders($('chatroom_messages'));
-    AreaBorders['chatroom_controls']=getObjectBorders($('chatroom_controls'));
-    AreaBorders['chatroom_userlist']=getObjectBorders($('chatroom_userlist'));
+    AreaBorders['chatroom_messages']=getObjectBorders(ChatroomMessages);
+    AreaBorders['chatroom_controls']=getObjectBorders(ChatroomControls);
+    AreaBorders['chatroom_userlist']=getObjectBorders(ChatroomUserlist);
     // Messages area background color
-    $('chatroom_messages').style.backgroundColor='#'+messagesAreaBGColor;
+    ChatroomMessages.style.backgroundColor='#'+messagesAreaBGColor;
     // Disable scrollbars
     $$('HTML')[0].style.overflow='hidden';
     // Set initial size and position of all areas in chat room window
@@ -437,15 +465,15 @@ function initChatRoom(room_id,
       } else {
         windowResizeTimeoutHandler=setTimeout('setAreas()', 200);
       }
-      if ($('main_input_textarea').click) {
-        $('main_input_textarea').click();
+      if (MainInputTextArea.click) {
+        MainInputTextArea.click();
       }
-      $('main_input_textarea').focus();
+      MainInputTextArea.focus();
     };
     // Set message history handler
-    $('main_input_textarea').msgHistorie=new Array();
-    $('main_input_textarea').msgHistoriePtr=0;
-    $('main_input_textarea').addMsgHistorie=function(msg) {
+    MainInputTextArea.msgHistorie=new Array();
+    MainInputTextArea.msgHistoriePtr=0;
+    MainInputTextArea.addMsgHistorie=function(msg) {
       msg=trimString(msg);
       if (msg!='') {
         this.msgHistoriePtr=0;
@@ -457,7 +485,7 @@ function initChatRoom(room_id,
         }
       }
     }
-    $('main_input_textarea').fromMsgHistorie=function(direction) {
+    MainInputTextArea.fromMsgHistorie=function(direction) {
       if (this.msgHistorie.length) {
         this.msgHistoriePtr+=direction;
         if (direction>0 && this.msgHistoriePtr>=this.msgHistorie.length) {
@@ -471,7 +499,7 @@ function initChatRoom(room_id,
       }
     }
     // Set onkeydown handler for input area
-    $('main_input_textarea').onkeydown=function(e) {
+    MainInputTextArea.onkeydown=function(e) {
       var kk=0;
       if(!e) {
         if(window.event) {
@@ -506,7 +534,7 @@ function initChatRoom(room_id,
       return true;
     };
     // Set onmouseup handler for input area
-    $('main_input_textarea').onmouseup=function(e) {
+    MainInputTextArea.onmouseup=function(e) {
       if (this.value.length>messageLengthMax) {
         this.value=this.value.substring(0, messageLengthMax);
       }
@@ -530,14 +558,14 @@ function initChatRoom(room_id,
         }
       }
       if (sel.options.length>0) {
-        $('main_input_textarea').style.fontFamily=sel.options[sel.selectedIndex].value;
+        MainInputTextArea.style.fontFamily=sel.options[sel.selectedIndex].value;
         sel.onchange=function() {
           this.style.fontFamily=this.value;
-          $('main_input_textarea').style.fontFamily=this.value;
+          MainInputTextArea.style.fontFamily=this.value;
           if (isOpera) {
             // Opera hack
-            $('main_input_textarea').style.display='none';
-            setTimeout('$(\'main_input_textarea\').style.display=\'\'', 1);
+            MainInputTextArea.style.display='none';
+            setTimeout('MainInputTextArea.style.display=\'\'', 1);
           }
         }
         sel.onclick=sel.onchange;
@@ -545,9 +573,9 @@ function initChatRoom(room_id,
           this.onchange;
           if (isOpera) {
             // Opera hack
-            setTimeout('$(\'main_input_textarea\').focus()', 1);
+            setTimeout('MainInputTextArea.focus()', 1);
           } else {
-            $('main_input_textarea').focus();
+            MainInputTextArea.focus();
           }
         };
         sel.onkeyup=sel.onchange;
@@ -566,13 +594,13 @@ function initChatRoom(room_id,
           }
         }
         if (sel.options.length>0) {
-          $('main_input_textarea').style.fontSize=sel.options[sel.selectedIndex].value+'px';
+          MainInputTextArea.style.fontSize=sel.options[sel.selectedIndex].value+'px';
           sel.onchange=function() {
-            $('main_input_textarea').style.fontSize=this.value+'px';
+            MainInputTextArea.style.fontSize=this.value+'px';
             if (isOpera) {
               // Opera hack
-              $('main_input_textarea').style.display='none';
-              setTimeout('$(\'main_input_textarea\').style.display=\'\'', 1);
+              MainInputTextArea.style.display='none';
+              setTimeout('MainInputTextArea.style.display=\'\'', 1);
             }
           }
           sel.onclick=sel.onchange;
@@ -580,9 +608,9 @@ function initChatRoom(room_id,
             this.onchange;
             if (isOpera) {
               // Opera hack
-              setTimeout('$(\'main_input_textarea\').focus()', 1);
+              setTimeout('MainInputTextArea.focus()', 1);
             } else {
-              $('main_input_textarea').focus();
+              MainInputTextArea.focus();
             }
           };
           sel.onkeyup=sel.onchange;
@@ -613,10 +641,10 @@ function initChatRoom(room_id,
       } catch (e) {}
     }
     // Set focus to input area
-    $('main_input_textarea').focus();
+    MainInputTextArea.focus();
     if (isIE || isOpera) {
       // Assign "onfocus" window event
-      window.onfocus=function() { try { $('main_input_textarea').focus(); } catch (e) {} }
+      window.onfocus=function() { try { MainInputTextArea.focus(); } catch (e) {} }
     }
     // Start periodic updates
     startUpdater(true, true, true);
@@ -639,6 +667,9 @@ function setAreas() {
   var controlsHeight_local=controlsHeight;
   var userlist_width=0;
   var SmiliesRowHeight_local=SmiliesRowHeight;
+  var chatroom_top_banner=$('chatroom_top_banner');
+  var chatroom_bottom_banner=$('chatroom_bottom_banner');
+  var smilie_selection_box=$('smilie_selection_box');
 
 //  try {
     if ($('attached_files').style.display!='none') {
@@ -649,77 +680,77 @@ function setAreas() {
 
     if (TopBannerEnabled) {
       top_offset=TopBannerHeight;
-      $('chatroom_top_banner').style.display='';
+      chatroom_top_banner.style.display='';
     } else {
-      $('chatroom_top_banner').style.display='none';
+      chatroom_top_banner.style.display='none';
     }
 
     if (BottomBannerEnabled) {
       bottom_offset=BottomBannerHeight;
-      $('chatroom_bottom_banner').style.display='';
+      chatroom_bottom_banner.style.display='';
     } else {
-      $('chatroom_bottom_banner').style.display='none';
+      chatroom_bottom_banner.style.display='none';
     }
 
     switch (userlistPosition) {
 
       case -1:
         // Left
-        $('chatroom_userlist').style.left='0px';
-        $('chatroom_messages').style.width=(winWidth-userlistWidth-AreaBorders['chatroom_messages'][1]-AreaBorders['chatroom_messages'][3]+2)+'px';
-        $('chatroom_messages').style.left=userlistWidth+'px';
-        $('chatroom_controls').style.left=userlistWidth+'px';
-        $('chatroom_controls').style.width=(winWidth-userlistWidth-AreaBorders['chatroom_controls'][1]-AreaBorders['chatroom_controls'][3]+2)+'px';
+        ChatroomUserlist.style.left='0px';
+        ChatroomMessages.style.width=(winWidth-userlistWidth-AreaBorders['chatroom_messages'][1]-AreaBorders['chatroom_messages'][3]+2)+'px';
+        ChatroomMessages.style.left=userlistWidth+'px';
+        ChatroomControls.style.left=userlistWidth+'px';
+        ChatroomControls.style.width=(winWidth-userlistWidth-AreaBorders['chatroom_controls'][1]-AreaBorders['chatroom_controls'][3]+2)+'px';
       break;
 
       case  0:
         // Hide userlist
         userlistWidth=0;
-        $('chatroom_userlist').style.display='none';
-        $('chatroom_messages').style.width=(winWidth-AreaBorders['chatroom_messages'][1]-AreaBorders['chatroom_messages'][3]+2)+'px';
-        $('chatroom_messages').style.left='0px';
-        $('chatroom_controls').style.left='0px';
-        $('chatroom_controls').style.width=(winWidth-AreaBorders['chatroom_controls'][1]-AreaBorders['chatroom_controls'][3]+2)+'px';
+        ChatroomUserlist.style.display='none';
+        ChatroomMessages.style.width=(winWidth-AreaBorders['chatroom_messages'][1]-AreaBorders['chatroom_messages'][3]+2)+'px';
+        ChatroomMessages.style.left='0px';
+        ChatroomControls.style.left='0px';
+        ChatroomControls.style.width=(winWidth-AreaBorders['chatroom_controls'][1]-AreaBorders['chatroom_controls'][3]+2)+'px';
       break;
 
       case 1:
       default:
         // Right (default)
-        $('chatroom_userlist').style.left=(winWidth-userlistWidth+2)+'px';
-        $('chatroom_messages').style.width=(winWidth-userlistWidth-AreaBorders['chatroom_messages'][1]-AreaBorders['chatroom_messages'][3]+2)+'px';
-        $('chatroom_messages').style.left='0px';
-        $('chatroom_controls').style.left='0px';
-        $('chatroom_controls').style.width=(winWidth-userlistWidth-AreaBorders['chatroom_controls'][1]-AreaBorders['chatroom_controls'][3]+2)+'px';
+        ChatroomUserlist.style.left=(winWidth-userlistWidth+2)+'px';
+        ChatroomMessages.style.width=(winWidth-userlistWidth-AreaBorders['chatroom_messages'][1]-AreaBorders['chatroom_messages'][3]+2)+'px';
+        ChatroomMessages.style.left='0px';
+        ChatroomControls.style.left='0px';
+        ChatroomControls.style.width=(winWidth-userlistWidth-AreaBorders['chatroom_controls'][1]-AreaBorders['chatroom_controls'][3]+2)+'px';
       break;
 
     }
 
-    if (SmiliesPosition==0 && (winWidth-userlistWidth-10)<$('smilie_selection_box').scrollWidth) {
+    if (SmiliesPosition==0 && (winWidth-userlistWidth-10)<smilie_selection_box.scrollWidth) {
       SmiliesRowHeight_local+=20;
       controlsHeight_local+=20;
     }
 
-    $('chatroom_messages').style.fontFamily=defaultFontFamily;
-    $('chatroom_messages').style.fontSize=defaultFontSize;
-    $('chatroom_messages').style.height=(winHeight-controlsHeight_local-top_offset-bottom_offset-AreaBorders['chatroom_messages'][0]-AreaBorders['chatroom_messages'][2]+1)+'px';
-    $('chatroom_messages').style.top=top_offset+'px';
-    $('chatroom_userlist').style.width=(userlistWidth-AreaBorders['chatroom_userlist'][1]-AreaBorders['chatroom_userlist'][3])+'px';
-    $('chatroom_userlist').style.height=(winHeight-top_offset-bottom_offset-AreaBorders['chatroom_userlist'][0]-AreaBorders['chatroom_userlist'][2]+2)+'px';
-    $('chatroom_userlist').style.top=top_offset+'px';
-    $('chatroom_controls').style.height=(controlsHeight_local-AreaBorders['chatroom_controls'][0]-AreaBorders['chatroom_controls'][2]+1)+'px';
-    $('chatroom_controls').style.top=(winHeight-controlsHeight_local+1-bottom_offset)+'px';
-    $('main_input_textarea').style.width=(winWidth-userlistWidth-$('mainSendMessageButton').scrollWidth-30+(isMozilla? 16 : 0)+(isOpera? 18 : 0))+'px';
-    $('main_input_textarea').style.height=(controlsHeight-SmiliesRowHeight-38)+'px';
+    ChatroomMessages.style.fontFamily=defaultFontFamily;
+    ChatroomMessages.style.fontSize=defaultFontSize;
+    ChatroomMessages.style.height=(winHeight-controlsHeight_local-top_offset-bottom_offset-AreaBorders['chatroom_messages'][0]-AreaBorders['chatroom_messages'][2]+1)+'px';
+    ChatroomMessages.style.top=top_offset+'px';
+    ChatroomUserlist.style.width=(userlistWidth-AreaBorders['chatroom_userlist'][1]-AreaBorders['chatroom_userlist'][3])+'px';
+    ChatroomUserlist.style.height=(winHeight-top_offset-bottom_offset-AreaBorders['chatroom_userlist'][0]-AreaBorders['chatroom_userlist'][2]+2)+'px';
+    ChatroomUserlist.style.top=top_offset+'px';
+    ChatroomControls.style.height=(controlsHeight_local-AreaBorders['chatroom_controls'][0]-AreaBorders['chatroom_controls'][2]+1)+'px';
+    ChatroomControls.style.top=(winHeight-controlsHeight_local+1-bottom_offset)+'px';
+    MainInputTextArea.style.width=(winWidth-userlistWidth-$('mainSendMessageButton').scrollWidth-30+(isMozilla? 16 : 0)+(isOpera? 18 : 0))+'px';
+    MainInputTextArea.style.height=(controlsHeight-SmiliesRowHeight-38)+'px';
     // Banners
-    $('chatroom_top_banner').style.width=(winWidth+2)+'px';
-    $('chatroom_top_banner').style.top='0px';
-    $('chatroom_top_banner').style.left='0px';
-    $('chatroom_top_banner').style.height=TopBannerHeight+'px';
-    $('chatroom_bottom_banner').style.width=(winWidth+2)+'px';
-    $('chatroom_bottom_banner').style.top=(winHeight-BottomBannerHeight+2)+'px';
-    $('chatroom_bottom_banner').style.left='0px';
-    $('chatroom_bottom_banner').style.height=BottomBannerHeight+'px';
-    userlist_width=parseInt($('chatroom_userlist').style.width);
+    chatroom_top_banner.style.width=(winWidth+2)+'px';
+    chatroom_top_banner.style.top='0px';
+    chatroom_top_banner.style.left='0px';
+    chatroom_top_banner.style.height=TopBannerHeight+'px';
+    chatroom_bottom_banner.style.width=(winWidth+2)+'px';
+    chatroom_bottom_banner.style.top=(winHeight-BottomBannerHeight+2)+'px';
+    chatroom_bottom_banner.style.left='0px';
+    chatroom_bottom_banner.style.height=BottomBannerHeight+'px';
+    userlist_width=parseInt(ChatroomUserlist.style.width);
     if ($('chatroom_userlist_room_selection')) {
       if (userlist_width>50) {
         $('chatroom_userlist_room_selection').style.width=(userlist_width-40)+'px';
@@ -732,14 +763,14 @@ function setAreas() {
     if (SmiliesPosition==0) {
       $('smilies_btn').style.display='none';
       openSmilieBox('main_input_textarea', null, null, true);
-      $('smilie_selection_box').style.border='0px';
-      $('smilie_selection_box').style.top=(getTopPos($('main_input_textarea'))+controlsHeight-SmiliesRowHeight+(isIE? 2 : 0)-32)+'px';
-      $('smilie_selection_box').style.left=getLeftPos($('main_input_textarea'))+'px';
-      $('smilie_selection_box').style.width=(winWidth-userlistWidth-10)+'px';
-      $('smilie_selection_box').style.backgroundColor='transparent';
-      $('smilie_selection_box').style.overflowY='hidden';
-      $('smilie_selection_box').style.overflowX='auto';
-      $('smilie_selection_box').style.height=SmiliesRowHeight_local+'px';
+      smilie_selection_box.style.border='0px';
+      smilie_selection_box.style.top=(getTopPos(MainInputTextArea)+controlsHeight-SmiliesRowHeight+(isIE? 2 : 0)-32)+'px';
+      smilie_selection_box.style.left=getLeftPos(MainInputTextArea)+'px';
+      smilie_selection_box.style.width=(winWidth-userlistWidth-10)+'px';
+      smilie_selection_box.style.backgroundColor='transparent';
+      smilie_selection_box.style.overflowY='hidden';
+      smilie_selection_box.style.overflowX='auto';
+      smilie_selection_box.style.height=SmiliesRowHeight_local+'px';
     } else {
       $('smilies_btn').style.display='';
     }
@@ -894,6 +925,7 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
   var banner_display_position=null;
   var banner_display_position_nr=0;
   var DisplayBannersData_old=null;
+  var dummy_form=$('dummyform');
 
   var userlist_refresh_needed=false;
 
@@ -908,28 +940,28 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
 
       case  '100':
         // Session owner is not in a room
-        $('dummyform').s_id.value=s_id;
-        $('dummyform').inc.value='profile_main';
-        $('dummyform').ts.value=unixTimeStamp();
-        $('dummyform').submit();
+        dummy_form.s_id.value=s_id;
+        dummy_form.inc.value='profile_main';
+        dummy_form.ts.value=unixTimeStamp();
+        dummy_form.submit();
         return false;
       break;
 
       case  '200':
         // Session owner is in another room now
-        $('dummyform').s_id.value=s_id;
-        $('dummyform').inc.value='chat_room';
-        $('dummyform').ts.value=unixTimeStamp();
-        $('dummyform').submit();
+        dummy_form.s_id.value=s_id;
+        dummy_form.inc.value='chat_room';
+        dummy_form.ts.value=unixTimeStamp();
+        dummy_form.submit();
         return false;
       break;
 
       case  '300':
         // Room does not exists (anymore)
-        $('dummyform').s_id.value=s_id;
-        $('dummyform').inc.value='profile_main';
-        $('dummyform').ts.value=unixTimeStamp();
-        $('dummyform').submit();
+        dummy_form.s_id.value=s_id;
+        dummy_form.inc.value='profile_main';
+        dummy_form.ts.value=unixTimeStamp();
+        dummy_form.submit();
         return false;
       break;
 
@@ -952,7 +984,7 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
           if (outgoingMessageColor=='') {
             outgoingMessageColor=defaultMessageColor;
           }
-          $('main_input_textarea').style.color='#'+outgoingMessageColor;
+          MainInputTextArea.style.color='#'+outgoingMessageColor;
           $('message_colors_btn').style.backgroundColor='#'+outgoingMessageColor;
           // Users
           userlist_refresh_needed=true;
@@ -1076,10 +1108,8 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
  */
 function fixBackgroundImagePos() {
   if (BackgroundImageID>0) {
-    var cm=$('chatroom_messages');
     if (BackgroundImageWidth>0 && BackgroundImageHeight>0) {
-      cm.style.backgroundPosition=Math.round((parseInt(cm.style.width)-BackgroundImageWidth)/2)+'px '
-                                 +Math.round((parseInt(cm.style.height)-BackgroundImageHeight)/2+(isIE? 0 : TopBannerHeight))+'px';
+      ChatroomMessages.style.backgroundPosition=Math.round((parseInt(ChatroomMessages.style.width)-BackgroundImageWidth)/2)+'px '+Math.round((parseInt(ChatroomMessages.style.height)-BackgroundImageHeight)/2+(isIE? 0 : TopBannerHeight))+'px';
     }
   }
 }
@@ -1172,8 +1202,6 @@ function redrawUserlist() {
     // Append row to the table
     ulist_tbl_body.appendChild(newRow);
   }
-  // Update onMouseOver status
-  setMouseoverStatus();
 }
 
 
@@ -1839,8 +1867,6 @@ function showOwnOnlineStatus(online_status, online_status_message) {
     }
     status_button.alt=getLng('online_status')+': '+online_status_message;
     status_button.title=getLng('online_status')+': '+online_status_message;
-    // Update onMouseOver status
-    setMouseoverStatus();
   }
 }
 
@@ -1851,18 +1877,19 @@ function showOwnOnlineStatus(online_status, online_status_message) {
  */
 function openOnlineStatusBox(openerObj) {
   var online_status_code=UserList.getRecord(currentUserId).getOnlineStatus();
-  var openerTop=1*getTopPos(openerObj);
-  var openerLeft=1*getLeftPos(openerObj);
-  if ($('online_status_selection_box').style.display=='none') {
+  var openerTop=getTopPos(openerObj);
+  var openerLeft=getLeftPos(openerObj);
+  var online_status_selection_box=$('online_status_selection_box');
+  if (online_status_selection_box.style.display=='none') {
     disableSelection();
     document.onclick_original=document.onclick;
     document.onkeypress_original=document.onkeypress;
-    $('online_status_selection_box').style.display='';
-    $('online_status_selection_box').style.top=(openerTop-$('online_status_selection_box').scrollHeight)+'px';
-    $('online_status_selection_box').style.left=(openerLeft+1)+'px';
+    online_status_selection_box.style.display='';
+    online_status_selection_box.style.top=(openerTop-online_status_selection_box.scrollHeight)+'px';
+    online_status_selection_box.style.left=(openerLeft+1)+'px';
     setTimeout('document.onclick=function() { closeOnlineStatusBox() }', 10);
     setTimeout('document.onkeypress=function() { closeOnlineStatusBox() }', 10);
-    $('online_status_selection_box').style.display='none';
+    online_status_selection_box.style.display='none';
     setTimeout("$('online_status_selection_box').style.display='';", 10);
     $('online_status_1_pointer').src='./pic/clearpixel_1x1.gif';
     $('online_status_2_pointer').src='./pic/clearpixel_1x1.gif';
@@ -1876,13 +1903,14 @@ function openOnlineStatusBox(openerObj) {
  * Fix online status selection box position
  */
 function fixOnlineStatusBox() {
+  var online_status_selection_box=$('online_status_selection_box');
   winWidth=getWinWidth();
   winHeight=getWinHeight();
-  if ($('online_status_selection_box')) {
-    if ($('online_status_selection_box').scrollWidth+mouseX+5>winWidth) {
-      $('online_status_selection_box').style.left=(winWidth-$('online_status_selection_box').scrollWidth-5)+'px';
+  if (online_status_selection_box) {
+    if (online_status_selection_box.scrollWidth+mouseX+5>winWidth) {
+      online_status_selection_box.style.left=(winWidth-online_status_selection_box.scrollWidth-5)+'px';
     } else {
-      $('online_status_selection_box').style.left=mouseX+'px';
+      online_status_selection_box.style.left=mouseX+'px';
     }
   }
 }
@@ -1943,10 +1971,11 @@ function _CALLBACK_changeOnlineStatus() {
  * Leave current chat room and load user profile page
  */
 function leaveRoom() {
-  $('dummyform').s_id.value=s_id;
-  $('dummyform').inc.value='profile_main';
-  $('dummyform').ts.value=unixTimeStamp();
-  $('dummyform').submit();
+  var dummy_form=$('dummyform');
+  dummy_form.s_id.value=s_id;
+  dummy_form.inc.value='profile_main';
+  dummy_form.ts.value=unixTimeStamp();
+  dummy_form.submit();
 }
 
 /**
@@ -1968,11 +1997,11 @@ function gotGlobalUnMuted(action) {
           } else {
             alert(getLng('you_are_muted_permanently'));
           }
-          $('main_input_textarea').value='';
+          MainInputTextArea.value='';
           return false;
         }
-        $('main_input_textarea').value='';
-        $('main_input_textarea').blur();
+        MainInputTextArea.value='';
+        MainInputTextArea.blur();
         if (muted_until>0) {
           alert(getLng('you_are_muted_until').split('[EXPIRATION_DATE]').join(date(dateFormat, muted_until)));
         } else {
@@ -2072,18 +2101,15 @@ function updateRoomList(categories) {
                           +(room_id==currentRoomID? '&gt; ' : '')
                           +htmlspecialchars(ajaxUpdater.getCdata('name', 0, room))
                           +'&nbsp;['+ajaxUpdater.getCdata('users_count', 0, room)+']';
-          
           s_cat.appendChild(s_room);
-          if (stringToNumber(s_room.value)==currentRoomID) {
-            s_room.selected=true;
-          }
         }
         if (room_nr>1 || room!=null) {
           rs.appendChild(s_cat);
         }
       }
     }
-    rs.style.width=($('chatroom_userlist').scrollWidth-35)+'px';
+    rs.style.width=(ChatroomUserlist.scrollWidth-35)+'px';
+    rs.value=currentRoomID;
   }
 }
 
@@ -2112,6 +2138,7 @@ function switchChatRoom(id, ask_pass, password) {
 function _CALLBACK_switchChatRoom() {
   var message=actionHandler.getCdata('message');
   var status=actionHandler.getCdata('status');
+  var dummy_form=$('dummyform');
   switch (status) {
 
     case  '-1':
@@ -2122,10 +2149,10 @@ function _CALLBACK_switchChatRoom() {
 
     case '0':
       // Room changed. Load room page.
-      $('dummyform').s_id.value=s_id;
-      $('dummyform').inc.value='chat_room';
-      $('dummyform').ts.value=unixTimeStamp();
-      $('dummyform').submit();
+      dummy_form.s_id.value=s_id;
+      dummy_form.inc.value='chat_room';
+      dummy_form.ts.value=unixTimeStamp();
+      dummy_form.submit();
       return false;
     break;
 
@@ -2157,19 +2184,20 @@ function _CALLBACK_switchChatRoom() {
  * @param   object    openerObj   Opener object
  */
 function showHelpBox(openerObj) {
-  var openerTop=1*getTopPos(openerObj);
-  var openerLeft=1*getLeftPos(openerObj);
-  if ($('help_box').style.display=='none') {
+  var openerTop=getTopPos(openerObj);
+  var openerLeft=getLeftPos(openerObj);
+  var help_box=$('help_box');
+  if (help_box.style.display=='none') {
     disableSelection();
     document.onclick_original=document.onclick;
     document.onkeypress_original=document.onkeypress;
-    $('help_box').style.display='';
-    $('help_box').style.top=(openerTop-$('help_box').scrollHeight)+'px';
-    $('help_box').style.left=(openerLeft+1)+'px';
+    help_box.style.display='';
+    help_box.style.top=(openerTop-help_box.scrollHeight)+'px';
+    help_box.style.left=(openerLeft+1)+'px';
     setTimeout('document.onclick=function() { closeHelpBox() }', 10);
     setTimeout('document.onkeypress=function() { closeHelpBox() }', 10);
-    $('help_box').style.display='none';
-    setTimeout("$('help_box').style.display='';", 10);
+    help_box.style.display='none';
+    setTimeout("$('help_box').style.display=''", 10);
     setTimeout('fixHelpBox()', 15);
   }
 }
@@ -2179,13 +2207,14 @@ function showHelpBox(openerObj) {
  * Fix online status selection box position
  */
 function fixHelpBox() {
+  var help_box=$('help_box');
   winWidth=getWinWidth();
   winHeight=getWinHeight();
-  if ($('help_box')) {
-    if ($('help_box').scrollWidth+mouseX+5>winWidth) {
-      $('help_box').style.left=(winWidth-$('help_box').scrollWidth-5)+'px';
+  if (help_box) {
+    if (help_box.scrollWidth+mouseX+5>winWidth) {
+      help_box.style.left=(winWidth-help_box.scrollWidth-5)+'px';
     } else {
-      $('help_box').style.left=mouseX+'px';
+      help_box.style.left=mouseX+'px';
     }
   }
 }
@@ -2234,7 +2263,7 @@ function invertTimeStampView() {
   for (var i in timestampSpans) {
     $(timestampSpans[i]).style.display=new_display;
   }
-  $('main_input_textarea').focus();
+  MainInputTextArea.focus();
   $('invert_timestamp_btn').style.backgroundImage='url(./pic/'+(displayTimeStamp? 'timestamp_active_15x15.gif' : 'timestamp_inactive_15x15.gif')+')';
   $('invert_timestamp_btn').title=displayTimeStamp? getLng('hide_message_time') : getLng('show_message_time');
 }
@@ -2282,8 +2311,6 @@ function parseUploadResponse(code, message, binaryfile_id, width, height, filena
 
     }
   }
-  // Reset window status resolution
-  setMouseoverStatus();
 }
 
 /**
@@ -2300,8 +2327,8 @@ function displayAttachments() {
          +'&nbsp;&nbsp;&nbsp;';
   }
   html+=MsgAttachments.length>0? '<br />' : '';
-  $('attached_files').innerHTML=html;
   if (html!='') {
+    $('attached_files').innerHTML=html;
     $('attached_files').style.display='';
   } else {
     $('attached_files').style.display='none';
@@ -2449,7 +2476,6 @@ function _CALLBACK_loadMsgBanner() {
   var status=ajaxBannersHandler.getCdata('status');
   var banner_data=null;
   var banner_span='';
-  var cm=$('chatroom_messages');
   var cmc=$('chatroom_messages_contents');
   if (status=='-1') {
     // Session is invalid
@@ -2472,7 +2498,7 @@ function _CALLBACK_loadMsgBanner() {
   cmc.appendChild(banner_span);
   if (AutoScroll) {
     try {
-      cm.scrollTop=cm.scrollHeight;
+      ChatroomMessages.scrollTop=ChatroomMessages.scrollHeight;
     } catch (e) {
       banner_span.scrollIntoView(false);
     }
@@ -2490,10 +2516,11 @@ function _CALLBACK_loadPopupBanner() {
 //debug(ajaxBannersHandler.getResponseString()); return false;
   var message=ajaxBannersHandler.getCdata('message');
   var status=ajaxBannersHandler.getCdata('status');
-
   var banner_data=null;
   var width=0;
   var height=0;
+  var banner_popup=$('banner_popup');
+  var banner_popup_frame=$('banner_popup_frame');
 
   if (status=='-1') {
     // Session is invalid
@@ -2504,15 +2531,15 @@ function _CALLBACK_loadPopupBanner() {
     width=stringToNumber(ajaxBannersHandler.getCdata('width', 0, banner_data));
     height=stringToNumber(ajaxBannersHandler.getCdata('height', 0, banner_data));
 
-    $('banner_popup').style.width=(width+14)+'px';
-    $('banner_popup').style.height=(height+26)+'px';
+    banner_popup.style.width=(width+14)+'px';
+    banner_popup.style.height=(height+26)+'px';
 
-    $('banner_popup_frame').style.width=width+'px';
-    $('banner_popup_frame').style.height=height+'px';
+    banner_popup_frame.style.width=width+'px';
+    banner_popup_frame.style.height=height+'px';
 
-    $('banner_popup_frame').src=formlink+'?load_banner=m&banner_id='+ajaxBannersHandler.getCdata('id', 0, banner_data)+(isOpera? '&killCache='+unixTimeStamp() : '');
-    $('banner_popup').style.display='';
-    moveToCenter($('banner_popup'));
+    banner_popup_frame.src=formlink+'?load_banner=m&banner_id='+ajaxBannersHandler.getCdata('id', 0, banner_data)+(isOpera? '&killCache='+unixTimeStamp() : '');
+    banner_popup.style.display='';
+    moveToCenter(banner_popup);
   }
 }
 

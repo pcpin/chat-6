@@ -63,9 +63,10 @@ var colorbox_callback_func=null;
  *                                Opener object MUST have an ID in this case!
  */
 function openColorBox(tgt_obj_id, css_attr, openerObj, tgt_var, center, opener_css) {
-  var openerTop=1*getTopPos(openerObj);
-  var openerLeft=1*getLeftPos(openerObj);
-  var colorbox_areas=$$('area', $('color_selection_box'));
+  var openerTop=getTopPos(openerObj);
+  var openerLeft=getLeftPos(openerObj);
+  var color_selection_box=$('color_selection_box');
+  var colorbox_areas=$$('area', color_selection_box);
   var name_='';
   if (typeof(tgt_obj_id)!='string') {
     tgt_obj_id='';
@@ -88,12 +89,12 @@ function openColorBox(tgt_obj_id, css_attr, openerObj, tgt_var, center, opener_c
         }
       }
     }
-    $('color_selection_box').style.display='';
+    color_selection_box.style.display='';
     if (center==true) {
-      moveToCenter($('color_selection_box'));
+      moveToCenter(color_selection_box);
     } else {
-      $('color_selection_box').style.top=(openerTop-$('color_selection_box').scrollHeight-1)+'px';
-      $('color_selection_box').style.left=(openerLeft+1)+'px';
+      color_selection_box.style.top=(openerTop-color_selection_box.scrollHeight-1)+'px';
+      color_selection_box.style.left=(openerLeft+1)+'px';
     }
     colorbox_tgt_obj_id=tgt_obj_id;
     colorbox_tgt_css_attr=css_attr;
@@ -105,8 +106,8 @@ function openColorBox(tgt_obj_id, css_attr, openerObj, tgt_var, center, opener_c
       colorbox_opener_id='';
       colorbox_opener_css_attr='';
     }
-    $('color_selection_box').style.display='none';
-    setTimeout("$('color_selection_box').style.display='';", 10);
+    color_selection_box.style.display='none';
+    setTimeout("$('color_selection_box').style.display=''", 10);
   }
 }
 

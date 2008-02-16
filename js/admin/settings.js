@@ -242,7 +242,6 @@ function _CALLBACK_getSettings() {
   }
   settings_tbl.style.display='';
   toggleProgressBar(false);
-  setMouseoverStatus();
   if (RoomListInputID!='') {
     // Get room list
     getRoomList();

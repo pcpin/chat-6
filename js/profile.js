@@ -338,8 +338,6 @@ function _CALLBACK_getAvatars() {
     }
   }
   toggleProgressBar(false);
-  // Reset window status resolution
-  setMouseoverStatus();
 }
 
 
@@ -508,8 +506,6 @@ function parseUploadResponse(code, message, binaryfile_id, width, height) {
 
     }
   }
-  // Reset window status resolution
-  setMouseoverStatus();
 }
 
 
@@ -708,8 +704,6 @@ function flushNickNamesTable() {
   } else {
     $('new_nickname_link_row').style.display='none';
   }
-  // Reset window status resolution
-  setMouseoverStatus();
 }
 
 

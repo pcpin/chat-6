@@ -74,7 +74,6 @@ function _CALLBACK_getDisallowedNames() {
     }
   }
   toggleProgressBar(false);
-  setMouseoverStatus();
 }
 
 
