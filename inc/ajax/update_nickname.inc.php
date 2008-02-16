@@ -33,7 +33,7 @@ if (empty($profile_user_id) || $current_user->is_admin!=='y') {
 if (!isset($nickname_id) || !is_scalar($nickname_id)) $nickname_id=0;
 if (!isset($new_nickname) || !is_scalar($new_nickname)) $new_nickname='';
 
-if (!empty($nickname_id) && !$nickname->_db_getList('id', 'id =# '.$nickname_id, 'user_id = '.$profile_user_id, 1)) {
+if (!empty($nickname_id) && !$nickname->_db_getList('id', 'id = '.$nickname_id, 'user_id = '.$profile_user_id, 1)) {
   // Nickname does not exists or not belongs to user
   $nickname_id=0;
 }

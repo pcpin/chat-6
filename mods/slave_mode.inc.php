@@ -37,7 +37,7 @@ if (PCPIN_SLAVE_MODE && !empty($_pcpin_slave_userdata) && !empty($session) && is
   } else {
     // Registered user
     // Check user
-    if ($current_user->_db_getList('login =# '.$_pcpin_slave_userdata['login'], 1)) {
+    if ($current_user->_db_getList('login = '.$_pcpin_slave_userdata['login'], 1)) {
       // User exists
       $current_user_set=$current_user->_db_list[0];
       $current_user->_db_freeList();

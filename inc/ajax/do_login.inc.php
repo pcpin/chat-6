@@ -54,7 +54,7 @@ if (false!==$blocked=$ipfilter->isBlocked(PCPIN_CLIENT_IP)) {
   }
 } elseif ($login!='' && ($password!='' || PCPIN_SLAVE_MODE && $_pcpin_slave_userdata_md5_password!='')) {
   // Registered user login
-  if ($current_user->_db_getList('login =# '.$login, 1)) {
+  if ($current_user->_db_getList('login = '.$login, 1)) {
     // User exists
     $userdata=$current_user->_db_list[0];
     $current_user->_db_freeList();
