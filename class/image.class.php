@@ -77,7 +77,6 @@ class PCPIN_Image {
                      $type='jpg', $bgcolor_r=255, $bgcolor_g=255, $bgcolor_b=255,
                      $fallback_src_file=null, $fallback_src_img=null) {
     $result=false;
-    $fallback=false;
     if (   PCPIN_Image::whichGD()==2
         && (!empty($src_img) || !empty($src_file) && file_exists($src_file) && is_readable($src_file))
         && !empty($width) && !empty($height)) {
@@ -93,7 +92,6 @@ class PCPIN_Image {
       }
       if (empty($im)) {
         // Use fallback
-        $fallback=true;
         if (!empty($fallback_src_file) && file_exists($fallback_src_file) && is_readable($fallback_src_file)) {
           $src_img=file_get_contents($fallback_src_file);
         } elseif (!empty($fallback_src_img)) {

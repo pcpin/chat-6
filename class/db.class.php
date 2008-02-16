@@ -171,9 +171,6 @@ class PCPIN_DB {
    * @return  mixed   Query execution resource or false on error
    */
   function _db_query($query='', $unbuffered=false) {
-    // If $show_slowest>0 then all queries with execution time >= $show_slowest
-    // will be monitored.
-    $show_slowest=0;
     $result=false;
     if (!empty($query)) {
       if (PCPIN_DEBUGMODE && (PCPIN_LOG_TIMER || PCPIN_SHOW_SLOW_QUERIES>0)) {
@@ -927,7 +924,8 @@ class PCPIN_DB {
     if (is_object($tgt_obj)) {
       // Get source vars
       $src_vars=get_object_vars($src_obj);
-      foreach ($src_vars as $key=>$val) {
+      $keys=array_keys($src_vars);
+      foreach ($keys as $key) {
         if ($key!='_db_list' && $key!='_db_list_count' && '_'==substr($key, 0, 1) && '_s_'!=substr($key, 0, 2)) {
           $tgt_obj->$key=&$src_obj->$key;
         }

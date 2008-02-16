@@ -65,7 +65,6 @@ class PCPIN_Badword extends PCPIN_Session {
    * @return  array
    */
   function getWords() {
-    $words=array();
     if ($this->_db_getList('word ASC')) {
       $this->words_cache=$this->_db_list;
       $this->_db_freeList();

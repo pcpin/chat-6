@@ -400,7 +400,7 @@ class PCPIN_User extends PCPIN_Session {
     if ($email!='') {
       $query=$this->_db_makeQuery(1100, $user_id, $email);
       if ($result=$this->_db_query($query)) {
-        if ($data=$this->_db_fetch($result, MYSQL_NUM)) {
+        if ($this->_db_fetch($result, MYSQL_NUM)) {
           $unique=false;
         } else {
           $unique=true;

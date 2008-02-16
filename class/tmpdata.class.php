@@ -85,7 +85,7 @@ class PCPIN_TmpData extends PCPIN_Session {
       $this->user_id=$user_id;
       $this->binaryfile_id=$binaryfile_id;
       $this->filename=$filename;
-      if ($result=$this->_db_insertObj()) {
+      if ($this->_db_insertObj()) {
         $this->id=$this->_db_lastInsertID();
       }
     }

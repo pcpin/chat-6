@@ -148,10 +148,9 @@ class PCPIN_TCP {
    * Reads line from a socket connection. Lines must end with CRLF sequence
    * @param   resource  $conn       A reference to connection handler
    * @param   string    $line       A reference to read line
-   * @param   int       $limit      Line length limit
    * @return  boolean   TRUE on success or FALSE on error
    */
-  function readLineConn(&$conn, &$line, $limit=65535) {
+  function readLineConn(&$conn, &$line) {
     $result=false;
     $line='';
     if (!empty($conn) && is_resource($conn)) {
@@ -177,10 +176,9 @@ class PCPIN_TCP {
    * Reads the last line from a socket connection
    * @param   resource  $conn       A reference to connection handler
    * @param   string    $line       A reference to read line
-   * @param   int       $limit      Line length limit
    * @return  boolean   TRUE on success or FALSE on error
    */
-  function readLastLineConn(&$conn, &$line, $limit=65535) {
+  function readLastLineConn(&$conn, &$line) {
     $result=false;
     $line='';
     if (!empty($conn) && is_resource($conn) && !feof($conn)) {
