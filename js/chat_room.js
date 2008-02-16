@@ -1273,7 +1273,15 @@ function processMessage(id, type, offline, date, author_id, author_nickname, tar
         if (author_nickname!='') {
           if ((privacy==0 || privacy==1) && target_user_id>0 && UserList.getRecord(target_user_id)) {
             // "Said to" or "Whispered to" message
-            displayMessage(author_nickname, parseMessage(body), css_properties, true, date, window, author_id, false, attachments, privacy, target_user_id);
+            // Check for opened PM boxes
+            var pm_box_found=false;
+            for (var pmh in pmHandlers) {
+              if (pmHandlers[pmh]) {
+                pm_box_found=true;
+                break;
+              }
+            }
+            displayMessage(author_nickname, parseMessage(body), css_properties, true, date, window, author_id, !pm_box_found, attachments, privacy, target_user_id);
             // Messages counter for banner
             if (MsgBannerMessagesLeft>0) {
               if (MsgBannerMessagesLeft==1) {
