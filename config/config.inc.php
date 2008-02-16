@@ -102,7 +102,7 @@ define('PCPIN_SQL_LOGFILE', './SQL.log');
  * Session ID string length in characters
  * WARNING: Maximum length: 32 characters
  */
-define('PCPIN_SID_LENGTH', 12);
+define('PCPIN_SID_LENGTH', 24);
 
 
 /**
