@@ -22,7 +22,7 @@ _pcpin_loadClass('version');
 
 $__pcpin_upgrade=array();
 
-$__pcpin_upgrade['file_version']=6.06;
+$__pcpin_upgrade['file_version']=6.07;
 $__pcpin_upgrade['init_class']=$__pcpin_init_class; // copy, not reference!
 $__pcpin_upgrade['init_class']->_conf_all=array(1); // just a dummy
 $__pcpin_upgrade['session']=new PCPIN_Session($__pcpin_upgrade['init_class'], '', true);
