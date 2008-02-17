@@ -1,5 +1,5 @@
 ===================================================================================
-                 PCPIN Chat 6 (BETA) installation instructions.
+                      PCPIN Chat 6 installation instructions.
    Read *carefully* before you begin with PCPIN Chat 6 installation or upgrade!
 ===================================================================================
 
