@@ -48,11 +48,6 @@ class PCPIN_DB {
    */
   var $_db_client_server_charsets=null;
 
-  /**
-   * Query template cache
-   * @var   array
-   */
-  var $_db_query_templates=null;
 
 
   /**
@@ -93,7 +88,6 @@ class PCPIN_DB {
     }
     unset($db_conndata);
     $this->_cache['_db_tabledata']=array(); // Cached table information ($this->_cache is a property of the parent class)
-    $this->_db_query_templates=array(); // Cached query templates
     $this->_db_pass_vars($this, $caller);
   }
 
@@ -984,14 +978,7 @@ class PCPIN_DB {
     unset($argv[0]);
     // Load requested template
     if (pcpin_ctype_digit($nr)) {
-      if (isset($this->_db_query_templates[$nr])) {
-        // Get template from cache
-        $query=$this->_db_query_templates[$nr];
-      } else {
-        // Get template from file
-        require('./class/dbtpl/'.$nr.'.tpl.php');
-        $this->_db_query_templates[$nr]=$query;
-      }
+      require('./class/dbtpl/'.$nr.'.tpl.php');
       $query=str_replace('\\_', PCPIN_SQLQUERY_ARG_SEPARATOR_START, str_replace('_\\', PCPIN_SQLQUERY_ARG_SEPARATOR_END, $query));
       foreach ($argv as $key=>$arg) {
         // Escape dangerous characters from query parameters
