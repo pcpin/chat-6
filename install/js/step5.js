@@ -96,5 +96,22 @@ function _CALLBACK_checkPreviousInstallation() {
 
 
 function setImportFlag(obj) {
+  var show_images_warning=false;
   window.parent.import_selection[obj.id.substring(5)]=obj.checked;
+  for (var i in importObjectNames5) {
+    if (window.parent.import_selection[importObjectNames5[i]]) {
+      if (   importObjectNames5[i]=='users'
+          || importObjectNames5[i]=='smilies'
+          || importObjectNames5[i]=='rooms'
+          ) {
+        show_images_warning=true;
+        break;
+      }
+    }
+  }
+  if (show_images_warning) {
+    document.getElementById('images_warning').style.display='';
+  } else {
+    document.getElementById('images_warning').style.display='none';
+  }
 }

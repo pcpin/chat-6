@@ -128,6 +128,12 @@ $body_onload[]='checkPreviousInstallation()';
     </td>
   </tr>
 
+  <tr id="images_warning" style="display:none">
+    <td class="tbl_row" style="text-align:center;color:#990000;">
+      <b>IMPORTANT:</b> Put the directory <b>/images</b> with all contents from your old chat location into new chat directory <b>/install/import</b>!
+    </td>
+  </tr>
+
   <tr>
     <td class="tbl_row" style="text-align: right">
       <button type="button" onclick="window.history.go(-1)" title="Back">Back</button>

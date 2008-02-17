@@ -39,7 +39,7 @@ $body_onload[]='initAdminAccountForm()';
       </label>
     </td>
   </tr>
-  <tr>
+  <tr id="admin_account_username_row">
     <td class="tbl_row" style="text-align:right">
       Administrator username:
     </td>
@@ -47,7 +47,7 @@ $body_onload[]='initAdminAccountForm()';
       <input type="text" id="admin_account_username" size="32" maxlength="32" onchange="setAdminUsername(this)" />
     </td>
   </tr>
-  <tr>
+  <tr id="admin_account_password_row">
     <td class="tbl_row" style="text-align:right">
       Administrator password:
     </td>
@@ -55,7 +55,7 @@ $body_onload[]='initAdminAccountForm()';
       <input type="password" id="admin_account_password" size="32" maxlength="32" onchange="setAdminPassword(this)" />
     </td>
   </tr>
-  <tr>
+  <tr id="admin_account_password2_row">
     <td class="tbl_row" style="text-align:right">
       Confirm Administrator password:
     </td>
@@ -63,7 +63,7 @@ $body_onload[]='initAdminAccountForm()';
       <input type="password" id="admin_account_password2" size="32" maxlength="32" onchange="setAdminPassword2(this)" />
     </td>
   </tr>
-  <tr>
+  <tr id="admin_account_email_row">
     <td class="tbl_row" style="text-align:right">
       Administrator E-Mail address:
     </td>

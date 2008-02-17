@@ -39,10 +39,17 @@ function initAdminAccountForm() {
 }
 
 function setNoAdminAccount(state) {
+  var field_display=state? 'none' : '';
   window.parent.admin_account['create']=!state;
   $('admin_account_username').disabled=state;
   $('admin_account_password').disabled=state;
+  $('admin_account_password2').disabled=state;
   $('admin_account_email').disabled=state;
+
+  $('admin_account_username_row').style.display=field_display;
+  $('admin_account_password_row').style.display=field_display;
+  $('admin_account_password2_row').style.display=field_display;
+  $('admin_account_email_row').style.display=field_display;
 }
 
 function setAdminUsername(obj) {
