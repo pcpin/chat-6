@@ -21,6 +21,7 @@ $status='-1'; // -1: Session is invalid
 
 _pcpin_loadClass('message'); $msg=new PCPIN_Message($session);
 _pcpin_loadClass('ipfilter'); $ipfilter=new PCPIN_IPFilter($session);
+_pcpin_loadClass('failed_login'); $failed_login_class=new PCPIN_Failed_Login($session);
 
 
 if (!isset($login) || !is_scalar($login)) $login='';
@@ -54,6 +55,7 @@ if (false!==$blocked=$ipfilter->isBlocked(PCPIN_CLIENT_IP)) {
   }
 } elseif ($login!='' && ($password!='' || PCPIN_SLAVE_MODE && $_pcpin_slave_userdata_md5_password!='')) {
   // Registered user login
+  $login_failed=false;
   if ($current_user->_db_getList('login = '.$login, 1)) {
     // User exists
     $userdata=$current_user->_db_list[0];
@@ -68,6 +70,7 @@ if (false!==$blocked=$ipfilter->isBlocked(PCPIN_CLIENT_IP)) {
     }
     if (true===$password_ok || true===$new_password_ok) {
       // Login and password are OK
+      $failed_login_class->clearCounter(PCPIN_CLIENT_IP);
       // Account activated?
       if (!empty($session->_conf_all['activate_new_accounts']) && $userdata['activated']!='y') {
         // Account is NOT activated
@@ -117,8 +120,17 @@ if (false!==$blocked=$ipfilter->isBlocked(PCPIN_CLIENT_IP)) {
           $msg->addMessage(101, 'n', 0, '', 0, 0, $session->_s_user_id);
         }
       }
+    } else {
+      // Invalid password
+      $login_failed=true;
     }
     unset($userdata);
+  } else {
+    // User does not exists
+    $login_failed=true;
+  }
+  if (!empty($login_failed)) {
+    $failed_login_class->increaseCounter(PCPIN_CLIENT_IP);
   }
 } elseif (!empty($guest_login)) {
   // Guest login
