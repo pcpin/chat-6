@@ -100,7 +100,7 @@
 
 <!-- MESSAGES AREA -->
 <div id="chatroom_messages" style="background-image:url({ROOM_BACKGROUND_IMAGE_URL})">
-  <div id="chatroom_messages_contents"></div>
+  <div id="chatroom_messages_contents" style="position:absolute;top:0px;left:0px;"></div>
 </div>
 
 <!-- ONLINE STATUS SELECTION BOX -->

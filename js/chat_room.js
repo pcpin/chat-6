@@ -1109,7 +1109,7 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
 function fixBackgroundImagePos() {
   if (BackgroundImageID>0) {
     if (BackgroundImageWidth>0 && BackgroundImageHeight>0) {
-      ChatroomMessages.style.backgroundPosition=Math.round((parseInt(ChatroomMessages.style.width)-BackgroundImageWidth)/2)+'px '+Math.round((parseInt(ChatroomMessages.style.height)-BackgroundImageHeight)/2+(isIE? 0 : TopBannerHeight))+'px';
+      ChatroomMessages.style.backgroundPosition=Math.round((parseInt(ChatroomMessages.style.width)-BackgroundImageWidth)/2)+'px '+Math.round((parseInt(ChatroomMessages.style.height)-BackgroundImageHeight)/2+(!isIE && TopBannerEnabled? parseInt(ChatroomMessages.style.top) : 0))+'px';
     }
   }
 }
