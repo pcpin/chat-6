@@ -22,7 +22,7 @@ _pcpin_loadClass('version');
 
 $__pcpin_upgrade=array();
 
-$__pcpin_upgrade['file_version']=6.07;
+$__pcpin_upgrade['file_version']=6.08;
 $__pcpin_upgrade['init_class']=$__pcpin_init_class; // copy, not reference!
 $__pcpin_upgrade['init_class']->_conf_all=array(1); // just a dummy
 $__pcpin_upgrade['session']=new PCPIN_Session($__pcpin_upgrade['init_class'], '', true);
@@ -39,9 +39,18 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
 
       case 6.00:
       case 6.01:
-        // Add more font sizes. See http://bugs.pcpin.com/view.php?id=224
+        // PCPIN Chat 6.02: Add more font sizes. See http://bugs.pcpin.com/view.php?id=224
         $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."config` SET `_conf_choices` = '9=9|10=10|11=11|12=12|13=13|14=14|15=15|16=16|17=17|18=18|19=19|20=20' WHERE `_conf_name` = 'default_font_size' LIMIT 1");
         $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."config` SET `_conf_choices` = '9=9|10=10|11=11|12=12|13=13|14=14|15=15|16=16|17=17|18=18|19=19|20=20' WHERE `_conf_name` = 'font_sizes' LIMIT 1");
+      case 6.02:
+      case 6.03:
+      case 6.04:
+      case 6.05:
+      case 6.06:
+      case 6.07:
+        // PCPIN Chat 6.08: Save failed login attempts. See http://bugs.pcpin.com/view.php?id=297
+        $__pcpin_upgrade['session']->_db_query("DROP TABLE IF EXISTS `".PCPIN_DB_PREFIX."failed_login`");
+        $__pcpin_upgrade['session']->_db_query("CREATE TABLE IF NOT EXISTS `".PCPIN_DB_PREFIX."failed_login` ( `ip` varchar(15) NOT NULL default '', `count` int(11) default 0 NOT NULL, PRIMARY KEY  (`ip`) ) TYPE=MyISAM");
       break;
 
     }
@@ -56,6 +65,10 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
 unset($__pcpin_upgrade);
 
 // Trying to delete this file
-@unlink('./upgrade.php');
+#@unlink('./upgrade.php');
+if (file_exists('./upgrade.php')) {
+  die('<html><body><center><br /><br /><br /><br /><h3>Upgrade completed.</h3><br />Please delete file <b>upgrade.php</b> in order to continue.</center></body></html>');
+}
+
 
 ?>

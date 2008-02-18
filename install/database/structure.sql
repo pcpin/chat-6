@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$attachment` (
   `filename` varchar(255) NOT NULL,
   PRIMARY KEY  (`id`),
   KEY `message_id` (`message_id`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=1 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$avatar`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$avatar` (
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$avatar` (
   PRIMARY KEY  (`id`),
   KEY `user_id` (`user_id`,`primary`),
   KEY `binaryfile_id` (`binaryfile_id`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=2 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$badword`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$badword` (
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$badword` (
   `replacement` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `word` (`word`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=10 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$banner`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$banner` (
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$banner` (
   KEY `date` (`start_date`,`expiration_date`),
   KEY `views` (`views`),
   KEY `max_views` (`max_views`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=16 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$binaryfile`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$binaryfile` (
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$binaryfile` (
   `protected` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`),
   KEY `protected` (`protected`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=370 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$category`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$category` (
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$category` (
   KEY `name` (`name`),
   KEY `parent_id` (`parent_id`),
   KEY `listpos` (`listpos`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=17 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$config`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$config` (
@@ -116,14 +116,21 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$config` (
   PRIMARY KEY  (`_conf_id`),
   UNIQUE KEY `_conf_name` (`_conf_name`),
   KEY `_conf_group` (`_conf_group`,`_conf_subgroup`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=81 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$disallowed_name`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$disallowed_name` (
   `id` int(11) NOT NULL auto_increment,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY  (`id`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=5 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
+
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$failed_login`; /* PCPIN6_QUERY_SEPARATOR */
+CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$failed_login` (
+  `ip` varchar(15) NOT NULL default '',
+  `count` int(11) NOT NULL default 0,
+  PRIMARY KEY  (`ip`)
+) TYPE=MyISAM ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$invitation`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$invitation` (
@@ -137,7 +144,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$invitation` (
   UNIQUE KEY `unique` (`author_id`,`target_user_id`,`room_id`),
   KEY `target_user_id` (`target_user_id`),
   KEY `room_id` (`room_id`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=71 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$ipfilter`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$ipfilter` (
@@ -153,7 +160,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$ipfilter` (
   KEY `added_on` (`added_on`),
   KEY `expires` (`expires`),
   KEY `action` (`action`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=2 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$language`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$language` (
@@ -165,7 +172,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$language` (
   PRIMARY KEY  (`id`),
   UNIQUE KEY `iso_name` (`iso_name`),
   KEY `active` (`active`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=30 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$language_expression`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$language_expression` (
@@ -197,7 +204,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$message` (
   KEY `author_id` (`author_id`),
   KEY `target_room_id` (`target_room_id`),
   KEY `target_user_id` (`target_user_id`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=1; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$message_log`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$message_log` (
@@ -253,7 +260,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$nickname` (
   KEY `nickname` (`nickname`),
   KEY `nickname_plain` (`nickname_plain`),
   KEY `default` (`default`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=1 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$room`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$room` (
@@ -274,7 +281,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$room` (
   KEY `users_count` (`users_count`),
   KEY `last_ping` (`last_ping`),
   KEY `listpos` (`listpos`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=82 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$session`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$session` (
@@ -315,7 +322,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$smilie` (
   `description` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`),
   KEY `text` (`code`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=29 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$tmpdata`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$tmpdata` (
@@ -328,7 +335,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$tmpdata` (
   KEY `type` (`type`),
   KEY `user_id` (`user_id`),
   KEY `binaryfile_id` (`binaryfile_id`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=1 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$user`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$user` (
@@ -378,7 +385,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$user` (
   KEY `joined` (`joined`,`last_login`),
   KEY `banned` (`banned_until`,`banned_permanently`),
   KEY `global_muted` (`global_muted_until`,`global_muted_permanently`)
-) TYPE=MyISAM PACK_KEYS=0 AUTO_INCREMENT=1 ; /* PCPIN6_QUERY_SEPARATOR */
+) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$userdata`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$userdata` (
