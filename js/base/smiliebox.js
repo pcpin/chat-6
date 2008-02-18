@@ -292,7 +292,7 @@ function setSmilieBoxSizes() {
     var sb=$('smilie_selection_box');
     sb.style.display='';
     newWidth=sb.scrollWidth;
-    newHeight=sb.scrollHeight;
+    newHeight=sb.scrollHeight-$('smiliebox_header').scrollHeight;
     sb.style.display='none';
     if (newWidth>winWidth-100) {
       newWidth=winWidth-100;
