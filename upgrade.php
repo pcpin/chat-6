@@ -65,7 +65,7 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
 unset($__pcpin_upgrade);
 
 // Trying to delete this file
-#@unlink('./upgrade.php');
+@unlink('./upgrade.php');
 if (file_exists('./upgrade.php')) {
   die('<html><body><center><br /><br /><br /><br /><h3>Upgrade completed.</h3><br />Please delete file <b>upgrade.php</b> in order to continue.</center></body></html>');
 }
