@@ -429,5 +429,42 @@ class PCPIN_Language extends PCPIN_Session {
   }
 
 
+  /**
+   * Get language file information
+   * @param   string    $raw            Raw data
+   * @param   string    &$lng_info      Language file info will be stored here
+   * @return  boolean TRUE on success or FALSE on error
+   */
+  function getLanguageFileInfo($raw, &$lng_info) {
+    $result=false;
+    $lng_info=array();
+    if ($raw!='') {
+      $hash=substr($raw, 0, 32);
+      $raw=substr($raw, 32);
+      if (strlen($hash)==32 && $raw!='' && strtoupper(md5($raw))===$hash) {
+        // Hash OK
+        if ($raw=@base64_decode($raw)) {
+          if ($lng=@unserialize($raw)) {
+            unset($raw);
+            if (   is_array($lng)
+                && isset($lng['data_type']) && $lng['data_type']=='language'
+                && isset($lng['pcpin_version'])
+                && !empty($lng['data']) && is_array($lng['data'])
+                ) {
+              $result=true;
+              $lng_info['pcpin_version']=$lng['pcpin_version'];
+              $lng_info['date_created']=$lng['date_created'];
+              $lng=$lng['data'];
+              $lng_info['iso_name']=PCPIN_Common::hexToString($lng['iso_name']);
+              $lng_info['local_name']=PCPIN_Common::hexToString($lng['local_name']);
+              $lng_info['expressions_count']=count($lng['expressions']);
+            }
+          }
+        }
+      }
+    }
+    return $result;
+  }
+  
 }
 ?>

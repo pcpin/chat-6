@@ -15,41 +15,41 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function initAdminAccountForm() {
-  if (typeof(window.parent.admin_account)!='object') {
-    window.parent.admin_account=new Array();
-    window.parent.admin_account['create']=true;
-    window.parent.admin_account['username']='';
-    window.parent.admin_account['password']='';
-    window.parent.admin_account['password2']='';
-    window.parent.admin_account['email']='';
+
+function initLanguagesForm() {
+  var inputs=$$('INPUT');
+  if (typeof(window.parent.languages)!='object') {
+    window.parent.languages=new Array();
   }
-
-  $('admin_account_username').value=window.parent.admin_account['username'];
-  $('admin_account_password').value=window.parent.admin_account['password'];
-  $('admin_account_password2').value=window.parent.admin_account['password2'];
-  $('admin_account_email').value=window.parent.admin_account['email'];
-
-
-  if (window.parent.import_selection['users']) {
-    $('no_new_admin_account_row').style.display='';
-    $('no_new_admin_account').checked=!window.parent.admin_account['create'];
-    $('no_new_admin_account').onclick();
-  }
+  getLanguages();
 }
 
-function setNoAdminAccount(state) {
-  var field_display=state? 'none' : '';
-  window.parent.admin_account['create']=!state;
-  $('admin_account_username').disabled=state;
-  $('admin_account_password').disabled=state;
-  $('admin_account_password2').disabled=state;
-  $('admin_account_email').disabled=state;
+function getLanguages() {
+  sendData('_CALLBACK_getLanguages()',
+           './install/ajax/get_languages.php',
+           'POST',
+            'host='+urlencode(window.parent.db_data['host'])
+           +'&user='+urlencode(window.parent.db_data['user'])
+           +'&password='+urlencode(window.parent.db_data['password'])
+           +'&database='+urlencode(window.parent.db_data['database'])
+           +'&prefix='+urlencode(window.parent.db_data['prefix'])
+           );
+}
+function _CALLBACK_getLanguages() {
+  debug(actionHandler.getResponseString()); return false;
 
-  $('admin_account_username_row').style.display=field_display;
-  $('admin_account_password_row').style.display=field_display;
-  $('admin_account_password2_row').style.display=field_display;
-  $('admin_account_email_row').style.display=field_display;
+
+/*
+    for (var id in window.parent.languages) {
+    if (window.parent.languages[id]) {
+      if ($('lng_'+id)) {
+        $('lng_'+id).checked=true;
+      } else {
+        window.parent.languages[id]=null;
+      }
+    }
+  }
+*/
 }
 
 function setAdminUsername(obj) {

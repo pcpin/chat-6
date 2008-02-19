@@ -84,6 +84,14 @@ $body_onload[]='$(\'contents_div\').style.display=\'\'';
     <td class="tbl_row" style="padding-top:15px;padding-bottom:15px;">
       <span id="step_7" class="status_open">
         <span id="step_7_prepend"></span>
+        Language files
+      </span>
+    </td>
+  </tr>
+  <tr>
+    <td class="tbl_row" style="padding-top:15px;padding-bottom:15px;">
+      <span id="step_8" class="status_open">
+        <span id="step_8_prepend"></span>
         Install chat
       </span>
     </td>

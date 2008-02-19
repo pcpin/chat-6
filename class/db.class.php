@@ -78,8 +78,8 @@ class PCPIN_DB {
         // Trying do select database
         if (!mysql_select_db($db_conndata['database'], $this->_db_conn)) {
           // Failed to select database
-          PCPIN_Common::dieWithError(1, '<b>Fatal error</b>: Failed to select database');
           $this->_db_close();
+          PCPIN_Common::dieWithError(1, '<b>Fatal error</b>: Failed to select database');
         } else {
           // Define database table names prefix
           if (!defined('PCPIN_DB_PREFIX')) define('PCPIN_DB_PREFIX', $db_conndata['tbl_prefix']);

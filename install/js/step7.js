@@ -15,272 +15,109 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function initFinalCheckTables() {
-  var importSettingNames=new Array();
-
-  $('db_data_host').innerHTML=htmlspecialchars(window.parent.db_data['host']);
-  $('db_data_user').innerHTML=htmlspecialchars(window.parent.db_data['user']);
-  $('db_data_database').innerHTML=htmlspecialchars(window.parent.db_data['database']);
-  $('db_data_prefix').innerHTML=htmlspecialchars(window.parent.db_data['prefix']);
-
-  for (var i in window.parent.import_selection) {
-    if (window.parent.import_selection[i]) {
-      switch (i) {
-        case 'users':
-          importSettingNames.push('Users');
-        break;
-        case 'smilies':
-          importSettingNames.push('Smilies');
-        break;
-        case 'rooms':
-          importSettingNames.push('Rooms');
-        break;
-        case 'bad_words':
-          importSettingNames.push('Bad words');
-        break;
-        case 'ip_filter':
-          importSettingNames.push('IP Filter');
-        break;
-        case 'avatar_gallery':
-          importSettingNames.push('Avatar Gallery');
-        break;
-        case 'banners':
-          importSettingNames.push('Banners');
-        break;
-        case 'languages':
-          importSettingNames.push('Languages');
-        break;
-      }
-    }
-  }
-  if (importSettingNames.length==0) {
-    $('import_settings_list').innerHTML=htmlspecialchars('None');
-  } else {
-    $('import_settings_list').innerHTML=htmlspecialchars(importSettingNames.join(', '));
+function initAdminAccountForm() {
+  if (typeof(window.parent.admin_account)!='object') {
+    window.parent.admin_account=new Array();
+    window.parent.admin_account['create']=true;
+    window.parent.admin_account['username']='';
+    window.parent.admin_account['password']='';
+    window.parent.admin_account['password2']='';
+    window.parent.admin_account['email']='';
   }
 
+  $('admin_account_username').value=window.parent.admin_account['username'];
+  $('admin_account_password').value=window.parent.admin_account['password'];
+  $('admin_account_password2').value=window.parent.admin_account['password2'];
+  $('admin_account_email').value=window.parent.admin_account['email'];
+
+
+  if (window.parent.import_selection['users']) {
+    $('no_new_admin_account_row').style.display='';
+    $('no_new_admin_account').checked=!window.parent.admin_account['create'];
+    $('no_new_admin_account').onclick();
+  }
+}
+
+function setNoAdminAccount(state) {
+  var field_display=state? 'none' : '';
+  window.parent.admin_account['create']=!state;
+  $('admin_account_username').disabled=state;
+  $('admin_account_password').disabled=state;
+  $('admin_account_password2').disabled=state;
+  $('admin_account_email').disabled=state;
+
+  $('admin_account_username_row').style.display=field_display;
+  $('admin_account_password_row').style.display=field_display;
+  $('admin_account_password2_row').style.display=field_display;
+  $('admin_account_email_row').style.display=field_display;
+}
+
+function setAdminUsername(obj) {
+  obj.value=trimString(obj.value);
+  window.parent.admin_account['username']=obj.value;
+}
+
+function setAdminPassword(obj) {
+  window.parent.admin_account['password']=obj.value;
+}
+
+function setAdminPassword2(obj) {
+  window.parent.admin_account['password2']=obj.value;
+}
+
+function setAdminEmail(obj) {
+  obj.value=trimString(obj.value);
+  window.parent.admin_account['email']=obj.value;
+}
+
+function validateAdminAccount() {
+  var errors=new Array();
   if (window.parent.admin_account['create']) {
-    $('administrator_account_no_new').style.display='none';
-    $('administrator_account_username_row').style.display='';
-    $('administrator_account_username').innerHTML=htmlspecialchars(window.parent.admin_account['username']);
-    $('administrator_account_email_row').style.display='';
-    $('administrator_account_email').innerHTML=htmlspecialchars(window.parent.admin_account['email']);
-  } else {
-    $('administrator_account_no_new').style.display='';
-    $('administrator_account_username_row').style.display='none';
-    $('administrator_account_email_row').style.display='none';
-  }
-}
-
-function startInstallation() {
-  if (confirm('Are you sure?')) {
-    $('overview_tbl').style.display='none';
-    $('installation_progress').style.display='';
-    window.parent.lastStep=1;
-    installStep(1);
-  }
-}
-function installStep(step) {
-  var import_fields=new Array();
-  var progress_tbl=$('installation_progress');
-  var tr=null;
-  var td=null;
-
-  if (typeof(step)=='number') {
-    switch (step) {
-
-      default:
-        $('install_complete').style.display='';
-      break;
-
-      case 1: // Secure data
-        tr=progress_tbl.insertRow(progress_tbl.rows.length-1);
-        td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars('Storing data');
-        setCssClass(td, 'tbl_row');
-        td=tr.insertCell(-1);
-        td.id='step_'+step+'_progress';
-        td.innerHTML='<img src="./pic/progress_bar_267x14.gif" alt="'+htmlspecialchars('In progress...')+'" title="'+htmlspecialchars('In progress...')+'" />';
-        setCssClass(td, 'tbl_row');
-        td.style.fontWeight='bold';
-
-        // Any data to import?
-        for (var i in window.parent.import_selection) {
-          if (window.parent.import_selection[i]) {
-            import_fields.push(i);
-          }
-        }
-
-        sendData('_CALLBACK_installStep('+step+')',
-                 './install/ajax/secure_data.php',
-                 'POST',
-                 'host='+urlencode(window.parent.db_data['host'])
-                +'&user='+urlencode(window.parent.db_data['user'])
-                +'&password='+urlencode(window.parent.db_data['password'])
-                +'&database='+urlencode(window.parent.db_data['database'])
-                +'&prefix='+urlencode(window.parent.db_data['prefix'])
-                +'&data_objects='+urlencode(import_fields.join(',')),
-                true, false, 1000
-                );
-      break;
-
-      case 2: // Create database structure
-        tr=progress_tbl.insertRow(progress_tbl.rows.length-1);
-        td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars('Creating database structure');
-        setCssClass(td, 'tbl_row');
-        td=tr.insertCell(-1);
-        td.id='step_'+step+'_progress';
-        td.innerHTML='<img src="./pic/progress_bar_267x14.gif" alt="'+htmlspecialchars('In progress...')+'" title="'+htmlspecialchars('In progress...')+'" />';
-        setCssClass(td, 'tbl_row');
-        td.style.fontWeight='bold';
-
-        sendData('_CALLBACK_installStep('+step+')',
-                 './install/ajax/create_db_structure.php',
-                 'POST',
-                 'host='+urlencode(window.parent.db_data['host'])
-                +'&user='+urlencode(window.parent.db_data['user'])
-                +'&password='+urlencode(window.parent.db_data['password'])
-                +'&database='+urlencode(window.parent.db_data['database'])
-                +'&prefix='+urlencode(window.parent.db_data['prefix']),
-                true, false, 1000
-                );
-      break;
-
-      case 3: // Fill tables with data
-        tr=progress_tbl.insertRow(progress_tbl.rows.length-1);
-        td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars('Installing data');
-        setCssClass(td, 'tbl_row');
-        td=tr.insertCell(-1);
-        td.id='step_'+step+'_progress';
-        td.innerHTML='<img src="./pic/progress_bar_267x14.gif" alt="'+htmlspecialchars('In progress...')+'" title="'+htmlspecialchars('In progress...')+'" />';
-        setCssClass(td, 'tbl_row');
-        td.style.fontWeight='bold';
-
-        sendData('_CALLBACK_installStep('+step+')',
-                 './install/ajax/fill_database.php',
-                 'POST',
-                 'host='+urlencode(window.parent.db_data['host'])
-                +'&user='+urlencode(window.parent.db_data['user'])
-                +'&password='+urlencode(window.parent.db_data['password'])
-                +'&database='+urlencode(window.parent.db_data['database'])
-                +'&prefix='+urlencode(window.parent.db_data['prefix']),
-                true, false, 1000
-                );
-      break;
-
-      case 4: // Importing stored data
-        tr=progress_tbl.insertRow(progress_tbl.rows.length-1);
-        td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars('Importing stored data');
-        setCssClass(td, 'tbl_row');
-        td=tr.insertCell(-1);
-        td.id='step_'+step+'_progress';
-        td.innerHTML='<img src="./pic/progress_bar_267x14.gif" alt="'+htmlspecialchars('In progress...')+'" title="'+htmlspecialchars('In progress...')+'" />';
-        setCssClass(td, 'tbl_row');
-        td.style.fontWeight='bold';
-
-        sendData('_CALLBACK_installStep('+step+')',
-                 './install/ajax/restore_data.php',
-                 'POST',
-                 'host='+urlencode(window.parent.db_data['host'])
-                +'&user='+urlencode(window.parent.db_data['user'])
-                +'&password='+urlencode(window.parent.db_data['password'])
-                +'&database='+urlencode(window.parent.db_data['database'])
-                +'&prefix='+urlencode(window.parent.db_data['prefix'])
-                ,
-                true, false, 1000
-                );
-      break;
-
-      case 5: // Create admin account
-        tr=progress_tbl.insertRow(progress_tbl.rows.length-1);
-        td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars('Creating Administrator account');
-        setCssClass(td, 'tbl_row');
-        td=tr.insertCell(-1);
-        td.id='step_'+step+'_progress';
-        td.innerHTML='<img src="./pic/progress_bar_267x14.gif" alt="'+htmlspecialchars('In progress...')+'" title="'+htmlspecialchars('In progress...')+'" />';
-        setCssClass(td, 'tbl_row');
-        td.style.fontWeight='bold';
-
-        sendData('_CALLBACK_installStep('+step+')',
-                 './install/ajax/create_admin_account.php',
-                 'POST',
-                 'host='+urlencode(window.parent.db_data['host'])
-                +'&user='+urlencode(window.parent.db_data['user'])
-                +'&password='+urlencode(window.parent.db_data['password'])
-                +'&database='+urlencode(window.parent.db_data['database'])
-                +'&prefix='+urlencode(window.parent.db_data['prefix'])
-                +'&do_create='+urlencode(window.parent.admin_account['create']? '1' : '0')
-                +'&admin_username='+urlencode(window.parent.admin_account['username'])
-                +'&admin_password='+urlencode(window.parent.admin_account['password'])
-                +'&admin_email='+urlencode(window.parent.admin_account['email'])
-                ,
-                true, false, 1000
-                );
-      break;
-
-      case 6: // Finalizing installation
-        tr=progress_tbl.insertRow(progress_tbl.rows.length-1);
-        td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars('Finalizing installation');
-        setCssClass(td, 'tbl_row');
-        td=tr.insertCell(-1);
-        td.id='step_'+step+'_progress';
-        td.innerHTML='<img src="./pic/progress_bar_267x14.gif" alt="'+htmlspecialchars('In progress...')+'" title="'+htmlspecialchars('In progress...')+'" />';
-        setCssClass(td, 'tbl_row');
-        td.style.fontWeight='bold';
-
-        sendData('_CALLBACK_installStep('+step+')',
-                 './install/ajax/finalize_installation.php',
-                 'POST',
-                 'host='+urlencode(window.parent.db_data['host'])
-                +'&user='+urlencode(window.parent.db_data['user'])
-                +'&password='+urlencode(window.parent.db_data['password'])
-                +'&database='+urlencode(window.parent.db_data['database'])
-                +'&prefix='+urlencode(window.parent.db_data['prefix'])
-                +'&do_create='+urlencode(window.parent.admin_account['create']? '1' : '0')
-                +'&admin_username='+urlencode(window.parent.admin_account['username'])
-                +'&admin_password='+urlencode(window.parent.admin_account['password'])
-                +'&admin_email='+urlencode(window.parent.admin_account['email'])
-                ,
-                true, false, 1000
-                );
-      break;
-
+    // Validate admin account
+    
+    if (window.parent.admin_account['username'].length<3) {
+      errors.push('Adminitrator username too short');
     }
+    if (window.parent.admin_account['password'] != window.parent.admin_account['password2']) {
+      errors.push('Adminitrator passwords are not ident');
+    } else if (window.parent.admin_account['password'].length<3) {
+      errors.push('Adminitrator password too short');
+    }
+    if (!checkEmail(window.parent.admin_account['email'])) {
+      errors.push('Adminitrator E-Mail address seems to be invalid');
+    }
+
+    if (errors.length) {
+      alert(errors.join("\n"));
+    } else if (window.parent.import_selection['users']) {
+      // Users will be imported. Check administrator username and email address.
+      sendData('_CALLBACK_validateAdminAccount()', './install/ajax/check_admin_account.php', 'POST', 'host='+urlencode(window.parent.db_data['host'])
+                                                                                                    +'&user='+urlencode(window.parent.db_data['user'])
+                                                                                                    +'&password='+urlencode(window.parent.db_data['password'])
+                                                                                                    +'&database='+urlencode(window.parent.db_data['database'])
+                                                                                                    +'&prefix='+urlencode(window.parent.db_data['prefix'])
+                                                                                                    +'&admin_username='+urlencode(window.parent.admin_account['username'])
+                                                                                                    +'&admin_email='+urlencode(window.parent.admin_account['email'])
+                                                                                                    );
+    } else {
+      // No users will be imported
+      window.location.href='./install.php?step=7&ts='+unixTimeStamp();
+    }
+  } else {
+    // No new account will be created
+    window.location.href='./install.php?step=7&ts='+unixTimeStamp();
   }
 }
-function _CALLBACK_installStep(step) {
+function _CALLBACK_validateAdminAccount() {
+  toggleProgressBar(false);
+  $('contents_div').style.display='';
+//debug(actionHandler.getResponseString()); return false;
+
   var message=actionHandler.getCdata('message');
   var status=actionHandler.getCdata('status');
-  var short_message=actionHandler.getCdata('short_message');
-
-  $('step_'+step+'_progress').innerHTML=htmlspecialchars(short_message);
-
-  if (status=='0') {
-    // Success
-    $('step_'+step+'_progress').style.color='#008800';
-    installStep(step+1);
-  } else {
-    // An error
-    $('step_'+step+'_progress').style.color='#ff0000';
+  if (status!='0') {
     alert(message);
-    if (status!='-1' && confirm('Continue installation?')) {
-      installStep(step+1);
-    }
-  }
-}
-
-function openAdminPanel() {
-  if (window.parent.admin_account['create']) {
-    $('admin_panel_form').direct_login.value='1';
-    $('admin_panel_form').login.value=window.parent.admin_account['username'];
-    $('admin_panel_form').password.value=window.parent.admin_account['password'];
   } else {
-    $('admin_panel_form').direct_login.value='';
+    window.location.href='./install.php?step=7&ts='+unixTimeStamp();
   }
-  $('admin_panel_form').submit();
 }

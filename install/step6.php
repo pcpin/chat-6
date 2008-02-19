@@ -21,54 +21,23 @@ if (!defined('PCPIN_INSTALL_MODE') || true!==PCPIN_INSTALL_MODE) {
   die();
 }
 $js_files[]='./step6.js';
-$body_onload[]='initAdminAccountForm()';
-
+$body_onload[]='initLanguagesForm()';
 
 ?>
 <table class="tbl" cellspacing="0" cellpadding="0" width="100%">
   <tr>
     <td class="tbl_header_main" colspan="2">
-      Administrator account
+      Language files
     </td>
   </tr>
 
-  <tr id="no_new_admin_account_row" style="display:none">
-    <td class="tbl_row" style="text-align:center;" colspan="2">
-      <label for="no_new_admin_account">
-        <input type="checkbox" id="no_new_admin_account" onclick="setNoAdminAccount(this.checked)"> Do not create new Administrator account
-      </label>
-    </td>
-  </tr>
-  <tr id="admin_account_username_row">
-    <td class="tbl_row" style="text-align:right">
-      Administrator username:
-    </td>
-    <td class="tbl_row">
-      <input type="text" id="admin_account_username" size="32" maxlength="32" onchange="setAdminUsername(this)" />
-    </td>
-  </tr>
-  <tr id="admin_account_password_row">
-    <td class="tbl_row" style="text-align:right">
-      Administrator password:
-    </td>
-    <td class="tbl_row">
-      <input type="password" id="admin_account_password" size="32" maxlength="32" onchange="setAdminPassword(this)" />
-    </td>
-  </tr>
-  <tr id="admin_account_password2_row">
-    <td class="tbl_row" style="text-align:right">
-      Confirm Administrator password:
-    </td>
-    <td class="tbl_row">
-      <input type="password" id="admin_account_password2" size="32" maxlength="32" onchange="setAdminPassword2(this)" />
-    </td>
-  </tr>
-  <tr id="admin_account_email_row">
-    <td class="tbl_row" style="text-align:right">
-      Administrator E-Mail address:
-    </td>
-    <td class="tbl_row">
-      <input type="text" id="admin_account_email" size="32" maxlength="255" onchange="setAdminEmail(this)" />
+  <tr>
+    <td class="tbl_row" style="text-align:center;">
+      Please select languages you would like to install:
+      <br /><br />
+<?php
+
+?>
     </td>
   </tr>
 

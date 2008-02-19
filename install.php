@@ -121,13 +121,18 @@ if (empty($step)) {
     break;
 
     case 6:
-      // Administrator account
+      // Language files
       require_once('./install/step6.php');
     break;
 
     case 7:
-      // Chat settings
+      // Administrator account
       require_once('./install/step7.php');
+    break;
+
+    case 8:
+      // Chat settings
+      require_once('./install/step8.php');
     break;
 
   }

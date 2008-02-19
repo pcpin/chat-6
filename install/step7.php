@@ -21,92 +21,54 @@ if (!defined('PCPIN_INSTALL_MODE') || true!==PCPIN_INSTALL_MODE) {
   die();
 }
 $js_files[]='./step7.js';
-$body_onload[]='initFinalCheckTables()';
+$body_onload[]='initAdminAccountForm()';
 
 
 ?>
-<table id="overview_tbl" class="tbl" cellspacing="0" cellpadding="0" width="100%">
+<table class="tbl" cellspacing="0" cellpadding="0" width="100%">
   <tr>
     <td class="tbl_header_main" colspan="2">
-      Install chat
-    </td>
-  </tr>
-
-  <tr>
-    <td class="tbl_row" colspan="2" style="text-align:center">
-      <br />
-      <b>Please check the data below and click "INSTALL".</b>
-      <br /><br />
-    </td>
-  </tr>
-
-  <tr>
-    <td class="tbl_header_sub" colspan="2">
-      Database
-    </td>
-  </tr>
-  <tr>
-    <td class="tbl_row">
-      Database server host name:
-    </td>
-    <td class="tbl_row" id="db_data_host">
-    </td>
-  </tr>
-  <tr>
-    <td class="tbl_row">
-      Database server username:
-    </td>
-    <td class="tbl_row" id="db_data_user">
-    </td>
-  </tr>
-  <tr>
-    <td class="tbl_row">
-      Database name:
-    </td>
-    <td class="tbl_row" id="db_data_database">
-    </td>
-  </tr>
-  <tr>
-    <td class="tbl_row">
-      Name prefix for all tables used by chat:
-    </td>
-    <td class="tbl_row" id="db_data_prefix">
-    </td>
-  </tr>
-
-  <tr>
-    <td class="tbl_header_sub" colspan="2">
-      Import data
-    </td>
-  </tr>
-  <tr>
-    <td id="import_settings_list" class="tbl_row" colspan="2">
-      &nbsp;
-    </td>
-  </tr>
-
-  <tr>
-    <td class="tbl_header_sub" colspan="2">
       Administrator account
     </td>
   </tr>
-  <tr id="administrator_account_no_new" style="display:none">
-    <td class="tbl_row" colspan="2">
-      Do not create new administrator account
+
+  <tr id="no_new_admin_account_row" style="display:none">
+    <td class="tbl_row" style="text-align:center;" colspan="2">
+      <label for="no_new_admin_account">
+        <input type="checkbox" id="no_new_admin_account" onclick="setNoAdminAccount(this.checked)"> Do not create new Administrator account
+      </label>
     </td>
   </tr>
-  <tr id="administrator_account_username_row" style="display:none">
-    <td class="tbl_row">
-      Username:
+  <tr id="admin_account_username_row">
+    <td class="tbl_row" style="text-align:right">
+      Administrator username:
     </td>
-    <td id="administrator_account_username" class="tbl_row">
+    <td class="tbl_row">
+      <input type="text" id="admin_account_username" size="32" maxlength="32" onchange="setAdminUsername(this)" />
     </td>
   </tr>
-  <tr id="administrator_account_email_row" style="display:none">
-    <td class="tbl_row">
-      E-Mail address:
+  <tr id="admin_account_password_row">
+    <td class="tbl_row" style="text-align:right">
+      Administrator password:
     </td>
-    <td id="administrator_account_email" class="tbl_row">
+    <td class="tbl_row">
+      <input type="password" id="admin_account_password" size="32" maxlength="32" onchange="setAdminPassword(this)" />
+    </td>
+  </tr>
+  <tr id="admin_account_password2_row">
+    <td class="tbl_row" style="text-align:right">
+      Confirm Administrator password:
+    </td>
+    <td class="tbl_row">
+      <input type="password" id="admin_account_password2" size="32" maxlength="32" onchange="setAdminPassword2(this)" />
+    </td>
+  </tr>
+  <tr id="admin_account_email_row">
+    <td class="tbl_row" style="text-align:right">
+      Administrator E-Mail address:
+    </td>
+    <td class="tbl_row">
+      <input type="text" id="admin_account_email" size="32" maxlength="255" onchange="setAdminEmail(this)" />
     </td>
   </tr>
 
@@ -114,49 +76,8 @@ $body_onload[]='initFinalCheckTables()';
     <td class="tbl_row" colspan="2" style="text-align: right">
       <button type="button" onclick="window.history.go(-1)" title="Back">Back</button>
       &nbsp;
-      <button type="button" onclick="startInstallation()" title="Continue">INSTALL</button>
+      <button type="button" onclick="validateAdminAccount()" title="Continue">Continue</button>
     </td>
   </tr>
 
 </table>
-
-
-<table id="installation_progress" class="tbl" cellspacing="0" cellpadding="0" width="100%" style="display:none">
-  <tr>
-    <td class="tbl_header_main" colspan="2">
-      Installation progress
-    </td>
-  </tr>
-  <tr>
-    <td class="tbl_header_sub" width="60%">
-      Installation step
-    </td>
-    <td class="tbl_header_sub">
-      Status
-    </td>
-  </tr>
-  <tr id="install_complete" style="display:none">
-    <td class="tbl_row" colspan="2" style="text-align:center">
-      <br />
-      <h2 style="color:#008800"><b>Installation complete!</b></h2>
-      <span style="color:#880000"><b>Delete directory &quot;install&quot; before you continue!</b></span>
-      <br /><br />
-      Please log into Admin Panel and configure your chat now:
-      &nbsp;
-      <button type="button" onclick="openAdminPanel()" title="Open Admin Panel">Open Admin Panel</button>
-      <br /><br /><br />
-      In case of any questions or problems regarding this software please visit our
-      <a href="http://community.pcpin.com/" title="PCPIN Community Forums" target="_blank">Community Forums</a>.
-      <br /><br /><br />
-      Thank you for choosing PCPIN Chat!
-      <br /><br />
-    </td>
-  </tr>
-</table>
-
-<form id="admin_panel_form" action="./admin.php" method="post" target="pcpin_chat_admin_panel" style="margin:0px">
-  <input type="hidden" name="admin_login" value="1" />
-  <input type="hidden" name="direct_login" value="1" />
-  <input type="hidden" name="login" value="" />
-  <input type="hidden" name="password" value="" />
-</form>
