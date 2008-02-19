@@ -87,6 +87,17 @@ $body_onload[]='initFinalCheckTables()';
 
   <tr>
     <td class="tbl_header_sub" colspan="2">
+      Languages to install
+    </td>
+  </tr>
+  <tr>
+    <td id="install_languages_list" class="tbl_row" colspan="2">
+      &nbsp;
+    </td>
+  </tr>
+
+  <tr>
+    <td class="tbl_header_sub" colspan="2">
       Administrator account
     </td>
   </tr>

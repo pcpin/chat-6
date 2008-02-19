@@ -15,6 +15,8 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+var RepeatStep=0;
+
 function initFinalCheckTables() {
   var importSettingNames=new Array();
 
@@ -58,6 +60,11 @@ function initFinalCheckTables() {
   } else {
     $('import_settings_list').innerHTML=htmlspecialchars(importSettingNames.join(', '));
   }
+  var languages=new Array();
+  for (var i=0; i<window.parent.languages.length; i++) {
+    languages.push(window.parent.language_names[window.parent.languages[i]]);
+  }
+  $('install_languages_list').innerHTML=htmlspecialchars(languages.join(', '));
 
   if (window.parent.admin_account['create']) {
     $('administrator_account_no_new').style.display='none';
@@ -74,7 +81,7 @@ function initFinalCheckTables() {
 
 function startInstallation() {
   if (confirm('Are you sure?')) {
-//    $('overview_tbl').style.display='none';
+    $('overview_tbl').style.display='none';
     $('installation_progress').style.display='';
     window.parent.lastStep=1;
     installStep(1);
@@ -94,6 +101,7 @@ function installStep(step) {
       break;
 
       case 1: // Secure data
+        RepeatStep=0;
         tr=progress_tbl.insertRow(progress_tbl.rows.length-1);
         td=tr.insertCell(-1);
         td.innerHTML=htmlspecialchars('Storing data');
@@ -125,6 +133,7 @@ function installStep(step) {
       break;
 
       case 2: // Create database structure
+        RepeatStep=0;
         tr=progress_tbl.insertRow(progress_tbl.rows.length-1);
         td=tr.insertCell(-1);
         td.innerHTML=htmlspecialchars('Creating database structure');
@@ -148,6 +157,7 @@ function installStep(step) {
       break;
 
       case 3: // Fill tables with data
+        RepeatStep=0;
         tr=progress_tbl.insertRow(progress_tbl.rows.length-1);
         td=tr.insertCell(-1);
         td.innerHTML=htmlspecialchars('Installing data');
@@ -171,6 +181,7 @@ function installStep(step) {
       break;
 
       case 4: // Importing stored data
+        RepeatStep=0;
         tr=progress_tbl.insertRow(progress_tbl.rows.length-1);
         td=tr.insertCell(-1);
         td.innerHTML=htmlspecialchars('Importing stored data');
@@ -195,9 +206,22 @@ function installStep(step) {
       break;
 
       case 5: // Installing languages
+        var lng_id=window.parent.languages[0];
+        var tmp=new Array();
+        for (var i=1; i<window.parent.languages.length; i++) {
+          tmp.push(window.parent.languages[i]);
+        }
+        window.parent.languages=tmp;
+        if (window.parent.languages.length>0) {
+          RepeatStep=step;
+        } else {
+          RepeatStep=0;
+        }
+        var lng_name=window.parent.language_names[lng_id];
+        var lng_filename=window.parent.language_files[lng_id];
         tr=progress_tbl.insertRow(progress_tbl.rows.length-1);
         td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars('Installing language files');
+        td.innerHTML=htmlspecialchars('Installing language '+htmlspecialchars(lng_name));
         setCssClass(td, 'tbl_row');
         td=tr.insertCell(-1);
         td.id='step_'+step+'_progress';
@@ -213,16 +237,16 @@ function installStep(step) {
                 +'&password='+urlencode(window.parent.db_data['password'])
                 +'&database='+urlencode(window.parent.db_data['database'])
                 +'&prefix='+urlencode(window.parent.db_data['prefix'])
-                +'&do_create='+urlencode(window.parent.admin_account['create']? '1' : '0')
-                +'&admin_username='+urlencode(window.parent.admin_account['username'])
-                +'&admin_password='+urlencode(window.parent.admin_account['password'])
-                +'&admin_email='+urlencode(window.parent.admin_account['email'])
+                +'&iso_name='+urlencode(lng_id)
+                +'&filename='+urlencode(lng_filename)
+                +'&lng_name='+urlencode(lng_name)
                 ,
                 true, false, 1000
                 );
       break;
 
       case 6: // Create admin account
+        RepeatStep=0;
         tr=progress_tbl.insertRow(progress_tbl.rows.length-1);
         td=tr.insertCell(-1);
         td.innerHTML=htmlspecialchars('Creating Administrator account');
@@ -251,6 +275,7 @@ function installStep(step) {
       break;
 
       case 7: // Finalizing installation
+        RepeatStep=0;
         tr=progress_tbl.insertRow(progress_tbl.rows.length-1);
         td=tr.insertCell(-1);
         td.innerHTML=htmlspecialchars('Finalizing installation');
@@ -282,9 +307,6 @@ function installStep(step) {
   }
 }
 function _CALLBACK_installStep(step) {
-if (step==5) {
-debug(actionHandler.getResponseString()); return false;
-}
   var message=actionHandler.getCdata('message');
   var status=actionHandler.getCdata('status');
   var short_message=actionHandler.getCdata('short_message');
@@ -294,13 +316,13 @@ debug(actionHandler.getResponseString()); return false;
   if (status=='0') {
     // Success
     $('step_'+step+'_progress').style.color='#008800';
-    installStep(step+1);
+    installStep(RepeatStep>0? RepeatStep : step+1);
   } else {
     // An error
     $('step_'+step+'_progress').style.color='#ff0000';
     alert(message);
     if (status!='-1' && confirm('Continue installation?')) {
-      installStep(step+1);
+      installStep(RepeatStep>0? RepeatStep : step+1);
     }
   }
 }

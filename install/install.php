@@ -27,6 +27,8 @@ define('PCPIN_INSTALL_VERSION', '6.08');
 define('PCPIN_REQUIRESPHP', '4.3.3');
 define('PCPIN_REQUIRESMYSQL', '4.0.15');
 
+define('PCPIN_VERSION', PCPIN_INSTALL_VERSION);
+
 if (file_exists('./funcs.inc.php')) {
   require('./funcs.inc.php');
 } elseif (file_exists('../../funcs.inc.php')) {

@@ -21,6 +21,9 @@ function initLanguagesForm() {
   if (typeof(window.parent.languages)!='object') {
     window.parent.languages=new Array();
   }
+  window.parent.language_names=new Array();
+  window.parent.language_files=new Array();
+  $('contents_div').style.display='none';
   getLanguages();
 }
 
@@ -36,87 +39,73 @@ function getLanguages() {
            );
 }
 function _CALLBACK_getLanguages() {
-  debug(actionHandler.getResponseString()); return false;
-
-
-/*
-    for (var id in window.parent.languages) {
-    if (window.parent.languages[id]) {
-      if ($('lng_'+id)) {
-        $('lng_'+id).checked=true;
-      } else {
-        window.parent.languages[id]=null;
+//debug(actionHandler.getResponseString()); return false;
+  var message=actionHandler.getCdata('message');
+  var status=actionHandler.getCdata('status');
+  var html='';
+  var languages=actionHandler.getElement('languages');
+  var language=null;
+  var language_nr=0;
+  var name='';
+  var iso_name='';
+  var local_name='';
+  var filename='';
+  if (status!='0') {
+    alert(message);
+  } else {
+    if (languages) {
+      while (null!=(language=actionHandler.getElement('language', language_nr++, languages))) {
+        iso_name=actionHandler.getCdata('iso_name', 0, language);
+        name=actionHandler.getCdata('name', 0, language);
+        local_name=actionHandler.getCdata('local_name', 0, language);
+        filename=actionHandler.getCdata('filename', 0, language);
+        html+='<br /><label for="languages_chkbox_'+htmlspecialchars(iso_name)+'" title="'+htmlspecialchars(name+' ('+local_name+')')+'"><input onclick="setLanguage(this)" type="checkbox" id="languages_chkbox_'+htmlspecialchars(iso_name)+'" title="'+htmlspecialchars(name+' ('+local_name+')')+'" /> '+htmlspecialchars(name+' ('+local_name+')')+'</label>';
+        window.parent.language_names[iso_name]=name+' ('+local_name+')';
+        window.parent.language_files[iso_name]=filename;
       }
     }
   }
-*/
-}
-
-function setAdminUsername(obj) {
-  obj.value=trimString(obj.value);
-  window.parent.admin_account['username']=obj.value;
-}
-
-function setAdminPassword(obj) {
-  window.parent.admin_account['password']=obj.value;
-}
-
-function setAdminPassword2(obj) {
-  window.parent.admin_account['password2']=obj.value;
-}
-
-function setAdminEmail(obj) {
-  obj.value=trimString(obj.value);
-  window.parent.admin_account['email']=obj.value;
-}
-
-function validateAdminAccount() {
-  var errors=new Array();
-  if (window.parent.admin_account['create']) {
-    // Validate admin account
-    
-    if (window.parent.admin_account['username'].length<3) {
-      errors.push('Adminitrator username too short');
+  $('languages_span').innerHTML=html;
+  var tmp=new Array();
+  for (var i=0; i<window.parent.languages.length; i++) {
+    if ($('languages_chkbox_'+window.parent.languages[i])) {
+      $('languages_chkbox_'+window.parent.languages[i]).click();
+      tmp.push(window.parent.languages[i]);
     }
-    if (window.parent.admin_account['password'] != window.parent.admin_account['password2']) {
-      errors.push('Adminitrator passwords are not ident');
-    } else if (window.parent.admin_account['password'].length<3) {
-      errors.push('Adminitrator password too short');
-    }
-    if (!checkEmail(window.parent.admin_account['email'])) {
-      errors.push('Adminitrator E-Mail address seems to be invalid');
-    }
+  }
+  window.parent.languages=tmp;
+  $('contents_div').style.display='';
+  toggleProgressBar(false);
+}
 
-    if (errors.length) {
-      alert(errors.join("\n"));
-    } else if (window.parent.import_selection['users']) {
-      // Users will be imported. Check administrator username and email address.
-      sendData('_CALLBACK_validateAdminAccount()', './install/ajax/check_admin_account.php', 'POST', 'host='+urlencode(window.parent.db_data['host'])
-                                                                                                    +'&user='+urlencode(window.parent.db_data['user'])
-                                                                                                    +'&password='+urlencode(window.parent.db_data['password'])
-                                                                                                    +'&database='+urlencode(window.parent.db_data['database'])
-                                                                                                    +'&prefix='+urlencode(window.parent.db_data['prefix'])
-                                                                                                    +'&admin_username='+urlencode(window.parent.admin_account['username'])
-                                                                                                    +'&admin_email='+urlencode(window.parent.admin_account['email'])
-                                                                                                    );
-    } else {
-      // No users will be imported
-      window.location.href='./install.php?step=7&ts='+unixTimeStamp();
+function setLanguage(obj) {
+  var tmp=new Array();
+  var id=obj.id.substring(17);
+  if (obj.checked) {
+    for (var i=0; i<window.parent.languages.length; i++) {
+      if (window.parent.languages[i]==id) {
+        return false;
+      }
     }
+    window.parent.languages.push(id);
   } else {
-    // No new account will be created
-    window.location.href='./install.php?step=7&ts='+unixTimeStamp();
+    for (var i=0; i<window.parent.languages.length; i++) {
+      if (window.parent.languages[i]!=id) {
+        tmp.push(window.parent.languages[i]);
+      }
+    }
+    window.parent.languages=tmp;
   }
 }
-function _CALLBACK_validateAdminAccount() {
-  toggleProgressBar(false);
-  $('contents_div').style.display='';
-//debug(actionHandler.getResponseString()); return false;
 
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  if (status!='0') {
-    alert(message);
+
+function validateLanguages() {
+  var errors=new Array();
+  if (window.parent.languages.length==0) {
+    errors.push('Please select at least one language');
+  }
+  if (errors.length) {
+    alert(errors.join("\n"));
   } else {
     window.location.href='./install.php?step=7&ts='+unixTimeStamp();
   }

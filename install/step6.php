@@ -35,9 +35,7 @@ $body_onload[]='initLanguagesForm()';
     <td class="tbl_row" style="text-align:center;">
       Please select languages you would like to install:
       <br /><br />
-<?php
-
-?>
+      <span id="languages_span" />
     </td>
   </tr>
 
@@ -45,7 +43,7 @@ $body_onload[]='initLanguagesForm()';
     <td class="tbl_row" colspan="2" style="text-align: right">
       <button type="button" onclick="window.history.go(-1)" title="Back">Back</button>
       &nbsp;
-      <button type="button" onclick="validateAdminAccount()" title="Continue">Continue</button>
+      <button type="button" onclick="validateLanguages()" title="Continue">Continue</button>
     </td>
   </tr>
 

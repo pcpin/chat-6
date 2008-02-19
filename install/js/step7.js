@@ -101,11 +101,11 @@ function validateAdminAccount() {
                                                                                                     );
     } else {
       // No users will be imported
-      window.location.href='./install.php?step=7&ts='+unixTimeStamp();
+      window.location.href='./install.php?step=8&ts='+unixTimeStamp();
     }
   } else {
     // No new account will be created
-    window.location.href='./install.php?step=7&ts='+unixTimeStamp();
+    window.location.href='./install.php?step=8&ts='+unixTimeStamp();
   }
 }
 function _CALLBACK_validateAdminAccount() {
@@ -118,6 +118,6 @@ function _CALLBACK_validateAdminAccount() {
   if (status!='0') {
     alert(message);
   } else {
-    window.location.href='./install.php?step=7&ts='+unixTimeStamp();
+    window.location.href='./install.php?step=8&ts='+unixTimeStamp();
   }
 }
