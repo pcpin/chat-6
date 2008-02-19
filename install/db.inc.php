@@ -24,7 +24,7 @@ require_once('./install.php');
 // Send headers
 header('Content-type: application/octet-stream');
 header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
-#header('Content-Disposition: attachment; filename="db.inc.php"');
+header('Content-Disposition: attachment; filename="db.inc.php"');
 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 header('Pragma: public');
 

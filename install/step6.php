@@ -35,7 +35,14 @@ $body_onload[]='initLanguagesForm()';
     <td class="tbl_row" style="text-align:center;">
       Please select languages you would like to install:
       <br /><br />
-      <span id="languages_span" />
+      <table border="0" cellspacing="0" cellpadding="0">
+        <tr>
+          <td class="tbl_row" width="49%">&nbsp;</td>
+          <td class="tbl_row" nowrap="nowrap" style="text-align:left" id="languages_cell">
+          </td>
+          <td class="tbl_row" width="49%">&nbsp;</td>
+        </tr>
+      </table>
     </td>
   </tr>
 

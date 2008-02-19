@@ -16,6 +16,7 @@
  */
 
 var RepeatStep=0;
+var RepeatStepCounter=0;
 
 function initFinalCheckTables() {
   var importSettingNames=new Array();
@@ -107,7 +108,7 @@ function installStep(step) {
         td.innerHTML=htmlspecialchars('Storing data');
         setCssClass(td, 'tbl_row');
         td=tr.insertCell(-1);
-        td.id='step_'+step+'_progress';
+        td.id='step_'+step+'_progress'+RepeatStepCounter;
         td.innerHTML='<img src="./pic/progress_bar_267x14.gif" alt="'+htmlspecialchars('In progress...')+'" title="'+htmlspecialchars('In progress...')+'" />';
         setCssClass(td, 'tbl_row');
         td.style.fontWeight='bold';
@@ -139,7 +140,7 @@ function installStep(step) {
         td.innerHTML=htmlspecialchars('Creating database structure');
         setCssClass(td, 'tbl_row');
         td=tr.insertCell(-1);
-        td.id='step_'+step+'_progress';
+        td.id='step_'+step+'_progress'+RepeatStepCounter;
         td.innerHTML='<img src="./pic/progress_bar_267x14.gif" alt="'+htmlspecialchars('In progress...')+'" title="'+htmlspecialchars('In progress...')+'" />';
         setCssClass(td, 'tbl_row');
         td.style.fontWeight='bold';
@@ -163,7 +164,7 @@ function installStep(step) {
         td.innerHTML=htmlspecialchars('Installing data');
         setCssClass(td, 'tbl_row');
         td=tr.insertCell(-1);
-        td.id='step_'+step+'_progress';
+        td.id='step_'+step+'_progress'+RepeatStepCounter;
         td.innerHTML='<img src="./pic/progress_bar_267x14.gif" alt="'+htmlspecialchars('In progress...')+'" title="'+htmlspecialchars('In progress...')+'" />';
         setCssClass(td, 'tbl_row');
         td.style.fontWeight='bold';
@@ -187,7 +188,7 @@ function installStep(step) {
         td.innerHTML=htmlspecialchars('Importing stored data');
         setCssClass(td, 'tbl_row');
         td=tr.insertCell(-1);
-        td.id='step_'+step+'_progress';
+        td.id='step_'+step+'_progress'+RepeatStepCounter;
         td.innerHTML='<img src="./pic/progress_bar_267x14.gif" alt="'+htmlspecialchars('In progress...')+'" title="'+htmlspecialchars('In progress...')+'" />';
         setCssClass(td, 'tbl_row');
         td.style.fontWeight='bold';
@@ -224,7 +225,7 @@ function installStep(step) {
         td.innerHTML=htmlspecialchars('Installing language '+htmlspecialchars(lng_name));
         setCssClass(td, 'tbl_row');
         td=tr.insertCell(-1);
-        td.id='step_'+step+'_progress';
+        td.id='step_'+step+'_progress'+RepeatStepCounter;
         td.innerHTML='<img src="./pic/progress_bar_267x14.gif" alt="'+htmlspecialchars('In progress...')+'" title="'+htmlspecialchars('In progress...')+'" />';
         setCssClass(td, 'tbl_row');
         td.style.fontWeight='bold';
@@ -252,7 +253,7 @@ function installStep(step) {
         td.innerHTML=htmlspecialchars('Creating Administrator account');
         setCssClass(td, 'tbl_row');
         td=tr.insertCell(-1);
-        td.id='step_'+step+'_progress';
+        td.id='step_'+step+'_progress'+RepeatStepCounter;
         td.innerHTML='<img src="./pic/progress_bar_267x14.gif" alt="'+htmlspecialchars('In progress...')+'" title="'+htmlspecialchars('In progress...')+'" />';
         setCssClass(td, 'tbl_row');
         td.style.fontWeight='bold';
@@ -281,7 +282,7 @@ function installStep(step) {
         td.innerHTML=htmlspecialchars('Finalizing installation');
         setCssClass(td, 'tbl_row');
         td=tr.insertCell(-1);
-        td.id='step_'+step+'_progress';
+        td.id='step_'+step+'_progress'+RepeatStepCounter;
         td.innerHTML='<img src="./pic/progress_bar_267x14.gif" alt="'+htmlspecialchars('In progress...')+'" title="'+htmlspecialchars('In progress...')+'" />';
         setCssClass(td, 'tbl_row');
         td.style.fontWeight='bold';
@@ -311,15 +312,16 @@ function _CALLBACK_installStep(step) {
   var status=actionHandler.getCdata('status');
   var short_message=actionHandler.getCdata('short_message');
 
-  $('step_'+step+'_progress').innerHTML=htmlspecialchars(short_message);
+  $('step_'+step+'_progress'+RepeatStepCounter).innerHTML=htmlspecialchars(short_message);
 
   if (status=='0') {
     // Success
-    $('step_'+step+'_progress').style.color='#008800';
+    $('step_'+step+'_progress'+RepeatStepCounter).style.color='#008800';
+    RepeatStepCounter+=RepeatStep>0? 1 : 0;
     installStep(RepeatStep>0? RepeatStep : step+1);
   } else {
     // An error
-    $('step_'+step+'_progress').style.color='#ff0000';
+    $('step_'+step+'_progress'+RepeatStepCounter).style.color='#ff0000';
     alert(message);
     if (status!='-1' && confirm('Continue installation?')) {
       installStep(RepeatStep>0? RepeatStep : step+1);

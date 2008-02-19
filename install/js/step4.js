@@ -66,8 +66,9 @@ function _CALLBACK_storeDbData() {
     if (status=='10') {
       // Failed to write database config file
       $('db_config_write_error').style.display='';
+    } else {
+      alert(message);
     }
-    alert(message);
   }
 }
 

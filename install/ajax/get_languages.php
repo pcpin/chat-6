@@ -73,6 +73,13 @@ if (!empty($conn) && @mysql_select_db($database, $conn)) {
     }
     closedir($h);
   }
+  $languages_new=array();
+  foreach ($languages as $lng) {
+    $languages_new[$lng['name'].$lng['iso_name']]=$lng;
+  }
+  ksort($languages_new);
+  $languages=$languages_new;
+  unset($languages_new);
   $status=0;
   $message='OK';
 }

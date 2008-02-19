@@ -65,7 +65,7 @@ function _CALLBACK_getLanguages() {
       }
     }
   }
-  $('languages_span').innerHTML=html;
+  $('languages_cell').innerHTML=html+'<br /><br />';
   var tmp=new Array();
   for (var i=0; i<window.parent.languages.length; i++) {
     if ($('languages_chkbox_'+window.parent.languages[i])) {

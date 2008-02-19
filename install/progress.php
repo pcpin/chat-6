@@ -76,7 +76,7 @@ $body_onload[]='$(\'contents_div\').style.display=\'\'';
     <td class="tbl_row" style="padding-top:15px;padding-bottom:15px;">
       <span id="step_6" class="status_open">
         <span id="step_6_prepend"></span>
-        Administrator account
+        Language files
       </span>
     </td>
   </tr>
@@ -84,7 +84,7 @@ $body_onload[]='$(\'contents_div\').style.display=\'\'';
     <td class="tbl_row" style="padding-top:15px;padding-bottom:15px;">
       <span id="step_7" class="status_open">
         <span id="step_7_prepend"></span>
-        Language files
+        Administrator account
       </span>
     </td>
   </tr>

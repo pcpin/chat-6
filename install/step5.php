@@ -35,7 +35,7 @@ $body_onload[]='checkPreviousInstallation()';
   <tr id="no_previous_installations" style="display:none">
     <td class="tbl_row" style="text-align:center">
       <br /><br />
-      No previous PCPIN Chat installations detected.
+      No <b>PCPIN Chat 5</b> installations detected.
       <br /><br /><br />
     </td>
   </tr>
