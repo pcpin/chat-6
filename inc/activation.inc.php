@@ -72,6 +72,7 @@ if ($activation_code!='') {
       $user->email_new_date='';
       $user->email_new_activation_code='';
       $user->_db_updateObj($user->id);
+      
       $message=$l->g('new_email_activated');
       if ($session->_db_getList('_s_room_id', '_s_user_id = '.$user->id, 1)) {
         // User is online
@@ -83,8 +84,7 @@ if ($activation_code!='') {
     }
   } elseif (isset($activate_account)) {
     // New account activation
-    if ($user->_db_getList('id',
-                           'language_id',
+    if ($user->_db_getList('id,language_id',
                            'activated = n',
                            'activation_code = '.md5($activation_code),
                            1)) {
@@ -117,7 +117,7 @@ if ($activation_code!='') {
             }
             unset($users);
             foreach ($language_emails as $language_id=>$emails) {
-              if (true!==$l->setLanguage($language_id)) {
+              if (true!==$l->setLanguage($language_id) && (empty($session->_conf_all['default_language']) || true!==$l->setLanguage($session->_conf_all['default_language']))) {
                 $l->setLanguage($old_language_id);
               }
               foreach ($emails as $email) {

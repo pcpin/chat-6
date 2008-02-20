@@ -78,7 +78,7 @@ if (!empty($errortext)) {
     $activation_code_plain='';
     $activation_code='';
   }
-  $current_user->newUser($login, $password, $email, 1, 'n', $activation_code, $session->_s_language_id);
+  $current_user->newUser($login, $password, $email, 1, 'n', $activation_code, $l->id);
   if (empty($session->_conf_all['activate_new_accounts'])) {
     // No account activation required. Send "welcome" email.
     $email_body=$l->g('email_welcome_new_user');

@@ -62,7 +62,7 @@ if (!empty($current_user->id)) {
       }
       // Load language
       if ($tmp_user->language_id!=$l->id) {
-        if (true!==$l->setLanguage($tmp_user->language_id)) {
+        if (true!==$l->setLanguage($tmp_user->language_id) && (empty($session->_conf_all['default_language']) || true!==$l->setLanguage($session->_conf_all['default_language']))) {
           $l->setLanguage($old_language_id);
         }
       }
