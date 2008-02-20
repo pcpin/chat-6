@@ -44,7 +44,6 @@ if (!isset($filename)) $filename='';
 
 $conn=@mysql_connect($host, $user, $password);
 
-error_reporting(E_ALL); ini_set('display_errors', 'on');
 function _pcpin_loadClass($class) { require_once('../../class/'.$class.'.class.php'); }
 if (!empty($conn) && @mysql_select_db($database, $conn)) {
   $status=1;
