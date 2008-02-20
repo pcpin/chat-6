@@ -60,7 +60,7 @@ if (!empty($profile_user_id)) {
         $email_body=$l->g('email_email_address_activation');
         $email_body=str_replace('[HOURS]', $session->_conf_all['new_email_activation_timeout'], $email_body);
         $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
-        $email_body=str_replace('[ACTIVATION_URL]', $session->_conf_all['base_url'].'?activate_email&activation_code='.$email_new_activation_code, $email_body);
+        $email_body=str_replace('[ACTIVATION_URL]', str_replace(' ', '%20', $session->_conf_all['base_url']).'?activate_email&activation_code='.urlencode($email_new_activation_code), $email_body);
         $email_body=str_replace('[CHAT_NAME]', $session->_conf_all['chat_name'], $email_body);
         PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $l->g('email_address_activation'), null, null, $email_body);
         $status=0;
