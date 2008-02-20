@@ -41,7 +41,6 @@ if ($language_id!=$l->id) {
     $l->setLanguage($old_language_id);
   }
 }
-print_r($l); die();
 $errortext=array();
 
 $login=trim($login);

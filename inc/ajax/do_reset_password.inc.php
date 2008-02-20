@@ -72,7 +72,7 @@ if (!empty($errortext)) {
   $email_body=str_replace('[CHAT_NAME]', $session->_conf_all['chat_name'], $email_body);
   $email_body=str_replace('[USERNAME]', $login, $email_body);
   $email_body=str_replace('[PASSWORD]', $password_new, $email_body);
-  $email_body=str_replace('[URL]', $session->_conf_all['base_url'], $email_body);
+  $email_body=str_replace('[URL]', str_replace(' ', '%20', $session->_conf_all['base_url']), $email_body);
   $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
   PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $l->g('password_reset'), null, null, $email_body);
   $status=0;
