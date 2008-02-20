@@ -374,6 +374,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$user` (
   `is_guest` enum('y','n') NOT NULL default 'n',
   `show_message_time` enum('y','n') NOT NULL default 'y',
   `outgoing_message_color` varchar(6) NOT NULL default '',
+  `language_id` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `login` (`login`),
   KEY `email` (`email`),

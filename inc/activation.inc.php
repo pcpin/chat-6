@@ -102,6 +102,7 @@ if ($activation_code!='') {
         $message=$l->g('your_account_activated');
         if (!empty($session->_conf_all['new_user_notification'])) {
           // Send notification to admins
+          $old_language_id=$l->id;
           if ($current_user->_db_getList('email,language_id', 'is_admin = y')) {
             $users=$current_user->_db_list;
             $current_user->_db_freeList();
@@ -116,7 +117,7 @@ if ($activation_code!='') {
             unset($users);
             foreach ($language_emails as $language_id=>$emails) {
               if (true!==$l->setLanguage($language_id)) {
-                $l->setLanguage($session->_s_language_id);
+                $l->setLanguage($old_language_id);
               }
               foreach ($emails as $email) {
                 $email_body=$l->g('email_new_user_notification');
@@ -129,8 +130,8 @@ if ($activation_code!='') {
               }
             }
             // Restore original language
-            if ($language_id!=$session->_s_language_id) {
-              $l->setLanguage($session->_s_language_id);
+            if ($l->id!=$old_language_id) {
+              $l->setLanguage($old_language_id);
             }
           }
         }
