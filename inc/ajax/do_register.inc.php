@@ -135,7 +135,7 @@ if (!empty($errortext)) {
     $email_body=str_replace('[PASSWORD]', $password, $email_body);
     $email_body=str_replace('[URL]', str_replace(' ', '%20', $session->_conf_all['base_url']), $email_body);
     $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
-    $email_body=str_replace('[ACTIVATION_URL]', $session->_conf_all['base_url'].'?activate_account&activation_code='.$activation_code_plain, $email_body);
+    $email_body=str_replace('[ACTIVATION_URL]', str_replace(' ', '%20', $session->_conf_all['base_url']).'?activate_account&activation_code='.urlencode($activation_code_plain), $email_body);
     $email_body=str_replace('[HOURS]', $session->_conf_all['new_account_activation_timeout'], $email_body);
     PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $l->g('new_account_activation'), null, null, $email_body);
     $status=0;
