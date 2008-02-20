@@ -31,7 +31,7 @@ $body_onload[]='initLanguagesForm()';
     </td>
   </tr>
 
-  <tr>
+  <tr id="language_selection_header">
     <td class="tbl_row" style="text-align:center;">
       Please select languages you would like to install:
       <br /><br />
@@ -46,11 +46,19 @@ $body_onload[]='initLanguagesForm()';
     </td>
   </tr>
 
+  <tr id="no_languages_found" style="display:none">
+    <td class="tbl_row" colspan="2" style="text-align:center;color:#dd0000;">
+      <br /><br />
+      <b>ERROR: No language files found</b>
+      <br /><br /><br />
+    </td>
+  </tr>
+
   <tr>
     <td class="tbl_row" colspan="2" style="text-align: right">
       <button type="button" onclick="window.history.go(-1)" title="Back">Back</button>
       &nbsp;
-      <button type="button" onclick="validateLanguages()" title="Continue">Continue</button>
+      <button id="continue_btn" type="button" onclick="validateLanguages()" title="Continue">Continue</button>
     </td>
   </tr>
 

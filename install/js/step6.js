@@ -54,7 +54,7 @@ function _CALLBACK_getLanguages() {
     alert(message);
   } else {
     if (languages) {
-      while (null!=(language=actionHandler.getElement('language', language_nr++, languages))) {
+      while (null!=(language=actionHandler.getElement('language', language_nr, languages))) {
         iso_name=actionHandler.getCdata('iso_name', 0, language);
         name=actionHandler.getCdata('name', 0, language);
         local_name=actionHandler.getCdata('local_name', 0, language);
@@ -62,18 +62,28 @@ function _CALLBACK_getLanguages() {
         html+='<br /><label for="languages_chkbox_'+htmlspecialchars(iso_name)+'" title="'+htmlspecialchars(name+' ('+local_name+')')+'"><input onclick="setLanguage(this)" type="checkbox" id="languages_chkbox_'+htmlspecialchars(iso_name)+'" title="'+htmlspecialchars(name+' ('+local_name+')')+'" /> '+htmlspecialchars(name+' ('+local_name+')')+'</label>';
         window.parent.language_names[iso_name]=name+' ('+local_name+')';
         window.parent.language_files[iso_name]=filename;
+        language_nr++;
       }
     }
   }
-  $('languages_cell').innerHTML=html+'<br /><br />';
-  var tmp=new Array();
-  for (var i=0; i<window.parent.languages.length; i++) {
-    if ($('languages_chkbox_'+window.parent.languages[i])) {
-      $('languages_chkbox_'+window.parent.languages[i]).click();
-      tmp.push(window.parent.languages[i]);
+  if (language_nr==0) {
+    $('no_languages_found').style.display='';
+    $('continue_btn').style.display='none';
+    $('language_selection_header').style.display='none';
+  } else {
+    $('no_languages_found').style.display='none';
+    $('continue_btn').style.display='';
+    $('language_selection_header').style.display='';
+    $('languages_cell').innerHTML=html+'<br /><br />';
+    var tmp=new Array();
+    for (var i=0; i<window.parent.languages.length; i++) {
+      if ($('languages_chkbox_'+window.parent.languages[i])) {
+        $('languages_chkbox_'+window.parent.languages[i]).click();
+        tmp.push(window.parent.languages[i]);
+      }
     }
+    window.parent.languages=tmp;
   }
-  window.parent.languages=tmp;
   $('contents_div').style.display='';
   toggleProgressBar(false);
 }
