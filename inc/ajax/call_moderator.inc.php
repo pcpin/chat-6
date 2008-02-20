@@ -47,10 +47,7 @@ if (!empty($current_user->id)) {
       $moderators=$current_user->getAdmins();
     }
     _pcpin_loadClass('nickname'); $nickname=new PCPIN_Nickname($session);
-    if ($session->_s_language_id!=$session->_conf_all['default_language']) {
-      // Load default language
-      $l->setLanguage($session->_conf_all['default_language']);
-    }
+    $old_language_id=$l->id;
     // Create message body
     $body=$current_user->id.'/'.$session->_s_room_id.'/'.($abuse_category*1).'/'.trim(str_replace('/', ' ', $abuse_nickname)).'/'.trim($abuse_description);
     foreach ($moderators as $data) {
@@ -62,6 +59,12 @@ if (!empty($current_user->id)) {
       } else {
         // Add offline message
 //      $msg->addMessage(4001, 'y', $session->_s_user_id, $current_nickname, 0, $data['id'], $body, date('Y-m-d H:i:s'), 2);
+      }
+      // Load language
+      if ($tmp_user->language_id!=$l->id) {
+        if (true!==$l->setLanguage($tmp_user->language_id)) {
+          $l->setLanguage($old_language_id);
+        }
       }
       $violation_category='';
       switch ($abuse_category) {
@@ -106,9 +109,9 @@ if (!empty($current_user->id)) {
                   ;
       PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $tmp_user->email, $session->_conf_all['chat_name'].': '.$l->g('abuse_arrived'), null, null, $email_body);
     }
-    if ($session->_s_language_id!=$session->_conf_all['default_language']) {
-      // Restore session language
-      $l->setLanguage($session->_s_language_id);
+    if ($old_language_id!=$l->id) {
+      // Restore original language
+      $l->setLanguage($old_language_id);
     }
   }
 }

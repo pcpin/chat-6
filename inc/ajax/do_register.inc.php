@@ -35,8 +35,11 @@ if (!isset($email) || !is_scalar($email)) $email='';
 if (!isset($language_id) || !is_scalar($language_id)) $language_id=0;
 
 // Load language
-if (!empty($language_id)) {
-  $l->setLanguage($language_id);
+if ($language_id!=$session->_s_language_id) {
+  $old_language_id=$l->id;
+  if (true!==$l->setLanguage($language_id)) {
+    $l->setLanguage($old_language_id);
+  }
 }
 
 $errortext=array();
@@ -76,7 +79,7 @@ if (!empty($errortext)) {
     $activation_code_plain='';
     $activation_code='';
   }
-  $current_user->newUser($login, $password, $email, 1, 'n', $activation_code);
+  $current_user->newUser($login, $password, $email, 1, 'n', $activation_code, $session->_s_language_id);
   if (empty($session->_conf_all['activate_new_accounts'])) {
     // No account activation required. Send "welcome" email.
     $email_body=$l->g('email_welcome_new_user');
@@ -91,17 +94,35 @@ if (!empty($errortext)) {
     $message=$l->g('your_account_created');
     if (!empty($session->_conf_all['new_user_notification'])) {
       // Send notification to admins
-      if ($current_user->_db_getList('email', 'is_admin = y')) {
-        $emails=$current_user->_db_list;
+      if ($current_user->_db_getList('email,language_id', 'is_admin = y')) {
+        $users=$current_user->_db_list;
         $current_user->_db_freeList();
-        foreach ($emails as $data) {
-          $email_body=$l->g('email_new_user_notification');
-          $email_body=str_replace('[CHAT_NAME]', $session->_conf_all['chat_name'], $email_body);
-          $email_body=str_replace('[EMAIL_ADDRESS]', $email, $email_body);
-          $email_body=str_replace('[USERNAME]', $login, $email_body);
-          $email_body=str_replace('[REMOTE_IP]', PCPIN_CLIENT_IP, $email_body);
-          $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
-          PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $data['email'], $session->_conf_all['chat_name'].': '.$l->g('new_account_created'), null, null, $email_body);
+        // Group users by language
+        $language_emails=array();
+        foreach ($users as $data) {
+          if (!isset($language_users[$data['language_id']])) {
+            $language_emails[$data['language_id']]=array();
+          }
+          $language_emails[$data['language_id']][]=$data['email'];
+        }
+        unset($users);
+        foreach ($language_emails as $language_id=>$emails) {
+          if (true!==$l->setLanguage($language_id)) {
+            $l->setLanguage($session->_s_language_id);
+          }
+          foreach ($emails as $email) {
+            $email_body=$l->g('email_new_user_notification');
+            $email_body=str_replace('[CHAT_NAME]', $session->_conf_all['chat_name'], $email_body);
+            $email_body=str_replace('[EMAIL_ADDRESS]', $email, $email_body);
+            $email_body=str_replace('[USERNAME]', $login, $email_body);
+            $email_body=str_replace('[REMOTE_IP]', PCPIN_CLIENT_IP, $email_body);
+            $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
+            PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $session->_conf_all['chat_name'].': '.$l->g('new_account_created'), null, null, $email_body);
+          }
+        }
+        // Restore original language
+        if ($language_id!=$session->_s_language_id) {
+          $l->setLanguage($session->_s_language_id);
         }
       }
     }

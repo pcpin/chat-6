@@ -16,6 +16,33 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Load language
+$languages=array();
+if (!empty($session->_conf_all['allow_language_selection'])) {
+  $languages=$l->getLanguages(false);
+  if (empty($preselect_language)) {
+    // Get proposed by client languages
+    $preselect_language=0;
+    $accept_languages=!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])? explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) : array();
+    foreach ($accept_languages as $val) {
+      foreach ($languages as $data) {
+        if (strtolower(trim($val))==$data['iso_name']) {
+          $preselect_language=$data['id'];
+          break;
+        }
+      }
+      if (!empty($preselect_language)) {
+        break;
+      }
+    }
+  }
+}
+if (empty($preselect_language)) {
+  $preselect_language=$session->_conf_all['default_language'];
+}
+$l->setLanguage($preselect_language);
+
+
 $message=$l->g('access_denied');
 
 if (!isset($activation_code) || !is_scalar($activation_code)) {
@@ -56,9 +83,17 @@ if ($activation_code!='') {
   } elseif (isset($activate_account)) {
     // New account activation
     if ($user->_db_getList('id',
+                           'language_id',
                            'activated = n',
                            'activation_code = '.md5($activation_code),
                            1)) {
+      // Load language
+      if ($l->id!=$user->_db_list[0]['language_id']) {
+        $old_language_id=$l->id;
+        if (true!==$l->setLanguage($user->_db_list[0]['language_id'])) {
+          $l->setLanguage($old_language_id);
+        }
+      }
       // Activate user account
       $user_id=$user->_db_list[0]['id'];
       $user->_db_freeList();
@@ -67,17 +102,35 @@ if ($activation_code!='') {
         $message=$l->g('your_account_activated');
         if (!empty($session->_conf_all['new_user_notification'])) {
           // Send notification to admins
-          if ($current_user->_db_getList('email', 'is_admin = y')) {
-            $emails=$current_user->_db_list;
+          if ($current_user->_db_getList('email,language_id', 'is_admin = y')) {
+            $users=$current_user->_db_list;
             $current_user->_db_freeList();
-            foreach ($emails as $data) {
-              $email_body=$l->g('email_new_user_notification');
-              $email_body=str_replace('[CHAT_NAME]', $session->_conf_all['chat_name'], $email_body);
-              $email_body=str_replace('[EMAIL_ADDRESS]', $user->email, $email_body);
-              $email_body=str_replace('[USERNAME]', $user->login, $email_body);
-              $email_body=str_replace('[REMOTE_IP]', PCPIN_CLIENT_IP, $email_body);
-              $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
-              PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $data['email'], $session->_conf_all['chat_name'].': '.$l->g('new_account_created'), null, null, $email_body);
+            // Group users by language
+            $language_emails=array();
+            foreach ($users as $data) {
+              if (!isset($language_users[$data['language_id']])) {
+                $language_emails[$data['language_id']]=array();
+              }
+              $language_emails[$data['language_id']][]=$data['email'];
+            }
+            unset($users);
+            foreach ($language_emails as $language_id=>$emails) {
+              if (true!==$l->setLanguage($language_id)) {
+                $l->setLanguage($session->_s_language_id);
+              }
+              foreach ($emails as $email) {
+                $email_body=$l->g('email_new_user_notification');
+                $email_body=str_replace('[CHAT_NAME]', $session->_conf_all['chat_name'], $email_body);
+                $email_body=str_replace('[EMAIL_ADDRESS]', $user->email, $email_body);
+                $email_body=str_replace('[USERNAME]', $user->login, $email_body);
+                $email_body=str_replace('[REMOTE_IP]', PCPIN_CLIENT_IP, $email_body);
+                $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
+                PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $session->_conf_all['chat_name'].': '.$l->g('new_account_created'), null, null, $email_body);
+              }
+            }
+            // Restore original language
+            if ($language_id!=$session->_s_language_id) {
+              $l->setLanguage($session->_s_language_id);
             }
           }
         }

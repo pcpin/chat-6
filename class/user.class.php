@@ -234,6 +234,12 @@ class PCPIN_User extends PCPIN_Session {
    */
   var $outgoing_message_color='';
 
+  /**
+   * Language ID
+   * @var   int
+   */
+  var $language_id=0;
+
 
 
   /**
@@ -254,9 +260,10 @@ class PCPIN_User extends PCPIN_Session {
    * @param   int       $hide_email       Hide E-Mail address? (0: No, 1: Yes)
    * @param   string    $guest            Flag: "y" if user is a guest, "n" if user was registered
    * @param   string    $activation_code  If new account activation enabled: Activation code (MD5-encoded)
+   * @param   int       $language_id      Language ID. If empty: language ID from current session will be used
    * @return  boolean TRUE on success or FALSE on error
    */
-  function newUser($login='', $password='', $email='', $hide_email=0, $guest='n', $activation_code='') {
+  function newUser($login='', $password='', $email='', $hide_email=0, $guest='n', $activation_code='', $language_id=0) {
     $result=false;
     $this->id=0;
     $login=trim($login);
@@ -293,6 +300,7 @@ class PCPIN_User extends PCPIN_Session {
       $this->is_guest=$guest;
       $this->show_message_time='';
       $this->outgoing_message_color='';
+      $this->language_id=!empty($language_id)? $language_id : $this->_s_language_id;
       // Insert row
       if ($this->_db_insertObj()) {
         $result=true;
