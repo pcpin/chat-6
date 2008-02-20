@@ -31,7 +31,7 @@ if (!isset($email) || !is_scalar($email)) $email='';
 if (!isset($language_id) || !is_scalar($language_id)) $language_id=0;
 
 // Load language
-if ($language_id!=$session->_s_language_id) {
+if ($language_id!=$l->id) {
   $old_language_id=$l->id;
   if (true!==$l->setLanguage($language_id)) {
     $l->setLanguage($old_language_id);

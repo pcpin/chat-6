@@ -94,6 +94,7 @@ if (!empty($errortext)) {
     $message=$l->g('your_account_created');
     if (!empty($session->_conf_all['new_user_notification'])) {
       // Send notification to admins
+      $old_language_id=$l->id;
       if ($current_user->_db_getList('email,language_id', 'is_admin = y')) {
         $users=$current_user->_db_list;
         $current_user->_db_freeList();
@@ -121,8 +122,8 @@ if (!empty($errortext)) {
           }
         }
         // Restore original language
-        if ($language_id!=$session->_s_language_id) {
-          $l->setLanguage($session->_s_language_id);
+        if ($l->id!=$old_language_id) {
+          $l->setLanguage($old_language_id);
         }
       }
     }
