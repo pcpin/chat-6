@@ -32,6 +32,12 @@ _pcpin_loadClass('disallowed_name'); $disallowed_name=new PCPIN_Disallowed_Name(
 if (!isset($login) || !is_scalar($login)) $login='';
 if (!isset($password) || !is_scalar($password)) $password='';
 if (!isset($email) || !is_scalar($email)) $email='';
+if (!isset($language_id) || !is_scalar($language_id)) $language_id=0;
+
+// Load language
+if (!empty($language_id)) {
+  $l->setLanguage($language_id);
+}
 
 $errortext=array();
 

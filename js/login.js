@@ -252,6 +252,7 @@ function doRegister() {
                                                         +'&login='+urlencode($('register_username').value)
                                                         +'&password='+urlencode(base64encode(password))
                                                         +'&email='+urlencode($('register_email').value)
+                                                        +'&language_id='+urlencode($('language_selection')? $('language_selection').value : 0)
                                                         );
   }
   return false;
