@@ -25,6 +25,7 @@ if (!empty($session->_conf_all['allow_language_selection'])) {
     $preselect_language=0;
     $accept_languages=!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])? explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) : array();
     foreach ($accept_languages as $val) {
+      $val=substr($val, 0, strpos($val, ';'));
       foreach ($languages as $data) {
         if (strtolower(trim($val))==$data['iso_name']) {
           $preselect_language=$data['id'];
