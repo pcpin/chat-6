@@ -221,7 +221,6 @@ function hideResetPasswordForm() {
  */
 function doRegister() {
   var errors=new Array();
-  var password='';
 
   $('register_username').value=trimString($('register_username').value);
   $('register_email').value=trimString($('register_email').value);
@@ -237,7 +236,6 @@ function doRegister() {
   }
 
   // Validate passwords
-  password=$('register_password1').value;
   if ($('register_password1').value.length<3) {
     errors.push(getLng('password_too_short'));
   } else if ($('register_password1').value!=$('register_password2').value) {
@@ -250,7 +248,7 @@ function doRegister() {
     hideRegisterForm();
     sendData('_CALLBACK_doRegister()', formlink, 'POST', 'ajax='+urlencode('do_register')
                                                         +'&login='+urlencode($('register_username').value)
-                                                        +'&password='+urlencode(base64encode(password))
+                                                        +'&password='+urlencode($('register_password1').value)
                                                         +'&email='+urlencode($('register_email').value)
                                                         +'&language_id='+urlencode($('language_selection')? $('language_selection').value : 0)
                                                         );

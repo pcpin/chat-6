@@ -61,7 +61,6 @@ if (!PCPIN_Common::checkEmail($email)) {
   $errortext[]=$l->g('email_already_taken');
 }
 
-$password=base64_decode($password);
 if (_pcpin_strlen($password)<3) {
   $errortext[]=$l->g('password_too_short');
 }
