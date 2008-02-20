@@ -108,7 +108,7 @@ if (!empty($session->_conf_all['allow_language_selection']) && !empty($session->
   foreach ($languages as $data) {
     $tpl->addVars('language_selection_option', array('id'=>htmlspecialchars($data['id']),
                                                      'local_name'=>htmlspecialchars($data['local_name']),
-                                                     'selected'=>$data['id']==$preselect_language? 'selected="selected"' : '',
+                                                     'selected'=>($data['id']==$l->id)? 'selected="selected"' : '',
                                                      ));
     $tpl->parseTemplate('language_selection_option', 'a');
   }
