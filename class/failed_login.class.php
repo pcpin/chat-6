@@ -52,16 +52,17 @@ class PCPIN_Failed_Login extends PCPIN_Session {
   /**
    * Increase failed logins counter for specified IP address and ban it if maximum allowed login attempt limit exceeds.
    * This method must be called on every failed login attempt.
-   * @param   string    $ip     IP address
+   * @param   string    $ip           IP address
+   * @param   string    $ban_reason   Reason for ban, if issued
    */
-  function increaseCounter($ip) {
+  function increaseCounter($ip, $ban_reason='') {
     $ip=trim($ip);
     if (!empty($ip)) {
       if ($this->_db_query($this->_db_makeQuery(2090, $ip))) {
         if (!empty($this->_conf_all['ip_failed_login_limit']) && $this->_db_getList('count', 'ip =# '.$ip, 1)) {
           if ($this->_db_list[0]['count']>$this->_conf_all['ip_failed_login_limit']) {
             _pcpin_loadClass('ipfilter'); $ban=new PCPIN_IPFilter($this);
-            $ban->addAddress($ip, date('Y-m-d H:i:s', time()+3600*$this->_conf_all['ip_failed_login_ban']), '', 'd');
+            $ban->addAddress($ip, date('Y-m-d H:i:s', time()+3600*$this->_conf_all['ip_failed_login_ban']), $ban_reason, 'd');
             $this->clearCounter($ip);
           }
         }

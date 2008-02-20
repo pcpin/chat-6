@@ -130,7 +130,7 @@ if (false!==$blocked=$ipfilter->isBlocked(PCPIN_CLIENT_IP)) {
     $login_failed=true;
   }
   if (!empty($login_failed)) {
-    $failed_login_class->increaseCounter(PCPIN_CLIENT_IP);
+    $failed_login_class->increaseCounter(PCPIN_CLIENT_IP, $l->g('too_many_failed_logins'));
   }
 } elseif (!empty($guest_login)) {
   // Guest login
