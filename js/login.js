@@ -33,8 +33,6 @@ var LoginLengthMax=10;
  */
 var adminLogin=false;
 
-
-
 /**
  * Init login form
  * @param   int       login_length_min      Minimum allowed username length
@@ -55,10 +53,17 @@ function initLoginForm(login_length_min, login_length_max, admin_login) {
     }
   } catch (e) {}
 
+  if (!pbl) {
+    pbl=$('pbl');
+    pbl.innerHTML=base64decode('UG93ZXJlZCBieSA8YSBocmVmPSJodHRwOi8vd3d3LnBjcGluLmNvbSIgdGFyZ2V0PSJfYmxhbmsiIHRpdGxlPSJQb3dlcmVkIGJ5IFBDUElOIENoYXQiPlBDUElOIENoYXQ8L2E+');
+    pbl.style.position='absolute';
+    pbl.style.fontSize='smaller';
+  }
+
   window.onresize=function() {
     setTimeout("centerLoginTable()", 30);
-    setTimeout("moveToCenter($('register_table'))", 30);
-    setTimeout("moveToCenter($('reset_pw_table'))", 30);
+    setTimeout("moveToCenter($('register_table')); fixPBL($('register_table'));", 30);
+    setTimeout("moveToCenter($('reset_pw_table')); fixPBL($('reset_pw_table'));", 30);
   }
 
   // Display login form
@@ -73,10 +78,12 @@ function centerLoginTable() {
   var login_tbl=$('login_table');
   var chat_summary=$('chat_summary');
   if (chat_summary) {
-    moveToCenter(login_tbl, -5-Math.round((chat_summary.scrollHeight)/2));
-    moveToCenter(chat_summary, 5+Math.round((login_tbl.scrollHeight)/2));
+    moveToCenter(login_tbl, -8-Math.round((chat_summary.scrollHeight)/2));
+    moveToCenter(chat_summary, 8+Math.round((login_tbl.scrollHeight)/2));
+    fixPBL(login_tbl);
   } else {
     moveToCenter(login_tbl);
+    fixPBL(login_tbl);
   }
 }
 
@@ -110,6 +117,7 @@ function hideLoginForm() {
   if ($('chat_summary')) {
     $('chat_summary').style.display='none';
   }
+  pbl.style.display='none';
 }
 
 
@@ -176,6 +184,7 @@ function showRegisterForm(no_reset) {
   hideLoginForm();
   $('register_table').style.display='';
   moveToCenter($('register_table'));
+  fixPBL($('register_table'));
 
   if (typeof(no_reset)!='boolean' || !no_reset) {
     $('register_username').value='';
@@ -193,6 +202,7 @@ function showRegisterForm(no_reset) {
  */
 function hideRegisterForm() {
   $('register_table').style.display='none';
+  pbl.style.display='none';
 }
 
 
@@ -205,6 +215,7 @@ function showResetPasswordForm() {
   $('reset_pw_username').focus();
   $('reset_pw_username').select();
   moveToCenter($('reset_pw_table'));
+  fixPBL($('reset_pw_table'));
 }
 
 
@@ -213,6 +224,7 @@ function showResetPasswordForm() {
  */
 function hideResetPasswordForm() {
   $('reset_pw_table').style.display='none';
+  pbl.style.display='none';
 }
 
 
@@ -313,5 +325,18 @@ function _CALLBACK_doResetPassword() {
   } else {
     // An error
     showResetPasswordForm();
+  }
+}
+
+
+// Please keep this unchanged. Thank you!
+var pbl=null;
+
+// Please keep this unchanged. Thank you!
+function fixPBL(pobj) {
+  if (pobj.style.display!='none') {
+    pbl.style.display='';
+    moveToCenter(pbl);
+    setTimeout("pbl.style.top=($('"+pobj.id+"').scrollHeight+4+getTopPos($('"+pobj.id+"')))+'px';", 10);
   }
 }

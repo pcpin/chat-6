@@ -60,6 +60,12 @@
   </div>
 </PCPIN:TPL>
 
+<div id="pbl" style="display:none">
+<!--
+  PLEASE KEEP THIS UNCHANGED. THANK YOU!
+-->
+</div>
+
 <form action="{FORMLINK}" method="post" onsubmit="doRegister(); return false;">
   <table id="register_table" class="tbl" border="0" cellspacing="1" cellpadding="0" style="position:absolute;display:none;">
     <tr>
