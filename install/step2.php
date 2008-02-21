@@ -30,7 +30,7 @@ if (!defined('PCPIN_INSTALL_MODE') || true!==PCPIN_INSTALL_MODE) {
   </tr>
   <tr>
     <td class="tbl_row">
-      <div style="overflow:auto; padding: 5px; margin: 5px; height: 400px; border: solid 1px #000000;">
+      <div style="overflow:auto; padding: 5px; margin: 5px; height: 600px; border: solid 1px #000000;">
         <h3 style="text-align: center;">GNU GENERAL PUBLIC LICENSE</h3>
         <p style="text-align: center;">Version 3, 29 June 2007</p>
         

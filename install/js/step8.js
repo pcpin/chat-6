@@ -66,6 +66,7 @@ function initFinalCheckTables() {
     languages.push(window.parent.language_names[window.parent.languages[i]]);
   }
   $('install_languages_list').innerHTML=htmlspecialchars(languages.join(', '));
+  $('default_language').innerHTML=htmlspecialchars(window.parent.language_names[window.parent.default_language]);
 
   if (window.parent.admin_account['create']) {
     $('administrator_account_no_new').style.display='none';
@@ -299,6 +300,7 @@ function installStep(step) {
                 +'&admin_username='+urlencode(window.parent.admin_account['username'])
                 +'&admin_password='+urlencode(window.parent.admin_account['password'])
                 +'&admin_email='+urlencode(window.parent.admin_account['email'])
+                +'&default_language='+urlencode(window.parent.default_language)
                 ,
                 true, false, 1000
                 );

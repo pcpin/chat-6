@@ -40,6 +40,7 @@ if (!isset($prefix)) $prefix='';
 if (!isset($admin_username)) $admin_username='';
 if (!isset($admin_password)) $admin_password='';
 if (!isset($admin_email)) $admin_email='';
+if (!isset($default_language)) $default_language='';
 
 $conn=@mysql_connect($host, $user, $password);
 
@@ -71,13 +72,19 @@ if (!empty($conn) && @mysql_select_db($database, $conn)) {
   $base_dir=implode('/', $base_dir);
   $base_url=$protocol.'://'.$_SERVER['HTTP_HOST'].$port.'/'.$base_dir.'/index.php';
   mysql_query('UPDATE `'.$prefix.'config` SET `_conf_value` = "'.mysql_real_escape_string($base_url, $conn).'" WHERE `_conf_name` = "base_url" LIMIT 1', $conn);
+  // Set default language
+  mysql_query('UPDATE `'.$prefix.'config` `co`,
+                   `'.$prefix.'language` `la`
+                  SET `co`.`_conf_value` = `la`.`id`
+                WHERE `co`.`_conf_name` = "default_language"
+                      AND `la`.`iso_name` = "'.mysql_real_escape_string($default_language, $conn).'"', $conn);
   // Set new version
   mysql_query('DELETE FROM `'.$prefix.'version`', $conn);
   mysql_query('INSERT INTO `'.$prefix.'version` ( `version`,
                                                   `version_check_key`
                                                 ) VALUES (
                                                   "'.mysql_real_escape_string(PCPIN_INSTALL_VERSION, $conn).'",
-                                                  "-blank-"
+                                                  "'.md5(mt_rand(-time(), time()).microtime().rand(-time(), time())).'"
                                                 )', $conn);
 
   $short_message='Done';

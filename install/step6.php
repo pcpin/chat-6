@@ -54,6 +54,15 @@ $body_onload[]='initLanguagesForm()';
     </td>
   </tr>
 
+  <tr id="default_language_row">
+    <td class="tbl_row" colspan="2" style="text-align: center">
+      Default language:
+      <select id="default_language" onchange="setDefaultLanguage(this)">
+        <option value="">------------- Please select -------------</option>
+      </select>
+    </td>
+  </tr>
+
   <tr>
     <td class="tbl_row" colspan="2" style="text-align: right">
       <button type="button" onclick="window.history.go(-1)" title="Back">Back</button>
