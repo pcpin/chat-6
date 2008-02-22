@@ -60,7 +60,7 @@
   </div>
 </PCPIN:TPL>
 
-<div id="pbl" style="display:none">
+<div id="pbl">
 <!--
   PLEASE KEEP THIS UNCHANGED. THANK YOU!
 -->
