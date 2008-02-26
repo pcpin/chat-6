@@ -172,11 +172,11 @@ function htmlspecialchars(string) {
 function htmlspecialchars_decode(string) {
   var result='';
   if (typeof(string)=='string' && string!='') {
-    result=result.split('&gt;').join('>');
+    result=string.split('&gt;').join('>');
     result=result.split('&lt;').join('<');
     result=result.split('&#039;').join("'");
     result=result.split('&quot;').join('"');
-    result=string.split('&amp;').join('&');
+    result=result.split('&amp;').join('&');
   }
   return result;
 }
