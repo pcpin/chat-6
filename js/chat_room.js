@@ -359,6 +359,7 @@ var ChatroomUserlist=null;
 var MainInputTextArea=null;
 
 
+
 /**
  * Initialize client in the chat room
  * @var     int       room_id                 Current room ID
@@ -909,6 +910,9 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
   var user=null;
   var user_id=0;
   var user_nr=0;
+  var abuses=null;
+  var abuse=null;
+  var abuse_nr=0;
   var messages=null;
   var msg=null;
   var msg_nr=0;
@@ -1055,6 +1059,10 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
           while (null!=(invitation=ajaxUpdater.getElement('invitation', invitation_nr++, invitations))) {
             openWindow(formlink+'?s_id='+s_id+'&inc=invitation&invitation_id='+urlencode(ajaxUpdater.getCdata('id', 0, invitation)), 'invitation'+ajaxUpdater.getCdata('id', 0, invitation), 600, 300, false, false, false, false, true);
           }
+        }
+        // Abuses
+        if (null!=(abuses=ajaxUpdater.getElement('abuses'))) {
+          processAbuses(abuses, ajaxUpdater);
         }
       break;
     }

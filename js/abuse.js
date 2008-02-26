@@ -38,7 +38,15 @@ function initAbuseWindow() {
 
   $('enter_room_btn').innerHTML=htmlspecialchars(getLng('enter_chat_room').split('[ROOM]').join(abuse_data['room_name']));
   $('enter_room_btn').title=$('enter_room_btn').innerHTML;
-  eval("$('enter_room_btn').onclick=function() { if (window.opener.enterChatRoom) { window.opener.enterChatRoom(null, null, "+abuse_data['room_id']+"); } }");
+  $('enter_room_btn').abuse_room_id=stringToNumber(abuse_data['room_id']);
+  $('enter_room_btn').onclick=function() {
+    if (window.opener.enterChatRoom) {
+      window.opener.enterChatRoom(null, null, this.abuse_room_id);
+    } else if (window.opener.switchChatRoom) {
+      window.opener.switchChatRoom(this.abuse_room_id);
+    }
+    this.disabled=true;
+  }
 
   // Resize window
   setTimeout('resizeForDocumentHeight(10)', 100);

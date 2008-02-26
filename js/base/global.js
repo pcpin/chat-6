@@ -125,6 +125,13 @@ var MouseMoveFuncObj=null;
  */
 var SlaveMode=false;
 
+/**
+ * Received abuses
+ * @var object
+ */
+var receivedAbuses=new Array();
+
+
 
 
 
@@ -1211,3 +1218,50 @@ function stopDragNDrop(id) {
   }
 }
 
+
+/**
+ * Send abuse data to opened abuse window
+ * @param   object    aw    Abuse window handler
+ * @param   int       id    Abuse ID
+ * @return object
+ */
+function getAbuseData(aw, id) {
+  var abuse_data=null;
+  if (typeof(aw)=='object' && aw) {
+    if (typeof(id)=='number' && id>0 && receivedAbuses[id]) {
+      abuse_data=receivedAbuses[id];
+    } else {
+      try {
+        aw.close();
+      } catch (e) {}
+    }
+  }
+  return abuse_data;
+}
+
+
+/**
+ * Process received abuses
+ * @param   object    abuses
+ * @param   object    ah
+ */
+function processAbuses(abuses, ah) {
+  var abuse=null;
+  var abuse_nr=0;
+  var abuse_id=0;
+  var abuse_data=null;
+  while (null!=(abuse=ah.getElement('abuse', abuse_nr++, abuses))) {
+    abuse_data=new Array();
+    abuse_data['id']=stringToNumber(ah.getCdata('id', 0, abuse));
+    abuse_data['date']=ah.getCdata('date', 0, abuse);
+    abuse_data['author_id']=stringToNumber(ah.getCdata('author_id', 0, abuse));
+    abuse_data['author_nickname']=ah.getCdata('author_nickname', 0, abuse);
+    abuse_data['category']=ah.getCdata('category', 0, abuse);
+    abuse_data['room_id']=stringToNumber(ah.getCdata('room_id', 0, abuse));
+    abuse_data['room_name']=ah.getCdata('room_name', 0, abuse);
+    abuse_data['abuser_nickname']=ah.getCdata('abuser_nickname', 0, abuse);
+    abuse_data['description']=ah.getCdata('description', 0, abuse);
+    receivedAbuses[abuse_data['id']]=abuse_data;
+    openWindow(formlink+'?s_id='+s_id+'&inc=abuse', 'abuse_'+abuse_data['id'], 600, 450, false, false, false, false, true);
+  }
+}

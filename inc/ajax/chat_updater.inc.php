@@ -50,6 +50,7 @@ if (!empty($first_request)) {
 $categories_xml='';
 $invitations_xml='';
 $banner_display_positions_xml='';
+$abuses_xml='';
 
 if (!empty($room_id) && !empty($current_user->id)) {
   if (empty($session->_s_room_id)) {
@@ -208,6 +209,56 @@ if (!empty($room_id) && !empty($current_user->id)) {
       foreach ($messages as $message_data) {
         $last_message_id=($last_message_id<$message_data['id'])? $message_data['id'] : $last_message_id;
         $msg_parts=explode('/', $message_data['body']);
+
+        if ($message_data['type']=='4001') {
+          // Abuse
+          if ($message_data['target_user_id']==$session->_s_user_id) {
+            $abuse_msg_parts=explode('/', $message_data['body'], 5);
+            if ($room->_db_getList('name', 'id = '.$abuse_msg_parts[1], 1)) {
+              $room_name=$room->_db_list[0]['name'];
+              $room->_db_freeList();
+            } else {
+              $room_name='-';
+            }
+            switch ($abuse_msg_parts[2]) {
+              case '1':
+                $abuse_category=$l->g('spam');
+              break;
+              case '2':
+                $abuse_category=$l->g('insult');
+              break;
+              case '3':
+                $abuse_category=$l->g('adult_content');
+              break;
+              case '4':
+                $abuse_category=$l->g('illegal_content');
+              break;
+              case '5':
+                $abuse_category=$l->g('harassment');
+              break;
+              case '6':
+                $abuse_category=$l->g('fraud');
+              break;
+              default:
+                $abuse_category=$l->g('other');
+              break;
+            }
+            $abuses_xml.='
+  <abuse>
+    <id>'.htmlspecialchars($message_data['id']).'</id>
+    <date>'.htmlspecialchars($current_user->makeDate(PCPIN_Common::datetimeToTimestamp($message_data['date']))).'</date>
+    <author_id>'.htmlspecialchars($message_data['author_id']).'</author_id>
+    <author_nickname>'.htmlspecialchars($message_data['author_nickname']).'</author_nickname>
+    <category>'.htmlspecialchars($abuse_category).'</category>
+    <room_id>'.htmlspecialchars($abuse_msg_parts[1]).'</room_id>
+    <room_name>'.htmlspecialchars($room_name).'</room_name>
+    <abuser_nickname>'.htmlspecialchars($abuse_msg_parts[3]).'</abuser_nickname>
+    <description>'.htmlspecialchars($abuse_msg_parts[4]).'</description>
+  </abuse>';
+          }
+          continue;
+        }
+
         if (empty($full_request)) {
           // Need full data?
           switch ($message_data['type']) {
@@ -459,6 +510,9 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
   <chat_messages>'
   .$chat_messages.'
   </chat_messages>
+  <abuses>'
+  .$abuses_xml.'
+  </abuses>
   <invitations>
   '.$invitations_xml.'
   </invitations>
