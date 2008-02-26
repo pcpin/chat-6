@@ -100,12 +100,6 @@ var currentProfileHomepage='';
 var currentProfileGender='-';
 
 /**
- * Received abuses
- * @var object
- */
-var receivedAbuses=new Array();
-
-/**
  * Flag: TRUE if email address is hidden
  * @var boolean
  */
@@ -400,10 +394,6 @@ function _CALLBACK_getNewMessages() {
   var status=actionHandler.getCdata('status');
   var i=0;
   var abuses=null;
-  var abuse=null;
-  var abuse_nr=0;
-  var abuse_id=0;
-  var abuse_data=null;
 
   if (status=='-1') {
     // Session is invalid
@@ -411,23 +401,8 @@ function _CALLBACK_getNewMessages() {
     return false;
   } else {
     if (null!=(abuses=actionHandler.getElement('abuses'))) {
-      while (null!=(abuse=actionHandler.getElement('abuse', abuse_nr++, abuses))) {
-        abuse_data=new Array();
-        abuse_data['id']=stringToNumber(actionHandler.getCdata('id', 0, abuse));
-        abuse_data['date']=actionHandler.getCdata('date', 0, abuse);
-        abuse_data['author_id']=stringToNumber(actionHandler.getCdata('author_id', 0, abuse));
-        abuse_data['author_nickname']=actionHandler.getCdata('author_nickname', 0, abuse);
-        abuse_data['category']=actionHandler.getCdata('category', 0, abuse);
-        abuse_data['room_id']=stringToNumber(actionHandler.getCdata('room_id', 0, abuse));
-        abuse_data['room_name']=actionHandler.getCdata('room_name', 0, abuse);
-        abuse_data['abuser_nickname']=actionHandler.getCdata('abuser_nickname', 0, abuse);
-        abuse_data['description']=actionHandler.getCdata('description', 0, abuse);
-        receivedAbuses[abuse_data['id']]=abuse_data;
-
-        openWindow(formlink+'?s_id='+s_id+'&inc=abuse', 'abuse_'+abuse_data['id'], 600, 450, false, false, false, false, true);
-      }
+      processAbuses(abuses, actionHandler);
     }
-    
   }
 }
 
@@ -1134,27 +1109,6 @@ function updateGender(gender) {
   flushDisplay();
   sendData('_CALLBACK_updateUserdataField()', formlink, 'POST', 'ajax='+urlencode('update_userdata')+'&s_id='+urlencode(s_id)+'&gender='+urlencode(gender)+'&profile_user_id='+urlencode(profileUserId));
   return false;
-}
-
-
-/**
- * Send abuse data to opened abuse window
- * @param   object    aw    Abuse window handler
- * @param   int       id    Abuse ID
- * @return object
- */
-function getAbuseData(aw, id) {
-  var abuse_data=null;
-  if (typeof(aw)=='object' && aw) {
-    if (typeof(id)=='number' && id>0 && receivedAbuses[id]) {
-      abuse_data=receivedAbuses[id];
-    } else {
-      try {
-        aw.close();
-      } catch (e) {}
-    }
-  }
-  return abuse_data;
 }
 
 

@@ -911,8 +911,6 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
   var user_id=0;
   var user_nr=0;
   var abuses=null;
-  var abuse=null;
-  var abuse_nr=0;
   var messages=null;
   var msg=null;
   var msg_nr=0;
