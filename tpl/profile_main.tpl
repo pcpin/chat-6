@@ -326,7 +326,7 @@
                 <b>{LNG_LANGUAGE}:</b>
               </td>
               <td class="tbl_row">
-                <select id="language_selection" title="{LNG_LANGUAGES}" onchange="$('dummyform').s_id.value=s_id; $('dummyform').language_id.value=this.value; $('dummyform').submit();">
+                <select id="language_selection" title="{LNG_LANGUAGES}" onchange="$('dummyform').action=window.document.location.href; $('dummyform').s_id.value=s_id; $('dummyform').language_id.value=this.value; $('dummyform').submit();">
                   <PCPIN:TPL name="language_selection_option">
                     <option value="{ID}" {SELECTED}>{LOCAL_NAME}</option>
                   </PCPIN:TPL>
