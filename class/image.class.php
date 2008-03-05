@@ -144,19 +144,34 @@ class PCPIN_Image {
         switch(strtolower($type)) {
           case  'jpg'   :
           case  'jpeg'  :   // JPEG image
-                            ob_start();
-                            $result=imagejpeg($new_im, $dst_file, 95);
-                            $dst_img=ob_get_clean();
+                            if (!is_null($dst_file)) {
+                              $result=imagejpeg($new_im, $dst_file, 95);
+                              $dst_img=file_get_contents($dst_file);
+                            } else {
+                              ob_start();
+                              $result=imagejpeg($new_im, null, 95);
+                              $dst_img=ob_get_clean();
+                            }
           break;
           case  'gif'   :   // GIF image
-                            ob_start();
-                            $result=imagegif($new_im, $dst_file);
-                            $dst_img=ob_get_clean();
+                            if (!is_null($dst_file)) {
+                              $result=imagegif($new_im, $dst_file);
+                              $dst_img=file_get_contents($dst_file);
+                            } else {
+                              ob_start();
+                              $result=imagegif($new_im);
+                              $dst_img=ob_get_clean();
+                            }
           break;
           case  'png'   :   // PNG image
-                            ob_start();
-                            $result=imagepng($new_im, $dst_file);
-                            $dst_img=ob_get_clean();
+                            if (!is_null($dst_file)) {
+                              $result=imagepng($new_im, $dst_file);
+                              $dst_img=file_get_contents($dst_file);
+                            } else {
+                              ob_start();
+                              $result=imagepng($new_im);
+                              $dst_img=ob_get_clean();
+                            }
           break;
         }
       }
