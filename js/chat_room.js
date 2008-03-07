@@ -662,10 +662,6 @@ function initChatRoom(room_id,
   setTimeout('window.onresize()', 150);
 }
 
-function cleanup(){
-alert("Leaving page...");
-}
-
 
 /**
  * Set initial size and position of all areas in chat room window, apply some CSS attributes

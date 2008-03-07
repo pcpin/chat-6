@@ -163,7 +163,12 @@ function initProfile(nickname_length_min_, nickname_length_max_, homepage, gende
     // Get member data
     getMemberData();
   }
-  $$('body')[0].onunload=function() {
+  // Set "onunload" handler
+  window.onunload=function() {
+    // Send "Page unloaded" signal to server
+    if (!SkipPageUnloadedMsg && (typeof(window.opener)=='undefined' || typeof(window.opener.appName_)!='string' || window.opener.appName_!='pcpin_chat' || typeof(window.opener.initChatRoom)=='undefined')) {
+      openWindow(formlink+'?inc='+urlencode('page_unloaded')+'&s_id='+urlencode(s_id), '', 1, 1, false, false, false, false, false, false, false, false, false, false, 0, 0);
+    }
     try {
       if (uploadWindow) {
         uploadWindow.close();
@@ -895,6 +900,7 @@ function _CALLBACK_enterChatRoom() {
     break;
     case '0':
       // Room changed. Load room page.
+      SkipPageUnloadedMsg=true;
       $('dummyform').s_id.value=s_id;
       $('dummyform').inc.value='chat_room';
       $('dummyform').ts.value=unixTimeStamp();
