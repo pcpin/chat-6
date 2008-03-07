@@ -620,6 +620,10 @@ function initChatRoom(room_id,
     }
     // Set "onunload" handler
     window.onunload=function() {
+      // Send "Page unloaded" signal to server
+      if (!SkipPageUnloadedMsg) {
+        openWindow(formlink+'?inc='+urlencode('page_unloaded')+'&s_id='+urlencode(s_id), '', 1, 1, false, false, false, false, false, false, false, false, false, false, 0, 0);
+      }
       // Close all PM boxes
       for (var i in pmHandlers) {
         if (pmHandlers[i]) {
@@ -656,6 +660,10 @@ function initChatRoom(room_id,
   setAutoScroll(true);
 
   setTimeout('window.onresize()', 150);
+}
+
+function cleanup(){
+alert("Leaving page...");
 }
 
 
@@ -1949,6 +1957,7 @@ function closeOnlineStatusBox(online_status, online_status_message) {
       // Log out
       if (confirm(getLng('sure_to_log_out'))) {
         if (typeof(logOut)=='function') {
+          SkipPageUnloadedMsg=true;
           logOut();
         }
       }
@@ -1979,6 +1988,7 @@ function _CALLBACK_changeOnlineStatus() {
  * Leave current chat room and load user profile page
  */
 function leaveRoom() {
+  SkipPageUnloadedMsg=true;
   var dummy_form=$('dummyform');
   dummy_form.s_id.value=s_id;
   dummy_form.inc.value='profile_main';
@@ -2151,12 +2161,14 @@ function _CALLBACK_switchChatRoom() {
 
     case  '-1':
       // Session is invalid
+      SkipPageUnloadedMsg=true;
       document.location.href=formlink+'?session_timeout';
       return false;
     break;
 
     case '0':
       // Room changed. Load room page.
+      SkipPageUnloadedMsg=true;
       dummy_form.s_id.value=s_id;
       dummy_form.inc.value='chat_room';
       dummy_form.ts.value=unixTimeStamp();

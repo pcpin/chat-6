@@ -143,6 +143,12 @@ class PCPIN_Session extends PCPIN_Config {
    */
   var $_s_backend='';
 
+  /**
+   * Flag: 'y' if session owner has unloaded the chat without logging out properly
+   * @var   string
+   */
+  var $_s_page_unloaded='';
+
 
 
   /**
@@ -174,7 +180,7 @@ class PCPIN_Session extends PCPIN_Config {
         // Session exists in database and belongs to client
         $this->_db_setObject($this->_db_list[0]);
         // Update last_ping
-        $this->_s_updateSession($this->_s_id, true, true, null, date('Y-m-d H:i:s'));
+        $this->_s_updateSession($this->_s_id, true, true, null, date('Y-m-d H:i:s'), null, null, null, null, null, null, null, null, null, null, 'n');
       }
       $this->_db_freeList();
     }
@@ -221,34 +227,20 @@ class PCPIN_Session extends PCPIN_Config {
   function _s_cleanUp() {
     // Store current state
     $this_vars=$this->_db_getFromObject();
-    // Delete old sessions
-    if ($this->_db_getList('_s_last_ping < '.date('Y-m-d H:i:s', time()-$this->_conf_all['session_timeout']))) {
-      $sessions=$this->_db_list;
-      $this->_db_freeList();
+    // Get sessions
+    $sessions=array();
+    $query=$this->_db_makeQuery(2100, time(), $this->_conf_all['session_timeout']);
+    $result=$this->_db_query($query);
+    while ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {
+      $sessions[]=$data;
+    }
+    $this->_db_freeResult($result);
+    $this->_db_freeList();
+    if (!empty($sessions)) {
       _pcpin_loadClass('session'); $session=new PCPIN_Session($this, '', true);
       foreach ($sessions as $sessiondata) {
         $session->_db_setObject($sessiondata);
         $session->_s_logOut();
-      }
-    }
-    // Delete "kicked out" sessions
-    if ($this->_db_getList('_s_kicked = y')) {
-      $sessions=$this->_db_list;
-      $this->_db_freeList();
-      _pcpin_loadClass('session'); $session=new PCPIN_Session($this, '', true);
-      foreach ($sessions as $sessiondata) {
-        $session->_db_setObject($sessiondata);
-        $session->_s_logOut();
-      }
-    }
-    // Set "Away" online status for sessions with ping older than (updater_interval+N) seconds
-    if ($this->_db_getList('_s_online_status != 3', '_s_last_ping < '.(date('Y-m-d H:i:s', time()-$this->_conf_all['updater_interval']*4)))) {
-      $sessions=$this->_db_list;
-      $this->_db_freeList();
-      _pcpin_loadClass('session'); $session=new PCPIN_Session($this, '', true);
-      foreach ($sessions as $sessiondata) {
-        $session->_db_setObject($sessiondata);
-        $session->_s_setOnlineStatus(3);
       }
     }
     // Delete old messages
@@ -415,6 +407,7 @@ class PCPIN_Session extends PCPIN_Config {
         $this->_s_kicked='n';
         $this->_s_stealth_mode='n';
         $this->_s_backend=$backend_login;
+        $this->_s_page_unloaded='n';
         // Save session into database
         $ok=$this->_db_insertObj();
       }
@@ -444,6 +437,7 @@ class PCPIN_Session extends PCPIN_Config {
    * @param   string    $online_status            Online status. NULL: do not change.
    * @param   string    $online_status_message    Online status message. NULL: do not change.
    * @param   string    $stealth_mode             "Stealth" flag. NULL: do not change.
+   * @param   string    $page_unloaded            "Page unloaded" flag. NULL: do not change.
    * @return  boolean TRUE on success or FALSE on error
    */
   function _s_updateSession($s_id, $obj=false, $db=false,
@@ -458,7 +452,8 @@ class PCPIN_Session extends PCPIN_Config {
                             $kicked=null,
                             $online_status=null,
                             $online_status_message=null,
-                            $stealth_mode=null
+                            $stealth_mode=null,
+                            $page_unloaded=null
                             ) {
     $result=false;
     if ($s_id!='') {
@@ -476,6 +471,7 @@ class PCPIN_Session extends PCPIN_Config {
         if (!is_null($online_status)) $this->_s_online_status=$online_status;
         if (!is_null($online_status_message)) $this->_s_online_status_message=$online_status_message;
         if (!is_null($stealth_mode)) $this->_s_stealth_mode=$stealth_mode;
+        if (!is_null($page_unloaded)) $this->_s_page_unloaded=$page_unloaded;
       }
       if (true===$db) {
         $param=array();
@@ -491,6 +487,7 @@ class PCPIN_Session extends PCPIN_Config {
         if (!is_null($online_status)) $param['_s_online_status']=$online_status;
         if (!is_null($online_status_message)) $param['_s_online_status_message']=$online_status_message;
         if (!is_null($stealth_mode)) $param['_s_stealth_mode']=$stealth_mode;
+        if (!is_null($page_unloaded)) $param['_s_page_unloaded']=$page_unloaded;
         $result=$this->_db_updateRow($s_id, '_s_id', $param);
       }
     }

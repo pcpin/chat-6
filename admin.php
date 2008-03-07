@@ -104,6 +104,12 @@ $_body_onload=array('window.focus()',
                     'setAdminFlag('.($current_user->is_admin==='y'? 'true' : 'false').')',
                     'setSlaveMode('.(PCPIN_SLAVE_MODE? 'true' : 'false').')',
                     );
+
+// onLoad event handlers for main FRAMESET element
+$_frameset_onload=array('setMainFormLink(\''.PCPIN_FORMLINK.'\')',
+                        'setSid(\''.$session->_s_id.'\')',
+                        );
+
 // JavaScript files
 $_js_files=array('./js/base/screen.js',
                  './js/base/strings.js',
@@ -113,6 +119,7 @@ $_js_files=array('./js/base/screen.js',
                  './js/base/global.js',
                  './js/base/main.js',
                  './js/base/colorbox.js',
+                 './js/admin/frames.js',
                  );
 
 // JavaScript language expressions
@@ -143,7 +150,7 @@ if (!isset($ainc) && !empty($session->_s_user_id)) {
   // Load frameset
   $frameset_loaded=true;
   $template->readTemplatesFromFile('./admin/frames.tpl');
-  $_frameset_onload=array('window.appName_=\'pcpin_chat\''); // <-- DO NOT CHANGE THIS LINE!!!
+  $_frameset_onload[]='initAdminFames()';
 } else {
   // Load main template
   $frameset_loaded=false;

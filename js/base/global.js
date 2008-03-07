@@ -131,6 +131,12 @@ var SlaveMode=false;
  */
 var receivedAbuses=new Array();
 
+/**
+ * Flag: TRUE if client does not need to send "page unloaded" event to server
+ * @var boolean
+ */
+var SkipPageUnloadedMsg=false;
+
 
 
 
@@ -488,7 +494,11 @@ function sendData(callbackFunc, url, method, data, skipProgressBar, doSync, send
     if (typeof(skipProgressBar)!='boolean' || !skipProgressBar) {
       toggleProgressBar(true);
     }
-    setTimeout('actionHandler.sendData("'+callbackFunc+'", "'+method+'", "'+url+'", "'+data+'", '+(doSync? 'true' : 'false')+')', sendWait);
+    if (true||sendWait>0) {
+      setTimeout('actionHandler.sendData("'+callbackFunc+'", "'+method+'", "'+url+'", "'+data+'", '+(doSync? 'true' : 'false')+')', sendWait);
+    } else {
+      actionHandler.sendData(callbackFunc, method, url, data, doSync);
+    }
   }
 }
 

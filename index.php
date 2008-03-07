@@ -72,6 +72,10 @@ if (!empty($b_id)) {
   // Load banner
   require_once('./inc/load_banner.inc.php');
   die();
+} elseif (isset($inc) && $inc=='page_unloaded') {
+  // Client unloaded chat page
+  require_once('./inc/page_unloaded.inc.php');
+  die();
 }
 
 // Default window title
