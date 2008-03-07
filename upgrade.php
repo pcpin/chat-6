@@ -62,8 +62,8 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
         $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."user`  ADD `language_id` INT NOT NULL DEFAULT 0");
 
         // Force logout when user close browser window. See http://bugs.pcpin.com/view.php?id=314
-        $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."session` ADD `_s_browser_closed` ENUM( 'n', 'y' ) DEFAULT 'n' NOT NULL");
-        $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."session` ADD INDEX ( `_s_browser_closed` )");
+        $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."session` ADD `_s_page_unloaded` ENUM( 'n', 'y' ) DEFAULT 'n' NOT NULL");
+        $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."session` ADD INDEX ( `_s_page_unloaded` )");
         $__pcpin_upgrade['session']->_db_query("UPDATE `pcpin_config` SET `_conf_choices` = '10|120' WHERE `_conf_name` = 'session_timeout' LIMIT 1");
         $__pcpin_upgrade['session']->_db_query("UPDATE `pcpin_config` SET `_conf_value` = '20' WHERE `_conf_name` = 'session_timeout' AND `_conf_value` > '20' LIMIT 1");
         $__pcpin_upgrade['session']->_db_query("UPDATE `pcpin_config` SET `_conf_choices` = '1|20' WHERE `_conf_name` = 'updater_interval' LIMIT 1");
