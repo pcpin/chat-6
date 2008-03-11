@@ -841,7 +841,11 @@ function startUpdater(now, full_request, first_request, get_last_msgs, show_prog
   }
   clearTimeout(updaterTimeoutHandler);
   if (updaterInterval>0) {
-    updaterTimeoutHandler=setTimeout('sendUpdaterRequest('+(full_request? 'true' : 'false')+', '+(first_request? 'true' : 'false')+', '+get_last_msgs+', '+(show_progressbar? 'true' : 'false')+')', now? 1 : updaterInterval*1000);
+    if (now) {
+      sendUpdaterRequest(full_request, first_request, get_last_msgs, show_progressbar);
+    } else {
+      updaterTimeoutHandler=setTimeout('sendUpdaterRequest('+(full_request? 'true' : 'false')+', '+(first_request? 'true' : 'false')+', '+get_last_msgs+', '+(show_progressbar? 'true' : 'false')+')', now? 1 : updaterInterval*1000);
+    }
   }
 }
 
