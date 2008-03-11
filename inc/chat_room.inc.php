@@ -240,4 +240,9 @@ unset($smilies);
 $tpl->addVar('admin_btn', 'display', $current_user->is_admin==='y');
 $template->addVar('moderator_user_options', 'display', true===$_is_moderator || $current_user->is_admin==='y');
 $template->addVar('admin_user_options', 'display', $current_user->is_admin==='y');
+
+// Add dummy sound
+if (!empty($session->_conf_all['allow_sounds'])) {
+  $tpl->addVar('sound_player', 'display', true);
+}
 ?>

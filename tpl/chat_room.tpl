@@ -5,6 +5,11 @@
 <!-- BOTTOM BANNER AREA -->
 <iframe id="chatroom_bottom_banner" name="chatroom_bottom_banner" src="dummy.html" scrolling="No" frameborder="0"></iframe>
 
+<!-- SOUND PLAYER -->
+<PCPIN:TPL name="sound_player" type="simplecondition" requiredvars="DISPLAY">
+  <embed id="embed_sound_player" src="./sounds/empty.mp3" width="0" height="0" autostart="true" loop="false" volume="100" hidden="true" mastersound />
+</PCPIN:TPL>
+
 <!-- USERLIST AREA -->
 <div id="chatroom_userlist">
   <div id="chatroom_userlist_contents">
