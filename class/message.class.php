@@ -182,15 +182,19 @@ class PCPIN_Message extends PCPIN_Session {
    * Delete multiple messages from database
    * @param   array   $ids              Message IDs
    * @param   int     $posted_before    Delete all messages older than supplied value (UNIX_TIMESTAMP)
+   * @param   int     $room_id          Optional. Room ID.
    */
-  function deleteMessages($ids=null, $posted_before=0) {
-    if ($posted_before>0 && $this->_db_getList('id', 'date < '.date('Y-m-d H:i:s', $posted_before), 'offline = n')) {
+  function deleteMessages($ids=null, $posted_before=0, $room_id=0) {
+    if ($posted_before>0 && $this->_db_getList('id,target_room_id', 'date < '.date('Y-m-d H:i:s', $posted_before), 'offline = n')) {
       if (!is_array($ids)) {
         $ids=array();
       }
       foreach ($this->_db_list as $data) {
-        $ids[]=$data['id'];
+        if (empty($room_id) || $data['target_room_id']==$room_id) {
+          $ids[]=$data['id'];
+        }
       }
+      $this->_db_freeList();
       $ids=array_unique($ids);
     }
     if (!empty($ids) && is_array($ids)) {

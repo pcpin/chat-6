@@ -149,9 +149,17 @@ if (!empty($room_id) && !empty($current_user->id)) {
                 if (empty($target_room_id)) {
                   // "/clear all"
                   $message_ok=$current_user->is_admin==='y';
+                  if ($message_ok) {
+                    // Delete all messages
+                    $msg->deleteMessages(null, time());
+                  }
                 } else {
                   // "/clear <room>"
                   $message_ok=$current_user->is_admin==='y' || false!==strpos(','.$target_room_id.',', ','.$current_user->moderated_rooms.',');
+                  if ($message_ok) {
+                    // Delete all messages
+                    $msg->deleteMessages(null, time(), $target_room_id);
+                  }
                 }
               break;
 
