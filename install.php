@@ -36,9 +36,7 @@ if (empty($step)) {
   <script type="text/javascript" src="./js/base/strings.js?<?php echo md5(filemtime('./js/base/strings.js')); ?>"></script>
   <script type="text/javascript" src="./js/base/time.js?<?php echo md5(filemtime('./js/base/time.js')); ?>"></script>
   <script type="text/javascript" src="./js/base/xmlhttprequest.js?<?php echo md5(filemtime('./js/base/xmlhttprequest.js')); ?>"></script>
-<!--
   <script type="text/javascript" src="./js/base/connectionstatus.js?<?php echo md5(filemtime('./js/base/connectionstatus.js')); ?>"></script>
--->
   <script type="text/javascript" src="./js/base/global.js?<?php echo md5(filemtime('./js/base/global.js')); ?>"></script>
   <script type="text/javascript">
     var lastStep=0;
@@ -162,9 +160,7 @@ if (empty($step)) {
   <script type="text/javascript" src="./js/base/strings.js?<?php echo md5(filemtime('./js/base/strings.js')); ?>"></script>
   <script type="text/javascript" src="./js/base/time.js?<?php echo md5(filemtime('./js/base/time.js')); ?>"></script>
   <script type="text/javascript" src="./js/base/xmlhttprequest.js?<?php echo md5(filemtime('./js/base/xmlhttprequest.js')); ?>"></script>
-<!--
   <script type="text/javascript" src="./js/base/connectionstatus.js?<?php echo md5(filemtime('./js/base/connectionstatus.js')); ?>"></script>
--->
   <script type="text/javascript" src="./js/base/global.js?<?php echo md5(filemtime('./js/base/global.js')); ?>"></script>
 <?php
 foreach ($js_files as $file) {

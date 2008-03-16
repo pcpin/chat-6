@@ -359,6 +359,18 @@ var ChatroomUserlist=null;
 var MainInputTextArea=null;
 
 /**
+ * HTTP communication indicator area
+ * @var object
+ */
+var CommunicationIndicator=null;
+
+/**
+ * HTTP communication indicator image
+ * @var object
+ */
+var CommunicationIndicatorImg=null;
+
+/**
  * Flag: TRUE, then next updater request will be executed without delay
  * @var boolean
  */
@@ -455,6 +467,8 @@ function initChatRoom(room_id,
     ChatroomControls=$('chatroom_controls');
     ChatroomUserlist=$('chatroom_userlist');
     MainInputTextArea=$('main_input_textarea');
+    CommunicationIndicator=$('CommunicationIndicator');
+    CommunicationIndicatorImg=$('CommunicationIndicatorImg');
     // Initialize "Timestamp" button
     invertTimeStampView();
     // Set CSS classes
@@ -469,6 +483,7 @@ function initChatRoom(room_id,
     ChatroomMessages.style.backgroundColor='#'+messagesAreaBGColor;
     // Disable scrollbars
     $$('HTML')[0].style.overflow='hidden';
+    $$('BODY')[0].style.overflow='hidden';
     // Set initial size and position of all areas in chat room window
     setAreas();
     // Set onResize window handler
@@ -719,6 +734,8 @@ function setAreas() {
         ChatroomMessages.style.left=userlistWidth+'px';
         ChatroomControls.style.left=userlistWidth+'px';
         ChatroomControls.style.width=(winWidth-userlistWidth-AreaBorders['chatroom_controls'][1]-AreaBorders['chatroom_controls'][3]+2)+'px';
+        CommunicationIndicator.style.top=(winHeight-CommunicationIndicatorImg.height-1)+'px';
+        CommunicationIndicator.style.left='1px';
       break;
 
       case  0:
@@ -729,6 +746,8 @@ function setAreas() {
         ChatroomMessages.style.left='0px';
         ChatroomControls.style.left='0px';
         ChatroomControls.style.width=(winWidth-AreaBorders['chatroom_controls'][1]-AreaBorders['chatroom_controls'][3]+2)+'px';
+        CommunicationIndicator.style.top='1px';
+        CommunicationIndicator.style.left=(winWidth-CommunicationIndicatorImg.width-1)+'px';
       break;
 
       case 1:
@@ -739,6 +758,8 @@ function setAreas() {
         ChatroomMessages.style.left='0px';
         ChatroomControls.style.left='0px';
         ChatroomControls.style.width=(winWidth-userlistWidth-AreaBorders['chatroom_controls'][1]-AreaBorders['chatroom_controls'][3]+2)+'px';
+        CommunicationIndicator.style.top=(winHeight-CommunicationIndicatorImg.height-1)+'px';
+        CommunicationIndicator.style.left=(winWidth-CommunicationIndicatorImg.width-1)+'px';
       break;
 
     }

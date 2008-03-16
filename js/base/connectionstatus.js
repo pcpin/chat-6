@@ -16,6 +16,13 @@
  */
 
 /**
+ * Hide connection box timeout handler
+ * @var int
+ */
+var CloseConnectionStatusTimeout=0;
+
+
+/**
  * Connection status
  * Values:
  *    0 : Idle/Completed
@@ -61,25 +68,31 @@ function updateConnectionStatus(connStatus, RS2correct) {
   }
 }
 
+
+
+
 /**
- * Show current connection status in monitor
+ * Display connection status
  */
 function showConnectionStatus() {
-  var targetDiv=$('connStatusDiv');
-  if (targetDiv) {
-    var statusText='';
+  if (typeof(CommunicationIndicator)!='undefined' && CommunicationIndicator.style) {
     switch (ConnectionStatus) {
-      default   :   // Idle
-      case  0   :
-                    statusText='...';
-        break;
+
+      default   :   
+      case  0   :   // Idle/Completed
+                    CloseConnectionStatusTimeout=setTimeout("CommunicationIndicator.style.display='none';", typeof(isOpera)=='boolean' && isOpera? 250 : 100);
+      break;
+
       case  1   :   // Sending data
-                    statusText='>>>';
-        break;
+                    clearTimeout(CloseConnectionStatusTimeout);
+                    CommunicationIndicator.style.display='';
+      break;
+
       case  2   :   // Receiving data
-                    statusText='<<<';
-        break;
+                    clearTimeout(CloseConnectionStatusTimeout);
+                    CommunicationIndicator.style.display='';
+      break;
+
     }
-    targetDiv.innerHTML='PC '+htmlspecialchars(statusText)+' WWW';
   }
 }

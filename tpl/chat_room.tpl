@@ -195,4 +195,7 @@
   <iframe id="banner_popup_frame" name="banner_popup_frame" src="dummy.html" scrolling="No" frameborder="0"></iframe>
 </div>
 
+<!-- COMMUNICATION INDICATOR -->
+<div id="CommunicationIndicator" style="position:absolute;display:none;"><img src="./pic/progress_16x16.gif" alt="" style="border:0px" id="CommunicationIndicatorImg" /></div>
+
 </PCPIN:TPL>
