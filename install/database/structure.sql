@@ -304,6 +304,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$session` (
   `_s_online_status_message` varchar(255) NOT NULL default '',
   `_s_stealth_mode` enum('y','n') NOT NULL default 'n',
   `_s_backend` enum('n','y') NOT NULL default 'n',
+  `_s_page_unloaded` enum( 'n', 'y' ) NOT NULL default 'n',
   PRIMARY KEY  (`_s_id`),
   KEY `_s_user_id` (`_s_user_id`),
   KEY `_s_last_ping` (`_s_last_ping`),
@@ -311,7 +312,9 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$session` (
   KEY `_s_room_date` (`_s_room_date`),
   KEY `_s_last_message_id` (`_s_last_message_id`),
   KEY `_s_kicked` (`_s_kicked`),
-  KEY `_s_online_status` (`_s_online_status`)
+  KEY `_s_online_status` (`_s_online_status`),
+  KEY `_s_page_unloaded` (`_s_page_unloaded`),
+  KEY `_s_backend` (`_s_backend`)
 ) TYPE=MyISAM PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$smilie`; /* PCPIN6_QUERY_SEPARATOR */

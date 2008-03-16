@@ -39,7 +39,8 @@ INSERT INTO `$$$DB_PREFIX$$$category` (`id`, `parent_id`, `name`, `description`,
 (2, 0, 'Computing', 'Computer related chats', 'n', 0),
 (16, 0, 'User rooms', 'Everybody can create own room in this category!', 'g', 2); /* PCPIN6_QUERY_SEPARATOR */
 
-INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`, `_conf_name`, `_conf_value`, `_conf_type`, `_conf_choices`, `_conf_description`) VALUES (1, 'security', '{LNG_SESSION}', 'session_timeout', '3600', 'int_range', '60|36000', '{LNG__CONF_SESSION_TIMEOUT}'),
+INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`, `_conf_name`, `_conf_value`, `_conf_type`, `_conf_choices`, `_conf_description`) VALUES
+(1, 'security', '{LNG_SESSION}', 'session_timeout', '30', 'int_range', '10|120', '{LNG__CONF_SESSION_TIMEOUT}'),
 (2, 'server', '{LNG_GENERAL}', 'chat_name', 'PCPIN Chat 6', 'string_255', '', '{LNG__CONF_CHAT_NAME}'),
 (3, 'security', '{LNG_EMAIL_ADDRESS}', 'email_validation_level', '1', 'int_choice', '0={LNG_NONE}|1={LNG_STANDARD}|2={LNG_STRONG}|3={LNG_PARANOID}', '{LNG__CONF_EMAIL_VALIDATION_LEVEL}'),
 (4, 'server', '{LNG_LANGUAGES}', 'default_language', '1', 'int_choice', '<languages>', '{LNG__CONF_DEFAULT_LANGUAGE}'),
@@ -110,7 +111,7 @@ INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`
 (73, 'server', '{LNG_SUMMARY}', 'startup_summary_height', '350', 'int_range', '10|*', '{LNG__CONF_STARTUP_SUMMARY_HEIGHT}'),
 (74, 'slave', '', 'slave_mode', '0', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ACTIVATE_SLAVE_MODE}'),
 (75, 'slave', '', 'slave_mode_master', 'phpbb2', 'string_choice', '<slave_masters>', '{LNG__CONF_SLAVE_MODE_MASTER}'),
-(76, 'chat', '{LNG_REFRESH}', 'updater_interval', '4', 'int_range', '4|*', '{LNG__CONF_UPDATER_INTERVAL}'),
+(76, 'chat', '{LNG_REFRESH}', 'updater_interval', '3', 'int_range', '1|20', '{LNG__CONF_UPDATER_INTERVAL}'),
 (77, 'security', '{LNG_IMAGES}', 'allow_gd', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_GD}'),
 (78, 'server', '{LNG_LANGUAGES}', 'allow_language_selection', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_LANGUAGE_SELECTION}'),
 (79, 'server', '{LNG_LANGUAGES}', 'login_language_selection', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_LOGIN_LANGUAGE_SELECTION}'),
