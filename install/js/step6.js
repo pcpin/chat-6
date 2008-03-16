@@ -126,9 +126,6 @@ function setLanguage(obj) {
       }
     }
   }
-  if (window.parent.languages.length==1) {
-    window.parent.default_language=window.parent.languages[0];
-  }
   $('default_language').value=window.parent.default_language;
 }
 
