@@ -55,9 +55,6 @@ function initLoginForm(login_length_min, login_length_max, admin_login) {
 
   if (!pbl) {
     pbl=$('pbl');
-    pbl.innerHTML=base64decode('UG93ZXJlZCBieSA8YSBocmVmPSJodHRwOi8vd3d3LnBjcGluLmNvbSIgdGFyZ2V0PSJfYmxhbmsiIHRpdGxlPSJQb3dlcmVkIGJ5IFBDUElOIENoYXQiPlBDUElOIENoYXQ8L2E+');
-    pbl.style.position='absolute';
-    pbl.style.fontSize='smaller';
   }
 
   window.onresize=function() {

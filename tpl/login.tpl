@@ -60,10 +60,11 @@
   </div>
 </PCPIN:TPL>
 
-<div id="pbl">
+<div id="pbl" style="position:absolute;font-size:smaller;">
 <!--
-  PLEASE KEEP THIS UNCHANGED. THANK YOU!
+  PLEASE KEEP THIS UNCHANGED. THANK YOU.
 -->
+  Powered by <a href="http://www.pcpin.com/" target="_blank" title="Powered by PCPIN Chat">PCPIN Chat</a>
 </div>
 
 <form action="{FORMLINK}" method="post" onsubmit="doRegister(); return false;">
