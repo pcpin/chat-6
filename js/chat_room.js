@@ -16,6 +16,12 @@
  */
 
 /**
+ * Define sound to play after MP3 player initialisation ("welcome" sound)
+ * See mp3_player.js
+ */
+PCPIN_MP3_Player_PlayLockedAfterInit='./sounds/welcome.mp3';
+
+/**
  * XmlHttpRequest handler for periodic updates
  * @var object
  */
@@ -439,6 +445,7 @@ function initChatRoom(room_id,
       && typeof(userlist_width)=='number' && userlist_width>0
       && typeof(userlist_position)=='number'
       ) {
+
     currentRoomID=room_id;
     updaterInterval=updater_interval;
     userlistPosition=userlist_position;
@@ -1326,6 +1333,8 @@ function processMessage(id, type, offline, date, author_id, author_nickname, tar
           body=body.split('[USER]').join(coloredToHTML(nickname));
           displayMessage(null, body, css_properties, true, date);
         }
+        // Play system message sound
+        playSound('system_message.mp3');
       break;
 
       case  115: // User X left room Y (this room)
@@ -1340,6 +1349,8 @@ function processMessage(id, type, offline, date, author_id, author_nickname, tar
           body=body.split('[USER]').join(coloredToHTML(nickname));
           displayMessage(null, body, css_properties, true, date);
         }
+        // Play system message sound
+        playSound('system_message.mp3');
       break;
 
       case 3001: // User X posted a message
@@ -1372,12 +1383,16 @@ function processMessage(id, type, offline, date, author_id, author_nickname, tar
                 MsgBannerMessagesLeft--;
               }
             }
+            // Play "whispered" message sound
+            playSound('whispered_message.mp3');
           } else if (privacy==2) {
             // Display message in PM window
             opposite_user_id=author_id==currentUserId? target_user_id : author_id;
             if (pmHandlers[opposite_user_id] && pmHandlers[opposite_user_id].alert) {
               // PM window already opened
               displayMessage(author_nickname, parseMessage(body), css_properties, true, date, pmHandlers[opposite_user_id], author_id, false, attachments);
+              // Play "private" message sound
+              playSound('private_message.mp3');
             } else {
               // Push the message back to queue
               MessageQueue.addRecordIn(id, type, offline, date, author_id, author_nickname, target_user_id, target_room_id, privacy, body, css_properties, actor_nickname, attachments);
@@ -1396,6 +1411,8 @@ function processMessage(id, type, offline, date, author_id, author_nickname, tar
                 MsgBannerMessagesLeft--;
               }
             }
+            // Play "public" message sound
+            playSound('public_message.mp3');
           }
         }
       break;
@@ -2606,4 +2623,24 @@ function _CALLBACK_loadPopupBanner() {
  */
 function hidePopupBanner() {
   $('banner_popup').style.display='none';
+}
+
+
+/**
+ * Load and play a sound
+ * @param   string    file    MP3 file name within ./sounds directory
+ * @param   boolean   lock    Optional. If TRUE, then player will ignore other sounds until supplied sound is playing. Default FALSE.
+ */
+function playSound(file, lock) {
+  if (typeof(file)=='string' && file!='' && PCPIN_MP3_Player) {
+    if (typeof(lock)!='boolean') {
+      lock=false;
+    }
+    PCPIN_MP3_Player.loadUrl('./sounds/'+file);
+    if (lock) {
+      PCPIN_MP3_Player.playTrackLocked();
+    } else {
+      PCPIN_MP3_Player.playTrack();
+    }
+  }
 }

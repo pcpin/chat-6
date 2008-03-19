@@ -108,6 +108,11 @@ $_js_files=array('./js/base/screen.js',
                  './js/base/smiliebox.js',
                  );
 
+// Add mp3 player javascript code
+if (!empty($session->_conf_all['allow_sounds'])) {
+  $_js_files[]='./js/base/mp3_player.js';
+}
+
 // JavaScript language expressions
 $_js_lng=array('password');
 
@@ -289,6 +294,11 @@ $template->addVar('main', 'body_oncontextmenu', PCPIN_DEBUGMODE? 'return true' :
 
 // Close database conection
 $session->_db_close();
+
+// Add mp3 player template
+if (!empty($session->_conf_all['allow_sounds'])) {
+  $template->addVar('mp3_player', 'player', './sounds/pcpin_mp3.swf?'.filemtime('./sounds/pcpin_mp3.swf'));
+}
 
 // Get timers
 if (PCPIN_DEBUGMODE && PCPIN_LOG_TIMER) {

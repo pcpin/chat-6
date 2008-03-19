@@ -16,6 +16,8 @@
   </PCPIN:TPL>
 </head>
 <body onload="{BODY_ONLOAD}" oncontextmenu="{BODY_ONCONTEXTMENU}">
+<!-- MP3 PLAYER -->
+<PCPIN:TPL name="mp3_player" type="simplecondition" requiredvars="PLAYER" src="mp3_player.tpl" />
 <div id="body_contents">{CONTENTS}</div>
 <div id="progressBar" style="display:none;">
   {LNG_PLEASE_WAIT}...
