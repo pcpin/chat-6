@@ -2632,7 +2632,7 @@ function hidePopupBanner() {
  * @param   boolean   lock    Optional. If TRUE, then player will ignore other sounds until supplied sound is playing. Default FALSE.
  */
 function playSound(file, lock) {
-  if (typeof(file)=='string' && file!='' && PCPIN_MP3_Player) {
+  if (typeof(file)=='string' && file!='' && typeof(PCPIN_MP3_Player)!='undefined' && PCPIN_MP3_Player) {
     if (typeof(lock)!='boolean') {
       lock=false;
     }
