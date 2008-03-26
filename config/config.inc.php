@@ -56,7 +56,7 @@ define('PCPIN_ADMIN_FORMLINK', './admin.php');
  * WARNING: Use for Development only!!!
  * If TRUE, then error_reporting will be set to 'E_ALL' and display_errors will be set to 'On'.
  */
-define('PCPIN_DEBUGMODE', true);
+define('PCPIN_DEBUGMODE', false);
 
 
 /**
