@@ -84,7 +84,7 @@ if (!function_exists('_pcpin_loadClass')) {
    * Load class file, if not loaded yet
    * @param   string    $class      Class name
    */
-  function _pcpin_loadClass($class='') {
+  function _pcpin_loadClass($class) {
     require_once('./class/'.strtolower(trim($class)).'.class.php');
   }
 }
