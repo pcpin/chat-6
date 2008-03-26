@@ -7,6 +7,6 @@ $query='UPDATE `'.PCPIN_DB_PREFIX.'user`
                `banned_until` = "0000-00-00 00:00:00",
                `ban_reason` = ""
          WHERE `banned_until` > "0000-00-00 00:00:00"
-               AND `banned_until` < NOW()
+               AND `banned_until` < "\\_ARG1_\\"
                AND `banned_permanently` != "y"';
 ?>

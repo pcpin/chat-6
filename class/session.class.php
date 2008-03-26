@@ -270,7 +270,7 @@ class PCPIN_Session extends PCPIN_Config {
       }
     }
     // Clean unbanned users
-    if ($result=$this->_db_query($this->_db_makeQuery(2080))) {
+    if ($result=$this->_db_query($this->_db_makeQuery(2080, date('Y-m-d H:i:s')))) {
       $this->_db_freeResult($result);
     }
     // Clean not activated email addresses

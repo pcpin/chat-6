@@ -86,7 +86,7 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
     }
     // All versions: Store new version number
     $__pcpin_upgrade['session']->_db_query('DELETE FROM `'.PCPIN_DB_PREFIX.'version`');
-    $__pcpin_upgrade['session']->_db_query('INSERT INTO `'.PCPIN_DB_PREFIX.'version` ( `version`, `version_check_key`, `last_version_check` ) VALUES ( "'.$__pcpin_upgrade['session']->_db_escapeStr($__pcpin_upgrade['file_version'], false).'", "-", NOW() )');
+    $__pcpin_upgrade['session']->_db_query('INSERT INTO `'.PCPIN_DB_PREFIX.'version` ( `version`, `version_check_key`, `last_version_check` ) VALUES ( "'.$__pcpin_upgrade['session']->_db_escapeStr($__pcpin_upgrade['file_version'], false).'", "-", "'.date('Y-m-d H:i:s').'" )');
   }
 } else {
   die('Fatal error: Your installation is broken. Reinstall needed!');

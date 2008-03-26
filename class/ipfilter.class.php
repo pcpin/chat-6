@@ -140,7 +140,7 @@ class PCPIN_IPFilter extends PCPIN_Session {
     $ip=trim($ip);
     if ($ip!='') {
       // Is IP address blocked?
-      $query=$this->_db_makeQuery(1400, $ip, $skip_record);
+      $query=$this->_db_makeQuery(1400, $ip, $skip_record, date('Y-m-d H:i:s'));
       $result=$this->_db_query($query);
       $allowed=false;
       while ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {

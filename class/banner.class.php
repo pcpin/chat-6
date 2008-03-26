@@ -178,7 +178,7 @@ class PCPIN_Banner extends PCPIN_Session {
    */
   function checktRoomBanners() {
     $display_positions=array();
-    $query=$this->_db_makeQuery(2000);
+    $query=$this->_db_makeQuery(2000, date('Y-m-d H:i:s'));
     if ($result=$this->_db_query($query)) {
       while ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {
         $display_positions[]=$data['pos'];
@@ -274,7 +274,7 @@ class PCPIN_Banner extends PCPIN_Session {
   function getRandomBanner($display_position='') {
     $banner_data=array();
     if (!empty($display_position)) {
-      $query=$this->_db_makeQuery(2010, $display_position);
+      $query=$this->_db_makeQuery(2010, $display_position, date('Y-m-d H:i:s'));
       if ($result=$this->_db_query($query)) {
         if ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {
           $banner_data=$data;

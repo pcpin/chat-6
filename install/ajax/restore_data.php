@@ -173,7 +173,7 @@ function restoreUsers5() {
                                                                   "'.mysql_real_escape_string($img_body, $conn).'",
                                                                   "'.mysql_real_escape_string($img_body_length, $conn).'",
                                                                   "'.mysql_real_escape_string($img_data['mime'], $conn).'",
-                                                                  NOW(),
+                                                                  "'.date('Y-m-d H:i:s').'",
                                                                   "'.mysql_real_escape_string($width, $conn).'",
                                                                   "'.mysql_real_escape_string($height, $conn).'",
                                                                   "log"
@@ -232,7 +232,7 @@ function restoreSmilies5() {
                                                                   "'.mysql_real_escape_string($img_body, $conn).'",
                                                                   "'.mysql_real_escape_string($img_body_length, $conn).'",
                                                                   "'.mysql_real_escape_string($img_data['mime'], $conn).'",
-                                                                  NOW(),
+                                                                  "'.date('Y-m-d H:i:s').'",
                                                                   "'.mysql_real_escape_string($width, $conn).'",
                                                                   "'.mysql_real_escape_string($height, $conn).'",
                                                                   ""
@@ -446,7 +446,7 @@ function restoreRooms5() {
                                                                       "'.mysql_real_escape_string($img_body, $conn).'",
                                                                       "'.mysql_real_escape_string($img_body_length, $conn).'",
                                                                       "'.mysql_real_escape_string($img_data['mime'], $conn).'",
-                                                                      NOW(),
+                                                                      "'.date('Y-m-d H:i:s').'",
                                                                       "'.mysql_real_escape_string($width, $conn).'",
                                                                       "'.mysql_real_escape_string($height, $conn).'",
                                                                       ""
