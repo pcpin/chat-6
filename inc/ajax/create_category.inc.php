@@ -16,9 +16,6 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 _pcpin_loadClass('category'); $category=new PCPIN_Category($session);
 
 $parent_id=0; // todo

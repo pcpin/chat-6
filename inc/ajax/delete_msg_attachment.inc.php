@@ -17,11 +17,9 @@
  */
 
 /**
- * Telete temporary message attachment
+ * Delete temporary message attachment
  * @param   int    $binaryfile_id   Binaryfile ID of the attachment
  */
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
 
 if (!isset($binaryfile_id) || !pcpin_ctype_digit($binaryfile_id)) $binaryfile_id=0;
 

@@ -22,9 +22,6 @@
  * @param   string    $abuse_description
  */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 _pcpin_loadClass('message'); $msg=new PCPIN_Message($session);
 _pcpin_loadClass('room'); $room=new PCPIN_Room($session);
 

@@ -21,6 +21,9 @@ if (empty($current_user->id) || $current_user->is_admin!=='y') {
   die();
 }
 
+// Load colorbox
+$_load_colorbox=true;
+
 // JS files
 $_js_files[]='./js/admin/settings.js';
 $_js_files[]='./js/language.js';

@@ -62,15 +62,21 @@ class PCPIN_DB {
     // Query args separator. DO NOT CHANGE!!!
     if (!defined('PCPIN_SQLQUERY_ARG_SEPARATOR_END')) define('PCPIN_SQLQUERY_ARG_SEPARATOR_END', chr(255).chr(0).PCPIN_Common::randomString(10));
     // Connect to database
+    $connected=false;
     if (empty($this->_db_conn)) {
       if (!function_exists('mysql_connect')) {
         // MySQL extension is not loaded
         PCPIN_Common::dieWithError(1, '<b>Fatal error</b>: MySQL extension is not loaded');
-      } elseif (!$this->_db_conn=mysql_connect($db_conndata['server'], $db_conndata['user'], $db_conndata['password'])) {
-        // Failed to connect database server
+      } elseif (PCPIN_DB_PERSISTENT && $this->_db_conn=@mysql_pconnect($db_conndata['server'], $db_conndata['user'], $db_conndata['password'])) {
+        // Database server connected using mysql_pconnect() function
+        $connected=true;
+      } elseif ($this->_db_conn=mysql_connect($db_conndata['server'], $db_conndata['user'], $db_conndata['password'])) {
+        // Database server connected using mysql_connect() function
+        $connected=true;
+      }
+      if (!$connected) {
         PCPIN_Common::dieWithError(1, '<b>Fatal error</b>: Failed to connect database server');
       } else {
-        // Database server connected
         // Set UTF-8 character set for client-server communication
         $this->_db_setCharsets();
         // Disable MySQL strict mode
@@ -187,7 +193,7 @@ class PCPIN_DB {
         // Unbuffered query. Use with care!
         $result=mysql_unbuffered_query($query, $this->_db_conn);
       }
-#echo "$query\n\n";
+#echo "$query\r\n\r\n";
       if (PCPIN_DEBUGMODE && (PCPIN_LOG_TIMER || PCPIN_SHOW_SLOW_QUERIES>0)) {
         $end_times=explode(' ', microtime());
         $start_times=explode(' ', $timer_start);
@@ -204,10 +210,10 @@ class PCPIN_DB {
           }
           $diff_str[1]=str_pad($diff_str[1], 4, '0', STR_PAD_RIGHT);
           if (PCPIN_SQL_LOGFILE=='*') {
-            echo '<b>'.implode('.', $diff_str).":</b> $query <br />\n";
+            echo '<b>'.implode('.', $diff_str).":</b> ".str_replace("\n", "\r\n", $query)." <br />\r\n\r\n";
             flush();
           } elseif (PCPIN_SQL_LOGFILE!='' && $lfh=@fopen(PCPIN_SQL_LOGFILE, 'a')) {
-            @fwrite($lfh, implode('.', $diff_str).': '.$query."\n");
+            @fwrite($lfh, implode('.', $diff_str).': '.str_replace("\n", "\r\n", $query)."\r\n\r\n");
             @fclose($lfh);
           }
         }
@@ -218,10 +224,10 @@ class PCPIN_DB {
           $errno=mysql_errno($this->_db_conn);
           $errstr=mysql_error($this->_db_conn);
           if (PCPIN_SQL_LOGFILE=='*') {
-            echo nl2br("Query:\n$query\nERROR ($errno): $errstr\n---------------------------------------\n");
+            echo nl2br("Query:\r\n$query\r\nERROR ($errno): $errstr\r\n---------------------------------------\r\n\r\n");
             flush();
           } elseif (PCPIN_SQL_LOGFILE!='' && $lfh=@fopen(PCPIN_SQL_LOGFILE, 'a')) {
-            @fwrite($lfh, "Query:\n$query\nERROR ($errno): $errstr\n---------------------------------------\n");
+            @fwrite($lfh, "Query:\r\n".str_replace("\n", "\r\n", $query)."\r\nERROR ($errno): $errstr\r\n---------------------------------------\r\n\r\n");
             @fclose($lfh);
           }
         }
@@ -781,7 +787,7 @@ class PCPIN_DB {
       $limit=(!is_null($limitstart))? (" LIMIT $limitstart, $limitlength") : ((!is_null($limitlength))? (" LIMIT $limitlength") : '');
       // Create query
       $query='SELECT '.$select.' FROM `'.$tbl.'` '.$where.$orderby.$limit;
-#echo $query." <br />\n";
+#echo $query." <br />\r\n\r\n";
       $result=$this->_db_query($query);
       if ($count) {
         if ($data=$this->_db_fetch($result, MYSQL_NUM)) {

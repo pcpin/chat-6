@@ -81,6 +81,15 @@ if (!empty($b_id)) {
 // Default window title
 $_window_title=$session->_conf_all['chat_name'];
 
+// Default: Do not load colorbox
+$_load_colorbox=false;
+
+// Default: Do not load smiliebox
+$_load_smiliebox=false;
+
+// Default: Do not context menu user options
+$_load_cm_user_options=false;
+
 // onLoad event handlers for BODY element
 $_body_onload=array('setSid(\''.$session->_s_id.'\')',
                     'setIP(\''.PCPIN_CLIENT_IP.'\')',
@@ -95,7 +104,9 @@ $_body_onload=array('setSid(\''.$session->_s_id.'\')',
                     'setAdminFlag('.($current_user->is_admin==='y'? 'true' : 'false').')',
                     'startMousePosCapture()',
                     'setSlaveMode('.(PCPIN_SLAVE_MODE? 'true' : 'false').')',
+                    'setCurrentRoomID('.$session->_s_room_id.')',
                     );
+
 // JavaScript files
 $_js_files=array('./js/base/screen.js',
                  './js/base/strings.js',
@@ -104,8 +115,6 @@ $_js_files=array('./js/base/screen.js',
                  './js/base/connectionstatus.js',
                  './js/base/global.js',
                  './js/base/main.js',
-                 './js/base/colorbox.js',
-                 './js/base/smiliebox.js',
                  );
 
 // Add mp3 player javascript code
@@ -240,6 +249,29 @@ if (empty($session->_s_user_id)) {
   }
 }
 
+// Add language expressions to template
+foreach ($template->tpl_vars_plain as $var) {
+  if (0===strpos($var, 'LNG_')) {
+    $var=strtolower($var);
+    $template->addGlobalVar($var, htmlspecialchars($l->g(substr($var, 4))));
+  }
+}
+
+// Add JS language expressions to template
+if (!empty($_js_lng) && is_array($_js_lng)) {
+  $_js_lng=array_unique($_js_lng);
+  foreach ($_js_lng as $lng_key) {
+    if ($lng_key!='') {
+      $lng_val=str_replace('\'', '\\\'', htmlspecialchars($l->g($lng_key)));
+      $lng_val=str_replace("\n", '\\n', str_replace("\r", '\\r', $lng_val));
+      array_unshift($_body_onload, 'setLng(\''.str_replace('\'', '\\\'', $lng_key).'\', \''.$lng_val.'\')');
+    }
+  }
+}
+
+// Close database conection
+$session->_db_close();
+
 // Add title
 $template->addVar('main', 'title', htmlspecialchars($_window_title));
 
@@ -248,12 +280,22 @@ foreach ($global_tpl_vars as $key=>$val) {
   $template->addGlobalVar($key, htmlspecialchars($val));
 }
 
-// Add language expressions to template
-foreach ($template->tpl_vars_plain as $var) {
-  if (0===strpos($var, 'LNG_')) {
-    $var=strtolower($var);
-    $template->addGlobalVar($var, htmlspecialchars($l->g(substr($var, 4))));
-  }
+// Load colorbox JavaScript code and template
+if ($_load_colorbox) {
+  $_js_files[]='./js/base/colorbox.js';
+  $template->addVar('colorbox', 'display', true);
+}
+
+// Load smiliebox JavaScript code and template
+if ($_load_smiliebox) {
+  $_js_files[]='./js/base/smiliebox.js';
+  $template->addVar('smiliebox_tpl', 'display', true);
+}
+
+// Load context menu user options template
+if ($_load_cm_user_options) {
+  $template->addVar('context_menu_user_options', 'display', true);
+  $_js_files[]='./js/context_menu_user_options.js';
 }
 
 // Add JavaScript files to template
@@ -272,18 +314,6 @@ foreach ($_css_files as $file) {
   }
 }
 
-// Add JS language expressions to template
-if (!empty($_js_lng) && is_array($_js_lng)) {
-  $_js_lng=array_unique($_js_lng);
-  foreach ($_js_lng as $lng_key) {
-    if ($lng_key!='') {
-      $lng_val=str_replace('\'', '\\\'', htmlspecialchars($l->g($lng_key)));
-      $lng_val=str_replace("\n", '\\n', str_replace("\r", '\\r', $lng_val));
-      array_unshift($_body_onload, 'setLng(\''.str_replace('\'', '\\\'', $lng_key).'\', \''.$lng_val.'\')');
-    }
-  }
-}
-
 // Add OnLoad event handlers for BODY element
 if (!empty($_body_onload) && is_array($_body_onload)) {
   $template->addVar('main', 'body_onload', implode(' ; ', $_body_onload));
@@ -291,9 +321,6 @@ if (!empty($_body_onload) && is_array($_body_onload)) {
 
 // Add "oncontextmenu" handler
 $template->addVar('main', 'body_oncontextmenu', PCPIN_DEBUGMODE? 'return true' : 'return false');
-
-// Close database conection
-$session->_db_close();
 
 // Add mp3 player template
 if (!empty($session->_conf_all['allow_sounds'])) {

@@ -17,9 +17,6 @@
  */
 
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 $invitations_arrived=0;
 $messages_arrived=0;
 $categories_xml='';

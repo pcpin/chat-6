@@ -29,6 +29,10 @@ if (!empty($ajax)) {
     header('Pragma: no-cache');
   }
 
+  // Defaults
+  $message='ACCESS_DENIED';
+  $status='-1';
+
   switch ($ajax) {
 
     case 'add_avatar_gallery':
@@ -187,7 +191,7 @@ if (!empty($ajax)) {
         // Not allowed in Slave mode
         echo '<?xml version="1.0" encoding="UTF-8"?>
 <pcpin_xml>
-  <message>'.htmlspecialchars($l->g('slave_mode')).'</message>
+  <message>SLAVE_MODE</message>
   <status>1</status>
 </pcpin_xml>';
         die();

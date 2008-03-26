@@ -86,6 +86,8 @@ if (!empty($conn) && @mysql_select_db($database, $conn)) {
                                                   "'.mysql_real_escape_string(PCPIN_INSTALL_VERSION, $conn).'",
                                                   "'.md5(mt_rand(-time(), time()).microtime().rand(-time(), time())).'"
                                                 )', $conn);
+  // Sort config table
+  mysql_query('ALTER TABLE `'.$prefix.'config` ORDER BY `_conf_group` ASC, `_conf_subgroup` ASC, `_conf_id` ASC', $conn);
 
   $short_message='Done';
   $status=0;

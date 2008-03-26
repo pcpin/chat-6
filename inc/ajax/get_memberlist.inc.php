@@ -28,8 +28,6 @@
  * @param   boolean   $admins_only          Optional. If TRUE, then only admins will be listed
  * @param   boolean   $not_activated_only   Optional. If TRUE, then only not activated user accounts will be listed
  */
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
 
 _pcpin_loadClass('room'); $room=new PCPIN_Room($session);
 _pcpin_loadClass('category'); $category=new PCPIN_Category($session);

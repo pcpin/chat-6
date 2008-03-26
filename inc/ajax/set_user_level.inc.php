@@ -19,8 +19,6 @@
 /**
  * Set new user level
  */
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
 
 if (!isset($profile_user_id)) $profile_user_id=0;
 if (!isset($level)) $level='';

@@ -20,9 +20,6 @@
  * Get banners list (Admin area)
  */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 _pcpin_loadClass('banner'); $banner=new PCPIN_Banner($session);
 
 $banners_xml='';

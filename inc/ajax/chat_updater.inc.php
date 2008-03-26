@@ -26,8 +26,6 @@
  * @param   boolean   $pref_timestamp       Optional. Current state of client's "Display message timestamp" preference
  * @param   boolean   $pref_message_color   Optional. Current message color
  */
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
 
 _pcpin_loadClass('message'); $msg=new PCPIN_Message($session);
 _pcpin_loadClass('category'); $category=new PCPIN_Category($session);

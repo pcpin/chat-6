@@ -16,9 +16,6 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 _pcpin_loadClass('room'); $room=new PCPIN_Room($session);
 
 if (!isset($room_id) || !pcpin_ctype_digit($room_id)) $room_id=0;

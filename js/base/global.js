@@ -137,6 +137,12 @@ var receivedAbuses=new Array();
  */
 var SkipPageUnloadedMsg=false;
 
+/**
+ * Current room ID
+ * @var int
+ */
+var currentRoomID=0;
+
 
 
 
@@ -444,6 +450,17 @@ function setLng(lng_id, lng_val) {
 function setDateFormat(date_format) {
   if (typeof(date_format)=='string' && date_format!='') {
     dateFormat=date_format;
+  }
+}
+
+
+/**
+ * Set current room ID
+ * @param   int   id    ID of room the user currently in
+ */
+function setCurrentRoomID(id) {
+  if (typeof(id)=='number' && id>0) {
+    currentRoomID=id;
   }
 }
 

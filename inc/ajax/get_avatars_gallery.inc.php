@@ -23,9 +23,6 @@
 
 _pcpin_loadClass('avatar'); $avatar=new PCPIN_Avatar($session);
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 $avatars_xml='';
 if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_user_id==$current_user->id) {
   $message='OK';

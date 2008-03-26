@@ -74,6 +74,13 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
         $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."language_expression` ( `language_id`, `code`, `value`, `multi_row` ) SELECT DISTINCT `".PCPIN_DB_PREFIX."language_expression`.`language_id` AS `language_id`, '_conf_allow_sounds' AS `code`, 0x416c6c6f7720736f756e6420656666656374733f AS `value`, 'n' AS `multi_row` FROM `".PCPIN_DB_PREFIX."language_expression`");
         $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."language_expression` ( `language_id`, `code`, `value`, `multi_row` ) SELECT DISTINCT `".PCPIN_DB_PREFIX."language_expression`.`language_id` AS `language_id`, 'sounds' AS `code`, 0x536f756e6473 AS `value`, 'n' AS `multi_row` FROM `".PCPIN_DB_PREFIX."language_expression`");
         $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."config` ( `_conf_group` , `_conf_subgroup` , `_conf_name` , `_conf_value` , `_conf_type` , `_conf_choices` , `_conf_description` ) VALUES ( 'chat', '{LNG_SOUNDS}', 'allow_sounds', '0', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_SOUNDS}' )");
+
+        // 0000361: Performance optimisation
+        // http://bugs.pcpin.com/view.php?id=361
+        $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."language_expression` DROP PRIMARY KEY");
+        $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."language_expression` ADD INDEX ( `language_id` )");
+        $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."config` ORDER BY `_conf_group` ASC, `_conf_subgroup` ASC, `_conf_id` ASC");
+
       break;
 
     }

@@ -77,12 +77,6 @@ var updaterTimeoutHandler=0;
 var updaterBusy=false;
 
 /**
- * Current room ID
- * @var int
- */
-var currentRoomID=0;
-
-/**
  * Timeout handler for window.onresize event timeout
  * @var int
  */
@@ -446,7 +440,6 @@ function initChatRoom(room_id,
       && typeof(userlist_position)=='number'
       ) {
 
-    currentRoomID=room_id;
     updaterInterval=updater_interval;
     userlistPosition=userlist_position;
     userlistWidth=userlistPosition!=0? userlist_width : 0;

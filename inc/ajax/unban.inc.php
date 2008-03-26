@@ -16,9 +16,6 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 _pcpin_loadClass('message'); $msg=new PCPIN_Message($session);
 
 if (!isset($target_user_id) || !is_scalar($target_user_id)) {

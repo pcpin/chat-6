@@ -6,7 +6,7 @@ $where=' 1 ';
 $orderby='`me`.`id` ASC';
 $limit='';
 if (empty($argv[2])) {
-  $where.=' AND ( `me`.`id` > `se`.`_s_last_message_id` AND `me`.`date` > `_s_room_date` )';
+  $where.=' AND ( `me`.`id` > `se`.`_s_last_message_id` AND `me`.`date` > `se`.`_s_room_date` )';
 } else {
   $orderby='`me`.`id` DESC';
   $limit='LIMIT \\_ARG2_\\';

@@ -16,6 +16,12 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Load colorbox
+$_load_colorbox=true;
+
+// Default: Do not context menu user options
+$_load_cm_user_options=true;
+
 if (empty($current_user->id) || $session->_s_user_id!=$current_user->id) {
   header('Location: '.PCPIN_FORMLINK.'?'.md5(microtime()));
   die();
@@ -114,8 +120,6 @@ $tpl->readTemplatesFromFile('./profile_main.tpl');
 $_js_files[]='./js/profile.js';
 $_js_files[]='./js/room_structure.js';
 $_js_files[]='./js/user.js';
-$_js_files[]='./js/context_menu_user_options.js';
-
 
 // JS language expressions
 $_js_lng[]='users_profile';

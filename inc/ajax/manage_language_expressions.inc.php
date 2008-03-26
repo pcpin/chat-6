@@ -20,9 +20,6 @@
 * Get available languages list
 */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 _pcpin_loadClass('language_expression'); $language_expression=new PCPIN_Language_Expression($session);
 
 $expressions_xml='';

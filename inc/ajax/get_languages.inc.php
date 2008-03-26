@@ -20,9 +20,6 @@
 * Get available languages list
 */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 if (!empty($all_languages) && $current_user->is_admin!=='y') {
   unset($all_languages);
 }

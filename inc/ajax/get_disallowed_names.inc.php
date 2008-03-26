@@ -20,9 +20,6 @@
 * Get word blacklist
 */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 _pcpin_loadClass('disallowed_name'); $disallowed_name=new PCPIN_Disallowed_Name($session);
 
 $names_xml='';

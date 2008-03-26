@@ -21,10 +21,18 @@ if (empty($current_user->id)) {
   die();
 }
 
+// Load colorbox
+$_load_colorbox=true;
+
+// Load smiliebox
+$_load_smiliebox=true;
+
+// Default: Do not context menu user options
+$_load_cm_user_options=true;
+
 _pcpin_loadClass('nickname'); $nickname=new PCPIN_Nickname($session);
 
 $_js_files[]='./js/user.js';
-$_js_files[]='./js/context_menu_user_options.js';
 $_js_files[]='./js/pm_box.js';
 
 $_js_lng[]='private_message';
@@ -78,7 +86,6 @@ if (!empty($smilies)) {
                                  ));
     }
   }
-  $template->addVar('smiliebox_table', 'display', true);
   $col=1;
   $maxcol=0;
   foreach ($smilies as $smilie_data) {

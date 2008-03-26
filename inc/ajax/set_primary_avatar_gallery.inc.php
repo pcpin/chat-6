@@ -16,9 +16,6 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 if (empty($avatar_id) || !pcpin_ctype_digit($avatar_id)) {
   $avatar_id=0;
 }

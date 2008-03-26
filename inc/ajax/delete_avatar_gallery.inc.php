@@ -22,9 +22,6 @@
  * @param   int   $avatar_id      Avatar ID
  */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 if (empty($avatar_id) || !pcpin_ctype_digit($avatar_id)) {
   $avatar_id=0;
 }

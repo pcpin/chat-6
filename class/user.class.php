@@ -263,7 +263,7 @@ class PCPIN_User extends PCPIN_Session {
    * @param   int       $language_id      Language ID. If empty: language ID from current session will be used
    * @return  boolean TRUE on success or FALSE on error
    */
-  function newUser($login='', $password='', $email='', $hide_email=0, $guest='n', $activation_code='', $language_id=0) {
+  function newUser($login, $password='', $email='', $hide_email=0, $guest='n', $activation_code='', $language_id=0) {
     $result=false;
     $this->id=0;
     $login=trim($login);
@@ -327,7 +327,7 @@ class PCPIN_User extends PCPIN_Session {
    * @param   int   $user_id    User ID
    * @return  boolean   TRUE on success or FALSE on error
    */
-  function deleteUser($user_id=0) {
+  function deleteUser($user_id) {
     $result=false;
     if (!empty($user_id) && $this->_db_getList('id', 'id = '.$user_id, 1)) {
       // Delete user
@@ -366,7 +366,7 @@ class PCPIN_User extends PCPIN_Session {
    * @param   int   $user_id    User ID
    * @return  boolean   TRUE on success or FALSE on error
    */
-  function activateUser($user_id=0) {
+  function activateUser($user_id) {
     $result=false;
     if (!empty($user_id) && $this->_db_getList('id', 'id = '.$user_id, 'activated = n', 1)) {
       $result=$this->_db_updateRow($user_id, 'id', array('activated'=>'y',
@@ -383,7 +383,7 @@ class PCPIN_User extends PCPIN_Session {
    * @param   int   $timestamp    UNIX timestamp
    * @return  string
    */
-  function makeDate($timestamp=0) {
+  function makeDate($timestamp) {
     $date='';
     if (!empty($timestamp)) {
       if ($this->date_format!='') {
@@ -402,7 +402,7 @@ class PCPIN_User extends PCPIN_Session {
    * @param   string  $email      Email address
    * @return  boolean   TRUE on if email address is unique or FALSE if not
    */
-  function checkEmailUnique($user_id=0, $email='') {
+  function checkEmailUnique($user_id, $email='') {
     $unique=false;
     $email=trim($email);
     if ($email!='') {
@@ -425,7 +425,7 @@ class PCPIN_User extends PCPIN_Session {
    * @param   string  $username      Username
    * @return  boolean   TRUE on if username is unique or FALSE if not
    */
-  function checkUsernameUnique($username='') {
+  function checkUsernameUnique($username) {
     $unique=false;
     if ($username!='' && !$this->_db_getList('id', 'login LIKE '.$username)) {
       $unique=true;
@@ -444,7 +444,7 @@ class PCPIN_User extends PCPIN_Session {
    * @param   int       $banned_by_username   If user will be banned: Nickname of user who banned him
    * @return  boolean  TRUE on success or FALSE on error
    */
-  function banUnban($user_id=0, $action=1, $ban_time=0, $ban_reason='', $banned_by_user_id=0, $banned_by_username='') {
+  function banUnban($user_id, $action=1, $ban_time=0, $ban_reason='', $banned_by_user_id=0, $banned_by_username='') {
     $result=false;
     _pcpin_loadClass('user'); $user=new PCPIN_User($this);
     if (!empty($user_id) && $user->_db_getList('id,banned_until,banned_permanently', 'id = '.$user_id, 1)) {
@@ -483,7 +483,7 @@ class PCPIN_User extends PCPIN_Session {
    * @param   int       $muted_by_username    If user will be muted: Nickname of user who muted him
    * @return  boolean  TRUE on success or FALSE on error
    */
-  function globalMuteUnmute($user_id=0, $action=1, $mute_time=0, $mute_reason='', $muted_by_user_id=0, $muted_by_username='') {
+  function globalMuteUnmute($user_id, $action=1, $mute_time=0, $mute_reason='', $muted_by_user_id=0, $muted_by_username='') {
     $result=false;
     _pcpin_loadClass('user'); $user=new PCPIN_User($this);
     if (!empty($user_id) && $user->_db_getList('id,global_muted_until,global_muted_permanently', 'id = '.$user_id, 1)) {
@@ -517,7 +517,7 @@ class PCPIN_User extends PCPIN_Session {
    * @param   int       $target_user_id   User to mute/unmute
    * @return  boolean   TRUE on success or FALSE on error
    */
-  function muteUnmuteLocally($target_user_id=0, $action=-1) {
+  function muteUnmuteLocally($target_user_id, $action=-1) {
     $result=false;
     if (!empty($this->id) && !empty($target_user_id) && $this->_db_getList('id', 'id = '.$target_user_id, 1)) {
       $this->muted_users=','.trim(str_replace(',,', ',', $this->muted_users), ',').',';
@@ -601,7 +601,7 @@ class PCPIN_User extends PCPIN_Session {
    * @param   int   $user_id    User ID
    * @return  int
    */
-  function calculateOnlineTime($user_id=0) {
+  function calculateOnlineTime($user_id) {
     $time=0;
     if (!empty($user_id)) {
       $query=$this->_db_makeQuery(2020, $user_id*1);

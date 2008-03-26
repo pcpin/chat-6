@@ -28,6 +28,14 @@
  *
  */
 
+/**
+ * Whether to use persistent database connection or not (function "mysql_pconnect()" instead of "mysql_connect()").
+ * Persistent database connection may considerably improve performance of this script.
+ * Please read IMPORTANT information regarding persistent connections here:
+ *  http://www.php.net/manual/en/features.persistent-connections.php
+ * NOTE: If your server does not supports persistent database connections, then this setting will be ignored.
+ */
+define('PCPIN_DB_PERSISTENT', true);
 
 /**
  * Path to the main index.php file as called by browser.
@@ -48,7 +56,7 @@ define('PCPIN_ADMIN_FORMLINK', './admin.php');
  * WARNING: Use for Development only!!!
  * If TRUE, then error_reporting will be set to 'E_ALL' and display_errors will be set to 'On'.
  */
-define('PCPIN_DEBUGMODE', false);
+define('PCPIN_DEBUGMODE', true);
 
 
 /**

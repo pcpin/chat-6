@@ -21,9 +21,6 @@
 * @param  array   $ids    IDs of addresses
 */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 _pcpin_loadClass('ipfilter'); $ipfilter=new PCPIN_IPFilter($session);
 
 if (!isset($ids) || !is_array($ids)) $ids=array();

@@ -21,6 +21,9 @@ if (!is_object($session)) {
   die();
 }
 
+// Default: Do not context menu user options
+$_load_cm_user_options=true;
+
 if ($current_user->is_admin!=='y') {
   unset($muted_members);
   unset($banned_members);
@@ -30,7 +33,6 @@ if ($current_user->is_admin!=='y') {
 
 // JS files
 $_js_files[]='./js/memberlist.js';
-$_js_files[]='./js/context_menu_user_options.js';
 $_js_files[]='./js/user.js';
 
 $_js_lng[]='online_status_0';

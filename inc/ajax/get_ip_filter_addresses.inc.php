@@ -22,9 +22,6 @@
 * @param  int   $sort_dir   Sort direction (0: Ascending, 1: Descending)
 */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 _pcpin_loadClass('ipfilter'); $ipfilter=new PCPIN_IPFilter($session);
 
 $ip_addresses_xml='';

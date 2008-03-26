@@ -180,7 +180,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$language_expression` (
   `code` varchar(255) NOT NULL default '',
   `value` longblob NOT NULL,
   `multi_row` enum('n','y') NOT NULL default 'n',
-  PRIMARY KEY  (`language_id`,`code`),
+  KEY `language_id` (`language_id`),
   KEY `code` (`code`)
 ) TYPE=MyISAM PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 

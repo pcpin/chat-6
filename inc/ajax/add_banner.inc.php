@@ -39,9 +39,6 @@
  * @param   int       $height             Banner height
  */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 _pcpin_loadClass('banner'); $banner=new PCPIN_Banner($session);
 
 if (!isset($name)) $name='';

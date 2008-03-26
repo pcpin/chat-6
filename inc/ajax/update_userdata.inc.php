@@ -20,7 +20,7 @@ if (PCPIN_SLAVE_MODE) {
   // Not used in Slave mode
   echo '<?xml version="1.0" encoding="UTF-8"?>
 <pcpin_xml>
-  <message>'.htmlspecialchars($l->g('slave_mode')).'</message>
+  <message>SLAVE_MODE</message>
   <status>1</status>
 </pcpin_xml>';
   die();
@@ -39,9 +39,6 @@ if (PCPIN_SLAVE_MODE) {
  * @param   string    $occupation   Occupation
  * @param   string    $interests    Interests
  */
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 if (empty($profile_user_id) || $current_user->is_admin!=='y') {
   $profile_user_id=$current_user->id;
 }

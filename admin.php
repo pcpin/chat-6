@@ -88,6 +88,9 @@ if (!empty($b_id)) {
 // Default window title
 $_window_title=$session->_conf_all['chat_name'].' '.PCPIN_WINDOW_TITLE_SEPARATOR.' '.$l->g('administration_area');
 
+// Default: Do not load colorbox
+$_load_colorbox=false;
+
 // onLoad event handlers for BODY element
 $_body_onload=array('window.focus()',
                     'setSid(\''.$session->_s_id.'\')',
@@ -103,6 +106,7 @@ $_body_onload=array('window.focus()',
                     'setDateFormat(\''.str_replace('\'', '\\\'', ($current_user->date_format!='')? $current_user->date_format : $session->_conf_all['date_format']).'\')',
                     'setAdminFlag('.($current_user->is_admin==='y'? 'true' : 'false').')',
                     'setSlaveMode('.(PCPIN_SLAVE_MODE? 'true' : 'false').')',
+                    'setCurrentRoomID('.$session->_s_room_id.')',
                     );
 
 // onLoad event handlers for main FRAMESET element
@@ -118,7 +122,6 @@ $_js_files=array('./js/base/screen.js',
                  './js/base/connectionstatus.js',
                  './js/base/global.js',
                  './js/base/main.js',
-                 './js/base/colorbox.js',
                  './js/admin/frames.js',
                  );
 
@@ -282,6 +285,34 @@ if (empty($session->_s_user_id)) {
 
 }
 
+// Add language expressions to template
+foreach ($template->tpl_vars_plain as $var) {
+  if (0===strpos($var, 'LNG_')) {
+    $var=strtolower($var);
+    $template->addGlobalVar($var, htmlspecialchars($l->g(substr($var, 4))));
+  }
+}
+
+// Add JS language expressions to template
+if (!empty($_js_lng) && is_array($_js_lng)) {
+  $_js_lng=array_unique($_js_lng);
+  foreach ($_js_lng as $lng_key) {
+    if ($lng_key!='') {
+      $lng_val=str_replace('\'', '\\\'', htmlspecialchars($l->g($lng_key)));
+      $lng_val=str_replace("\n", '\\n', str_replace("\r", '\\r', $lng_val));
+      array_unshift($_body_onload, 'setLng(\''.str_replace('\'', '\\\'', $lng_key).'\', \''.$lng_val.'\')');
+    }
+  }
+}
+
+// Cure database
+if (!empty($frameset_loaded)) {
+  $session->_db_cure();
+}
+
+// Close database conection
+$session->_db_close();
+
 // Add language data to main template
 $template->addVar('main', 'iso_lng', $l->iso_name);
 
@@ -293,12 +324,10 @@ foreach ($global_tpl_vars as $key=>$val) {
   $template->addGlobalVar($key, htmlspecialchars($val));
 }
 
-// Add language expressions to template
-foreach ($template->tpl_vars_plain as $var) {
-  if (0===strpos($var, 'LNG_')) {
-    $var=strtolower($var);
-    $template->addGlobalVar($var, htmlspecialchars($l->g(substr($var, 4))));
-  }
+// Load colorbox JavaScript code and template?
+if ($_load_colorbox) {
+  $_js_files[]='./js/base/colorbox.js';
+  $template->addVar('colorbox', 'display', true);
 }
 
 // Add JavaScript files to template
@@ -314,18 +343,6 @@ foreach ($_css_files as $file) {
   if (file_exists($file)) {
     $template->addVar('css_files', 'file', $file.'?'.filemtime($file));
     $template->parseTemplate('css_files', 'a');
-  }
-}
-
-// Add JS language expressions to template
-if (!empty($_js_lng) && is_array($_js_lng)) {
-  $_js_lng=array_unique($_js_lng);
-  foreach ($_js_lng as $lng_key) {
-    if ($lng_key!='') {
-      $lng_val=str_replace('\'', '\\\'', htmlspecialchars($l->g($lng_key)));
-      $lng_val=str_replace("\n", '\\n', str_replace("\r", '\\r', $lng_val));
-      array_unshift($_body_onload, 'setLng(\''.str_replace('\'', '\\\'', $lng_key).'\', \''.$lng_val.'\')');
-    }
   }
 }
 
@@ -378,14 +395,6 @@ $template->addVar('doctype', 'hide', empty($_force_buggy_doctype) && PCPIN_CLIEN
 
 // Parse and display results
 echo ltrim($template->getParsedTemplate());
-
-// Cure database
-if (!empty($frameset_loaded)) {
-  $session->_db_cure();
-}
-
-// Close database conection
-$session->_db_close();
 
 // Terminate script.
 // Warning: do not remove the next line!

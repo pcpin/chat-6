@@ -29,9 +29,6 @@
  * @param  string    $action           Filter action ("a": allow or "d": deny)
  */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 _pcpin_loadClass('ipfilter'); $ipfilter=new PCPIN_IPFilter($session);
 
 if (!isset($mask)) $mask='';

@@ -229,7 +229,11 @@ class PCPIN_Session extends PCPIN_Config {
     $this_vars=$this->_db_getFromObject();
     // Get sessions
     $sessions=array();
-    $query=$this->_db_makeQuery(2100, time(), $this->_conf_all['session_timeout']);
+    $query=$this->_db_makeQuery(2100,
+                                date('Y-m-d H:i:s', time()-1800),
+                                date('Y-m-d H:i:s', time()-$this->_conf_all['session_timeout']),
+                                date('Y-m-d H:i:s', time()-5)
+                                );
     $result=$this->_db_query($query);
     while ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {
       $sessions[]=$data;
@@ -284,8 +288,8 @@ class PCPIN_Session extends PCPIN_Config {
     if (!PCPIN_SLAVE_MODE && !empty($this->_conf_all['activate_new_accounts']) || !empty($this->_conf_all['account_pruning'])) {
       _pcpin_loadClass('user'); $user=new PCPIN_User($this);
       $query=$this->_db_makeQuery(2060,
-                                  !empty($this->_conf_all['activate_new_accounts'])? time()-3600*$this->_conf_all['new_account_activation_timeout'] : 0,
-                                  !empty($this->_conf_all['account_pruning'])? time()-$this->_conf_all['account_pruning']*86400 : 0
+                                  !empty($this->_conf_all['activate_new_accounts'])? date('Y-m-d H:i:s', time()-3600*$this->_conf_all['new_account_activation_timeout']) : '',
+                                  !empty($this->_conf_all['account_pruning'])? date('Y-m-d H:i:s', time()-$this->_conf_all['account_pruning']*86400) : ''
                                   );
       $user_ids=array();
       if ($result=$this->_db_query($query)) {
@@ -327,40 +331,38 @@ class PCPIN_Session extends PCPIN_Config {
    */
   function _s_logOut($skip_msg=false) {
     if ($this->_s_id!='') {
-      if ($this->_db_getList('_s_id', '_s_id = '.$this->_s_id)) {
-        if (!empty($this->_s_user_id)) {
-          _pcpin_loadClass('message'); $msg=new PCPIN_Message($this);
-          if (!empty($this->_s_room_id)) {
-            // Session owner was in a room
-            _pcpin_loadClass('room'); $room=new PCPIN_Room($this);
-            $room->putUser($this->_s_user_id, 0, $skip_msg);
-          }
-          // Delete invitations
-          _pcpin_loadClass('invitation'); $invitation=new PCPIN_Invitation($this);
-          $invitation->deleteUserInvitations($this->_s_user_id);
-          // Delete temporary data
-          _pcpin_loadClass('tmpdata'); $tmpdata=new PCPIN_TmpData($this);
-          $tmpdata->deleteUserRecords($this->_s_user_id);
-          // Update session owner stats
-          _pcpin_loadClass('user'); $user=new PCPIN_User($this);
-          if ($user->_db_loadObj($this->_s_user_id)) {
-            if ($user->is_guest=='y') {
-              // User was a guest. Delete record.
-              $user->deleteUser($this->_s_user_id);
-            } else {
-              // Update registered user stats
-              $user->time_online=$user->calculateOnlineTime($user->id);
-              $user->last_message_id=($user->last_message_id<$this->_s_last_message_id)? $this->_s_last_message_id : $user->last_message_id;
-              $user->_db_updateObj($user->id);
-            }
-          }
-          if (true!==$skip_msg) {
-            $msg->addMessage(105, 'n', 0, '', 0, 0, $this->_s_user_id);
+      if (!empty($this->_s_user_id)) {
+        _pcpin_loadClass('message'); $msg=new PCPIN_Message($this);
+        if (!empty($this->_s_room_id)) {
+          // Session owner was in a room
+         _pcpin_loadClass('room'); $room=new PCPIN_Room($this);
+           $room->putUser($this->_s_user_id, 0, $skip_msg);
+        }
+        // Delete invitations
+       _pcpin_loadClass('invitation'); $invitation=new PCPIN_Invitation($this);
+         $invitation->deleteUserInvitations($this->_s_user_id);
+        // Delete temporary data
+        _pcpin_loadClass('tmpdata'); $tmpdata=new PCPIN_TmpData($this);
+        $tmpdata->deleteUserRecords($this->_s_user_id);
+        // Update session owner stats
+        _pcpin_loadClass('user'); $user=new PCPIN_User($this);
+        if ($user->_db_loadObj($this->_s_user_id)) {
+          if ($user->is_guest=='y') {
+            // User was a guest. Delete record.
+            $user->deleteUser($this->_s_user_id);
+          } else {
+            // Update registered user stats
+            $user->time_online=$user->calculateOnlineTime($user->id);
+            $user->last_message_id=($user->last_message_id<$this->_s_last_message_id)? $this->_s_last_message_id : $user->last_message_id;
+            $user->_db_updateObj($user->id);
           }
         }
-        // Delete session from database
-        $this->_db_deleteRow($this->_s_id, '_s_id');
+        if (true!==$skip_msg) {
+          $msg->addMessage(105, 'n', 0, '', 0, 0, $this->_s_user_id);
+        }
       }
+      // Delete session from database
+      $this->_db_deleteRow($this->_s_id, '_s_id');
     }
   }
 
@@ -393,7 +395,7 @@ class PCPIN_Session extends PCPIN_Config {
         $this->_s_client_agent_name=PCPIN_CLIENT_AGENT_NAME;
         $this->_s_client_agent_version=PCPIN_CLIENT_AGENT_VERSION;
         $this->_s_client_os=PCPIN_CLIENT_OS;
-        $this->_s_created=DATE('Y-m-d H:i:s');
+        $this->_s_created=date('Y-m-d H:i:s');
         $this->_s_last_ping=date('Y-m-d H:i:s');
         $this->_s_language_id=$language_id;
         $this->_s_user_id=$user_id;

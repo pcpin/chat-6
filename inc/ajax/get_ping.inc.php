@@ -19,10 +19,6 @@
 
 if (empty($count) || !is_scalar($count) || !pcpin_ctype_digit($count)) $count=1;
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
-
 if (empty($ip) || gettype($ip)!='string') $ip='';
 $ping_data_xml='';
 

@@ -16,10 +16,6 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
-
 if (!isset($group)) $group='';
 $settings_xml='';
 

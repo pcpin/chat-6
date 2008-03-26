@@ -18,6 +18,15 @@
 
 $_force_buggy_doctype=true; // Do not hide <!DOCTYPE> declaration for IE6
 
+// Load colorbox
+$_load_colorbox=true;
+
+// Load smiliebox
+$_load_smiliebox=true;
+
+// Default: Do not context menu user options
+$_load_cm_user_options=true;
+
 if (empty($current_user->id) || $session->_s_user_id!=$current_user->id || empty($session->_s_room_id)) {
   header('Location: '.PCPIN_FORMLINK.'?'.md5(microtime()));
   die();
@@ -38,7 +47,6 @@ $_js_files[]='./js/user.js';
 $_js_files[]='./js/message_queue.js';
 $_js_files[]='./js/chat_room.js';
 $_js_files[]='./js/commands.js';
-$_js_files[]='./js/context_menu_user_options.js';
 
 $_js_lng[]='user_entered_this_room';
 $_js_lng[]='user_left_this_room';
@@ -206,7 +214,6 @@ if (!empty($smilies)) {
                                  ));
     }
   }
-  $template->addVar('smiliebox_table', 'display', true);
   $col=1;
   $maxcol=0;
   foreach ($smilies as $smilie_data) {

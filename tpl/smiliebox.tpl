@@ -1,4 +1,4 @@
-<PCPIN:TPL name="smiliebox_table" type="simplecondition" requiredvars="DISPLAY">
+<div id="smilie_selection_box" style="display:none">
   <table border="0" cellspacing="0" cellpadding="0" id="smiliebox_header">
     <PCPIN:TPL name="smiliebox_header_row" type="simplecondition" requiredvars="HEADER_ROW_COLSPAN">
       <tr>
@@ -28,4 +28,5 @@
       </PCPIN:TPL>
     </table>
   </div>
-</PCPIN:TPL>
+</div>
+<img id="drag_smilie" src="./pic/clearpixel_1x1.gif" alt="" title="" style="display:none;position:absolute;" />

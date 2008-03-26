@@ -20,9 +20,6 @@
  * Delete banner
  */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 _pcpin_loadClass('banner'); $banner=new PCPIN_Banner($session);
 
 if (!isset($banner_id)) $banner_id=0;

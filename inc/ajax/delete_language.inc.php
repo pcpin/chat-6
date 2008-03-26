@@ -20,9 +20,6 @@
  * Delete banner
  */
 
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
-
 if (!isset($language_id) || !is_scalar($language_id)) $language_id=0;
 
 // Get client session

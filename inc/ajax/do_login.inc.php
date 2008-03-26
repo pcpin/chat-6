@@ -16,9 +16,6 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-$message=$l->g('login_failed');
-$status='-1'; // -1: Session is invalid
-
 _pcpin_loadClass('message'); $msg=new PCPIN_Message($session);
 _pcpin_loadClass('ipfilter'); $ipfilter=new PCPIN_IPFilter($session);
 _pcpin_loadClass('failed_login'); $failed_login_class=new PCPIN_Failed_Login($session);
@@ -122,11 +119,13 @@ if (false!==$blocked=$ipfilter->isBlocked(PCPIN_CLIENT_IP)) {
       }
     } else {
       // Invalid password
+      $message=$l->g('login_failed');
       $login_failed=true;
     }
     unset($userdata);
   } else {
     // User does not exists
+    $message=$l->g('login_failed');
     $login_failed=true;
   }
   if (!empty($login_failed)) {

@@ -25,12 +25,9 @@
   <img src="./pic/progress_bar_267x14.gif" title="{LNG_PLEASE_WAIT}" alt="{LNG_PLEASE_WAIT}" />
 </div>
 <div id="color_selection_box" style="display:none">
-  <PCPIN:TPL name="colorbox" src="colorbox.tpl" />
+  <PCPIN:TPL name="colorbox" src="colorbox.tpl" type="simplecondition" requiredvars="DISPLAY" />
 </div>
-<div id="smilie_selection_box" style="display:none">
-  <PCPIN:TPL name="smiliebox" src="smiliebox.tpl" />
-</div>
-<img id="drag_smilie" src="./pic/clearpixel_1x1.gif" alt="" title="" style="display:none;position:absolute;" />
+<PCPIN:TPL name="smiliebox_tpl" src="smiliebox.tpl" type="simplecondition" requiredvars="DISPLAY" />
 <div style="display:none">
   <form id="dummyform" action="{FORMLINK}" method="post">
     <input type="hidden" name="s_id" value="" />
@@ -46,7 +43,7 @@
 <!-- USERLIST/MEMBERLIST RECORD TEMPLATE -->
 <PCPIN:TPL name="userlist_record_tpl" src="userlist_record_tpl.tpl" />
 <!-- USER OPTIONS CONTEXT MENU -->
-<PCPIN:TPL name="context_menu_user_options" src="context_menu_user_options.tpl" />
+<PCPIN:TPL name="context_menu_user_options" src="context_menu_user_options.tpl" type="simplecondition" requiredvars="DISPLAY" />
 <noscript>
   <br /><br /><br /><br /><br />
   <div style="text-align:center;width:100%;">

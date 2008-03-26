@@ -110,15 +110,7 @@ class PCPIN_Language extends PCPIN_Session {
     if (!empty($this->_db_list)) {
       $this->_db_setObject($this->_db_list[0]);
       $this->_db_freeList();
-      _pcpin_loadClass('language_expression'); $language_expression=new PCPIN_Language_Expression($this);
-      if ($language_expression->_db_getList('code,value', 'language_id = '.$this->id)) {
-        if (!empty($language_expression->_db_list)) {
-          $ok=true;
-          while ($expr=array_pop($language_expression->_db_list)) {
-            $this->_cache['language'][$expr['code']]=$expr['value'];
-          }
-        }
-      }
+      $ok=true;
     }
     return $ok;
   }
@@ -129,10 +121,24 @@ class PCPIN_Language extends PCPIN_Session {
    * @param   string    $code     Expression code
    * @return  string  Expression or expression code if no expression found
    */
-  function g($code='') {
+  function g($code) {
     $expr=$code;
-    if (!empty($this->id) && $code!='' && isset($this->_cache['language'][$code]) && $this->_cache['language'][$code]!='') {
-      $expr=$this->_cache['language'][$code];
+    if (!empty($this->id) && $code!='') {
+      if (empty($this->_cache['language'])) {
+        // Language expressions are not loaded yet - load them now
+        _pcpin_loadClass('language_expression'); $language_expression=new PCPIN_Language_Expression($this);
+        if ($language_expression->_db_getList('code,value', 'language_id = '.$this->id)) {
+          if (!empty($language_expression->_db_list)) {
+            foreach ($language_expression->_db_list as $data) {
+              $this->_cache['language'][$data['code']]=$data['value'];
+            }
+            $language_expression->_db_freeList();
+          }
+        }
+      }
+      if (isset($this->_cache['language'][$code]) && $this->_cache['language'][$code]!='') {
+        $expr=$this->_cache['language'][$code];
+      }
     }
     return $expr;
   }

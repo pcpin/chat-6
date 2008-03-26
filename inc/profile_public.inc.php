@@ -23,8 +23,8 @@ if (!is_object($session)) {
 
 // JS files
 $_js_files[]='./js/profile_public.js';
-$_js_files[]='./js/context_menu_user_options.js';
 
+// JS language expressions
 $_js_lng[]='avatar';
 $_js_lng[]='seconds';
 $_js_lng[]='minutes';

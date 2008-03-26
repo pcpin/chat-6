@@ -20,7 +20,7 @@ if (PCPIN_SLAVE_MODE) {
   // Not used in Slave mode
   echo '<?xml version="1.0" encoding="UTF-8"?>
 <pcpin_xml>
-  <message>'.htmlspecialchars($l->g('slave_mode')).'</message>
+  <message>SLAVE_MODE</message>
   <status>1</status>
 </pcpin_xml>';
   die();

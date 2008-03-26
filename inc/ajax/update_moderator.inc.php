@@ -19,8 +19,6 @@
 /**
  * Update moderator data
  */
-$message=$l->g('access_denied');
-$status='-1'; // -1: Session is invalid
 
 _pcpin_loadClass('room'); $room=new PCPIN_Room($session);
 _pcpin_loadClass('category'); $category=new PCPIN_Category($session);
