@@ -100,7 +100,7 @@ $_body_onload=array('window.focus()',
                     'setMainFormLink(\''.PCPIN_FORMLINK.'\')',
                     'setExitURL(\''.htmlspecialchars($session->_conf_all['exit_url']).'\')',
                     'setUserId('.$session->_s_user_id.')',
-                    'setImgResizeFlag('.(('2'==PCPIN_Image::whichGD())? 'true' : 'false').')',
+                    'setImgResizeFlag('.(('2'==PCPIN_GD_VERSION)? 'true' : 'false').')',
                     'window.appName_=\'pcpin_chat\'', // <-- DO NOT CHANGE THIS LINE!!!
                     'window.adminArea_=true', // <-- DO NOT CHANGE THIS LINE!!!
                     'setDateFormat(\''.str_replace('\'', '\\\'', ($current_user->date_format!='')? $current_user->date_format : $session->_conf_all['date_format']).'\')',

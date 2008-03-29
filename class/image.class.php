@@ -17,6 +17,11 @@
  */
 
 /**
+ * GD Version
+ */
+define('PCPIN_GD_VERSION', PCPIN_Image::whichGD());
+
+/**
  * Image check results
  */
 define('PCPIN_IMAGE_CHECK_OK',              0); // Image OK
@@ -77,7 +82,7 @@ class PCPIN_Image {
                      $type='jpg', $bgcolor_r=255, $bgcolor_g=255, $bgcolor_b=255,
                      $fallback_src_file=null, $fallback_src_img=null) {
     $result=false;
-    if (   PCPIN_Image::whichGD()==2
+    if (   PCPIN_GD_VERSION==2
         && (!empty($src_img) || !empty($src_file) && file_exists($src_file) && is_readable($src_file))
         && !empty($width) && !empty($height)) {
       // Get an image

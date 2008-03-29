@@ -85,8 +85,8 @@ $_js_lng[]='not_activated_accounts';
 $_js_lng[]='guest';
 
 $_body_onload[]='initMemberlist('.(!empty($session->_conf_all['userlist_gender_icon'])? 'true' : 'false').','
-                                 .((!empty($session->_conf_all['userlist_avatar_thumb']) && 2==PCPIN_Image::whichGD())? 'true' : 'false').','
-                                 .((!empty($session->_conf_all['userlist_privileged_flags']) && 2==PCPIN_Image::whichGD())? 'true' : 'false')
+                                 .((!empty($session->_conf_all['userlist_avatar_thumb']) && 2==PCPIN_GD_VERSION)? 'true' : 'false').','
+                                 .((!empty($session->_conf_all['userlist_privileged_flags']) && 2==PCPIN_GD_VERSION)? 'true' : 'false')
                                  .')';
 
 $_window_title.=' '.PCPIN_WINDOW_TITLE_SEPARATOR.' '.$l->g('memberlist');
