@@ -571,17 +571,26 @@ class PCPIN_DB {
     if ($tbl_name!='') {
       // Get table information
       if (!isset($this->_cache['_db_tabledata'][$tbl_name])) {
-        // Table fields are not read yet. Do it.
-        if ($result=$this->_db_query('SHOW COLUMNS FROM `'.$tbl_name.'`')) {
-          $table=array();
-          while ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {
-            $table[]=$data;
-          }
-          $this->_db_freeResult($result);
-          if (!empty($table)) {
-            // Store table fields data into cache
-            $this->_cache['_db_tabledata'][$tbl_name]=$table;
-            $fields=$this->_cache['_db_tabledata'][$tbl_name];
+        // Trying to get cached table data.
+        $cache=$this->_db_getCacheRecord('_db_tabledata_'.$tbl_name);
+        if (!is_null($cache)) {
+          // Cached record loaded.
+          $fields=unserialize($cache);
+        } else {
+          // Table fields are not read yet. Do it.
+          if ($result=$this->_db_query('SHOW COLUMNS FROM `'.$tbl_name.'`')) {
+            $table=array();
+            while ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {
+              $table[]=$data;
+            }
+            $this->_db_freeResult($result);
+            if (!empty($table)) {
+              // Store table fields data into cache
+              $this->_cache['_db_tabledata'][$tbl_name]=$table;
+              $fields=$this->_cache['_db_tabledata'][$tbl_name];
+              // Store cache record
+              $this->_db_addCacheRecord('_db_tabledata_'.$tbl_name, serialize($fields));
+            }
           }
         }
       } else {
@@ -1006,6 +1015,40 @@ class PCPIN_DB {
     }
     return $query;
   }
+
+
+  /**
+   * Add new record to the cache table
+   * @param   string    $id         Record ID (max. 255 chars)
+   * @param   string    $contents   Contents
+   */
+  function _db_addCacheRecord($id, $contents) {
+    if (!defined('PCPIN_INSTALL_MODE') || !PCPIN_INSTALL_MODE) {
+      $result=$this->_db_query($this->_db_makeQuery(2110, $id, $contents));
+      $this->_db_freeResult($result);
+    }
+  }
+
+
+  /**
+   * Get record
+   * @param   string  $id     Record ID
+   * @return  mixed   (string) cache contents or NULL if no record found
+   */
+  function _db_getCacheRecord($id) {
+    $cache=null;
+    if (!defined('PCPIN_INSTALL_MODE') || !PCPIN_INSTALL_MODE) {
+      if ($result=$this->_db_query($this->_db_makeQuery(2120, $id))) {
+        if ($data=$this->_db_fetch($result, MYSQL_NUM)) {
+          $cache=$data[0];
+        }
+        $this->_db_freeResult($result);
+      }
+    }
+    return $cache;
+  }
+
+
 
 }
 ?>

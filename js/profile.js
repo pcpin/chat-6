@@ -135,6 +135,12 @@ var avatarGalleryAllowed=false;
  */
 var nicknamesCount=0;
 
+/**
+ * Additional timeout handler for enterChatRoom() function
+ * @var int
+ */
+var enterChatRoomTimeOut=0;
+
 
 
 /**
@@ -166,7 +172,7 @@ function initProfile(nickname_length_min_, nickname_length_max_, homepage, gende
   // Set "onunload" handler
   window.onunload=function() {
     // Send "Page unloaded" signal to server
-    if (!SkipPageUnloadedMsg && (typeof(window.opener)=='undefined' || typeof(window.opener.appName_)!='string' || window.opener.appName_!='pcpin_chat' || typeof(window.opener.initChatRoom)=='undefined')) {
+    if (!SkipPageUnloadedMsg && (typeof(window.opener)=='undefined' || window.opener==null || typeof(window.opener.appName_)!='string' || window.opener.appName_!='pcpin_chat' || typeof(window.opener.initChatRoom)=='undefined')) {
       openWindow(formlink+'?inc='+urlencode('page_unloaded')+'&s_id='+urlencode(s_id), '', 1, 1, false, false, false, false, false, false, false, false, false, false, 0, 0);
     }
     try {
@@ -345,13 +351,14 @@ function _CALLBACK_getAvatars() {
  * @param   boolean   now   If TRUE, then request will be sent immediately
  */
 function profile_start_update(now) {
-  clearInterval(updaterIntervalHandle);
+  clearTimeout(updaterIntervalHandle);
   // Request new room structure
   if (typeof(now)=='boolean' && true==now) {
-    getRoomStructure();
+    getRoomStructure('profile_start_update(), false, true');
+  } else {
+    // Set new interval
+    updaterIntervalHandle=setTimeout('getRoomStructure("profile_start_update()", true)', updaterInterval*1000);
   }
-  // Set new interval
-  updaterIntervalHandle=setInterval('getRoomStructure()', updaterInterval*1000);
 }
 
 
@@ -861,31 +868,37 @@ function showGenderImage() {
  * @param   int       room_id         Optional. Room ID.
  */
 function enterChatRoom(nickname_id, password, room_id) {
-  var stealthbox=$('stealth_mode_chkbox');
-  var stealth_mode=(typeof(stealthbox)=='object' && stealthbox && true==stealthbox.checked)? 'y' : 'n';
-  if (typeof(nickname_id)!='string' && typeof(nickname_id)!='number') {
-    nickname_id=CurrentNicknameID;
-  }
-  nickname_id=stringToNumber(nickname_id);
-  if (typeof(room_id)=='number' && room_id>0) {
-    ActiveRoomId=room_id;
-  }
-  if (ActiveRoomId==0) {
-    // No room selected
-    alert(getLng('select_room'));
-  } else if (nickname_id==0) {
-    // User has no nicknames
-    manageNickname('enterChatRoom(null, null);');
-  } else {
-    if (typeof(password)=='undefined' || null==password) {
-      if (!isAdmin && CategoryTree[ActiveCategoryId]['rooms'][ActiveRoomId] && CategoryTree[ActiveCategoryId]['rooms'][ActiveRoomId]['password_protected'] && !CategoryTree[ActiveCategoryId]['rooms'][ActiveRoomId]['moderated_by_me']) {
-        showPasswordFieldBox(mouseX, mouseY, 'enterChatRoom('+nickname_id+', \'/RESULT/\')', null, getLng('room_password'));
-        return false;
-      } else {
-        password='';
-      }
+  clearTimeout(enterChatRoomTimeOut);
+  try {
+    var stealthbox=$('stealth_mode_chkbox');
+    var stealth_mode=(typeof(stealthbox)=='object' && stealthbox && true==stealthbox.checked)? 'y' : 'n';
+    if (typeof(nickname_id)!='string' && typeof(nickname_id)!='number') {
+      nickname_id=CurrentNicknameID;
     }
-    sendData('_CALLBACK_enterChatRoom()', formlink, 'POST', 'ajax='+urlencode('enter_chat_room')+'&s_id='+urlencode(s_id)+'&room_id='+urlencode(ActiveRoomId)+'&nickname_id='+urlencode(nickname_id)+'&stealth_mode='+urlencode(stealth_mode)+'&password='+urlencode(base64encode(password)));
+    nickname_id=stringToNumber(nickname_id);
+    if (typeof(room_id)=='number' && room_id>0) {
+      ActiveRoomId=room_id;
+    }
+    if (ActiveRoomId==0) {
+      // No room selected
+      alert(getLng('select_room'));
+    } else if (nickname_id==0) {
+      // User has no nicknames
+      manageNickname('enterChatRoom(null, null);');
+    } else {
+      if (typeof(password)=='undefined' || null==password) {
+        if (!isAdmin && CategoryTree[ActiveCategoryId]['rooms'][ActiveRoomId] && CategoryTree[ActiveCategoryId]['rooms'][ActiveRoomId]['password_protected'] && !CategoryTree[ActiveCategoryId]['rooms'][ActiveRoomId]['moderated_by_me']) {
+          showPasswordFieldBox(mouseX, mouseY, 'enterChatRoom('+nickname_id+', \'/RESULT/\')', null, getLng('room_password'));
+          return false;
+        } else {
+          password='';
+        }
+      }
+      sendData('_CALLBACK_enterChatRoom()', formlink, 'POST', 'ajax='+urlencode('enter_chat_room')+'&s_id='+urlencode(s_id)+'&room_id='+urlencode(ActiveRoomId)+'&nickname_id='+urlencode(nickname_id)+'&stealth_mode='+urlencode(stealth_mode)+'&password='+urlencode(base64encode(password)));
+    }
+  } catch (e) {
+    toggleProgressBar(true);
+    enterChatRoomTimeOut=setTimeout('enterChatRoom('+nickname_id+', '+(typeof(password)=='string'? '"'+password.split('"').join('\\"')+'"' : 'null')+', '+room_id+')', 200);
   }
 }
 function _CALLBACK_enterChatRoom() {

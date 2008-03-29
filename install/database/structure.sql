@@ -89,6 +89,12 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$binaryfile` (
   KEY `protected` (`protected`)
 ) TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
+CREATE TABLE `$$$DB_PREFIX$$$cache` (
+`id` CHAR( 255 ) NOT NULL ,
+`contents` LONGBLOB NOT NULL ,
+PRIMARY KEY ( `id` ) 
+) ; /* PCPIN6_QUERY_SEPARATOR */
+
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$category`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$category` (
   `id` int(11) NOT NULL auto_increment,

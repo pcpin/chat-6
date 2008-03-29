@@ -80,7 +80,7 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
         $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."language_expression` DROP PRIMARY KEY");
         $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."language_expression` ADD INDEX ( `language_id` )");
         $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."config` ORDER BY `_conf_group` ASC, `_conf_subgroup` ASC, `_conf_id` ASC");
-
+        $__pcpin_upgrade['session']->_db_query("CREATE TABLE `".PCPIN_DB_PREFIX."cache` ( `id` CHAR( 255 ) NOT NULL , `contents` LONGBLOB NOT NULL , PRIMARY KEY ( `id` ) )");
       break;
 
     }

@@ -83,6 +83,7 @@ var userlistAvatarHeight=10;
 var userlistPrivileged=false;
 
 
+
 /**
  * Empty room structure
  */
@@ -99,12 +100,18 @@ function resetRoomStructure() {
 
 /**
  * Get chat rooms list grouped in categories and sorted by name, including list of users in each room.
+ * @param   string    callback2       Optional callback function to be executed after _CALLBACK_getRoomStructure()
+ * @param   boolean   async           Optional. If FALSE (default): request will be executed in synchronous mode
+ * @param   boolean   showProgressBar Optional. If FALSE (default): progress bar will be not displayed
  */
-function getRoomStructure() {
+function getRoomStructure(callback2, async, showProgressBar) {
   resetRoomStructure();
-  sendData('_CALLBACK_getRoomStructure()', formlink, 'POST', 'ajax='+urlencode('get_room_structure')+'&s_id='+urlencode(s_id), true);
+  if (typeof(callback2)!=='string') {
+    callback2='';
+  }
+  sendData('_CALLBACK_getRoomStructure(\''+callback2+'\')', formlink, 'POST', 'ajax='+urlencode('get_room_structure')+'&s_id='+urlencode(s_id), typeof(showProgressBar)!='boolean' || showProgressBar, typeof(async)!='boolean' || !async);
 }
-function _CALLBACK_getRoomStructure() {
+function _CALLBACK_getRoomStructure(callback2) {
 //debug(actionHandler.getResponseString());
   var message=actionHandler.getCdata('message');
   var status=actionHandler.getCdata('status');
@@ -153,6 +160,9 @@ function _CALLBACK_getRoomStructure() {
 
   }
   toggleProgressBar(false);
+  if (callback2!='') {
+    eval(callback2);
+  }
 }
 
 
@@ -559,6 +569,9 @@ function openCloseRoom(room_id, category_id, open) {
  * @param   array     cats          Array with category tree
  */
 function displaySimpleCategoryTree(cats) {
+  if (typeof(CategoryTree[0])=='undefined' || typeof(CategoryTree[0]['children'])=='undefined') {
+    return false;
+  }
   var div_top=$('chat_rooms_list_simplified').scrollTop;
   $('rooms_tree').style.display='none';
   $('rooms_simplified').style.display='';
