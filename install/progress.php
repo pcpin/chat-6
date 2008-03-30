@@ -68,7 +68,7 @@ $body_onload[]='$(\'contents_div\').style.display=\'\'';
     <td class="tbl_row" style="padding-top:15px;padding-bottom:15px;">
       <span id="step_5" class="status_open">
         <span id="step_5_prepend"></span>
-        Data import
+        Import data from PCPIN Chat 5
       </span>
     </td>
   </tr>

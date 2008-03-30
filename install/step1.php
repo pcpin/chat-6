@@ -33,7 +33,7 @@ if (!defined('PCPIN_INSTALL_MODE') || true!==PCPIN_INSTALL_MODE) {
     <td class="tbl_row" style="text-align:center; height: 250px; vertical-align: middle;">
       <b>Welcome to PCPIN Chat <?php echo htmlspecialchars(PCPIN_INSTALL_VERSION) ?> installation!</b>
       <br /><br />
-      Read <a href="./INSTALL.txt" target="_blank">installation instructions</a> before you begin!
+      Read <a href="./INSTALL.txt" target="_blank" style="color:aa0000;text-decoration:underline;">installation instructions</a> before you begin!
       <br /><br /><br />
       <button type="button" title="START installation" onclick="window.location.href='./install.php?step=2'">START Installation</button>
     </td>

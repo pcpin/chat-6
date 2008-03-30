@@ -70,7 +70,7 @@ if (empty($step)) {
     }
   </script>
 </head>
-<frameset cols="200,*" framespacing="0" frameborder="0" marginwidth="0" marginheight="0">
+<frameset cols="220,*" framespacing="0" frameborder="0" marginwidth="0" marginheight="0">
   <frame name="progress_area" id="progress_area" src="./install.php?step=-1" scrolling="auto" noresize marginwidth="0" marginheight="0" border="0">
   <frame name="main_area" id="main_area" src="./install.php?step=1" scrolling="auto" noresize marginwidth="0" marginheight="0">
 </frameset>
