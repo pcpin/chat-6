@@ -333,13 +333,13 @@ if (PCPIN_DEBUGMODE && PCPIN_LOG_TIMER) {
   $start_times=explode(' ', $_pcpin_log_timer_start);
   $start=1*(substr($start_times[1], -5).substr($start_times[0], 1, 5));
   $end=1*(substr($end_times[1], -5).substr($end_times[0], 1, 5));
-  $diff=round($end-$start, 3);
-  $mysql_usage=round($_GET['_pcpin_log_mysql_usage'], 3);
+  $diff=$end-$start;
+  $mysql_usage=$_GET['_pcpin_log_mysql_usage'];
   $timers="\n<!--\n"
          ."===========================================================================\n"
-         ."\tThe page has been generated in total ".($diff+$mysql_usage)." seconds\n"
-         ."\t\tPHP time:\t$diff seconds\n"
-         ."\t\tMySQL time:\t$mysql_usage seconds\n"
+         ."\tThe page has been generated in total ".number_format($diff, 3, '.', '')." seconds\n"
+         ."\t\tPHP time:\t".number_format($diff-$mysql_usage, 3, '.', '')." seconds\n"
+         ."\t\tMySQL time:\t".number_format($mysql_usage, 3, '.', '')." seconds\n"
          ."===========================================================================\n"
          ."-->";
   $template->addVar('main', 'timers', $timers);
