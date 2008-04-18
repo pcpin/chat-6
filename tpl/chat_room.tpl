@@ -59,6 +59,10 @@
               <td><button id="message_colors_btn" type="button" style="width:32px;background-image:none;" onclick="openColorBox('main_input_textarea', 'color', this, 'outgoingMessageColor', false, 'background-color')" title="{LNG_MESSAGE_COLOR}" onfocus="blur()"></button></td>
               <td style="width:1px"><img src="./pic/clearpixel_1x1.gif" alt="" width="5" height="1" /></td>
               <td><button type="button" id="invert_timestamp_btn" style="width:23px;background-repeat:no-repeat;background-position:center center;" onclick="invertTimeStampView()" onfocus="blur()"></button></td>
+              <PCPIN:TPL name="invert_sounds_btn" type="simplecondition" requiredvars="DISPLAY">
+                <td style="width:1px"><img src="./pic/clearpixel_1x1.gif" alt="" width="5" height="1" /></td>
+                <td><button id="invert_sounds_btn" type="button" style="width:23px;background-image:url(./pic/sounds_active_15x15.gif);background-repeat:no-repeat;background-position:center center;" onclick="toggleSounds()" title="{LNG_SOUNDS}" onfocus="blur()"></button></td>
+              </PCPIN:TPL>
               <PCPIN:TPL name="msg_attachment_btn" type="simplecondition" requiredvars="DISPLAY">
                 <td style="width:1px"><img src="./pic/clearpixel_1x1.gif" alt="" width="5" height="1" /></td>
                 <td><button id="msg_attachment_btn" type="button" style="width:23px;background-image:url(./pic/attachment_15x15.gif);background-repeat:no-repeat;background-position:center center;" onclick="addMsgAttachment()" title="{LNG_ATTACH_FILE}" onfocus="blur()"></button></td>

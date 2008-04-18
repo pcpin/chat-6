@@ -24,6 +24,7 @@
  * @param   boolean   $full_request         If TRUE, then full room information and full userlist will be returned
  * @param   int       $get_last_msgs        If > 0, then last X messages will be returned (including already delivered messages)
  * @param   boolean   $pref_timestamp       Optional. Current state of client's "Display message timestamp" preference
+ * @param   boolean   $pref_allow_sounds    Optional. Current state of client's "Allow sounds" preference
  * @param   boolean   $pref_message_color   Optional. Current message color
  */
 
@@ -493,6 +494,14 @@ if (!empty($room_id) && !empty($current_user->id)) {
     $current_user->_db_updateObj($current_user->id);
   } elseif (empty($pref_timestamp) && $current_user->show_message_time!='n') {
     $current_user->show_message_time='n';
+    $current_user->_db_updateObj($current_user->id);
+  }
+  // "Allow sounds" preference
+  if (!empty($pref_allow_sounds) && $current_user->allow_sounds!='y') {
+    $current_user->allow_sounds='y';
+    $current_user->_db_updateObj($current_user->id);
+  } elseif (empty($pref_allow_sounds) && $current_user->allow_sounds!='n') {
+    $current_user->allow_sounds='n';
     $current_user->_db_updateObj($current_user->id);
   }
   // "Message color" preference

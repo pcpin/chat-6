@@ -139,6 +139,11 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
         $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."userdata` CHANGE `homepage` `homepage` CHAR( 255 ) CHARACTER SET utf8 NOT NULL DEFAULT '' , CHANGE `gender` `gender` ENUM( 'm', 'f', '-' ) NOT NULL DEFAULT '-', CHANGE `age` `age` CHAR( 255 ) CHARACTER SET utf8 NOT NULL DEFAULT '' , CHANGE `icq` `icq` CHAR( 255 ) CHARACTER SET utf8 NOT NULL DEFAULT '' , CHANGE `msn` `msn` CHAR( 255 ) CHARACTER SET utf8 NOT NULL DEFAULT '' , CHANGE `aim` `aim` CHAR( 255 ) CHARACTER SET utf8 NOT NULL DEFAULT '' , CHANGE `yim` `yim` CHAR( 255 ) CHARACTER SET utf8 NOT NULL DEFAULT '' , CHANGE `location` `location` CHAR( 255 ) CHARACTER SET utf8 NOT NULL DEFAULT '' , CHANGE `occupation` `occupation` CHAR( 255 ) CHARACTER SET utf8 NOT NULL DEFAULT '' , CHANGE `interests` `interests` TEXT CHARACTER SET utf8 NOT NULL DEFAULT ''");
         $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."version` CHANGE `version_check_key` `version_check_key` CHAR( 32 ) CHARACTER SET utf8 NOT NULL DEFAULT '' , CHANGE `new_version_url` `new_version_url` CHAR( 255 ) CHARACTER SET utf8 NOT NULL DEFAULT ''");
 
+        // 0000369: A possibility to turn sounds off/on for users
+        // http://bugs.pcpin.com/view.php?id=369
+        $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."user` ADD `allow_sounds` ENUM( 'y', 'n' ) DEFAULT 'y' NOT NULL");
+        $__pcpin_upgrade['session']->_db_query("TRUNCATE TABLE `".PCPIN_DB_PREFIX."cache`");
+        
       break;
 
     }

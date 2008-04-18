@@ -99,8 +99,6 @@ $_js_lng[]='off';
 $_js_lng[]='said_message';
 $_js_lng[]='whispered_message';
 $_js_lng[]='room_password';
-$_js_lng[]='sounds_turned_on';
-$_js_lng[]='sounds_turned_off';
 
 // Init smilies after load
 $_body_onload[]='initSmilieList()';

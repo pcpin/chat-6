@@ -22,6 +22,12 @@
 PCPIN_MP3_Player_PlayLockedAfterInit='./sounds/welcome.mp3';
 
 /**
+ * Default player volume (must be between 0 and 100)
+ * @var int
+ */
+PCPIN_MP3_PlayerDefaultVolume=75;
+
+/**
  * XmlHttpRequest handler for periodic updates
  * @var object
  */
@@ -183,6 +189,12 @@ var userlistPrivileged=false;
  * @var boolean
  */
 var displayTimeStamp=false;
+
+/**
+ * Flag: if TRUE, then sound effects will be allowed (if not blocked by server)
+ * @var boolean
+ */
+var allowSounds=false;
 
 /**
  * Array with message timestamp spans' ids
@@ -423,6 +435,7 @@ function initChatRoom(room_id,
                       userlist_avatar,
                       userlist_privileged,
                       display_time_stamp,
+                      allow_sounds,
                       message_color,
                       default_room_bgcolor,
                       msg_attachments_limit,
@@ -451,6 +464,7 @@ function initChatRoom(room_id,
     userlistAvatar=userlist_avatar;
     userlistPrivileged=userlist_privileged;
     displayTimeStamp=!display_time_stamp; // See below
+    allowSounds=!allow_sounds; // See below
     outgoingMessageColor=message_color;
     messagesAreaBGColor=default_room_bgcolor;
     MsgAttachmentsLimit=msg_attachments_limit;
@@ -471,6 +485,8 @@ function initChatRoom(room_id,
     CommunicationIndicatorImg=$('CommunicationIndicatorImg');
     // Initialize "Timestamp" button
     invertTimeStampView();
+    // Initialize "Sounds On/Off" button
+    toggleSounds();
     // Set CSS classes
     setCssClass(ChatroomMessages, '#chatroom_messages');
     setCssClass(ChatroomControls, '#chatroom_controls');
@@ -700,6 +716,15 @@ function initChatRoom(room_id,
   displayAttachments();
   // Activate auto-scroll
   setAutoScroll(true);
+  // Disable sounds
+  if (!allowSounds) {
+    if (typeof(PCPIN_MP3_Player)!='undefined' && PCPIN_MP3_Player) {
+      PCPIN_MP3_Player.setVolume(0);
+      setTimeout('PCPIN_MP3_Player.setVolume(0)', 500);
+    } else {
+      PCPIN_MP3_Player_PlayLockedAfterInit='';
+    }
+  }
 
   setTimeout('window.onresize()', 150);
 }
@@ -945,9 +970,9 @@ function sendUpdaterRequest(full_request, first_request, get_last_msgs, show_pro
     UpdaterGetFullData=false;
     if (show_progressbar) {
       toggleProgressBar(true);
-      setTimeout('ajaxUpdater.sendData(\'_CALLBACK_sendUpdaterRequest('+(show_progressbar? 'true' : 'false')+')\', \'POST\', formlink, \'ajax='+urlencode('chat_updater')+'&s_id='+urlencode(s_id)+'&room_id='+urlencode(currentRoomID)+(full_request? '&pref_timestamp='+(displayTimeStamp? '1' : '0')+'&pref_message_color='+urlencode(outgoingMessageColor)+'&full_request=1' : '')+(first_request? '&first_request=1' : '')+'&get_last_msgs='+get_last_msgs+((postMessages.length>0)? '&'+postMessages.join('&') : '')+'\', '+(show_progressbar? 'true' : 'false')+');', 10);
+      setTimeout('ajaxUpdater.sendData(\'_CALLBACK_sendUpdaterRequest('+(show_progressbar? 'true' : 'false')+')\', \'POST\', formlink, \'ajax='+urlencode('chat_updater')+'&s_id='+urlencode(s_id)+'&room_id='+urlencode(currentRoomID)+(full_request? '&pref_timestamp='+(displayTimeStamp? '1' : '0')+'&pref_allow_sounds='+(allowSounds? '1' : '0')+'&pref_message_color='+urlencode(outgoingMessageColor)+'&full_request=1' : '')+(first_request? '&first_request=1' : '')+'&get_last_msgs='+get_last_msgs+((postMessages.length>0)? '&'+postMessages.join('&') : '')+'\', '+(show_progressbar? 'true' : 'false')+');', 10);
     } else {
-      ajaxUpdater.sendData('_CALLBACK_sendUpdaterRequest('+(show_progressbar? 'true' : 'false')+')', 'POST', formlink, 'ajax='+urlencode('chat_updater')+'&s_id='+urlencode(s_id)+'&room_id='+urlencode(currentRoomID)+'&pref_timestamp='+(displayTimeStamp? '1' : '0')+'&pref_message_color='+urlencode(outgoingMessageColor)+(full_request? '&full_request=1' : '')+(first_request? '&first_request=1' : '')+'&get_last_msgs='+get_last_msgs+((postMessages.length>0)? '&'+postMessages.join('&') : ''), show_progressbar);
+      ajaxUpdater.sendData('_CALLBACK_sendUpdaterRequest('+(show_progressbar? 'true' : 'false')+')', 'POST', formlink, 'ajax='+urlencode('chat_updater')+'&s_id='+urlencode(s_id)+'&room_id='+urlencode(currentRoomID)+'&pref_timestamp='+(displayTimeStamp? '1' : '0')+'&pref_allow_sounds='+(allowSounds? '1' : '0')+'&pref_message_color='+urlencode(outgoingMessageColor)+(full_request? '&full_request=1' : '')+(first_request? '&first_request=1' : '')+'&get_last_msgs='+get_last_msgs+((postMessages.length>0)? '&'+postMessages.join('&') : ''), show_progressbar);
     }
   } else {
     UpdaterSkipDelay=true;
@@ -2351,6 +2376,26 @@ function invertTimeStampView() {
 
 
 /**
+ * Activate/deactivate sound effects
+ */
+function toggleSounds() {
+  var btn=$('invert_sounds_btn');
+  allowSounds=!allowSounds;
+  if (typeof(PCPIN_MP3_Player)!='undefined' && PCPIN_MP3_Player) {
+    if (!allowSounds) {
+      PCPIN_MP3_Player.setVolume(0);
+    } else {
+      PCPIN_MP3_Player.setVolume(PCPIN_MP3_PlayerDefaultVolume);
+    }
+  }
+  MainInputTextArea.focus();
+  if (btn) {
+    btn.style.backgroundImage='url(./pic/'+(allowSounds? 'sounds_active_15x15.gif' : 'sounds_inactive_15x15.gif')+')';
+  }
+}
+
+
+/**
  * Display "Attach file" popup
  */
 function addMsgAttachment() {
@@ -2639,7 +2684,7 @@ function hidePopupBanner() {
  * @param   boolean   lock    Optional. If TRUE, then player will ignore other sounds until supplied sound is playing. Default FALSE.
  */
 function playSound(file, lock) {
-  if (typeof(file)=='string' && file!='' && typeof(PCPIN_MP3_Player)!='undefined' && PCPIN_MP3_Player) {
+  if (allowSounds && typeof(file)=='string' && file!='' && typeof(PCPIN_MP3_Player)!='undefined' && PCPIN_MP3_Player) {
     if (typeof(lock)!='boolean') {
       lock=false;
     }

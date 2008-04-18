@@ -28,6 +28,12 @@ var PCPIN_MP3_Player=null;
  */
 PCPIN_MP3_Player_PlayLockedAfterInit='';
 
+/**
+ * Default player volume (must be between 0 and 100)
+ * @var int
+ */
+var PCPIN_MP3_PlayerDefaultVolume=75;
+
 
 /**
  * This function called by player after it finished initialisation
@@ -82,6 +88,9 @@ var PCPINPlayer=function() {
         obj=document.pcpin_mp3;
         if (obj.SetTrackVolume) {
           this.PlayerInstance=obj;
+          if (typeof(PCPIN_MP3_PlayerDefaultVolume)==number) {
+            this.PlayerInstance.setVolume(PCPIN_MP3_PlayerDefaultVolume);
+          }
         }
       } catch (e) {}
     }
