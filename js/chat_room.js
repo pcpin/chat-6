@@ -502,8 +502,9 @@ function initChatRoom(room_id,
     // Set message history handler
     MainInputTextArea.msgHistorie=new Array();
     MainInputTextArea.msgHistoriePtr=0;
-    MainInputTextArea.addMsgHistorie=function(msg) {
-      msg=trimString(msg);
+    MainInputTextArea.gotFromHistory=false;
+    MainInputTextArea.addMsgHistorie=function() {
+      msg=trimString(this.value);
       if (msg!='') {
         this.msgHistoriePtr=0;
         if (this.msgHistorie.length==0 || this.msgHistorie[this.msgHistorie.length-1]!=msg) {
@@ -522,9 +523,8 @@ function initChatRoom(room_id,
         } else if (direction==-1 && this.msgHistoriePtr<0) {
           this.msgHistoriePtr=this.msgHistorie.length-1;
         }
-        return this.msgHistorie[this.msgHistoriePtr];
-      } else {
-        return this.value;
+        this.value=this.msgHistorie[this.msgHistoriePtr];
+        this.gotFromHistory=true;
       }
     }
     // Set onkeydown handler for input area
@@ -546,15 +546,29 @@ function initChatRoom(room_id,
           // Other NS and Mozilla versions
           kk=e.charCode;
         }
-        if (kk==13) {
+        if (kk==13 && !e.shiftKey) {
+          // [Enter] sends a message, [Shift]+[Enter] inserts a line break
           $('mainSendMessageButton').click();
           return false;
-        } else if (kk==38) {
-          // Arrow up
-          this.value=this.fromMsgHistorie(-1);
-        } else if (kk==40) {
-          // Arrow down
-          this.value=this.fromMsgHistorie(1);
+        } else if (kk==38 && e.shiftKey) {
+          // [Shift]+[CursorUp]
+          if (trimString(this.value)!='' && !this.gotFromHistory) {
+            // Store not sent text, if non-empty and not stored yet
+            this.addMsgHistorie();
+            this.fromMsgHistorie(-1);
+          }
+          // Get value from history
+          this.fromMsgHistorie(-1);
+          return false;
+        } else if (kk==40 && e.shiftKey) {
+          // [Shift]+[CursorDown]
+          if (trimString(this.value)!='' && !this.gotFromHistory) {
+            // Store not sent text, if non-empty and not stored yet
+            this.addMsgHistorie();
+          }
+          // Get value from history
+          this.fromMsgHistorie(1);
+          return false;
         }
       }
       if (this.value.length>messageLengthMax) {
@@ -1824,7 +1838,7 @@ function postChatMessage(inputElement, type, offline, target_user_id, target_roo
     var msg_body=trimString(inputElement.value);
     var tmp=null;
     if (inputElement.addMsgHistorie) {
-      inputElement.addMsgHistorie(msg_body);
+      inputElement.addMsgHistorie();
     }
     inputElement.value='';
     var msg_src=parseCommands(msg_body);
