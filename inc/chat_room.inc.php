@@ -99,6 +99,8 @@ $_js_lng[]='off';
 $_js_lng[]='said_message';
 $_js_lng[]='whispered_message';
 $_js_lng[]='room_password';
+$_js_lng[]='sounds_turned_on';
+$_js_lng[]='sounds_turned_off';
 
 // Init smilies after load
 $_body_onload[]='initSmilieList()';
@@ -117,6 +119,7 @@ $_body_onload[]='initChatRoom('.$session->_s_room_id.', '
                                .((!empty($session->_conf_all['userlist_avatar_thumb']) && 2==PCPIN_GD_VERSION)? 'true' : 'false').','
                                .((!empty($session->_conf_all['userlist_privileged_flags']) && 2==PCPIN_GD_VERSION)? 'true' : 'false').','
                                .(($current_user->show_message_time=='y')? 'true' : 'false').','
+                               .(($current_user->allow_sounds=='y')? 'true' : 'false').','
                                .'\''.htmlspecialchars($current_user->outgoing_message_color).'\', '
                                .'\''.htmlspecialchars($session->_conf_all['default_room_background_color']).'\', '
                                .$session->_conf_all['msg_attachments_limit'].','
@@ -182,6 +185,9 @@ foreach ($help_texts as $code=>$expr) {
 
 // "Attachment" button
 $tpl->addVar('msg_attachment_btn', 'display', !empty($session->_conf_all['msg_attachments_limit']));
+
+// "Sounds On/Off" button
+$tpl->addVar('invert_sounds_btn', 'display', !empty($session->_conf_all['allow_sounds']));
 
 // "Leave this room" menu topic
 $tpl->addVar('leave_room_link', 'display', empty($session->_conf_all['default_room']));
