@@ -384,6 +384,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$user` (
   `show_message_time` enum('y','n') NOT NULL default 'y',
   `outgoing_message_color` char(6) NOT NULL default '',
   `language_id` int(11) NOT NULL default '0',
+  `allow_sounds` enum('y','n') NOT NULL default 'y',
   PRIMARY KEY  (`id`),
   UNIQUE KEY `login` (`login`),
   KEY `email` (`email`),

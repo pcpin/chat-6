@@ -118,7 +118,7 @@ INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`
 (80, 'design', '{LNG_COLORS}', 'thumb_background', 'ffffff', 'string_6', '<color>', '{LNG__CONF_THUMB_BACKGROUND}'),
 (81, 'security', '{LNG_LOG_IN}', 'ip_failed_login_limit', '10', 'int_range', '0|*', '{LNG__CONF_IP_FAILED_LOGIN_LIMIT}'),
 (82, 'security', '{LNG_LOG_IN}', 'ip_failed_login_ban', '10', 'int_range', '1|*', '{LNG__CONF_IP_FAILED_LOGIN_BAN}'),
-(83, 'chat', '{LNG_SOUNDS}', 'allow_sounds', '0', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_SOUNDS}'); /* PCPIN6_QUERY_SEPARATOR */
+(83, 'chat', '{LNG_SOUNDS}', 'allow_sounds', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_SOUNDS}'); /* PCPIN6_QUERY_SEPARATOR */
 
 INSERT INTO `$$$DB_PREFIX$$$disallowed_name` (`id`, `name`) VALUES (1, 'admin'); /* PCPIN6_QUERY_SEPARATOR */
 
