@@ -22,7 +22,7 @@ _pcpin_loadClass('version');
 
 $__pcpin_upgrade=array();
 
-$__pcpin_upgrade['file_version']=6.10;
+$__pcpin_upgrade['file_version']=6.21;
 $__pcpin_upgrade['init_class']=$__pcpin_init_class; // copy, not reference!
 $__pcpin_upgrade['init_class']->_conf_all=array(1); // just a dummy
 $__pcpin_upgrade['session']=new PCPIN_Session($__pcpin_upgrade['init_class'], '', true);
@@ -84,7 +84,7 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
       break;
 
       case 6.10:
-        // PCPIN Chat 6.11
+        // PCPIN Chat *.* ==> PCPIN Chat 6.21
 
         // 0000367: Wrong encoded characters in database tables
         // http://bugs.pcpin.com/view.php?id=367
@@ -143,7 +143,11 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
         // http://bugs.pcpin.com/view.php?id=369
         $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."user` ADD `allow_sounds` ENUM( 'y', 'n' ) DEFAULT 'y' NOT NULL");
         $__pcpin_upgrade['session']->_db_query("TRUNCATE TABLE `".PCPIN_DB_PREFIX."cache`");
-        
+
+        // 0000374: "Optimize Database" menu in Administrator area
+        // http://bugs.pcpin.com/view.php?id=374
+        $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."language_expression` ( `language_id`, `code`, `value`, `multi_row` ) SELECT DISTINCT `".PCPIN_DB_PREFIX."language_expression`.`language_id` AS `language_id`, 'optimize_database' AS `code`, 0x4f7074696d697a65206461746162617365 AS `value`, 'n' AS `multi_row` FROM `".PCPIN_DB_PREFIX."language_expression`");
+
       break;
 
     }
