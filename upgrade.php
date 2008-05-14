@@ -22,7 +22,7 @@ _pcpin_loadClass('version');
 
 $__pcpin_upgrade=array();
 
-$__pcpin_upgrade['file_version']=6.21;
+$__pcpin_upgrade['file_version']=6.20;
 $__pcpin_upgrade['init_class']=$__pcpin_init_class; // copy, not reference!
 $__pcpin_upgrade['init_class']->_conf_all=array(1); // just a dummy
 $__pcpin_upgrade['session']=new PCPIN_Session($__pcpin_upgrade['init_class'], '', true);
@@ -84,7 +84,7 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
       break;
 
       case 6.10:
-        // PCPIN Chat *.* ==> PCPIN Chat 6.21
+        // PCPIN Chat *.* ==> PCPIN Chat 6.20
 
         // 0000367: Wrong encoded characters in database tables
         // http://bugs.pcpin.com/view.php?id=367
