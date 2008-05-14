@@ -200,6 +200,11 @@ if (empty($session->_s_user_id)) {
         require_once('./inc/admin/db_backup.inc.php');
       break;
 
+      case 'db_optimize':
+        // Optimize database
+        require_once('./inc/admin/db_optimize.inc.php');
+      break;
+
       case 'db_restore':
         // Restore database
         require_once('./inc/admin/db_restore.inc.php');
@@ -303,11 +308,6 @@ if (!empty($_js_lng) && is_array($_js_lng)) {
       array_unshift($_body_onload, 'setLng(\''.str_replace('\'', '\\\'', $lng_key).'\', \''.$lng_val.'\')');
     }
   }
-}
-
-// Cure database
-if (!empty($frameset_loaded)) {
-  $session->_db_cure();
 }
 
 // Close database conection

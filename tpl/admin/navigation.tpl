@@ -18,6 +18,11 @@
   </tr>
   <tr>
     <td class="tbl_row">
+      &nbsp;<a href="{FORMLINK}?s_id={S_ID}&amp;ainc=db_optimize" target="main_frame" title="{LNG_GENERAL} &bull; {LNG_OPTIMIZE_DATABASE}" onfocus="blur()">{LNG_OPTIMIZE_DATABASE}</a>
+    </td>
+  </tr>
+  <tr>
+    <td class="tbl_row">
       &nbsp;<a href="{FORMLINK}?s_id={S_ID}&amp;ainc=db_backup" target="main_frame" title="{LNG_GENERAL} &bull; {LNG_BACKUP_DATABASE}" onfocus="blur()">{LNG_BACKUP_DATABASE}</a>
     </td>
   </tr>

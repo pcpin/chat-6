@@ -366,6 +366,11 @@ if (!empty($ajax) && is_scalar($ajax)) {
       require_once('./inc/ajax/mute_unmute_locally.inc.php');
     break;
 
+    case 'optimize_db':
+      // Optimize database
+      require_once('./inc/ajax/optimize_db.inc.php');
+    break;
+
     case 'set_avatar_from_gallery':
       // Set avatar from Avatar Gallery
       require_once('./inc/ajax/set_avatar_from_gallery.inc.php');
