@@ -35,7 +35,7 @@
  *  http://www.php.net/manual/en/features.persistent-connections.php
  * NOTE: If your server does not supports persistent database connections, then this setting will be ignored.
  */
-define('PCPIN_DB_PERSISTENT', true);
+define('PCPIN_DB_PERSISTENT', false);
 
 /**
  * Path to the main index.php file as called by browser.
