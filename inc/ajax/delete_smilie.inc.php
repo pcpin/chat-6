@@ -26,18 +26,11 @@ if (!empty($current_user->id) && $current_user->is_admin==='y') {
 
   // Delete smilie
   if (!empty($smilie_id) && pcpin_ctype_digit($smilie_id) && $smilie->deleteSmilie($smilie_id)) {
-    $status=0;
-    $message=$l->g('smilie_deleted');
+    $xmlwriter->setHeaderStatus(0);
+    $xmlwriter->setHeaderMessage($l->g('smilie_deleted'));
   } else {
-    $status=1;
-    $message=$l->g('error');
+    $xmlwriter->setHeaderStatus(1);
+    $xmlwriter->setHeaderMessage($l->g('error'));
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

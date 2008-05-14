@@ -33,44 +33,43 @@ function initClientInfo(user_id) {
  */
 function getClientInfo(user_id) {
   if (typeof(user_id)=='number' && user_id>0) {
-    sendData('_CALLBACK_getClientInfo('+user_id+')', formlink, 'POST', 'ajax='+urlencode('get_client_info')+'&s_id='+urlencode(s_id)+'&user_id='+urlencode(user_id));
+    sendData('_CALLBACK_getClientInfo('+user_id+')', formlink, 'POST', 'ajax=get_client_info&s_id='+urlencode(s_id)+'&user_id='+urlencode(user_id));
   }
 }
 function _CALLBACK_getClientInfo(user_id) {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  var client_data=actionHandler.getElement('client_data');
+  var client_data=null;
   var ip='';
   var host='';
   var agent='';
   var os='';
   var language='';
   var session_start='';
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.close();
     document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (message=='OK') {
+    if (actionHandler.message=='OK') {
+      client_data=actionHandler.data['client_data'][0];
       // IP address
-      $('client_ip').innerHTML=htmlspecialchars(actionHandler.getCdata('ip', 0, client_data, ''));
+      $('client_ip').innerHTML=htmlspecialchars(client_data['ip'][0]);
 
       // Host name
-      $('client_host').innerHTML=htmlspecialchars(actionHandler.getCdata('host', 0, client_data, ''));
+      $('client_host').innerHTML=htmlspecialchars(client_data['host'][0]);
 
       // Agent name and version
-      $('client_agent').innerHTML=htmlspecialchars(actionHandler.getCdata('agent', 0, client_data, ''));
+      $('client_agent').innerHTML=htmlspecialchars(client_data['agent'][0]);
 
       // OS
-      $('client_os').innerHTML=htmlspecialchars(actionHandler.getCdata('os', 0, client_data, ''));
+      $('client_os').innerHTML=htmlspecialchars(client_data['os'][0]);
 
       // Language
-      $('client_language').innerHTML=htmlspecialchars(actionHandler.getCdata('language', 0, client_data, ''));
+      $('client_language').innerHTML=htmlspecialchars(client_data['language'][0]);
 
       // Session start time
-      $('client_session_start').innerHTML=htmlspecialchars(actionHandler.getCdata('session_start', 0, client_data, ''));
+      $('client_session_start').innerHTML=htmlspecialchars(client_data['session_start'][0]);
 
       // Display table
       $('client_table').style.display='';
@@ -88,30 +87,27 @@ function _CALLBACK_getClientInfo(user_id) {
  * @param   string    ip    IP address or hostname
  */
 function getPing(ip) {
-  sendData('_CALLBACK_getPing()', formlink, 'POST', 'ajax='+urlencode('get_ping')+'&s_id='+urlencode(s_id)+'&ip='+urlencode(ip), false, false);
+  sendData('_CALLBACK_getPing()', formlink, 'POST', 'ajax=get_ping&s_id='+urlencode(s_id)+'&ip='+urlencode(ip), false, false);
 }
 function _CALLBACK_getPing() {
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
   var ping_data=null;
   var ping=0;
   var ping_nr=0;
   var count=0;
   var ping_total=0.0;
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.close();
     opener.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
-  } else if (status==0) {
+  } else if (actionHandler.status==0) {
     // Success
-    if (null!=(ping_data=actionHandler.getElement('ping_data', 0))) {
-      while(null!=(ping=actionHandler.getCdata('ping', ping_nr++, ping_data))) {
-        ping=stringToNumber(ping);
-        if (ping>0) {
-          ping_total+=ping;
-          count++;
-        }
+    ping_data=actionHandler.data['ping_data'][0];
+    for (var i=0; i<ping_data.length; i++) {
+      ping=stringToNumber(ping_data[i]);
+      if (ping>0) {
+        ping_total+=ping;
+        count++;
       }
       if (count>0 && ping_total>0) {
         $('client_ping').innerHTML=stringToNumber(ping_total/count, '.')+getLng('milliseconds_short');

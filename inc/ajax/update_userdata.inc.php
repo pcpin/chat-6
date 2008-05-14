@@ -16,16 +16,6 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-if (PCPIN_SLAVE_MODE) {
-  // Not used in Slave mode
-  echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>SLAVE_MODE</message>
-  <status>1</status>
-</pcpin_xml>';
-  die();
-}
-
 /**
  * Update user data. Following variables will be used (if set)
  * @param   string    $gender       Gender
@@ -92,28 +82,23 @@ if (!empty($profile_user_id)) {
                                         $profile_userdata->interests,
                                         $profile_userdata->homepage
                                         )) {
-    $message=$l->g('changes_saved');
-    $status=0;
+    $xmlwriter->setHeaderMessage($l->g('changes_saved'));
+    $xmlwriter->setHeaderStatus(0);
   } else {
-    $message=$l->g('error');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('error'));
+    $xmlwriter->setHeaderStatus(1);
   }
 }
+$xmlwriter->setData(array('gender'=>$profile_userdata->gender,
+                          'age'=>$profile_userdata->age,
+                          'homepage'=>$profile_userdata->homepage,
+                          'icq'=>$profile_userdata->icq,
+                          'msn'=>$profile_userdata->msn,
+                          'aim'=>$profile_userdata->aim,
+                          'yim'=>$profile_userdata->yim,
+                          'location'=>$profile_userdata->location,
+                          'occupation'=>$profile_userdata->occupation,
+                          'interests'=>$profile_userdata->interests,
+                          ));
 
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-<gender>'.htmlspecialchars($profile_userdata->gender).'</gender>
-<age>'.htmlspecialchars($profile_userdata->age).'</age>
-<homepage>'.htmlspecialchars($profile_userdata->homepage).'</homepage>
-<icq>'.htmlspecialchars($profile_userdata->icq).'</icq>
-<msn>'.htmlspecialchars($profile_userdata->msn).'</msn>
-<aim>'.htmlspecialchars($profile_userdata->aim).'</aim>
-<yim>'.htmlspecialchars($profile_userdata->yim).'</yim>
-<location>'.htmlspecialchars($profile_userdata->location).'</location>
-<occupation>'.htmlspecialchars($profile_userdata->occupation).'</occupation>
-<interests>'.htmlspecialchars($profile_userdata->interests).'</interests>
-</pcpin_xml>';
-die();
 ?>

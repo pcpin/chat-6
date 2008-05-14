@@ -17,16 +17,6 @@
  */
 
 
-if (PCPIN_SLAVE_MODE) {
-  // Not used in Slave mode
-  echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>SLAVE_MODE</message>
-  <status>1</status>
-</pcpin_xml>';
-  die();
-}
-
 if (!isset($email) || !is_scalar($email)) $email='';
 if (!isset($language_id) || !is_scalar($language_id)) $language_id=0;
 
@@ -61,8 +51,8 @@ if (empty($errortext)) {
 }
 
 if (!empty($errortext)) {
-  $status='1';
-  $message='- '.implode("\n- ", $errortext);
+  $xmlwriter->setHeaderStatus(1);
+  $xmlwriter->setHeaderMessage('- '.implode("\n- ", $errortext));
 } else {
   // Reset password
   $password_new=PCPIN_Common::randomString(mt_rand(6, 8), 'abcdefghijklmnopqrstuvwxyz0123456789');
@@ -75,14 +65,7 @@ if (!empty($errortext)) {
   $email_body=str_replace('[URL]', str_replace(' ', '%20', $session->_conf_all['base_url']), $email_body);
   $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
   PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $l->g('password_reset'), null, null, $email_body);
-  $status=0;
-  $message=str_replace('[EMAIL]', $email, $l->g('new_password_sent'));
+  $xmlwriter->setHeaderStatus(0);
+  $xmlwriter->setHeaderMessage(str_replace('[EMAIL]', $email, $l->g('new_password_sent')));
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

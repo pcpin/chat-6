@@ -27,28 +27,19 @@ if (empty($profile_user_id) || $current_user->is_admin!=='y') {
   $profile_user_id=$current_user->id;
 }
 
-$avatars_xml='';
+$avatars_xml=array();
 if (!empty($profile_user_id)) {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   $avatars=$avatar->getAvatars($profile_user_id);
   foreach ($avatars as $avatar_data) {
-    $avatars_xml.='
-  <avatar>
-    <id>'.htmlspecialchars($avatar_data['id']).'</id>
-    <primary>'.htmlspecialchars($avatar_data['primary']).'</primary>
-    <binaryfile_id>'.htmlspecialchars($avatar_data['binaryfile_id']).'</binaryfile_id>
-    <width>'.htmlspecialchars($avatar_data['width']).'</width>
-    <height>'.htmlspecialchars($avatar_data['height']).'</height>
-  </avatar>';
+    $avatars_xml[]=array('id'=>$avatar_data['id'],
+                         'primary'=>$avatar_data['primary'],
+                         'binaryfile_id'=>$avatar_data['binaryfile_id'],
+                         'width'=>$avatar_data['width'],
+                         'height'=>$avatar_data['height'],
+                         );
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-'.$avatars_xml.'
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('avatar'=>$avatars_xml));
 ?>

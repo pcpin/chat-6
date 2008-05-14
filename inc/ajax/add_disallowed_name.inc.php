@@ -35,21 +35,14 @@ if (!empty($current_user->id) && $current_user->is_admin==='y') {
   if (empty($errortext)) {
     // Save word
     if ($disallowed_name->addName($name)) {
-      $status=0;
-      $message=str_replace('[NAME]', $name, $l->g('name_added_to_filter'));
+      $xmlwriter->setHeaderStatus(0);
+      $xmlwriter->setHeaderMessage(str_replace('[NAME]', $name, $l->g('name_added_to_filter')));
     } else {
-      $status=1;
-      $message=$l->g('error');
+      $xmlwriter->setHeaderStatus(1);
+      $xmlwriter->setHeaderMessage($l->g('error'));
     }
   } else {
-    $message=implode("\n", $errortext);
+    $xmlwriter->setHeaderMessage(implode("\n", $errortext));
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

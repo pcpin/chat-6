@@ -43,12 +43,10 @@ function initIPFilterForm() {
  * Get filtered IP addresses
  */
 function getFilteredIPAddresses() {
-  sendData('_CALLBACK_getFilteredIPAddresses()', formlink, 'POST', 'ajax='+urlencode('ip_filter_get_addresses')+'&s_id='+urlencode(s_id)+'&sort_by='+urlencode(sort_by)+'&sort_dir='+urlencode(sort_dir));
+  sendData('_CALLBACK_getFilteredIPAddresses()', formlink, 'POST', 'ajax=ip_filter_get_addresses&s_id='+urlencode(s_id)+'&sort_by='+urlencode(sort_by)+'&sort_dir='+urlencode(sort_dir));
 }
 function _CALLBACK_getFilteredIPAddresses() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
 
   var address=null;
   var address_nr=0;
@@ -58,20 +56,22 @@ function _CALLBACK_getFilteredIPAddresses() {
   var tr=null;
   var td=null;
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (message=='OK') {
+    if (actionHandler.message=='OK') {
       // OK
       ip_tbl=$('ip_table');
       // Clear table
       for (var i=ip_tbl.rows.length-2; i>1; i--) {
         ip_tbl.deleteRow(i);
       }
-      while (null!=(address=actionHandler.getElement('address', address_nr++))) {
-        address_id=stringToNumber(actionHandler.getCdata('id', 0, address));
+      for (address_nr=0; address_nr<actionHandler.data['address'].length; address_nr++) {
+        address=actionHandler.data['address'][address_nr];
+        address_id=stringToNumber(address['id'][0]);
+
         tr=ip_tbl.insertRow(ip_tbl.rows.length-1);
         tr.checkbox_id='ip_selection_'+address_id;
 
@@ -80,28 +80,28 @@ function _CALLBACK_getFilteredIPAddresses() {
         setCssClass(td, '.tbl_row');
 
         td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars(actionHandler.getCdata('mask', 0, address));
+        td.innerHTML=htmlspecialchars(address['mask'][0]);
         setCssClass(td, '.tbl_row');
 
         td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars(actionHandler.getCdata('action', 0, address)=='a'? getLng('allow') : getLng('deny'));
+        td.innerHTML=htmlspecialchars(address['action'][0]=='a'? getLng('allow') : getLng('deny'));
         setCssClass(td, '.tbl_row');
 
         td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars(actionHandler.getCdata('added_on', 0, address));
+        td.innerHTML=htmlspecialchars(address['added_on'][0]);
         setCssClass(td, '.tbl_row');
 
         td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars(actionHandler.getCdata('expires', 0, address));
+        td.innerHTML=htmlspecialchars(address['expires'][0]);
         setCssClass(td, '.tbl_row');
 
         td=tr.insertCell(-1);
-        td.innerHTML=nl2br(htmlspecialchars(actionHandler.getCdata('description', 0, address)));
+        td.innerHTML=nl2br(htmlspecialchars(address['description'][0]));
         setCssClass(td, '.tbl_row');
 
       }
-    } else if (message!=null) {
-      alert(message);
+    } else {
+      alert(actionHandler.message);
     }
   }
   toggleProgressBar(false);
@@ -171,7 +171,7 @@ function addIPAddress() {
     alert(errors.join("\n"));
   } else {
     // Send data to server
-    sendData('_CALLBACK_addIPAddress()', formlink, 'POST', 'ajax='+urlencode('ip_filter_add_address')+'&s_id='+urlencode(s_id)
+    sendData('_CALLBACK_addIPAddress()', formlink, 'POST', 'ajax=ip_filter_add_address&s_id='+urlencode(s_id)
              +'&mask='+urlencode($('new_ip_mask_0').value+'.'+$('new_ip_mask_1').value+'.'+$('new_ip_mask_2').value+'.'+$('new_ip_mask_3').value)
              +'&expires_year='+urlencode($('new_ip_expires_year').value)
              +'&expires_month='+urlencode($('new_ip_expires_month').value)
@@ -186,13 +186,9 @@ function addIPAddress() {
 }
 function _CALLBACK_addIPAddress() {
 //alert(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  if (message!=null) {
-    alert(message);
-  }
   toggleProgressBar(false);
-  if (status=='0') {
+  alert(actionHandler.message);
+  if (actionHandler.status==0) {
     getFilteredIPAddresses();
     initAddIpAddressForm();
   }
@@ -210,17 +206,13 @@ function deleteSelectedAddresses() {
     }
   }
   if (ids.length && confirm(getLng('confirm_delete_addresses'))) {
-    sendData('_CALLBACK_deleteSelectedAddresses()', formlink, 'POST', 'ajax='+urlencode('ip_filter_delete_address')+'&s_id='+urlencode(s_id)+'&'+ids.join('&'));
+    sendData('_CALLBACK_deleteSelectedAddresses()', formlink, 'POST', 'ajax=ip_filter_delete_address&s_id='+urlencode(s_id)+'&'+ids.join('&'));
   }
   return false;
 }
 function _CALLBACK_deleteSelectedAddresses() {
 //alert(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  if (message!=null) {
-    alert(message);
-  }
   toggleProgressBar(false);
+  alert(actionHandler.message);
   getFilteredIPAddresses();
 }

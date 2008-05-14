@@ -18,38 +18,29 @@
 
 if (!isset($display_position)) $display_position='';
 
-$banner_data_xml='';
+$banner_data_xml=array();
 
 _pcpin_loadClass('banner'); $banner=new PCPIN_Banner($session);
 
 if (!empty($current_user->id)) {
-  $message=$l->g('error');
-  $status=1;
+  $xmlwriter->setHeaderMessage($l->g('error'));
+  $xmlwriter->setHeaderStatus(1);
 
   if ($session->_s_room_id>0) {
     if ($banner_data=$banner->getRandomBanner($display_position)) {
-      $message='OK';
-      $status=0;
+      $xmlwriter->setHeaderMessage('OK');
+      $xmlwriter->setHeaderStatus(0);
       foreach ($banner_data as $key=>$val) {
         if (   $key=='display_position'
             || $key=='width'
             || $key=='height'
             || $key=='id'
             ) {
-          $banner_data_xml.='  <'.htmlspecialchars($key).'>'.htmlspecialchars($val).'</'.htmlspecialchars($key).'>'."\n";
+          $banner_data_xml[$key]=$val;
         }
       }
     }
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-<banner_data>
-'.rtrim($banner_data_xml).'
-</banner_data>
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('banner_data'=>$banner_data_xml));
 ?>

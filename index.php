@@ -60,7 +60,7 @@ if (!empty($b_id)) {
   // Binary file requested
   require_once('./inc/get_binary.inc.php');
   die();
-} elseif (!empty($ajax)) {
+} elseif (!empty($ajax) && is_scalar($ajax)) {
   // AJAX request
   require_once('./inc/ajax/_main.inc.php');
   die();

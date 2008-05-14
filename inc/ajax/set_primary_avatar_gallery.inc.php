@@ -24,18 +24,11 @@ _pcpin_loadClass('avatar'); $avatar=new PCPIN_Avatar($session);
 
 if (!empty($current_user->id) && $current_user->is_admin==='y' && !empty($avatar_id) && $avatar->_db_getList('primary', 'id = '.$avatar_id, 'user_id = 0', 1)) {
   // Avatar exists
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   if ($avatar->_db_list[0]['primary']!='y') {
     $avatar->setDefaultAvatarGallery($avatar_id);
   }
   $avatar->_db_freeList();
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

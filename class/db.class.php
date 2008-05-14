@@ -424,9 +424,10 @@ class PCPIN_DB {
    * @param   mixed     $id         Table row ID field value
    * @param   string    $id_field   Table row ID field name
    * @param   array     $data       Data to apply as array with field name as KEY and field value as VAL
+   * @param   boolean   $omit_limit Optional. If TRUE: no LIMIT statement will be used in SQL query. Default is FALSE
    * @return  boolean   TRUE on success or FALSE on error
    */
-  function _db_updateRow($id='', $id_field='id', $data=null) {
+  function _db_updateRow($id='', $id_field='id', $data=null, $omit_limit=false) {
     $ok=false;
     $tbl=$this->_db_getTbl();
     if (!empty($tbl) && !empty($id_field) && !empty($data) && is_array($data)) {
@@ -447,7 +448,7 @@ class PCPIN_DB {
         }
         if (!empty($parts)) {
           // Create and execute query
-          $query='UPDATE `'.$tbl.'` SET '.implode(', ', $parts).' WHERE `'.$id_field.'` = BINARY "'.$this->_db_escapeStr($id, false).'" LIMIT 1';
+          $query='UPDATE `'.$tbl.'` SET '.implode(', ', $parts).' WHERE `'.$id_field.'` = BINARY "'.$this->_db_escapeStr($id, false).'"'.(true===$omit_limit? '' : ' LIMIT 1');
           if ($result=$this->_db_query($query)) {
             $this->_db_freeResult($result);
             $ok=true;

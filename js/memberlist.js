@@ -127,7 +127,7 @@ function getMemberlist(page, sort_by, sort_dir, search) {
   if (typeof(search)!='undefined' && search!=null) {
     CurrentSearch=trimString(search);
   }
-  sendData('_CALLBACK_getMemberlist()', formlink, 'POST', 'ajax='+urlencode('get_memberlist')
+  sendData('_CALLBACK_getMemberlist()', formlink, 'POST', 'ajax=get_memberlist'
                                                          +'&s_id='+urlencode(s_id)
                                                          +'&page='+urlencode(CurrentPage)
                                                          +'&sort_by='+urlencode(CurrentSortBy)
@@ -141,10 +141,7 @@ function getMemberlist(page, sort_by, sort_dir, search) {
                                                          );
 }
 function _CALLBACK_getMemberlist() {
-//debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  var members=null;
+//debug(actionHandler.getResponseString());
   var member_nr=0;
   var members_tbl=null;
   var tr=null;
@@ -171,49 +168,51 @@ function _CALLBACK_getMemberlist() {
   var room_nr=0;
   var room_name='';
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.close();
     opener.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (status=='0') {
-      total_members=actionHandler.getCdata('total_members', 0);
-      members=actionHandler.getElement('members', 0);
+    if (actionHandler.status==0) {
+      total_members=actionHandler.data['total_members'][0];
       UserList.initialize();
       ModeratedCategories=new Array();
       ModeratedRooms=new Array();
-      while (member=actionHandler.getElement('member', member_nr++, members)) {
-        user_id=stringToNumber(actionHandler.getCdata('id', 0, member));
-        online_status=actionHandler.getCdata('online_status', 0, member, '0');
-        online_status_message=actionHandler.getCdata('online_status_message', 0, member, getLng('online_status_'+online_status));
+      for (member_nr=0; member_nr<actionHandler.data['member'].length; member_nr++) {
+        member=actionHandler.data['member'][member_nr];
+        user_id=stringToNumber(member['id'][0]);
+        online_status=member['online_status'][0];
+        online_status_message=member['online_status_message'][0];
+        if (online_status_message=='') online_status_message=getLng('online_status_'+online_status);
         UserList.addRecord(user_id,
-                           actionHandler.getCdata('nickname', 0, member),
+                           member['nickname'][0],
                            online_status,
                            online_status_message,
-                           '1'==actionHandler.getCdata('muted_locally', 0, member),
-                           '1'==actionHandler.getCdata('global_muted', 0, member),
-                           actionHandler.getCdata('global_muted_until', 0, member),
-                           actionHandler.getCdata('ip_address', 0, member),
-                           actionHandler.getCdata('gender', 0, member),
-                           actionHandler.getCdata('avatar_bid', 0, member),
-                           '1'==actionHandler.getCdata('is_admin', 0, member),
-                           '1'==actionHandler.getCdata('is_moderator', 0, member),
-                           actionHandler.getCdata('joined', 0, member),
-                           actionHandler.getCdata('last_login', 0, member),
-                           actionHandler.getCdata('time_online', 0, member, 0),
-                           '1'==actionHandler.getCdata('banned', 0, member, 0),
-                           actionHandler.getCdata('banned_until', 0, member, 0),
-                           actionHandler.getCdata('ban_reason', 0, member, ''),
-                           stringToNumber(actionHandler.getCdata('banned_by', 0, member, 0)),
-                           actionHandler.getCdata('banned_by_username', 0, member, ''),
-                           stringToNumber(actionHandler.getCdata('global_muted_by', 0, member, 0)),
-                           actionHandler.getCdata('global_muted_by_username', 0, member, ''),
-                           actionHandler.getCdata('global_muted_reason', 0, member, ''),
-                           '1'==actionHandler.getCdata('is_guest', 0, member)
+                           '1'==member['muted_locally'][0],
+                           '1'==member['global_muted'][0],
+                           member['global_muted_until'][0],
+                           member['ip_address'][0],
+                           member['gender'][0],
+                           member['avatar_bid'][0],
+                           '1'==member['is_admin'][0],
+                           '1'==member['is_moderator'][0],
+                           member['joined'][0],
+                           member['last_login'][0],
+                           member['time_online'][0],
+                           '1'==member['banned'][0],
+                           member['banned_until'][0],
+                           member['ban_reason'][0],
+                           stringToNumber(member['banned_by'][0]),
+                           member['banned_by_username'][0],
+                           stringToNumber(member['global_muted_by'][0]),
+                           member['global_muted_by_username'][0],
+                           member['global_muted_reason'][0],
+                           '1'==member['is_guest'][0]
                            );
         category_nr=0;
-        while (null!=(category_name=actionHandler.getCdata('moderated_category', category_nr++, member))) {
+        for (category_nr=0; category_nr<member['moderated_category'].length; category_nr++) {
+          category_name=member['moderated_category'][category_nr];
           if (ModeratedCategories[user_id]) {
             ModeratedCategories[user_id].push(category_name);
           } else {
@@ -221,7 +220,8 @@ function _CALLBACK_getMemberlist() {
           }
         }
         room_nr=0;
-        while (null!=(room_name=actionHandler.getCdata('moderated_room', room_nr++, member))) {
+        for (room_nr=0; room_nr<member['moderated_room'].length; room_nr++) {
+          room_name=member['moderated_room'][room_nr];
           if (ModeratedRooms[user_id]) {
             ModeratedRooms[user_id].push(room_name);
           } else {
@@ -230,8 +230,8 @@ function _CALLBACK_getMemberlist() {
         }
       }
       // Display page numbers
-      page=stringToNumber(actionHandler.getCdata('page', 0));
-      total_pages=stringToNumber(actionHandler.getCdata('total_pages', 0));
+      page=stringToNumber(actionHandler.data['page'][0]);
+      total_pages=stringToNumber(actionHandler.data['total_pages'][0]);
       $('page_numbers').innerHTML='';
       if (total_pages>1) {
         pages_html='<b>'+htmlspecialchars(getLng('pages'))+' ('+htmlspecialchars(total_pages)+'):</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';

@@ -60,6 +60,7 @@ $_js_lng[]='user_banned_without_reason';
 $_js_lng[]='user_banned_permanently_with_reason';
 $_js_lng[]='user_banned_permanently_without_reason';
 $_js_lng[]='online_status';
+$_js_lng[]='online_status_0';
 $_js_lng[]='online_status_1';
 $_js_lng[]='online_status_2';
 $_js_lng[]='online_status_3';
@@ -184,11 +185,11 @@ foreach ($help_texts as $code=>$expr) {
 // "Attachment" button
 $tpl->addVar('msg_attachment_btn', 'display', !empty($session->_conf_all['msg_attachments_limit']));
 
-// "Sounds On/Off" button
-$tpl->addVar('invert_sounds_btn', 'display', !empty($session->_conf_all['allow_sounds']));
-
 // "Leave this room" menu topic
 $tpl->addVar('leave_room_link', 'display', empty($session->_conf_all['default_room']));
+
+// "Sounds On/Off" button
+$tpl->addVar('invert_sounds_btn', 'display', !empty($session->_conf_all['allow_sounds']));
 
 // "Your profile" menu topic
 $tpl->addVar('your_profile_link', 'display', !PCPIN_SLAVE_MODE);

@@ -26,7 +26,7 @@ if (!isset($description)) $description='';
 
 if (!empty($current_user->id) && $current_user->is_admin==='y') {
 
-  $status=1;
+  $xmlwriter->setHeaderStatus(1);
   if ($code=='') {
     $errortext[]=$l->g('smilie_code_empty_error');
   }
@@ -51,20 +51,13 @@ if (!empty($current_user->id) && $current_user->is_admin==='y') {
       // Delete temporary data
       $tmpdata->_db_freeList();
       $tmpdata->deleteUserRecords($session->_s_user_id, 2, 0, true);
-      $status=0;
-      $message=$l->g('smilie_added');
+      $xmlwriter->setHeaderStatus(0);
+      $xmlwriter->setHeaderMessage($l->g('smilie_added'));
     } else {
-      $message=$l->g('error');
+      $xmlwriter->setHeaderMessage($l->g('error'));
     }
   } else {
-    $message=implode("\n", $errortext);
+    $xmlwriter->setHeaderMessage(implode("\n", $errortext));
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

@@ -29,22 +29,15 @@ if (!empty($profile_user->id) && isset($hide_email) && is_scalar($hide_email)) {
   $profile_user->hide_email=(!empty($hide_email)? 1 : 0);
   if ($profile_user->_db_updateObj($profile_user->id)) {
     if (!empty($hide_email)) {
-      $message=$l->g('email_invisible_now');
+      $xmlwriter->setHeaderMessage($l->g('email_invisible_now'));
     } else {
-      $message=$l->g('email_visible_now');
+      $xmlwriter->setHeaderMessage($l->g('email_visible_now'));
     }
-    $status=0;
+    $xmlwriter->setHeaderStatus(0);
   } else {
-    $message=$l->g('error');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('error'));
+    $xmlwriter->setHeaderStatus(1);
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-<hide_email>'.htmlspecialchars($profile_user->hide_email).'</hide_email>
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('hide_email'=>$profile_user->hide_email));
 ?>

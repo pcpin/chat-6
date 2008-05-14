@@ -267,33 +267,18 @@ class PCPIN_Avatar extends PCPIN_Session {
    * @param   int   $avatar_id  Optional. Avatar ID. If empty, then avatar with smallest ID, if any, will be set as primary.
    */
   function setPrimaryAvatar($user_id=0, $avatar_id=0) {
-    if (!empty($user_id) && $this->_db_getList('id,primary', 'user_id = '.$user_id, 'id DESC')) {
-      $flag_set=false;
-      $list=$this->_db_list;
-      $this->_db_freeList();
-      foreach ($list as $data) {
-        if ($data['primary']=='y') {
-          if (empty($avatar_id)) {
-            // No avatar ID specified and user already has primary avatar.
-            $flag_set=true;
-            break;
-          } elseif ($data['id']==$avatar_id) {
-            // Avatar is already primary
-            $flag_set=true;
-            break;
-          } else {
-            // Remove "primary" flag
-            $this->_db_updateRow($data['id'], 'id', array('primary'=>'n'));
-          }
-        } elseif ($data['id']==$avatar_id) {
-          // Set flag
-          $this->_db_updateRow($data['id'], 'id', array('primary'=>'y'));
-          $flag_set=true;
+    if (!empty($user_id)) {
+      // Check avatar
+      if (   !empty($avatar_id) && $this->_db_getList('id,primary', 'id = '.$avatar_id, 'user_id = '.$user_id, 1)
+          || $this->_db_getList('id,primary', 'user_id = '.$user_id, 'id DESC', 1)) {
+        // Avatar exists and belongs to user
+        if ($this->_db_list[0]['primary']!='y') {
+          // Clear "primary flag from all user's avatars
+          $this->_db_updateRow($user_id, 'user_id', array('primary'=>'n'), true);
+          // Set new flag
+          $this->_db_updateRow($this->_db_list[0]['id'], 'id', array('primary'=>'y'));
         }
-      }
-      if (empty($flag_set)) {
-        // Set "primary" flag to last avatar
-        $this->_db_updateRow($data['id'], 'id', array('primary'=>'y'));
+        $this->_db_freeList();
       }
     }
   }

@@ -240,12 +240,11 @@ class PCPIN_User extends PCPIN_Session {
    */
   var $language_id=0;
 
-  /**
+  /** 
    * Flag: "y", if user can hear sounds
    * @var   string
    */
   var $allow_sounds='';
-
 
 
   /**
@@ -305,9 +304,9 @@ class PCPIN_User extends PCPIN_Session {
       $this->time_zone_offset=0;
       $this->is_guest=$guest;
       $this->show_message_time='';
-      $this->allow_sounds='';
       $this->outgoing_message_color='';
       $this->language_id=!empty($language_id)? $language_id : $this->_s_language_id;
+      $this->allow_sounds='';
       // Insert row
       if ($this->_db_insertObj()) {
         $result=true;

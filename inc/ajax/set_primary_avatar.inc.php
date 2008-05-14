@@ -26,19 +26,12 @@ if (empty($avatar_id) || !is_scalar($avatar_id)) {
 }
 
 if (!empty($avatar_id) && $avatar->_db_getList('id,primary', 'id = '.$avatar_id, 'user_id = '.$profile_user_id, 1)) {
-  // Avatar exists
-  $message='OK';
-  $status=0;
+  // Avatar exists and belongs to user
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   if ($avatar->_db_list[0]['primary']!='y') {
     $avatar->setPrimaryAvatar($profile_user_id, $avatar_id);
   }
   $avatar->_db_freeList();
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

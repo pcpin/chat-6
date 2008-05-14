@@ -467,7 +467,7 @@ function showClientInfo(user_id) {
  */
 function muteLocally(user_id) {
   toggleProgressBar(true);
-  setTimeout("ajaxUserOptions.sendData('_CALLBACK_muteUnmuteUserLocally()', 'POST', formlink, 'ajax='+urlencode('mute_unmute_locally')+'&s_id='+urlencode(s_id)+'&target_user_id='+urlencode("+user_id+")+'&action=1', true);", 50);
+  setTimeout("ajaxUserOptions.sendData('_CALLBACK_muteUnmuteUserLocally()', 'POST', formlink, 'ajax=mute_unmute_locally&s_id='+urlencode(s_id)+'&target_user_id='+urlencode("+user_id+")+'&action=1', true);", 50);
 }
 
 /**
@@ -476,16 +476,15 @@ function muteLocally(user_id) {
  */
 function unMuteLocally(user_id) {
   toggleProgressBar(true);
-  setTimeout("ajaxUserOptions.sendData('_CALLBACK_muteUnmuteUserLocally()', 'POST', formlink, 'ajax='+urlencode('mute_unmute_locally')+'&s_id='+urlencode(s_id)+'&target_user_id='+urlencode("+user_id+")+'&action=0', true);", 50);
+  setTimeout("ajaxUserOptions.sendData('_CALLBACK_muteUnmuteUserLocally()', 'POST', formlink, 'ajax=mute_unmute_locally&s_id='+urlencode(s_id)+'&target_user_id='+urlencode("+user_id+")+'&action=0', true);", 50);
 }
 
 function _CALLBACK_muteUnmuteUserLocally() {
 //debug(ajaxUserOptions.getResponseString());
-  var status=ajaxUserOptions.getCdata('status');
-  var muted_users=ajaxUserOptions.getCdata('muted_users');
+  var muted_users=ajaxUserOptions.data['muted_users'][0];
   var muted_ids=null;
   var urecs=null;
-  if (status!='-1') {
+  if (ajaxUserOptions.status!=-1) {
     // OK
     muted_users=','+muted_users+',';
     urecs=UserList.getAllRecords();
@@ -531,7 +530,7 @@ function kickUser(id, reason) {
     }
     reason=trimString(reason).substring(0, 255);
     toggleProgressBar(true);
-    setTimeout("ajaxUserOptions.sendData('_CALLBACK_kickUser()', 'POST', formlink, 'ajax='+urlencode('kick')+'&s_id='+urlencode(s_id)+'&target_user_id='+urlencode("+id+")+'&reason="+urlencode(reason)+"', true);", 50);
+    setTimeout("ajaxUserOptions.sendData('_CALLBACK_kickUser()', 'POST', formlink, 'ajax=kick&s_id='+urlencode(s_id)+'&target_user_id='+urlencode("+id+")+'&reason="+urlencode(reason)+"', true);", 50);
   }
 }
 function _CALLBACK_kickUser() {
@@ -565,7 +564,7 @@ function banUser(id, reason, minutes, ip_ban) {
       ip_ban='';
     }
     toggleProgressBar(true);
-    setTimeout("ajaxUserOptions.sendData('_CALLBACK_banUser()', 'POST', formlink, 'ajax='+urlencode('ban')+'&s_id='+urlencode(s_id)+'&target_user_id='+urlencode("+id+")+'&duration="+urlencode(minutes)+"&reason="+urlencode(reason)+"&ip_ban="+ip_ban+"', true);", 50);
+    setTimeout("ajaxUserOptions.sendData('_CALLBACK_banUser()', 'POST', formlink, 'ajax=ban&s_id='+urlencode(s_id)+'&target_user_id='+urlencode("+id+")+'&duration="+urlencode(minutes)+"&reason="+urlencode(reason)+"&ip_ban="+ip_ban+"', true);", 50);
   }
 }
 function _CALLBACK_banUser() {
@@ -587,7 +586,7 @@ function _CALLBACK_banUser() {
 function unBanUser(id) {
   if (typeof(id)=='number') {
     toggleProgressBar(true);
-    setTimeout("ajaxUserOptions.sendData('_CALLBACK_unBanUser()', 'POST', formlink, 'ajax='+urlencode('unban')+'&s_id='+urlencode(s_id)+'&target_user_id='+urlencode("+id+"), true);", 50);
+    setTimeout("ajaxUserOptions.sendData('_CALLBACK_unBanUser()', 'POST', formlink, 'ajax=unban&s_id='+urlencode(s_id)+'&target_user_id='+urlencode("+id+"), true);", 50);
   }
 }
 function _CALLBACK_unBanUser() {
@@ -615,7 +614,7 @@ function globalMuteUser(id, reason, minutes) {
     }
     reason=trimString(reason).substring(0, 255);
     toggleProgressBar(true);
-    setTimeout("ajaxUserOptions.sendData('_CALLBACK_globalMuteUser()', 'POST', formlink, 'ajax='+urlencode('globalmute')+'&s_id='+urlencode(s_id)+'&target_user_id='+urlencode("+id+")+'&duration="+urlencode(minutes)+"&reason="+urlencode(reason)+"&action=1', true);", 50);
+    setTimeout("ajaxUserOptions.sendData('_CALLBACK_globalMuteUser()', 'POST', formlink, 'ajax=globalmute&s_id='+urlencode(s_id)+'&target_user_id='+urlencode("+id+")+'&duration="+urlencode(minutes)+"&reason="+urlencode(reason)+"&action=1', true);", 50);
   }
 }
 function _CALLBACK_globalMuteUser() {
@@ -636,7 +635,7 @@ function _CALLBACK_globalMuteUser() {
 function globalUnmuteUser(id) {
   if (typeof(id)=='number') {
     toggleProgressBar(true);
-    setTimeout("ajaxUserOptions.sendData('_CALLBACK_globalUnmuteUser()', 'POST', formlink, 'ajax='+urlencode('globalmute')+'&s_id='+urlencode(s_id)+'&target_user_id='+urlencode("+id+")+'&action=0', true);", 50);
+    setTimeout("ajaxUserOptions.sendData('_CALLBACK_globalUnmuteUser()', 'POST', formlink, 'ajax=globalmute&s_id='+urlencode(s_id)+'&target_user_id='+urlencode("+id+")+'&action=0', true);", 50);
   }
 }
 function _CALLBACK_globalUnmuteUser() {
@@ -655,19 +654,17 @@ function _CALLBACK_globalUnmuteUser() {
 function sendInvitation(id) {
   if (typeof(id)=='number' && id>0) {
     toggleProgressBar(true);
-    setTimeout("ajaxUserOptions.sendData('_CALLBACK_sendInvitation("+id+")', 'POST', formlink, 'ajax='+urlencode('invite')+'&s_id='+urlencode(s_id)+'&user_id='+urlencode("+id+"), true);", 50);
+    setTimeout("ajaxUserOptions.sendData('_CALLBACK_sendInvitation("+id+")', 'POST', formlink, 'ajax=invite&s_id='+urlencode(s_id)+'&user_id='+urlencode("+id+"), true);", 50);
   }
 }
 function _CALLBACK_sendInvitation(user_id) {
-  var message=ajaxUserOptions.getCdata('message');
-  var status=ajaxUserOptions.getCdata('status');
-  if (status=='-1') {
+  if (ajaxUserOptions.status==-1) {
     // Session is invalid
     window.close();
     opener.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
-  } else if (message!=null) {
-    alert(message);
+  } else {
+    toggleProgressBar(false);
+    alert(ajaxUserOptions.message);
   }
-  toggleProgressBar(false);
 }

@@ -40,33 +40,32 @@ _pcpin_loadClass('banner'); $banner=new PCPIN_Banner($session);
 $default_nicknames=array(); // cached nicknames
 
 if (!isset($room_id) || !is_scalar($room_id)) $room_id=0;
-$full_data='';
-$chat_messages='';
+
 if (!empty($first_request)) {
   $full_request=1;
 }
 
-$categories_xml='';
-$invitations_xml='';
-$banner_display_positions_xml='';
-$abuses_xml='';
+$xml_data=array();
 
 if (!empty($room_id) && !empty($current_user->id)) {
   if (empty($session->_s_room_id)) {
     // User is not in chat room
-    $message='User is not in chat room';
-    $status='100';
+    $xmlwriter->setHeaderMessage('User is not in chat room');
+    $xmlwriter->setHeaderStatus(100);
   } elseif ($session->_s_room_id != $room_id) {
     // User is in other room
-    $message='User is in other room';
-    $status='200';
+    $xmlwriter->setHeaderMessage('User is in other room');
+    $xmlwriter->setHeaderStatus(200);
   } elseif (!$room->_db_getList('id', 'id = '.$room_id, 1)) {
     // Room does not exists (anymore)
-    $message='Room does not exists';
-    $status='300';
+    $xmlwriter->setHeaderMessage('Room does not exists');
+    $xmlwriter->setHeaderStatus(300);
   } else {
-    $status='0';
-    $message='OK';
+    $xmlwriter->setHeaderStatus(0);
+    $xmlwriter->setHeaderMessage('OK');
+    if (!empty($first_request)) {
+      $xml_data['welcome_message']=str_replace('[ROOM]', $current_room_name, $l->g('welcome_to_chat_room'));
+    }
     // Are there new messages in request?
     if (!empty($new_messages) && is_array($new_messages)) {
       // There are some new messages from user
@@ -210,7 +209,6 @@ if (!empty($room_id) && !empty($current_user->id)) {
       $messages=$msg->getNewMessages($current_user->id);
     }
     if (!empty($messages)) {
-      $chat_messages='';
       $msg_array=array();
       $last_message_id=$session->_s_last_message_id;
       foreach ($messages as $message_data) {
@@ -250,18 +248,19 @@ if (!empty($room_id) && !empty($current_user->id)) {
                 $abuse_category=$l->g('other');
               break;
             }
-            $abuses_xml.='
-  <abuse>
-    <id>'.htmlspecialchars($message_data['id']).'</id>
-    <date>'.htmlspecialchars($current_user->makeDate(PCPIN_Common::datetimeToTimestamp($message_data['date']))).'</date>
-    <author_id>'.htmlspecialchars($message_data['author_id']).'</author_id>
-    <author_nickname>'.htmlspecialchars($message_data['author_nickname']).'</author_nickname>
-    <category>'.htmlspecialchars($abuse_category).'</category>
-    <room_id>'.htmlspecialchars($abuse_msg_parts[1]).'</room_id>
-    <room_name>'.htmlspecialchars($room_name).'</room_name>
-    <abuser_nickname>'.htmlspecialchars($abuse_msg_parts[3]).'</abuser_nickname>
-    <description>'.htmlspecialchars($abuse_msg_parts[4]).'</description>
-  </abuse>';
+            if (!isset($xml_data['abuses'])) {
+              $xml_data['abuses']=array('abuse'=>array());
+            }
+            $xml_data['abuses']['abuse'][]=array('id'=>$message_data['id'],
+                                                 'date'=>$message_data['id'],
+                                                 'author_id'=>$message_data['author_id'],
+                                                 'author_nickname'=>$message_data['author_nickname'],
+                                                 'category'=>$abuse_category,
+                                                 'room_id'=>$abuse_msg_parts[1],
+                                                 'room_name'=>$room_name,
+                                                 'abuser_nickname'=>$abuse_msg_parts[3],
+                                                 'description'=>$abuse_msg_parts[4],
+                                                 );
           }
           continue;
         }
@@ -323,35 +322,15 @@ if (!empty($room_id) && !empty($current_user->id)) {
 
         }
         if (empty($message_data['author_id']) || false===strpos(','.$current_user->muted_users.',', ','.$message_data['author_id'].',')) {
-          $attachments_xml='';
-          if (!empty($message_data['has_attachments'])) {
-            foreach ($message_data['attachments'] as $attachment_data) {
-              $attachments_xml.='<attachment>';
-              $attachments_xml.='<id>'.htmlspecialchars($attachment_data['id']).'</id>';
-              $attachments_xml.='<binaryfile_id>'.htmlspecialchars($attachment_data['binaryfile_id']).'</binaryfile_id>';
-              $attachments_xml.='<filename>'.htmlspecialchars($attachment_data['filename']).'</filename>';
-              $attachments_xml.='</attachment>';
-            }
-          }
-          $msg_array[]='
-    <message>
-      <id>'.htmlspecialchars($message_data['id']).'</id>
-      <type>'.htmlspecialchars($message_data['type']).'</type>
-      <offline>'.htmlspecialchars($message_data['offline']).'</offline>
-      <date>'.htmlspecialchars(PCPIN_Common::datetimeToTimestamp($message_data['date'])+$current_user->time_zone_offset-date('Z')).'</date>
-      <author_id>'.htmlspecialchars($message_data['author_id']).'</author_id>
-      <author_nickname>'.htmlspecialchars($message_data['author_nickname']).'</author_nickname>
-      <target_user_id>'.htmlspecialchars($message_data['target_user_id']).'</target_user_id>
-      <privacy>'.htmlspecialchars($message_data['privacy']).'</privacy>
-      <body>'.htmlspecialchars($badword->filterString($message_data['body'])).'</body>
-      <css_properties>'.htmlspecialchars($message_data['css_properties']).'</css_properties>
-      <actor_nickname>'.htmlspecialchars($actor_nickname).'</actor_nickname>
-      <has_attachments>'.htmlspecialchars($message_data['has_attachments']).'</has_attachments>
-      '.$attachments_xml.'
-    </message>';
+          $message_data['body']=$badword->filterString($message_data['body']);
+          $message_data['actor_nickname']=$actor_nickname;
+          $msg_array[]=$message_data;
         }
       }
-      $chat_messages=implode('', $msg_array);
+      if (!empty($msg_array)) {
+        $xml_data['chat_message']=$msg_array;
+      }
+      unset($msg_array);
       if ($last_message_id>$session->_s_last_message_id) {
         // Update session
         $session->_s_updateSession($session->_s_id, true, true,
@@ -366,128 +345,16 @@ if (!empty($room_id) && !empty($current_user->id)) {
     }
     if (!empty($full_request)) {
       // Collect full data
-      $categories=$category->getTree($current_user->id);
-      $categories_xml='<categories>';
-      unset($categories[0]); // Root element: not needed
-      foreach ($categories as $category_id=>$category_data) {
-        $categories_xml.='
-    <category>
-      <name>'.htmlspecialchars($category_data['name']).'</name>
-      <description>'.htmlspecialchars($category_data['description']).'</description>';
-        foreach ($category_data['rooms'] as $room_id=>$room_data) {
-          $categories_xml.='
-      <room>
-        <id>'.htmlspecialchars($room_id).'</id>
-        <background_image>'.htmlspecialchars($room_data['background_image']).'</background_image>
-        <background_image_width>'.htmlspecialchars($room_data['background_image_width']).'</background_image_width>
-        <background_image_height>'.htmlspecialchars($room_data['background_image_height']).'</background_image_height>
-        <password_protected>'.htmlspecialchars($room_data['password_protected']).'</password_protected>
-        <name>'.htmlspecialchars($room_data['name']).'</name>
-        <description>'.htmlspecialchars($room_data['description']).'</description>
-        <users_count>'.htmlspecialchars(count($room_data['users'])).'</users_count>
-      </room>';
-          if ($room_id==$session->_s_room_id) {
-            $welcome_message=str_replace('[ROOM]', $room_data['name'], $l->g('welcome_to_chat_room'));
-              $full_data.=
-'<full_data>
-    <welcome_message>'.htmlspecialchars($welcome_message).'</welcome_message>
-    <category>
-      <id>'.htmlspecialchars($category_id).'</id>
-      <name>'.htmlspecialchars($category_data['name']).'</name>
-      <description>'.htmlspecialchars($category_data['description']).'</description>
-    </category>
-    <room>
-      <id>'.htmlspecialchars($session->_s_room_id).'</id>
-      <name>'.htmlspecialchars($room_data['name']).'</name>
-      <background_image>'.htmlspecialchars($room_data['background_image']).'</background_image>
-      <background_image_width>'.htmlspecialchars($room_data['background_image_width']).'</background_image_width>
-      <background_image_height>'.htmlspecialchars($room_data['background_image_height']).'</background_image_height>
-      <description>'.htmlspecialchars($room_data['description']).'</description>
-      <default_message_color>'.htmlspecialchars($room_data['default_message_color']).'</default_message_color>
-    </room>
-    <users>';
-              foreach ($room_data['users'] as $user_id=>$user_data) {
-                if ($user_data['online_status_message']=='') {
-                  // Empty online status message
-                  $user_data['online_status_message']=$l->g('online_status_'.$user_data['online_status']);
-                }
-                if ($user_data['global_muted_until']>date('Y-m-d H:i:s')) {
-                  $global_muted='1';
-                  $global_muted_by=$user_data['global_muted_by'];
-                  $global_muted_by_username=$user_data['global_muted_by_username'];
-                  $global_muted_until=PCPIN_Common::datetimeToTimestamp($user_data['global_muted_until'])+$current_user->time_zone_offset-date('Z');
-                  $global_muted_reason=$user_data['global_muted_reason'];
-                } elseif ($user_data['global_muted_permanently']=='y') {
-                  $global_muted='1';
-                  $global_muted_by=$user_data['global_muted_by'];
-                  $global_muted_by_username=$user_data['global_muted_by_username'];
-                  $global_muted_until='';
-                  $global_muted_reason=$user_data['global_muted_reason'];
-                } else {
-                  $global_muted='';
-                  $global_muted_by='';
-                  $global_muted_by_username='';
-                  $global_muted_until='';
-                  $global_muted_reason='';
-                }
-                if ($current_user->is_admin==='y') {
-                  $ip_address=$user_data['ip_address'];
-                } else {
-                  $ip_address='';
-                }
-                // Get first avatar
-                if ($avatar->_db_getList('binaryfile_id', 'user_id = '.$user_id, 'primary = y', 1)) {
-                  // User has avatars
-                  $user_data['avatar_bid']=$avatar->_db_list[0]['binaryfile_id'];
-                } else {
-                  // User has no avatars
-                  if ($avatar->_db_getList('binaryfile_id', 'user_id = 0', 1)) {
-                    $user_data['avatar_bid']=$avatar->_db_list[0]['binaryfile_id'];
-                  } else {
-                    $user_data['avatar_bid']=0;
-                  }
-                }
-                $avatar->_db_freeList();
-
-                $full_data.='
-      <user>
-        <id>'.htmlspecialchars($user_id).'</id>
-        <nickname>'.htmlspecialchars($user_data['nickname']).'</nickname>
-        <online_status>'.htmlspecialchars($user_data['online_status']).'</online_status>
-        <online_status_message>'.htmlspecialchars($user_data['online_status_message']).'</online_status_message>
-        <muted_locally>'.htmlspecialchars((false!==strpos(','.$current_user->muted_users.',', ','.$user_id.','))? '1' : '0').'</muted_locally>
-        <global_muted>'.htmlspecialchars($global_muted).'</global_muted>
-        <global_muted_until>'.htmlspecialchars($global_muted_until).'</global_muted_until>
-        <ip_address>'.htmlspecialchars($ip_address).'</ip_address>
-        <gender>'.htmlspecialchars($user_data['gender']).'</gender>
-        <avatar_bid>'.htmlspecialchars($user_data['avatar_bid']).'</avatar_bid>
-        <is_admin>'.htmlspecialchars($user_data['is_admin']).'</is_admin>
-        <is_moderator>'.htmlspecialchars($user_data['is_moderator']).'</is_moderator>
-        <is_guest>'.htmlspecialchars($user_data['is_guest']).'</is_guest>
-      </user>';
-            }
-            $full_data.='
-    </users>
-  </full_data>';
-          }
-        }
-        $categories_xml.='
-    </category>';
-      }
-      $categories_xml.='
-  </categories>';
+      $xml_data['category']=$category->getTree($current_user->id, $session->_s_room_id);
+      unset($xml_data['category'][0]); // Root element not needed; get flat data
     }
   }
   // Get new invitations
   $invitations=$invitation->getNewInvitations($current_user->id, true);
-  foreach ($invitations as $invitation_data) {
-    if (false===strpos(','.$current_user->muted_users.',', ','.$invitation_data['author_id'].',')) {
-      $invitations_xml.='
-  <invitation>
-    <id>'.htmlspecialchars($invitation_data['id']).'</id>
-  </invitation>';
-    }
+  if (!empty($invitations)) {
+    $xml_data['invitation']=$invitations;
   }
+  unset($invitations);
   // "Message timestamp" preference
   if (!empty($pref_timestamp) && $current_user->show_message_time!='y') {
     $current_user->show_message_time='y';
@@ -511,30 +378,11 @@ if (!empty($room_id) && !empty($current_user->id)) {
   }
   // Get display positions of displayable banners
   $banner_display_positions=$banner->checktRoomBanners();
-  foreach ($banner_display_positions as $pos) {
-    $banner_display_positions_xml.='    <banner_display_position>'.htmlspecialchars($pos).'</banner_display_position>'."\n";
+  if (!empty($banner_display_positions)) {
+    $xml_data['banner_display_position']=$banner_display_positions;
   }
+  unset($banner_display_positions);
 }
 
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-  <timestamp>'.htmlspecialchars(time()).'</timestamp>
-  '.$full_data.'
-  <chat_messages>'
-  .$chat_messages.'
-  </chat_messages>
-  <abuses>'
-  .$abuses_xml.'
-  </abuses>
-  <invitations>
-  '.$invitations_xml.'
-  </invitations>
-  '.$categories_xml.'
-  <banner_display_positions>
-'.rtrim($banner_display_positions_xml).'
-  </banner_display_positions>
-</pcpin_xml>';
-die();
+$xmlwriter->setData($xml_data);
 ?>

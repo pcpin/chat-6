@@ -67,7 +67,7 @@ function sendModeratorCall() {
     sendData('_CALLBACK_sendModeratorCall()',
              formlink,
              'POST',
-             'ajax='+urlencode('call_moderator')
+             'ajax=call_moderator'
              +'&s_id='+urlencode(s_id)
              +'&abuse_nickname='+urlencode($('abuse_nickname').value)
              +'&abuse_category='+urlencode($('abuse_category').value)
@@ -76,28 +76,24 @@ function sendModeratorCall() {
   }
 }
 function _CALLBACK_sendModeratorCall() {
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  switch (status) {
+  switch (actionHandler.status) {
 
-    case  '-1':
+    case  -1:
       // Session is invalid
       opener.document.location.href=formlink+'?session_timeout';
       window.close();
     break;
 
-    case '0':
+    case 0:
       // Data sent
       toggleProgressBar(false);
-      alert(message);
+      alert(actionHandler.message);
       window.close();
     break;
 
     default:
       // An error occured
-      if (message!=null) {
-        alert(message);
-      }
+      alert(actionHandler.message);
     break;
 
   }

@@ -20,41 +20,27 @@
 if (empty($count) || !is_scalar($count) || !pcpin_ctype_digit($count)) $count=1;
 
 if (empty($ip) || gettype($ip)!='string') $ip='';
-$ping_data_xml='';
+$ping_data=array();
 
 
 // Get client session
 if (is_object($session) && !empty($current_user->id) && $session->_s_user_id==$current_user->id && $current_user->is_admin==='y') {
   if ($ip!='') {
-    $ping_result=PCPIN_Ping::icmp_ping($ip, $count);
-    if (empty($ping_result)) {
+    $ping_data=PCPIN_Ping::icmp_ping($ip, $count);
+    if (empty($ping_data)) {
       // Ping failed
-      $message=$l->g('error');
-      $status=1;
+      $xmlwriter->setHeaderMessage($l->g('error'));
+      $xmlwriter->setHeaderStatus(1);
     } else {
       // Ping successful
-      $message='OK';
-      $status=0;
-      foreach ($ping_result as $ping) {
-        $ping_data_xml.='    <ping>'.htmlspecialchars($ping).'</ping>'."\n";
-      }
+      $xmlwriter->setHeaderMessage('OK');
+      $xmlwriter->setHeaderStatus(0);
     }
   } else {
     // Client is not online
-    $message=$l->g('client_not_online');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('client_not_online'));
+    $xmlwriter->setHeaderStatus(1);
   }
-
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-  <ping_data>
-'.$ping_data_xml.'
-  </ping_data>
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('ping_data'=>$ping_data));
 ?>

@@ -17,7 +17,7 @@
 
 function executeLogOut(close_when_done) {
   window.focus();
-  sendData('_CALLBACK_executeLogOut('+(close_when_done? 'true' : 'false')+')', formlink, 'POST', 'ajax='+urlencode('do_logout')+'&s_id='+urlencode(s_id), true, true);
+  sendData('_CALLBACK_executeLogOut('+(close_when_done? 'true' : 'false')+')', formlink, 'POST', 'ajax=do_logout&s_id='+urlencode(s_id), true, true);
   window.onblur=function() {
     window.focus();
   }

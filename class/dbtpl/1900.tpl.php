@@ -31,13 +31,13 @@ if (!empty($argv[1])) {
             IF( `curr_us`.`is_admin` = "y", `us`.`moderated_categories`, "" ) AS `moderated_categories`,
             COALESCE( `av`.`binaryfile_id`, `av_def`.`binaryfile_id` ) AS `avatar_bid`,
             IF( FIND_IN_SET( `us`.`id`, `curr_us`.`muted_users` )>0, 1, 0 ) AS `muted_locally`,
-            IF( `us`.`global_muted_until` > CURDATE() OR `us`.`global_muted_permanently` = "y", 1, 0 ) AS `global_muted`,
-            IF( `us`.`global_muted_until` > CURDATE(), UNIX_TIMESTAMP( `us`.`global_muted_until` ), 0 ) AS `global_muted_until`,
+            IF( `us`.`global_muted_until` > "'.date('Y-m-d').'" OR `us`.`global_muted_permanently` = "y", 1, 0 ) AS `global_muted`,
+            IF( `us`.`global_muted_until` > "'.date('Y-m-d').'", UNIX_TIMESTAMP( `us`.`global_muted_until` ), 0 ) AS `global_muted_until`,
             `us`.`global_muted_reason` AS `global_muted_reason`,
             IF( `curr_us`.`is_admin` = "y", `us`.`global_muted_by`, "" ) AS `global_muted_by`,
             IF( `curr_us`.`is_admin` = "y", `us`.`global_muted_by_username`, "" ) AS `global_muted_by_username`,
-            IF( `us`.`banned_until` > CURDATE() OR `us`.`banned_permanently` = "y", 1, 0 ) AS `banned`,
-            IF( `us`.`banned_until` > CURDATE(), UNIX_TIMESTAMP( `us`.`banned_until` ), 0 ) AS `banned_until`,
+            IF( `us`.`banned_until` > "'.date('Y-m-d').'" OR `us`.`banned_permanently` = "y", 1, 0 ) AS `banned`,
+            IF( `us`.`banned_until` > "'.date('Y-m-d').'", UNIX_TIMESTAMP( `us`.`banned_until` ), 0 ) AS `banned_until`,
             `us`.`ban_reason` AS `ban_reason`,
             IF( `curr_us`.`is_admin` = "y", `us`.`banned_by`, "" ) AS `banned_by`,
             IF( `curr_us`.`is_admin` = "y", `us`.`banned_by_username`, "" ) AS `banned_by_username`,
@@ -98,11 +98,11 @@ if (isset($argv[7])) {
 }
 if (isset($argv[8]) && true===$argv[8]) {
   // Banned users only
-  $where.=' AND (`us`.`banned_until` > CURDATE() OR `us`.`banned_permanently` = "y")';
+  $where.=' AND (`us`.`banned_until` > "'.date('Y-m-d').'" OR `us`.`banned_permanently` = "y")';
 }
 if (isset($argv[9]) && true===$argv[9]) {
   // Muted users only
-  $where.=' AND (`us`.`global_muted_until` > CURDATE() OR `us`.`global_muted_permanently` = "y")';
+  $where.=' AND (`us`.`global_muted_until` > "'.date('Y-m-d').'" OR `us`.`global_muted_permanently` = "y")';
 }
 if (isset($argv[10]) && true===$argv[10]) {
   // Moderators only

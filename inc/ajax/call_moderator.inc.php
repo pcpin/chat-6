@@ -33,11 +33,11 @@ if (!empty($current_user->id)) {
   // Get moderators
   if (empty($session->_s_room_id)) {
     // User is not in room
-    $message=$l->g('error');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('error'));
+    $xmlwriter->setHeaderStatus(1);
   } else {
-    $message=$l->g('abuse_report_sent');
-    $status=0;
+    $xmlwriter->setHeaderMessage($l->g('abuse_report_sent'));
+    $xmlwriter->setHeaderStatus(0);
     $moderators=$room->getModerators($session->_s_room_id);
     if (empty($moderators)) {
       // Room has no moderators. Admin(s) will receive an abuse then.
@@ -112,10 +112,4 @@ if (!empty($current_user->id)) {
     }
   }
 }
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

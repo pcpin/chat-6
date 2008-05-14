@@ -33,14 +33,14 @@ if (!isset($duration) || !is_scalar($duration) || !pcpin_ctype_digit($duration))
 }
 
 if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_user_id==$current_user->id) {
-  $status=1;
+  $xmlwriter->setHeaderStatus(1);
   if (!empty($target_user_id) && $current_user->_db_getList('is_admin', 'id = '.$target_user_id, 1)) {
     // User exists
     // Check permissions
     if ($allowed=$current_user->_db_list[0]['is_admin']!='y') {
       // Action permitted
-      $status=0;
-      $message='OK';
+      $xmlwriter->setHeaderStatus(0);
+      $xmlwriter->setHeaderMessage('OK');
       if ($session->_db_getList('_s_id,_s_room_id,_s_ip', '_s_user_id = '.$target_user_id, 1)) {
         // User is online
         $tgt_session_id=$session->_db_list[0]['_s_id'];
@@ -81,11 +81,4 @@ if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_u
     }
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

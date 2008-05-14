@@ -17,15 +17,14 @@
  */
 
 if (!isset($user_id)) $user_id=0;
-$client_data_xml='';
-
+$client_data=array();
 
 // Get client session
 if (is_object($session) && !empty($current_user->id) && $session->_s_user_id==$current_user->id && $current_user->is_admin==='y') {
   if ($session->_db_getList('_s_user_id = '.$user_id, 1)) {
     // Client is online
-    $message='OK';
-    $status=0;
+    $xmlwriter->setHeaderMessage('OK');
+    $xmlwriter->setHeaderStatus(0);
     $sessiondata=$session->_db_list[0];
     $session->_db_freeList();
     $client_data=array('ip'=>$sessiondata['_s_ip'],
@@ -38,26 +37,12 @@ if (is_object($session) && !empty($current_user->id) && $session->_s_user_id==$c
     $l->_db_getList('name, iso_name', 'id = '.$sessiondata['_s_language_id'], 1);
     $client_data['language']=$l->_db_list[0]['name'].' ('.$l->_db_list[0]['iso_name'].')';
     $l->_db_freeList();
-    // Create XML
-    foreach ($client_data as $key=>$val) {
-      $client_data_xml.='    <'.$key.'>'.htmlspecialchars($val).'</'.$key.'>'."\n";
-    }
   } else {
     // Client is not online
-    $message=$l->g('client_not_online');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('client_not_online'));
+    $xmlwriter->setHeaderStatus(1);
   }
 
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-  <client_data>
-'.$client_data_xml.'
-  </client_data>
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('client_data'=>$client_data));
 ?>

@@ -100,23 +100,19 @@ function deleteLanguage(id) {
     }
   }
   if (lng && confirm(getLng('sure_to_delete_language').split('[LANGUAGE]').join(lng.Name))) {
-    sendData('_CALLBACK_deleteLanguage()', formlink, 'POST', 'ajax='+urlencode('delete_language')+'&s_id='+urlencode(s_id)+'&language_id='+urlencode(id));
+    sendData('_CALLBACK_deleteLanguage()', formlink, 'POST', 'ajax=delete_language&s_id='+urlencode(s_id)+'&language_id='+urlencode(id));
   }
 }
 function _CALLBACK_deleteLanguage() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
     toggleProgressBar(false);
-    if (message!=null) {
-      alert(message);
-    }
-    if (status=='0') {
+    alert(actionHandler.message);
+    if (actionHandler.status==0) {
       // Language deleted
       initLanguagesPage();
     }
@@ -239,7 +235,7 @@ function saveLanguage() {
     }
     // Send data to server
     $('edit_language_tbl').style.display='none';
-    sendData('_CALLBACK_saveLanguage()', formlink, 'POST', 'ajax='+urlencode('update_language')+'&s_id='+urlencode(s_id)
+    sendData('_CALLBACK_saveLanguage()', formlink, 'POST', 'ajax=update_language&s_id='+urlencode(s_id)
              +'&language_id='+urlencode(id)
              +'&iso_name='+urlencode($('edit_language_iso_name').value)
              +'&local_name='+urlencode($('edit_language_local_name').value)
@@ -249,17 +245,13 @@ function saveLanguage() {
 }
 function _CALLBACK_saveLanguage() {
 //alert(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
   toggleProgressBar(false);
-  if (message!=null) {
-    alert(message);
-  }
-  if (status=='-1') {
+  alert(actionHandler.message);
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
-  } else if (status=='0') {
+  } else if (actionHandler.status==0) {
     // Language updated
     hideEditLanguageForm();
     initLanguagesPage();

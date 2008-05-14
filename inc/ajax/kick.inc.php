@@ -29,7 +29,7 @@ if (!isset($reason) || !is_scalar($reason)) {
 }
 
 if (!empty($current_user->id)) {
-  $status=1;
+  $xmlwriter->setHeaderStatus(1);
   if (!empty($target_user_id) && $current_user->_db_getList('is_admin,moderated_rooms', 'id = '.$target_user_id, 1)) {
     // User exists
     if ($session->_db_getList('_s_ip,_s_id,_s_room_id', '_s_user_id = '.$target_user_id, 1)) {
@@ -44,8 +44,8 @@ if (!empty($current_user->id)) {
                   && false!==strpos(','.$current_user->moderated_rooms.',', ','.$session->_db_list[0]['_s_room_id'].',')
                   && false===strpos(','.$current_user->_db_list[0]['moderated_rooms'].',', ','.$session->_db_list[0]['_s_room_id'].',');
       if (true==$allowed) {
-        $status=0;
-        $message='OK';
+        $xmlwriter->setHeaderStatus(0);
+        $xmlwriter->setHeaderMessage('OK');
         // Action permitted
         // Add new message
         $msg->addMessage(10101, 'n', $current_user->id, $current_nickname, $session->_db_list[0]['_s_room_id'], 0, $target_user_id.'/'.$current_user->id.'/'.$reason, date('Y-m-d H:i:s'), 0, '');
@@ -72,11 +72,4 @@ if (!empty($current_user->id)) {
     }
   } 
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

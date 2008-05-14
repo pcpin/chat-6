@@ -16,16 +16,6 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-if (PCPIN_SLAVE_MODE) {
-  // Not used in Slave mode
-  echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>SLAVE_MODE</message>
-  <status>1</status>
-</pcpin_xml>';
-  die();
-}
-
 _pcpin_loadClass('badword'); $badword=new PCPIN_Badword($session);
 _pcpin_loadClass('disallowed_name'); $disallowed_name=new PCPIN_Disallowed_Name($session);
 
@@ -66,8 +56,8 @@ if (_pcpin_strlen($password)<3) {
 }
 
 if (!empty($errortext)) {
-  $status='1';
-  $message='- '.implode("\n- ", $errortext);
+  $xmlwriter->setHeaderStatus(1);
+  $xmlwriter->setHeaderMessage('- '.implode("\n- ", $errortext));
 } else {
   // Create user
   if (!empty($session->_conf_all['activate_new_accounts'])) {
@@ -88,8 +78,8 @@ if (!empty($errortext)) {
     $email_body=str_replace('[URL]', str_replace(' ', '%20', $session->_conf_all['base_url']), $email_body);
     $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
     PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $l->g('new_account_created'), null, null, $email_body);
-    $status=0;
-    $message=$l->g('your_account_created');
+    $xmlwriter->setHeaderStatus(0);
+    $xmlwriter->setHeaderMessage($l->g('your_account_created'));
     if (!empty($session->_conf_all['new_user_notification'])) {
       // Send notification to admins
       $old_language_id=$l->id;
@@ -137,15 +127,8 @@ if (!empty($errortext)) {
     $email_body=str_replace('[ACTIVATION_URL]', str_replace(' ', '%20', $session->_conf_all['base_url']).'?activate_account&activation_code='.urlencode($activation_code_plain), $email_body);
     $email_body=str_replace('[HOURS]', $session->_conf_all['new_account_activation_timeout'], $email_body);
     PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $l->g('new_account_activation'), null, null, $email_body);
-    $status=0;
-    $message=str_replace('[EMAIL_ADDRESS]', $email, $l->g('account_activation_email_sent'));
+    $xmlwriter->setHeaderStatus(0);
+    $xmlwriter->setHeaderMessage(str_replace('[EMAIL_ADDRESS]', $email, $l->g('account_activation_email_sent')));
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

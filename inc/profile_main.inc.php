@@ -197,6 +197,10 @@ $_js_lng[]='sure_delete_user';
 $_js_lng[]='primary';
 $_js_lng[]='room_password';
 $_js_lng[]='sure_activate_account';
+$_js_lng[]='online_status_0';
+$_js_lng[]='online_status_1';
+$_js_lng[]='online_status_2';
+$_js_lng[]='online_status_3';
 
 
 // Add global vars to template
@@ -214,7 +218,6 @@ foreach ($tpl->tpl_vars_plain as $var) {
 
 // Add other vars
 $tpl->addVars('main', array('welcome_message'=>htmlspecialchars(str_replace('[USER]', $current_user->login, $l->g('welcome_user'))),
-                            'last_login'=>htmlspecialchars($profile_user->previous_login>'0000-00-00 00:00:00'? $current_user->makeDate(PCPIN_Common::datetimeToTimestamp($profile_user->previous_login)) : $l->g('never')),
                             'registration_date'=>htmlspecialchars($current_user->makeDate(PCPIN_Common::datetimeToTimestamp($profile_user->joined))),
                             'email_address'=>htmlspecialchars($profile_user->email),
                             'homepage'=>htmlspecialchars($profile_userdata->homepage),
@@ -232,6 +235,10 @@ $tpl->addVars('main', array('welcome_message'=>htmlspecialchars(str_replace('[US
                             'profile_username_hidden'=>htmlspecialchars($profile_user->login)
                             ));
 
+if ($current_user->is_guest=='n') {
+  $tpl->addVar('last_login', 'last_login', htmlspecialchars($profile_user->previous_login>'0000-00-00 00:00:00'? $current_user->makeDate(PCPIN_Common::datetimeToTimestamp($profile_user->previous_login)) : $l->g('never')));
+}
+
 // Show total online time
 $tpl->addVar('online_days', 'days', htmlspecialchars($online_days));
 $tpl->addVar('online_hours', 'hours', htmlspecialchars($online_hours));
@@ -248,6 +255,9 @@ if (!empty($session->_conf_all['allow_language_selection']) && $session->_s_user
     $tpl->parseTemplate('language_selection_option', 'a');
   }
 }
+
+// Display "Change password" link
+$tpl->addVar('change_password', 'display', $current_user->is_guest=='n');
 
 $template->addVar('moderator_user_options', 'display', $current_user->moderated_rooms!='' || $current_user->is_admin==='y');
 $template->addVar('admin_user_options', 'display', $current_user->is_admin==='y');

@@ -18,31 +18,21 @@
 
 _pcpin_loadClass('invitation'); $invitation=new PCPIN_Invitation($session);
 
-$invitations_xml='';
+$invitations_xml=array();
 if (!empty($current_user->id)) {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   $invitations=$invitation->getNewInvitations($current_user->id, false);
   foreach ($invitations as $invitation_data) {
     if (false===strpos(','.$current_user->muted_users.',', ','.$invitation_data['author_id'].',')) {
-      $invitations_xml.='
-  <invitation>
-    <id>'.htmlspecialchars($invitation_data['id']).'</id>
-    <author_id>'.htmlspecialchars($invitation_data['author_id']).'</author_id>
-    <author_nickname>'.htmlspecialchars($invitation_data['author_nickname']).'</author_nickname>
-    <room_id>'.htmlspecialchars($invitation_data['room_id']).'</room_id>
-    <room_name>'.htmlspecialchars($invitation_data['room_name']).'</room_name>
-  </invitation>';
+      $invitations_xml[]=array('id'=>$invitation_data['id'],
+                               'author_id'=>$invitation_data['author_id'],
+                               'author_nickname'=>$invitation_data['author_nickname'],
+                               'room_id'=>$invitation_data['room_id'],
+                               'room_name'=>$invitation_data['room_name'],
+                               );
     }
   }
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-'.$invitations_xml.'
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('invitation'=>$invitations_xml));
 ?>

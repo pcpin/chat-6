@@ -20,13 +20,11 @@
  * @param   int   room_id   Room ID
  */
 function acceptInvitation(room_id) {
-  sendData('_CALLBACK_acceptInvitation()', formlink, 'POST', 'ajax='+urlencode('enter_chat_room')+'&s_id='+urlencode(s_id)+'&room_id='+urlencode(room_id));
+  sendData('_CALLBACK_acceptInvitation()', formlink, 'POST', 'ajax=enter_chat_room&s_id='+urlencode(s_id)+'&room_id='+urlencode(room_id));
 }
 function _CALLBACK_acceptInvitation() {
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
   var dummy_form=$('dummyform', opener.document);
-  if (status=='0') {
+  if (actionHandler.status==0) {
     // Room changed. Load room page.
     dummy_form.s_id.value=s_id;
     dummy_form.inc.value='chat_room';

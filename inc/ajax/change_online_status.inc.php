@@ -26,17 +26,10 @@ if (!isset($online_status_message) || !is_scalar($online_status_message)) {
 }
 
 if (!empty($current_user->id)) {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   if (!empty($online_status) && $session->_s_online_status!=$online_status || $session->_s_online_status_message!=$online_status_message) {
     $session->_s_setOnlineStatus($online_status, $online_status_message);
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

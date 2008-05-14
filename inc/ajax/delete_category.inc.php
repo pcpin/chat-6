@@ -21,22 +21,15 @@ _pcpin_loadClass('category'); $category=new PCPIN_Category($session);
 if (!isset($category_id) || !pcpin_ctype_digit($category_id)) $category_id=0;
 
 if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_user_id==$current_user->id) {
-  $status=1;
-  $message=$l->g('error');
+  $xmlwriter->setHeaderStatus(1);
+  $xmlwriter->setHeaderMessage($l->g('error'));
   if (!empty($category_id) && $category->_db_getList('name', 'id = '.$category_id)) {
     // Category exists
-    $status=0;
+    $xmlwriter->setHeaderStatus(0);
     $category_name=$category->_db_list[0]['name'];
-    $message=str_replace('[NAME]', $category_name, $l->g('category_deleted'));
+    $xmlwriter->setHeaderMessage(str_replace('[NAME]', $category_name, $l->g('category_deleted')));
     // Delete category
     $category->deleteCategory($category_id);
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

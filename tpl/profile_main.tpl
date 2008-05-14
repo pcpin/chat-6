@@ -5,9 +5,11 @@
       {WELCOME_MESSAGE}
       ( <a class="tbl_header_main_link" href="#" onclick="logOut(); return false;" title="{LNG_LOG_OUT}">{LNG_LOG_OUT}</a> )
     </td>
-    <td  class="tbl_header_main" style="text-align:right">
-      <b>{LNG_YOUR_LAST_VISIT}:</b> {LAST_LOGIN}
-    </td>
+    <PCPIN:TPL name="last_login" type="simplecondition" requiredvars="LAST_LOGIN">
+      <td  class="tbl_header_main" style="text-align:right">
+        <b>{LNG_YOUR_LAST_VISIT}:</b> {LAST_LOGIN}
+      </td>
+    </PCPIN:TPL>
   </tr>
 </table>
 
@@ -310,16 +312,18 @@
               <span id="interests_span">{INTERESTS}</span>
             </td>
           </tr>
-          <tr>
-            <td class="tbl_row">
-              <b>{LNG_PASSWORD}:</b>
-            </td>
-            <td class="tbl_row">
-              <span id="change_password_link_span">
-                <a href="#" onclick="changePassword()" title="{LNG_CHANGE_PASSWORD}">{LNG_CHANGE}</a>
-              </span>
-            </td>
-          </tr>
+          <PCPIN:TPL name="change_password" type="simplecondition" requiredvars="DISPLAY">
+            <tr>
+              <td class="tbl_row">
+                <b>{LNG_PASSWORD}:</b>
+              </td>
+              <td class="tbl_row">
+                <span id="change_password_link_span">
+                  <a href="#" onclick="changePassword()" title="{LNG_CHANGE_PASSWORD}">{LNG_CHANGE}</a>
+                </span>
+              </td>
+            </tr>
+          </PCPIN:TPL>
           <PCPIN:TPL name="language_selection" type="simplecondition" requiredvars="DISPLAY">
             <tr>
               <td class="tbl_row">

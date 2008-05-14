@@ -21,22 +21,15 @@ _pcpin_loadClass('room'); $room=new PCPIN_Room($session);
 if (!isset($room_id) || !pcpin_ctype_digit($room_id)) $room_id=0;
 
 if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_user_id==$current_user->id) {
-  $status=1;
-  $message=$l->g('error');
+  $xmlwriter->setHeaderStatus(1);
+  $xmlwriter->setHeaderMessage($l->g('error'));
   if (!empty($room_id) && $room->_db_getList('name', 'id = '.$room_id)) {
     // Room exists
-    $status=0;
+    $xmlwriter->setHeaderStatus(0);
     $room_name=$room->_db_list[0]['name'];
-    $message=str_replace('[NAME]', $room_name, $l->g('room_deleted'));
+    $xmlwriter->setHeaderMessage(str_replace('[NAME]', $room_name, $l->g('room_deleted')));
     // Delete room
     $room->deleteRoom($room_id);
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

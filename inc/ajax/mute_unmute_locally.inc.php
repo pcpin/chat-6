@@ -25,18 +25,11 @@ if (!isset($action)) {
 }
 
 if (!empty($current_user->id)) {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   if (!empty($target_user_id) && ($action==1 || $action==0)) {
     $current_user->muteUnmuteLocally($target_user_id, $action);
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-<muted_users>'.htmlspecialchars($current_user->muted_users).'</muted_users>
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('muted_users'=>$current_user->muted_users));
 ?>

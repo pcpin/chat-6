@@ -36,15 +36,8 @@ _pcpin_loadClass('message'); $msg=new PCPIN_Message($session);
 if (!empty($profile_user_id) && !empty($avatar_id)) {
   // Delete avatar
   $avatar->deleteAvatar($profile_user_id, $avatar_id);
-  $message=$l->g('avatar_deleted');
-  $status=0;
+  $xmlwriter->setHeaderMessage($l->g('avatar_deleted'));
+  $xmlwriter->setHeaderStatus(0);
   $msg->addMessage(1010, 'n', 0, '', $session->_s_room_id, 0, $profile_user_id);
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

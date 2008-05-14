@@ -48,6 +48,10 @@ $_js_lng[]='password_too_short';
 $_js_lng[]='background_image';
 $_js_lng[]='confirm_delete_category';
 $_js_lng[]='confirm_delete_room';
+$_js_lng[]='online_status_0';
+$_js_lng[]='online_status_1';
+$_js_lng[]='online_status_2';
+$_js_lng[]='online_status_3';
 
 $_body_onload[]='initRoomsForm()';
 

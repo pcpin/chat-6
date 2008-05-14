@@ -109,28 +109,26 @@ function getRoomStructure(callback2, async, showProgressBar) {
   if (typeof(callback2)!=='string') {
     callback2='';
   }
-  sendData('_CALLBACK_getRoomStructure(\''+callback2+'\')', formlink, 'POST', 'ajax='+urlencode('get_room_structure')+'&s_id='+urlencode(s_id), typeof(showProgressBar)!='boolean' || showProgressBar, typeof(async)!='boolean' || !async);
+  sendData('_CALLBACK_getRoomStructure(\''+callback2+'\')', formlink, 'POST', 'ajax=get_room_structure&s_id='+urlencode(s_id), typeof(showProgressBar)!='boolean' || showProgressBar, typeof(async)!='boolean' || !async);
 }
 function _CALLBACK_getRoomStructure(callback2) {
-//debug(actionHandler.getResponseString());
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
+//debug(actionHandler.getResponseString()); return false;
   var cats=null;
   var additional_data=null;
-  switch (status) {
+  switch (actionHandler.status) {
 
-    case  '-1':
+    case  -1:
       // Session is invalid
       document.location.href=formlink+'?session_timeout';
       return false;
     break;
 
-    case '0':
+    case 0:
       // Success
       // Get categories
-      if (null!=(cats=actionHandler.getElement('categories'))) {
+      if (actionHandler.data['category'].length) {
         // Make category tree
-        makeCategoryTree(cats);
+        makeCategoryTree(actionHandler.data['category']);
         // Display category tree
         if (typeof(roomSelectionDisplayType)=='number' && roomSelectionDisplayType==1) {
           displaySimpleCategoryTree();
@@ -142,38 +140,35 @@ function _CALLBACK_getRoomStructure(callback2) {
         }
       }
       // Get additional data
-      if (null!=(additional_data=actionHandler.getElement('additional_data'))) {
-        // Are there new invitations?
-        if ('1'==actionHandler.getCdata('new_invitations', 0, additional_data)) {
-          if (typeof(getNewInvitations)!='undefined') {
-            getNewInvitations();
-          }
-        }
-        // Are there new messages?
-        if ('1'==actionHandler.getCdata('new_messages', 0, additional_data)) {
-          if (typeof(getNewMessages)!='undefined' && getNewMessages) {
-            getNewMessages();
-          }
+      // Are there new invitations?
+      if ('1'==actionHandler.data['additional_data'][0]['new_invitations'][0]) {
+        if (typeof(getNewInvitations)!='undefined') {
+          getNewInvitations();
         }
       }
+      // Are there new messages?
+      if ('1'==actionHandler.data['additional_data'][0]['new_messages'][0]) {
+        if (typeof(getNewMessages)!='undefined' && getNewMessages) {
+          getNewMessages();
+        }
+      }
+
     break;
 
   }
   toggleProgressBar(false);
   if (callback2!='') {
-    eval(callback2);
+    eval('try { '+callback2+' } catch (e) { }');
   }
 }
 
 
 /**
- * Create category tree from Categories XML object
- * @param   object    cats        Categories as XML object
+ * Create category tree from Categories array
+ * @param   object    cats        Categories array as returned by AJAX interface
  * @return  array
  */
 function makeCategoryTree(cats) {
-  var cat=null;
-  var cat_nr=0;
   var cat_id=0;
   var cat_parent_id=0;
   var room=null;
@@ -183,21 +178,19 @@ function makeCategoryTree(cats) {
   var user=null;
   var user_id=0;
   if (cats) {
-    while (cat=actionHandler.getElement('category', cat_nr++, cats)) {
+    for (var cat_nr=0; cat_nr<cats.length; cat_nr++) {
+      cat_id=stringToNumber(cats[cat_nr]['id'][0]);
+      cat_parent_id=stringToNumber(cats[cat_nr]['parent_id'][0]);
       // Add category to the global array
-      cat_id=stringToNumber(actionHandler.getCdata('id', 0, cat));
       if (ActiveCategoryId_previous==cat_id) {
         setActiveCategoryId(cat_id);
       }
-      cat_parent_id=actionHandler.getCdata('parent_id', 0, cat);
-      if (cat_parent_id!=null) {
-        cat_parent_id=stringToNumber(cat_parent_id);
-      }
       CategoryTree[cat_id]=new Array();
+      CategoryTree[cat_id]['id']=cat_id;
       CategoryTree[cat_id]['parent_id']=cat_parent_id;
-      CategoryTree[cat_id]['name']=actionHandler.getCdata('name', 0, cat);
-      CategoryTree[cat_id]['description']=actionHandler.getCdata('description', 0, cat, '');
-      CategoryTree[cat_id]['creatable_rooms']=actionHandler.getCdata('creatable_rooms', 0, cat)=='1';
+      CategoryTree[cat_id]['name']=cats[cat_nr]['name'][0];
+      CategoryTree[cat_id]['description']=cats[cat_nr]['description'][0];
+      CategoryTree[cat_id]['creatable_rooms']=cats[cat_nr]['creatable_rooms'][0]=='1';
       CategoryTree[cat_id]['children']=new Array();
       CategoryTree[cat_id]['child_ids']=new Array();
       CategoryTree[cat_id]['rooms']=new Array();
@@ -205,52 +198,55 @@ function makeCategoryTree(cats) {
       CategoryTree[cat_id]['rooms_local']=0;
       CategoryTree[cat_id]['rooms_total']=0;
       CategoryTree[cat_id]['users_total']=0;
-      if (CategoryTree[cat_id]['parent_id']!=null) {
+      if (cat_parent_id!=-1) {
         // Make a reference
-        CategoryTree[CategoryTree[cat_id]['parent_id']]['children'][cat_id]=CategoryTree[cat_id];
+        CategoryTree[cat_parent_id]['children'][cat_id]=CategoryTree[cat_id];
       }
       // Get child categories
-      makeCategoryTree(actionHandler.getElement('categories', 0, cat));
+      if (cats[cat_nr]['category'].length) {
+        makeCategoryTree(cats[cat_nr]['category']);
+      }
       // Get rooms
-      room_nr=0;
-      while (room=actionHandler.getElement('room', room_nr++, cat)) {
-        room_id=actionHandler.getCdata('id', 0, room);
+      for (room_nr=0; room_nr<cats[cat_nr]['room'].length; room_nr++) {
+        room=cats[cat_nr]['room'][room_nr];
+        room_id=stringToNumber(room['id'][0]);
         if (ActiveRoomId_previous==room_id) {
           setActiveRoomId(room_id);
         }
         CategoryTree[cat_id]['rooms'][room_id]=new Array();
-        CategoryTree[cat_id]['rooms'][room_id]['password_protected']='0'!=actionHandler.getCdata('password_protected', 0, room);
-        CategoryTree[cat_id]['rooms'][room_id]['name']=actionHandler.getCdata('name', 0, room);
-        CategoryTree[cat_id]['rooms'][room_id]['description']=actionHandler.getCdata('description', 0, room, '');
+        CategoryTree[cat_id]['rooms'][room_id]['id']=room_id;
+        CategoryTree[cat_id]['rooms'][room_id]['password_protected']='0'!=room['password_protected'][0];
+        CategoryTree[cat_id]['rooms'][room_id]['name']=room['name'][0];
+        CategoryTree[cat_id]['rooms'][room_id]['description']=room['description'][0];
         CategoryTree[cat_id]['rooms'][room_id]['opened']=typeof(CategoryTree_previous[cat_id])!='undefined' && typeof(CategoryTree_previous[cat_id]['rooms'][room_id])!='undefined' && CategoryTree_previous[cat_id]['rooms'][room_id]['opened'];
-        CategoryTree[cat_id]['rooms'][room_id]['moderated_by_me']='1'==actionHandler.getCdata('moderated_by_me', 0, room);
+        CategoryTree[cat_id]['rooms'][room_id]['moderated_by_me']='1'==room['moderated_by_me'][0];
         CategoryTree[cat_id]['rooms'][room_id]['users']=new Array();
         CategoryTree[cat_id]['rooms'][room_id]['users_total']=0;
         CategoryTree[cat_id]['rooms_local']++;
         CategoryTree[cat_id]['rooms_total']++;
         // Get users
-        user_nr=0;
-        while (user=actionHandler.getElement('user', user_nr++, room)) {
-          user_id=actionHandler.getCdata('id', 0, user);
+        for (user_nr=0; user_nr<room['user'].length; user_nr++) {
+          user=room['user'][user_nr];
+          user_id=stringToNumber(user['id'][0]);
           CategoryTree[cat_id]['rooms'][room_id]['users'][user_id]=new Array();
-          CategoryTree[cat_id]['rooms'][room_id]['users'][user_id]['nickname']=actionHandler.getCdata('nickname', 0, user);
-          CategoryTree[cat_id]['rooms'][room_id]['users'][user_id]['nickname_plain']=actionHandler.getCdata('nickname_plain', 0, user);
+          CategoryTree[cat_id]['rooms'][room_id]['users'][user_id]['id']=user_id;
+          CategoryTree[cat_id]['rooms'][room_id]['users'][user_id]['nickname']=user['nickname'][0];
+          CategoryTree[cat_id]['rooms'][room_id]['users'][user_id]['nickname_plain']=user['nickname_plain'][0];
           CategoryTree[cat_id]['rooms'][room_id]['users_total']++;
           CategoryTree[cat_id]['users_total']++;
           UserList.addRecord(user_id,
-                             actionHandler.getCdata('nickname', 0, user),
-                             actionHandler.getCdata('online_status', 0, user),
-                             actionHandler.getCdata('online_status_message', 0, user),
-                             '1'==actionHandler.getCdata('muted_locally', 0, user),
-                             '1'==actionHandler.getCdata('global_muted', 0, user),
-                             actionHandler.getCdata('global_muted_until', 0, user),
-                             actionHandler.getCdata('ip_address', 0, user),
-                             actionHandler.getCdata('gender', 0, user),
-                             actionHandler.getCdata('avatar_bid', 0, user),
-                             '1'==actionHandler.getCdata('is_admin', 0, user),
-                             '1'==actionHandler.getCdata('is_moderator', 0, user)
+                             user['nickname'][0],
+                             user['online_status'][0],
+                             user['online_status_message'][0]!=''? user['online_status_message'][0] : getLng('online_status_'+user['online_status'][0]),
+                             '1'==user['muted_locally'][0],
+                             '1'==user['global_muted'][0],
+                             user['global_muted_until'][0],
+                             user['ip_address'][0],
+                             user['gender'][0],
+                             user['avatar_bid'][0],
+                             '1'==user['is_admin'][0],
+                             '1'==user['is_moderator'][0]
                              );
-
         }
       }
       // Save child categories' IDs and rooms/users counters
@@ -258,7 +254,7 @@ function makeCategoryTree(cats) {
         CategoryTree[cat_id]['child_ids'][CategoryTree[cat_id]['child_ids'].length]=i;
         CategoryTree[cat_id]['rooms_total']+=CategoryTree[cat_id]['children'][i]['rooms_total'];
         CategoryTree[cat_id]['users_total']+=CategoryTree[cat_id]['children'][i]['users_total'];
-        if (CategoryTree[cat_id]['parent_id']!=null) {
+        if (CategoryTree[cat_id]['parent_id']!=-1) {
           CategoryTree[CategoryTree[cat_id]['parent_id']]['child_ids'][CategoryTree[CategoryTree[cat_id]['parent_id']]['child_ids'].length]=i;
           CategoryTree[cat_id]['parent_id']['rooms_total']+=CategoryTree[cat_id]['rooms_total'];
           CategoryTree[cat_id]['parent_id']['users_total']+=CategoryTree[cat_id]['users_total'];
@@ -275,21 +271,23 @@ function makeCategoryTree(cats) {
  * @param   int       depth         Current depth
  */
 function displayCategoryTree(cats, depth) {
-  var div_top=$('chat_categories_list').scrollTop;
-  $('rooms_tree').style.display='';
-  $('rooms_simplified').style.display='none';
-  $('simplified_view_link').style.display='';
-  $('advanced_view_link').style.display='none';
-  $('join_room_tbl').style.width='100%';
-  if (typeof(cats)!='object' || cats==null) {
-    cats=CategoryTree[0]['children'];
-  }
-  if (typeof(depth)=='undefined') {
-    depth=0;
-  }
-  $('chat_categories_list').innerHTML=makeCategoryTreeHtml(cats, depth);
-  $('chat_categories_list').scrollTop=div_top;
-  setTimeout("$('chat_categories_list').scrollTop="+div_top+";", 1);
+  try {
+    var div_top=$('chat_categories_list').scrollTop;
+    $('rooms_tree').style.display='';
+    $('rooms_simplified').style.display='none';
+    $('simplified_view_link').style.display='';
+    $('advanced_view_link').style.display='none';
+    $('join_room_tbl').style.width='100%';
+    if (typeof(cats)!='object' || cats==null) {
+      cats=CategoryTree[0]['children'];
+    }
+    if (typeof(depth)=='undefined') {
+      depth=0;
+    }
+    $('chat_categories_list').innerHTML=makeCategoryTreeHtml(cats, depth);
+    $('chat_categories_list').scrollTop=div_top;
+    setTimeout("$('chat_categories_list').scrollTop="+div_top+";", 1);
+  } catch (e) {}
 }
 
 

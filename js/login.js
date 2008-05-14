@@ -123,7 +123,7 @@ function hideLoginForm() {
  */
 function doLogin() {
   hideLoginForm();
-  sendData('_CALLBACK_doLogin()', formlink, 'POST', 'ajax='+urlencode('do_login')
+  sendData('_CALLBACK_doLogin()', formlink, 'POST', 'ajax=do_login'
                                                    +'&login='+urlencode($('login_username').value)
                                                    +'&password='+urlencode($('login_password').value)
                                                    +'&time_zone_offset='+urlencode(date('Z'))
@@ -133,11 +133,9 @@ function doLogin() {
   return false;
 }
 function _CALLBACK_doLogin() {
-//debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  if (message=='OK') {
+  if (actionHandler.status==0) {
     // Login successfull
-    var s_id=actionHandler.getCdata('s_id');
+    var s_id=actionHandler.data['s_id'][0];
     var df=$('dummyform');
     if (df) {
       df.s_id.value=s_id;
@@ -148,11 +146,8 @@ function _CALLBACK_doLogin() {
     }
   } else {
     // Login failed
-    if (message!=null) {
-      $('login_password').value='';
-      toggleProgressBar(false);
-      alert(message);
-    }
+    $('login_password').value='';
+    alert(actionHandler.message);
     toggleProgressBar(false);
     showLoginForm();
   }
@@ -164,7 +159,7 @@ function _CALLBACK_doLogin() {
  */
 function doGuestLogin() {
   hideLoginForm();
-  sendData('_CALLBACK_doLogin()', formlink, 'POST', 'ajax='+urlencode('do_login')
+  sendData('_CALLBACK_doLogin()', formlink, 'POST', 'ajax=do_login'
                                                    +'&guest_login=1'
                                                    +'&time_zone_offset='+urlencode(date('Z'))
                                                    +'&language_id='+urlencode($('language_selection')? $('language_selection').value : 0)
@@ -255,7 +250,7 @@ function doRegister() {
     alert('- '+errors.join("\n- "));
   } else {
     hideRegisterForm();
-    sendData('_CALLBACK_doRegister()', formlink, 'POST', 'ajax='+urlencode('do_register')
+    sendData('_CALLBACK_doRegister()', formlink, 'POST', 'ajax=do_register'
                                                         +'&login='+urlencode($('register_username').value)
                                                         +'&password='+urlencode($('register_password1').value)
                                                         +'&email='+urlencode($('register_email').value)
@@ -266,13 +261,9 @@ function doRegister() {
 }
 function _CALLBACK_doRegister() {
 //debug(actionHandler.getResponseString()); return false;
-  var status=actionHandler.getCdata('status');
-  var message=actionHandler.getCdata('message');
   toggleProgressBar(false);
-  if (message!=null) {
-    alert(message);
-  }
-  if (status=='0') {
+  alert(actionHandler.message);
+  if (actionHandler.status==0) {
     // Register successfull
     showLoginForm();
   } else {
@@ -300,7 +291,7 @@ function doResetPassword() {
     alert('- '+errors.join("\n- "));
   } else {
     hideResetPasswordForm();
-    sendData('_CALLBACK_doResetPassword()', formlink, 'POST', 'ajax='+urlencode('do_reset_password')
+    sendData('_CALLBACK_doResetPassword()', formlink, 'POST', 'ajax=do_reset_password'
                                                              +'&login='+urlencode($('reset_pw_username').value)
                                                              +'&email='+urlencode($('reset_pw_email').value)
                                                              );
@@ -310,13 +301,9 @@ function doResetPassword() {
 function _CALLBACK_doResetPassword() {
 //debug(actionHandler.getResponseString());
 //return false;
-  var status=actionHandler.getCdata('status');
-  var message=actionHandler.getCdata('message');
   toggleProgressBar(false);
-  if (message!=null) {
-    alert(message);
-  }
-  if (status=='0') {
+  alert(actionHandler.message);
+  if (actionHandler.status==0) {
     // Password reset successfull
     showLoginForm();
   } else {

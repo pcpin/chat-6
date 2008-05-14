@@ -39,14 +39,12 @@ function initProfilePublic(user_id, avatars_max_count) {
  */
 function getPublicProfileData(user_id) {
   if (typeof(user_id)=='number' && user_id>0) {
-    sendData('_CALLBACK_getPublicProfileData('+user_id+')', formlink, 'POST', 'ajax='+urlencode('get_public_profile_data')+'&s_id='+urlencode(s_id)+'&user_id='+urlencode(user_id));
+    sendData('_CALLBACK_getPublicProfileData('+user_id+')', formlink, 'POST', 'ajax=get_public_profile_data&s_id='+urlencode(s_id)+'&user_id='+urlencode(user_id));
   }
 }
 function _CALLBACK_getPublicProfileData(user_id) {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  var profile_data=actionHandler.getElement('profile_data');
+  var profile_data=actionHandler.data['profile_data'][0];
   var nickname='';
   var gender='';
   var avatar=null;
@@ -54,36 +52,38 @@ function _CALLBACK_getPublicProfileData(user_id) {
   var avatars_count=0;
   var seconds_online=0;
   var homepage='';
+  var profile_rows=null;
+  var data_field=null;
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.close();
     opener.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (message=='OK') {
-      nickname=actionHandler.getCdata('nickname', 0, profile_data);
-      if (nickname==null) {
+    if (actionHandler.message=='OK') {
+      nickname=profile_data['nickname'][0];
+      if (nickname=='') {
         nickname='-';
       }
-      $('profile_header').innerHTML=htmlspecialchars(actionHandler.getCdata('header', 0, profile_data));
+      $('profile_header').innerHTML=htmlspecialchars(profile_data['header'][0]);
       $('profile_nickname').innerHTML=coloredToHTML(nickname);
-      if (null!=actionHandler.getCdata('hide_email', 0, profile_data)) {
+      if (''!=profile_data['hide_email'][0]) {
         // Email is hidden
         $('profile_email_row').style.display='none';
       } else {
-        $('profile_email_link').innerHTML=htmlspecialchars(actionHandler.getCdata('email', 0, profile_data));
+        $('profile_email_link').innerHTML=htmlspecialchars(profile_data['email'][0]);
         $('profile_email_link').title=$('profile_email_link').innerHTML;
-        $('profile_email_link').href='mailto:'+actionHandler.getCdata('email', 0, profile_data);
+        $('profile_email_link').href='mailto:'+profile_data['email'][0];
       }
-      if ('y'==actionHandler.getCdata('is_guest', 0, profile_data)) {
+      if ('y'==profile_data['is_guest'][0]) {
         $('profile_registration_date').innerHTML=htmlspecialchars('- ('+getLng('guest')+')');
       } else {
-        $('profile_registration_date').innerHTML=htmlspecialchars(date(dateFormat, actionHandler.getCdata('registration_date', 0, profile_data)));
+        $('profile_registration_date').innerHTML=htmlspecialchars(date(dateFormat, profile_data['registration_date'][0]));
       }
       // Time spent online
       $('profile_time_spent_online').innerHTML='';
-      seconds_online=actionHandler.getCdata('time_online', 0, profile_data);
+      seconds_online=profile_data['time_online'][0];
       $('profile_time_spent_online').innerHTML=htmlspecialchars((seconds_online%60)+' '+getLng('seconds'));
       if (seconds_online>60) {
         $('profile_time_spent_online').innerHTML=htmlspecialchars((Math.floor(seconds_online/60)%60)+' '+getLng('minutes')+', ')+$('profile_time_spent_online').innerHTML;
@@ -95,15 +95,16 @@ function _CALLBACK_getPublicProfileData(user_id) {
         }
       }
       // Avatars
-      avatars_count=actionHandler.countElements('avatar', profile_data);
+      avatars_count=typeof(profile_data['avatar'])!='undefined'? profile_data['avatar'].length : 0;
       $('avatar_image').innerHTML='';
       $('avatar_thumbs').innerHTML='';
-      while (null!=(avatar=actionHandler.getElement('avatar', avatar_nr++, profile_data))) {
-        avatar_id=stringToNumber(actionHandler.getCdata('id', 0, avatar));
-        avatar_binaryfile_id=stringToNumber(actionHandler.getCdata('binaryfile_id', 0, avatar));
-        avatar_width=stringToNumber(actionHandler.getCdata('width', 0, avatar));
-        avatar_height=stringToNumber(actionHandler.getCdata('height', 0, avatar));
-        if (avatar_nr==1) {
+      for (avatar_nr=0; avatar_nr<avatars_count; avatar_nr++) {
+        avatar=profile_data['avatar'][avatar_nr];
+        avatar_id=stringToNumber(avatar['id'][0]);
+        avatar_binaryfile_id=stringToNumber(avatar['binaryfile_id'][0]);
+        avatar_width=stringToNumber(avatar['width'][0]);
+        avatar_height=stringToNumber(avatar['height'][0]);
+        if (avatar_nr==0) {
           // First avatar
           $('avatar_image').innerHTML='<img id="avatar_img" onload="setTimeout(\'resizeForDocumentHeight(10)\', 100);" src="'+htmlspecialchars(formlink)+'?b_id='+htmlspecialchars(avatar_binaryfile_id)+'&amp;s_id='+htmlspecialchars(s_id)+'&amp;b_x=120&amp;b_y=85" border="0" alt="'+htmlspecialchars(getLng('avatar'))+'" title="'+htmlspecialchars(getLng('avatar'))+'" style="cursor:pointer" />';
           $('avatar_img').binaryfile_id=avatar_binaryfile_id;
@@ -129,13 +130,13 @@ function _CALLBACK_getPublicProfileData(user_id) {
       }
 
       // Online status
-      if (stringToNumber(actionHandler.getCdata('online_status', 0, profile_data))>=0) {
+      if (profile_data['online_status'][0]!='0') {
         $('profile_online_status').innerHTML=htmlspecialchars(getLng('user_is_logged_in')).split('[USER]').join('<b>'+coloredToHTML(nickname)+'</b>');
       } else {
         $('profile_online_status').innerHTML=htmlspecialchars(getLng('user_is_not_logged_in')).split('[USER]').join('<b>'+coloredToHTML(nickname)+'</b>');
       }
       // "Invite" button
-      if (actionHandler.getCdata('invitable', 0, profile_data)=='1') {
+      if (profile_data['invitable'][0]=='1') {
         $('send_pm_button').style.display='';
         $('invite_button').title=htmlspecialchars(getLng('invite_user_to_your_room')).split('[USER]').join(coloredToPlain(nickname, false));
         $('invite_button').tgt_user_id=user_id;
@@ -143,27 +144,26 @@ function _CALLBACK_getPublicProfileData(user_id) {
           sendInvitation(this.tgt_user_id);
         }
       }
-
-      var profile_rows=new Array('gender',
-                                 'homepage',
-                                 'age',
-                                 'icq',
-                                 'msn',
-                                 'aim',
-                                 'yim',
-                                 'location',
-                                 'occupation',
-                                 'interests'
-                                 );
-      var data_field=null;
+      profile_rows=new Array('gender',
+                             'homepage',
+                             'age',
+                             'icq',
+                             'msn',
+                             'aim',
+                             'yim',
+                             'location',
+                             'occupation',
+                             'interests'
+                             );
+      data_field=null;
       for (var field in profile_rows) {
-        data_field=actionHandler.getCdata(profile_rows[field], 0, profile_data);
-        if (data_field==null || profile_rows[field]=='gender' && data_field=='-') {
+        if (typeof(profile_data[profile_rows[field]])=='undefined' || profile_data[profile_rows[field]][0]=='' || profile_rows[field]=='gender' && profile_data[profile_rows[field]][0]=='-') {
           // No data
           try {
             $('profile_'+profile_rows[field]+'_row').style.display='none';
           } catch (e) {}
         } else {
+          data_field=profile_data[profile_rows[field]][0];
           // Display data
           if (profile_rows[field]=='gender') {
             // Gender
@@ -178,14 +178,11 @@ function _CALLBACK_getPublicProfileData(user_id) {
           }
         }
       }
-
       // Display table
       $('profile_table').style.display='';
       $('close_window_btn_tbl').style.display='';
     } else {
-      if (message!=null) {
-        alert(message);
-      }
+      alert(actionHandler.message);
       window.close();
     }
   }

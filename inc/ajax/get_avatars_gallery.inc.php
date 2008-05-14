@@ -23,28 +23,11 @@
 
 _pcpin_loadClass('avatar'); $avatar=new PCPIN_Avatar($session);
 
-$avatars_xml='';
+$avatars=array();
 if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_user_id==$current_user->id) {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   $avatars=$avatar->getGalleryAvatars();
-  foreach ($avatars as $avatar_data) {
-    $avatars_xml.='
-  <avatar>
-    <id>'.htmlspecialchars($avatar_data['id']).'</id>
-    <primary>'.htmlspecialchars($avatar_data['primary']).'</primary>
-    <binaryfile_id>'.htmlspecialchars($avatar_data['binaryfile_id']).'</binaryfile_id>
-    <width>'.htmlspecialchars($avatar_data['width']).'</width>
-    <height>'.htmlspecialchars($avatar_data['height']).'</height>
-  </avatar>';
-  }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-'.$avatars_xml.'
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('avatar'=>$avatars));
 ?>

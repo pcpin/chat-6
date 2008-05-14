@@ -173,7 +173,7 @@ function initProfile(nickname_length_min_, nickname_length_max_, homepage, gende
   window.onunload=function() {
     // Send "Page unloaded" signal to server
     if (!SkipPageUnloadedMsg && (typeof(window.opener)=='undefined' || window.opener==null || typeof(window.opener.appName_)!='string' || window.opener.appName_!='pcpin_chat' || typeof(window.opener.initChatRoom)=='undefined')) {
-      openWindow(formlink+'?inc='+urlencode('page_unloaded')+'&s_id='+urlencode(s_id), '', 1, 1, false, false, false, false, false, false, false, false, false, false, 0, 0);
+      openWindow(formlink+'?inc=page_unloaded&s_id='+urlencode(s_id), '', 1, 1, false, false, false, false, false, false, false, false, false, false, 0, 0);
     }
     try {
       if (uploadWindow) {
@@ -269,24 +269,23 @@ function initProfile(nickname_length_min_, nickname_length_max_, homepage, gende
  */
 function getAvatars() {
   if (avatarsMaxCount>0) {
-    sendData('_CALLBACK_getAvatars()', formlink, 'POST', 'ajax='+urlencode('get_avatars')+'&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId));
+    sendData('_CALLBACK_getAvatars()', formlink, 'POST', 'ajax=get_avatars&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId));
   }
 }
 function _CALLBACK_getAvatars() {
 //debug(actionHandler.getResponseString()); return false;
+
   var avatars_tbl=$('avatars_tbl');
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  var avatar=null;
   var avatar_nr=0;
   var avatar_id=0;
   var avatar_binaryfile_id=0;
+  var avatar_primary='';
   var avatars_count=0;
 
   var tr=null;
   var td=null;
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
@@ -296,19 +295,20 @@ function _CALLBACK_getAvatars() {
     for (var i=avatars_tbl.rows.length-3; i>0; i--) {
       avatars_tbl.deleteRow(i);
     }
-    avatars_count=actionHandler.countElements('avatar');
-    while (null!=(avatar=actionHandler.getElement('avatar', avatar_nr++))) {
-      if (1==(avatar_nr%2)) {
+    avatars_count=actionHandler.data['avatar'].length;
+    for (avatar_nr=0; avatar_nr<avatars_count; avatar_nr++) {
+      if (0==(avatar_nr%2)) {
         tr=avatars_tbl.insertRow(avatars_tbl.rows.length-2);
       }
-      avatar_id=stringToNumber(actionHandler.getCdata('id', 0, avatar));
-      avatar_binaryfile_id=stringToNumber(actionHandler.getCdata('binaryfile_id', 0, avatar));
+      avatar_id=stringToNumber(actionHandler.data['avatar'][avatar_nr]['id'][0]);
+      avatar_binaryfile_id=stringToNumber(actionHandler.data['avatar'][avatar_nr]['binaryfile_id'][0]);
+      avatar_primary=actionHandler.data['avatar'][avatar_nr]['primary'][0];
       td=tr.insertCell(-1);
       td.innerHTML='<img id="avatar_img_'+htmlspecialchars(avatar_id)+'" src="'+htmlspecialchars(formlink)+'?b_id='+htmlspecialchars(avatar_binaryfile_id)+'&amp;s_id='+htmlspecialchars(s_id)+'&amp;b_x=100&amp;b_y=85" border="0" alt="'+htmlspecialchars(getLng('avatar'))+'" title="'+htmlspecialchars(getLng('avatar'))+'" style="cursor:pointer" />';
       if (avatar_id>0) {
         td.innerHTML+='<br />'
                       +'<label for="avatar_primary_'+htmlspecialchars(avatar_id)+'" title="'+htmlspecialchars(getLng('primary'))+'">'
-                      +'<input type="radio" name="avatar_primary" id="avatar_primary_'+htmlspecialchars(avatar_id)+'" onclick="setPrimaryAvatar('+htmlspecialchars(avatar_id)+')"; return false;" '+(actionHandler.getCdata('primary', 0, avatar, 'n')=='y'? 'checked="checked"' : '')+'>'
+                      +'<input type="radio" name="avatar_primary" id="avatar_primary_'+htmlspecialchars(avatar_id)+'" onclick="setPrimaryAvatar('+htmlspecialchars(avatar_id)+')"; return false;" '+(avatar_primary=='y'? 'checked="checked"' : '')+'>'
                       +'&nbsp;'+htmlspecialchars(getLng('primary'))
                       +'</label>'
                       +'<br />'
@@ -320,14 +320,14 @@ function _CALLBACK_getAvatars() {
       setCssClass(td, '.tbl_row');
       td.style.textAlign='center';
       $('avatar_img_'+avatar_id).binaryfile_id=avatar_binaryfile_id;
-      $('avatar_img_'+avatar_id).ow_width=stringToNumber(actionHandler.getCdata('width', 0, avatar))+10;
-      $('avatar_img_'+avatar_id).ow_height=stringToNumber(actionHandler.getCdata('height', 0, avatar))+10;
+      $('avatar_img_'+avatar_id).ow_width=stringToNumber(actionHandler.data['avatar'][avatar_nr]['width'][0])+10;
+      $('avatar_img_'+avatar_id).ow_height=stringToNumber(actionHandler.data['avatar'][avatar_nr]['height'][0])+10;
       $('avatar_img_'+avatar_id).onclick=function() {
         openWindow(formlink+'?inc=show_image&img_b_id='+this.binaryfile_id+'&s_id='+s_id, '', this.ow_width, this.ow_height, false, false, false, false, true);
         return false;
       };
     }
-    if (0==(avatar_nr%2)) {
+    if (1==(avatar_nr%2)) {
       td.colSpan=2;
     }
     if (avatars_count<avatarsMaxCount || avatars_count==1 && avatarsMaxCount>0 && avatar_id==0) {
@@ -366,26 +366,21 @@ function profile_start_update(now) {
  * This function will be triggered after new invitation has been arrived
  */
 function getNewInvitations() {
-  sendData('_CALLBACK_getNewInvitations()', formlink, 'POST', 'ajax='+urlencode('get_invitations')+'&s_id='+urlencode(s_id));
+  sendData('_CALLBACK_getNewInvitations()', formlink, 'POST', 'ajax=get_invitations&s_id='+urlencode(s_id));
 }
 function _CALLBACK_getNewInvitations() {
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  var i=0;
-  var invitation=null;
   var invitation_msg='';
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   } else {
-    i=0;
-    while (null!=(invitation=actionHandler.getElement('invitation', i++))) {
+    for (var i=0; i<actionHandler.data['invitation'].length; i++) {
       invitation_msg=getLng('user_invited_you');
-      invitation_msg=invitation_msg.split('[USER]').join(coloredToPlain(actionHandler.getCdata('author_nickname', 0, invitation), false));
-      invitation_msg=invitation_msg.split('[ROOM]').join(actionHandler.getCdata('room_name', 0, invitation));
+      invitation_msg=invitation_msg.split('[USER]').join(coloredToPlain(actionHandler.data['invitation'][i]['author_nickname'][0], false));
+      invitation_msg=invitation_msg.split('[ROOM]').join(actionHandler.data['invitation'][i]['room_name'][0]);
       if (confirm(invitation_msg)) {
-        ActiveRoomId=stringToNumber(actionHandler.getCdata('room_id', 0, invitation));
+        ActiveRoomId=stringToNumber(actionHandler.data['invitation'][i]['room_id'][0]);
         enterChatRoom();
         return false;
       }
@@ -398,22 +393,17 @@ function _CALLBACK_getNewInvitations() {
  * This function will be triggered after new messages arrived
  */
 function getNewMessages() {
-  sendData('_CALLBACK_getNewMessages()', formlink, 'POST', 'ajax='+urlencode('get_new_messages')+'&s_id='+urlencode(s_id));
+  sendData('_CALLBACK_getNewMessages()', formlink, 'POST', 'ajax=get_new_messages&s_id='+urlencode(s_id));
 }
 function _CALLBACK_getNewMessages() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  var i=0;
-  var abuses=null;
-
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   } else {
-    if (null!=(abuses=actionHandler.getElement('abuses'))) {
-      processAbuses(abuses, actionHandler);
+    if (actionHandler.data['abuse'].length) {
+      processAbuses(actionHandler.data['abuse']);
     }
   }
 }
@@ -425,28 +415,24 @@ function _CALLBACK_getNewMessages() {
 function deleteAvatar(avatar_id) {
   flushDisplay();
   if (typeof(avatar_id)=='number' && avatar_id>0 && confirm(getLng('confirm_delete_avatar'))) {
-    sendData('_CALLBACK_deleteAvatar()', formlink, 'POST', 'ajax='+urlencode('delete_avatar')+'&s_id='+urlencode(s_id)+'&avatar_id='+urlencode(avatar_id)+'&profile_user_id='+urlencode(profileUserId));
+    sendData('_CALLBACK_deleteAvatar()', formlink, 'POST', 'ajax=delete_avatar&s_id='+urlencode(s_id)+'&avatar_id='+urlencode(avatar_id)+'&profile_user_id='+urlencode(profileUserId));
   }
   return false;
 }
 function _CALLBACK_deleteAvatar() {
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   } else {
-    if (message!=null) {
-      alert(message);
-    }
-    if (status=='0') {
+    toggleProgressBar(false);
+    alert(actionHandler.message);
+    if (actionHandler.status==0) {
       // Avatar deleted
       // Reload avatars
       getAvatars();
     }
   }
-  toggleProgressBar(false);
 }
 
 
@@ -503,34 +489,22 @@ function parseUploadResponse(code, message, binaryfile_id, width, height) {
 function deleteNickname(nickname_id) {
   var msg=getLng('confirm_delete_nickname').split('[NICKNAME]').join($('nickname_span_'+nickname_id).nickname_plain);
   if (confirm(msg)) {
-    sendData('_CALLBACK_deleteNickname('+nickname_id+')', formlink, 'POST', 'ajax='+urlencode('delete_nickname')+'&s_id='+urlencode(s_id)+'&nickname_id='+urlencode(nickname_id)+'&profile_user_id='+urlencode(profileUserId));
+    sendData('_CALLBACK_deleteNickname('+nickname_id+')', formlink, 'POST', 'ajax=delete_nickname&s_id='+urlencode(s_id)+'&nickname_id='+urlencode(nickname_id)+'&profile_user_id='+urlencode(profileUserId));
   }
   return false;
 }
 function _CALLBACK_deleteNickname(nickname_id) {
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  var default_nickname_id=actionHandler.getCdata('default_nickname_id');
-  if (status=='-1') {
+  if (actionHandler.status==0) {
+    // Nickname deleted
+    // Redraw nicknames table
+    flushNickNamesTable();
+    toggleProgressBar(false);
+    alert(actionHandler.message);
+  } else if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
-  } else {
-    if (message=='OK') {
-      // Nickname deleted
-      // Redraw nicknames table
-      flushNickNamesTable();
-      if (status!=null) {
-        alert(status);
-      }
-    } else {
-      // Nickname not deleted
-      if (message!=null) {
-        alert(message);
-      }
-    }
   }
-  toggleProgressBar(false);
 }
 
 
@@ -562,7 +536,7 @@ function manageNickname(callBack, nickname_id, nickname) {
     } else {
       if (nickname_id>0) {
         // Update nickname
-        sendData('_CALLBACK_manageNickname(\''+(typeof(callBack)=='string'? callBack : '')+'\')', formlink, 'POST', 'ajax='+urlencode('update_nickname')
+        sendData('_CALLBACK_manageNickname(\''+(typeof(callBack)=='string'? callBack : '')+'\')', formlink, 'POST', 'ajax=update_nickname'
                                                                                                                    +'&s_id='+urlencode(s_id)
                                                                                                                    +'&new_nickname='+urlencode(nickname)
                                                                                                                    +'&nickname_id='+urlencode(nickname_id)
@@ -570,7 +544,7 @@ function manageNickname(callBack, nickname_id, nickname) {
                                                                                                                    );
       } else {
         // Add new nickname
-        sendData('_CALLBACK_manageNickname(\''+(typeof(callBack)=='string'? callBack : '')+'\')', formlink, 'POST', 'ajax='+urlencode('add_nickname')
+        sendData('_CALLBACK_manageNickname(\''+(typeof(callBack)=='string'? callBack : '')+'\')', formlink, 'POST', 'ajax=add_nickname'
                                                                                                                    +'&s_id='+urlencode(s_id)
                                                                                                                    +'&new_nickname='+urlencode(nickname)
                                                                                                                    +'&profile_user_id='+urlencode(profileUserId)
@@ -582,16 +556,13 @@ function manageNickname(callBack, nickname_id, nickname) {
 }
 function _CALLBACK_manageNickname(callBack) {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  var nickname_id=actionHandler.getCdata('new_nickname_id');
   toggleProgressBar(false);
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   } else {
-    if (status=='0') {
+    if (actionHandler.status==0) {
       // Nickname added
       last_nickname='';
       // Redraw nicknames table
@@ -603,13 +574,11 @@ function _CALLBACK_manageNickname(callBack) {
           setTimeout(callBack, 100);
         }
       } else {
-        alert(message);
+        alert(actionHandler.message);
       }
     } else {
       // Nickname not added
-      if (message!=null) {
-        alert(message);
-      }
+      alert(actionHandler.message);
     }
   }
 }
@@ -619,20 +588,18 @@ function _CALLBACK_manageNickname(callBack) {
  * Get nicknames list from server
  */
 function getNickNames() {
-  sendData('_CALLBACK_getNickNames()', formlink, 'POST', 'ajax='+urlencode('get_nicknames')+'&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId));
+  sendData('_CALLBACK_getNickNames()', formlink, 'POST', 'ajax=get_nicknames&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId));
 }
 function _CALLBACK_getNickNames() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
   var nickname_nr=0;
   var nickname=null;
-  var status=actionHandler.getCdata('status');
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   } else {
-    if (message=='OK') {
+    if (actionHandler.message=='OK') {
       // Redraw nicknames table
       flushNickNamesTable();
     } else if (message!=null) {
@@ -649,7 +616,6 @@ function _CALLBACK_getNickNames() {
  */
 function flushNickNamesTable() {
   var i=0;
-  var nickname=null;
   var nick='';
   var nick_plain='';
   var nick_id=0;
@@ -664,20 +630,18 @@ function flushNickNamesTable() {
     }
   }
 
-  // IE6 behavior
+  // IE6 behaviour
   $('nicknames_area').innerHTML=$('nicknames_area').innerHTML;
-
-  while (nickname=actionHandler.getElement('nickname', i)) {
+  for (i=0; i<actionHandler.data['nickname'].length; i++) {
     nicknamesCount++;
-    nick_id=actionHandler.getCdata('id', 0, nickname);
-    nick=actionHandler.getCdata('nickname', 0, nickname);
-    nick_plain=actionHandler.getCdata('nickname_plain', 0, nickname);
-    is_default=actionHandler.getCdata('default', 0, nickname);
+    nick_id=actionHandler.data['nickname'][i]['id'][0];
+    nick=actionHandler.data['nickname'][i]['nickname'][0];
+    nick_plain=actionHandler.data['nickname'][i]['nickname_plain'][0];
+    is_default=actionHandler.data['nickname'][i]['default'][0];
     showNickNameRow(nick_id, nick, is_default=='y');
     if (is_default=='y') {
       CurrentNicknameID=nick_id;
     }
-    i++;
   }
   if (i>0) {
     // There are nicknames
@@ -749,38 +713,35 @@ function changeEmailAddress() {
         alert(getLng('email_invalid'));
       } else {
         // Email address seems to be OK
-        sendData('_CALLBACK_changeEmailAddress()', formlink, 'POST', 'ajax='+urlencode('change_email')+'&s_id='+urlencode(s_id)+'&email='+urlencode(email)+'&profile_user_id='+urlencode(profileUserId));
+        sendData('_CALLBACK_changeEmailAddress()', formlink, 'POST', 'ajax=change_email&s_id='+urlencode(s_id)+'&email='+urlencode(email)+'&profile_user_id='+urlencode(profileUserId));
       }
     }
   }
   return false;
 }
 function _CALLBACK_changeEmailAddress() {
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  switch (status) {
-    case  '-1':
+  switch (actionHandler.status) {
+    case  -1:
       // Session is invalid
       document.location.href=formlink+'?session_timeout';
       return false;
     break;
-    case '0':
+    case 0:
       // Email changed
-      var activation_required=actionHandler.getCdata('activation_required');
-      if (activation_required==1) {
+      if (actionHandler.data['activation_required'][0]=='1') {
         // New email address must be activated
         flushDisplay();
-        alert(message);
+        alert(actionHandler.message);
       } else {
         // Email address has been changed
         flushDisplay();
-        $('email_address_span').innerHTML=htmlspecialchars(actionHandler.getCdata('email'));
-        alert(message);
+        $('email_address_span').innerHTML=htmlspecialchars(actionHandler.data['email'][0]);
+        alert(actionHandler.message);
       }
     break;
     default:
       // An error occured
-      alert(message);
+      alert(actionHandler.message);
     break;
   }
   // Reset window status resolution
@@ -803,27 +764,25 @@ function changePassword() {
       alert(getLng('password_too_short'));
     } else {
       // Store new password
-      sendData('_CALLBACK_changePassword()', formlink, 'POST', 'ajax='+urlencode('change_password')+'&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId)+'&password='+base64encode(urlencode(new_pass)));
+      sendData('_CALLBACK_changePassword()', formlink, 'POST', 'ajax=change_password&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId)+'&password='+base64encode(urlencode(new_pass)));
     }
   }
 }
 function _CALLBACK_changePassword() {
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  switch (status) {
-    case  '-1':
+  switch (actionHandler.status) {
+    case  -1:
       // Session is invalid
       document.location.href=formlink+'?session_timeout';
       return false;
     break;
-    case '0':
+    case 0:
       // Password changed
       flushDisplay();
-      alert(message);
+      alert(actionHandler.message);
     break;
     default:
       // An error occured
-      alert(message);
+      alert(actionHandler.message);
     break;
   }
   // Reset window status resolution
@@ -894,7 +853,7 @@ function enterChatRoom(nickname_id, password, room_id) {
           password='';
         }
       }
-      sendData('_CALLBACK_enterChatRoom()', formlink, 'POST', 'ajax='+urlencode('enter_chat_room')+'&s_id='+urlencode(s_id)+'&room_id='+urlencode(ActiveRoomId)+'&nickname_id='+urlencode(nickname_id)+'&stealth_mode='+urlencode(stealth_mode)+'&password='+urlencode(base64encode(password)));
+      sendData('_CALLBACK_enterChatRoom()', formlink, 'POST', 'ajax=enter_chat_room&s_id='+urlencode(s_id)+'&room_id='+urlencode(ActiveRoomId)+'&nickname_id='+urlencode(nickname_id)+'&stealth_mode='+urlencode(stealth_mode)+'&password='+urlencode(base64encode(password)));
     }
   } catch (e) {
     toggleProgressBar(true);
@@ -903,15 +862,13 @@ function enterChatRoom(nickname_id, password, room_id) {
 }
 function _CALLBACK_enterChatRoom() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  switch (status) {
-    case  '-1':
+  switch (actionHandler.status) {
+    case  -1:
       // Session is invalid
       document.location.href=formlink+'?session_timeout';
       return false;
     break;
-    case '0':
+    case 0:
       // Room changed. Load room page.
       SkipPageUnloadedMsg=true;
       $('dummyform').s_id.value=s_id;
@@ -920,15 +877,15 @@ function _CALLBACK_enterChatRoom() {
       $('dummyform').submit();
       return false;
     break;
-    case '400':
+    case 400:
       // Error: Room does not exists
-      alert(message);
+      alert(actionHandler.message);
       getRoomStructure();
       clearCategoryRooms();
     break;
     default:
       // Other error
-      alert(message);
+      alert(actionHandler.message);
     break;
   }
   // Reset window status resolution
@@ -1022,22 +979,21 @@ function hideNicknameForm() {
  */
 function changeEmailVisibility() {
   flushDisplay();
-  sendData('_CALLBACK_changeEmailVisibility()', formlink, 'POST', 'ajax='+urlencode('change_email_visibility')+'&s_id='+urlencode(s_id)+'&hide_email='+urlencode(hideEmail? '0' : '1')+'&profile_user_id='+urlencode(profileUserId));
+  sendData('_CALLBACK_changeEmailVisibility()', formlink, 'POST', 'ajax=change_email_visibility&s_id='+urlencode(s_id)+'&hide_email='+urlencode(hideEmail? '0' : '1')+'&profile_user_id='+urlencode(profileUserId));
 }
 function _CALLBACK_changeEmailVisibility() {
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  switch (status) {
-    case  '-1':
+  toggleProgressBar(false);
+  switch (actionHandler.status) {
+    case  -1:
       // Session is invalid
       document.location.href=formlink+'?session_timeout';
       return false;
     break;
-    case '0':
+    case 0:
       // Data changed
-      alert(message);
+      alert(actionHandler.message);
       flushDisplay();
-      if (actionHandler.getCdata('hide_email')=='1') {
+      if (actionHandler.data['hide_email'][0]=='1') {
         hideEmail=true;
         $('hide_email_span').innerHTML=htmlspecialchars(getLng('yes'));
       } else {
@@ -1047,11 +1003,9 @@ function _CALLBACK_changeEmailVisibility() {
     break;
     default:
       // An error occured
-      alert(message);
+      alert(actionHandler.message);
     break;
   }
-  // Reset window status resolution
-  toggleProgressBar(false);
 }
 
 
@@ -1067,53 +1021,46 @@ function updateUserdataField(field, init_val) {
     if (new_val!=null) {
       // Store new age
       new_val=trimString(new_val).substring(0, 255);
-      sendData('_CALLBACK_updateUserdataField()', formlink, 'POST', 'ajax='+urlencode('update_userdata')+'&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId)+'&'+field+'='+urlencode(new_val));
+      sendData('_CALLBACK_updateUserdataField()', formlink, 'POST', 'ajax=update_userdata&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId)+'&'+field+'='+urlencode(new_val));
     }
   }
 }
 function _CALLBACK_updateUserdataField() {
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  var homepage='';
+  switch (actionHandler.status) {
 
-  switch (status) {
-
-    case  '-1':
+    case  -1:
       // Session is invalid
       document.location.href=formlink+'?session_timeout';
       return false;
     break;
 
-    case '0':
+    case 0:
       // Data updated
       flushDisplay();
 
-      homepage=actionHandler.getCdata('homepage', null, 0, '');
-      if (homepage!='') {
-        $('homepage_span').innerHTML='<a href="'+formlink+'?external_url='+urlencode(homepage)+'" title="'+htmlspecialchars(homepage)+'" target="_blank">'+htmlspecialchars(homepage)+'</a>';
-        currentProfileHomepage=homepage;
+      if (actionHandler.data['homepage'][0]!='') {
+        $('homepage_span').innerHTML='<a href="'+formlink+'?external_url='+urlencode(actionHandler.data['homepage'][0])+'" title="'+htmlspecialchars(actionHandler.data['homepage'][0])+'" target="_blank">'+htmlspecialchars(actionHandler.data['homepage'][0])+'</a>';
+        currentProfileHomepage=actionHandler.data['homepage'][0];
       } else {
         $('homepage_span').innerHTML='&nbsp;';
       }
-      $('age_span').innerHTML=htmlspecialchars(actionHandler.getCdata('age', null, 0, ''));
-      $('icq_span').innerHTML=htmlspecialchars(actionHandler.getCdata('icq', null, 0, ''));
-      $('msn_span').innerHTML=htmlspecialchars(actionHandler.getCdata('msn', null, 0, ''));
-      $('aim_span').innerHTML=htmlspecialchars(actionHandler.getCdata('aim', null, 0, ''));
-      $('yim_span').innerHTML=htmlspecialchars(actionHandler.getCdata('yim', null, 0, ''));
-      $('location_span').innerHTML=htmlspecialchars(actionHandler.getCdata('location', null, 0, ''));
-      $('occupation_span').innerHTML=htmlspecialchars(actionHandler.getCdata('occupation', null, 0, ''));
-      $('interests_span').innerHTML=htmlspecialchars(actionHandler.getCdata('interests', null, 0, ''));
+      $('age_span').innerHTML=htmlspecialchars(actionHandler.data['age'][0]);
+      $('icq_span').innerHTML=htmlspecialchars(actionHandler.data['icq'][0]);
+      $('msn_span').innerHTML=htmlspecialchars(actionHandler.data['msn'][0]);
+      $('aim_span').innerHTML=htmlspecialchars(actionHandler.data['aim'][0]);
+      $('yim_span').innerHTML=htmlspecialchars(actionHandler.data['yim'][0]);
+      $('location_span').innerHTML=htmlspecialchars(actionHandler.data['location'][0]);
+      $('occupation_span').innerHTML=htmlspecialchars(actionHandler.data['occupation'][0]);
+      $('interests_span').innerHTML=htmlspecialchars(actionHandler.data['interests'][0]);
       // Display gender image
-      currentProfileGender=actionHandler.getCdata('gender', null, 0, '-');
+      currentProfileGender=actionHandler.data['gender'][0];
       showGenderImage();
-      alert(message);
+      alert(actionHandler.message);
     break;
 
     default:
       // An error occured
-      if (message!=null) {
-        alert(message);
-      }
+      alert(actionHandler.message);
     break;
 
   }
@@ -1126,7 +1073,7 @@ function _CALLBACK_updateUserdataField() {
  */
 function updateGender(gender) {
   flushDisplay();
-  sendData('_CALLBACK_updateUserdataField()', formlink, 'POST', 'ajax='+urlencode('update_userdata')+'&s_id='+urlencode(s_id)+'&gender='+urlencode(gender)+'&profile_user_id='+urlencode(profileUserId));
+  sendData('_CALLBACK_updateUserdataField()', formlink, 'POST', 'ajax=update_userdata&s_id='+urlencode(s_id)+'&gender='+urlencode(gender)+'&profile_user_id='+urlencode(profileUserId));
   return false;
 }
 
@@ -1136,7 +1083,7 @@ function updateGender(gender) {
  * @param   int   id    Nickname ID
  */
 function setDefaultNickname(id) {
-  sendData('toggleProgressBar(false)', formlink, 'POST', 'ajax='+urlencode('set_default_nickname')+'&s_id='+urlencode(s_id)+'&nickname_id='+urlencode(id)+'&profile_user_id='+urlencode(profileUserId));
+  sendData('toggleProgressBar(false)', formlink, 'POST', 'ajax=set_default_nickname&s_id='+urlencode(s_id)+'&nickname_id='+urlencode(id)+'&profile_user_id='+urlencode(profileUserId));
 }
 
 
@@ -1145,7 +1092,7 @@ function setDefaultNickname(id) {
  * @param   int   id    Avatar ID
  */
 function setPrimaryAvatar(id) {
-  sendData('toggleProgressBar(false)', formlink, 'POST', 'ajax='+urlencode('set_primary_avatar')+'&s_id='+urlencode(s_id)+'&avatar_id='+urlencode(id)+'&profile_user_id='+urlencode(profileUserId));
+  sendData('toggleProgressBar(false)', formlink, 'POST', 'ajax=set_primary_avatar&s_id='+urlencode(s_id)+'&avatar_id='+urlencode(id)+'&profile_user_id='+urlencode(profileUserId));
 }
 
 
@@ -1155,82 +1102,62 @@ function setPrimaryAvatar(id) {
 function getMemberData() {
   if (isAdmin) {
     toggleProgressBar(true);
-    ajaxMember.sendData('_CALLBACK_getMemberData()', 'POST', formlink, 'ajax='+urlencode('get_member_data')+'&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId), true);
+    ajaxMember.sendData('_CALLBACK_getMemberData()', 'POST', formlink, 'ajax=get_member_data&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId), true);
   }
 }
 function _CALLBACK_getMemberData() {
 //debug(ajaxMember.getResponseString()); return false;
-  var message=ajaxMember.getCdata('message');
-  var status=ajaxMember.getCdata('status');
-  var member_data=null;
-  var category_nr=0;
-  var category_name='';
   var category_names=new Array();
-  var room_nr=0;
-  var room_name='';
   var room_names=new Array();
 
-  switch (status) {
+  if (ajaxMember.status==-1) {
+    // Session is invalid
+    document.location.href=formlink+'?session_timeout';
+    return false;
+  }
 
-    case  '-1':
-      // Session is invalid
-      document.location.href=formlink+'?session_timeout';
-      return false;
-    break;
-
-    case '1':
-      // Error
-      alert(message);
-      window.close();
-    break;
-
-    case '0':
-      // OK
-      if (null!=(member_data=ajaxMember.getElement('member_data', 0))) {
-        // Username (login)
-        $('member_username').innerHTML=htmlspecialchars(ajaxMember.getCdata('login', 0, member_data));
-        // Level
-        if ('1'==ajaxMember.getCdata('is_admin', 0, member_data)) {
-          // "Admin" level
-          $('member_level_name').innerHTML=htmlspecialchars(getLng('admin'));
-          $('member_level_id').value='a';
-        } else if ('1'==ajaxMember.getCdata('is_registered', 0, member_data)) {
-          // "Registered user" level
-          $('member_level_id').value='r';
-          $('member_level_name').innerHTML=htmlspecialchars(getLng('registered'));
-        } else {
-          // Guest
-          $('member_level_id').value='g';
-          $('member_level_name').innerHTML=htmlspecialchars(getLng('guest'));
-        }
-        // Moderated categories
-        while (null!=(category_name=ajaxMember.getCdata('moderated_category', category_nr++, member_data))) {
-          category_names.push(category_name);
-        }
-        if (category_names.length) {
-          $('member_moderated_categories').innerHTML=htmlspecialchars('"'+category_names.join('", "')+'"');
-        } else {
-          $('member_moderated_categories').innerHTML='-';
-        }
-        // Moderated rooms
-        while (null!=(room_name=ajaxMember.getCdata('moderated_room', room_nr++, member_data))) {
-          room_names.push(room_name);
-        }
-        if (room_names.length) {
-          $('member_moderated_rooms').innerHTML=htmlspecialchars('"'+room_names.join('", "')+'"');
-        } else {
-          $('member_moderated_rooms').innerHTML='-';
-        }
-        // Activated?
-        if ('1'!=ajaxMember.getCdata('activated', 0, member_data)) {
-          // No
-          $('member_not_activated_row').style.display='';
-        }
-      } else {
-        window.close();
-      }
-    break;
-
+  // Username (login)
+  $('member_username').innerHTML=htmlspecialchars(ajaxMember.data['member_data'][0]['login'][0]);
+  // Level
+  if ('1'==ajaxMember.data['member_data'][0]['is_admin'][0]) {
+    // "Admin" level
+    $('member_level_name').innerHTML=htmlspecialchars(getLng('admin'));
+    $('member_level_id').value='a';
+  } else if ('1'==ajaxMember.data['member_data'][0]['is_registered'][0]) {
+    // "Registered user" level
+    $('member_level_id').value='r';
+    $('member_level_name').innerHTML=htmlspecialchars(getLng('registered'));
+  } else {
+    // Guest
+    $('member_level_id').value='g';
+    $('member_level_name').innerHTML=htmlspecialchars(getLng('guest'));
+  }
+  // Moderated categories
+  if (typeof(ajaxMember.data['member_data'][0]['moderated_category'])!='undefined') {
+    for (i=0; i<ajaxMember.data['member_data'][0]['moderated_category'].length; i++) {
+      category_names.push(ajaxMember.data['member_data'][0]['moderated_category'][i]);
+    }
+  }
+  if (category_names.length) {
+    $('member_moderated_categories').innerHTML=htmlspecialchars('"'+category_names.join('", "')+'"');
+  } else {
+    $('member_moderated_categories').innerHTML='-';
+  }
+  // Moderated rooms
+  if (typeof(ajaxMember.data['member_data'][0]['moderated_room'])!='undefined') {
+    for (i=0; i<ajaxMember.data['member_data'][0]['moderated_room'].length; i++) {
+      room_names.push(ajaxMember.data['member_data'][0]['moderated_room'][i]);
+    }
+  }
+  if (room_names.length) {
+    $('member_moderated_rooms').innerHTML=htmlspecialchars('"'+room_names.join('", "')+'"');
+  } else {
+    $('member_moderated_rooms').innerHTML='-';
+  }
+  // Activated?
+  if ('1'!=ajaxMember.data['member_data'][0]['activated'][0]) {
+    // No
+    $('member_not_activated_row').style.display='';
   }
   toggleProgressBar(false);
 }
@@ -1275,25 +1202,21 @@ function setMemberLevel() {
       return false;
     } else if (confirm(getLng('sure_change_user_level')) && confirm(getLng('really_sure'))) {
       toggleProgressBar(true);
-      ajaxMember.sendData('_CALLBACK_setMemberLevel()', 'POST', formlink, 'ajax='+urlencode('set_user_level')+'&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId)+'&level='+urlencode(new_level), true);
+      ajaxMember.sendData('_CALLBACK_setMemberLevel()', 'POST', formlink, 'ajax=set_user_level&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId)+'&level='+urlencode(new_level), true);
     }
     hideMemberLevelForm();
   }
 }
 function _CALLBACK_setMemberLevel() {
-  var message=ajaxMember.getCdata('message');
-  var status=ajaxMember.getCdata('status');
-  switch (status) {
-    case  '-1':
+  switch (ajaxMember.status) {
+    case  -1:
       // Session is invalid
       document.location.href=formlink+'?session_timeout';
       return false;
     break;
     default:
-      if (message!=null) {
-        alert(message);
-        getMemberData();
-      }
+      alert(ajaxMember.message);
+      getMemberData();
     break;
   }
 }
@@ -1307,31 +1230,27 @@ function deleteUser() {
     alert(getLng('delete_yourself_error'));
   } else if (confirm(getLng('sure_delete_user')) && confirm(getLng('really_sure'))) {
     toggleProgressBar(true);
-    ajaxMember.sendData('_CALLBACK_deleteUser()', 'POST', formlink, 'ajax='+urlencode('delete_user')+'&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId), true);
+    ajaxMember.sendData('_CALLBACK_deleteUser()', 'POST', formlink, 'ajax=delete_user&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId), true);
   }
 }
 function _CALLBACK_deleteUser() {
-  var message=ajaxMember.getCdata('message');
-  var status=ajaxMember.getCdata('status');
-  switch (status) {
-    case  '-1':
+  switch (ajaxMember.status) {
+    case  -1:
       // Session is invalid
       document.location.href=formlink+'?session_timeout';
       return false;
     break;
-    case  '0':
+    case  0:
       // User deleted
-      alert(message);
+      alert(ajaxMember.message);
       try {
         $('memberlist_search_button', window.opener.document).click();
       } catch (e) {}
       window.close();
     break;
     default:
-      if (message!=null) {
-        alert(message);
-        getMemberData();
-      }
+      alert(ajaxMember.message);
+      getMemberData();
     break;
   }
 }
@@ -1369,21 +1288,19 @@ function showAvatarGallery() {
 function activateUser() {
   if (confirm(getLng('sure_activate_account')) && confirm(getLng('really_sure'))) {
     toggleProgressBar(true);
-    ajaxMember.sendData('_CALLBACK_activateUser()', 'POST', formlink, 'ajax='+urlencode('activate_user')+'&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId), true);
+    ajaxMember.sendData('_CALLBACK_activateUser()', 'POST', formlink, 'ajax=activate_user&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId), true);
   }
 }
 function _CALLBACK_activateUser() {
-  var message=ajaxMember.getCdata('message');
-  var status=ajaxMember.getCdata('status');
-  switch (status) {
-    case  '-1':
+  switch (ajaxMember.status) {
+    case  -1:
       // Session is invalid
       document.location.href=formlink+'?session_timeout';
       return false;
     break;
-    case  '0':
+    case  0:
       // Account activated
-      alert(message);
+      alert(ajaxMember.message);
       window.location.reload();
       toggleProgressBar(false);
     break;

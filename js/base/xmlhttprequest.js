@@ -19,135 +19,193 @@
  * name of the root XML element
  * @var string
  */
-var rootXmlElementName='pcpin_xml';
-
-/**
- * XMLHttpRequest handler array
- * @var object
- */
-var reqHandler=new Array();
-var reqHandlerLen=0;
-
-/**
- * HTTP response status code
- * @var object
- */
-var reqHttpStatusCode=new Array();
-
-/**
- * HTTP response status text
- * @var object
- */
-var reqHttpStatusText=new Array();
-
-/**
- * HTTP response headers
- * @var object
- */
-var reqHttpHeaders=new Array();
-
-/**
- * HTTP response data as complete string
- * @var object
- */
-var reqResponseText=new Array();
-
-/**
- * HTTP response data as XML DOM object
- * @var object
- */
-var reqResponseXML=new Array();
-
-/**
- * The function name to call after request is completed
- * @var object
- */
-var reqCallBackFunc=new Array();
+var rootXmlElementName='pcpin';
 
 
 /**
- * XMLHttpRequest.readyState change handler
- * Stores the HTTP response code returned by last transaction
- * @param   int       rn          Number of XMLHttpRequest handler in global reqHandler array
- * @param   boolean   useState    If false, no action will be performed but status monitor change
+ * Array containing XmlHttpRequest objects
+ * @var array
  */
-function reqStateHandlerTpl(rn, useState) {
-  var rh=reqHandler[rn];
-  switch (rh.readyState) {
-    case 0 :  // Uninitialised
-              break;
-    case 1 :  // Loading
-              // Update connection status
-              updateConnectionStatus(2, useState);
-              break;
-    case 2 :  // Headers loaded
-              break;
-    case 3 :  // Interactive
-              break;
-    case 4 :  // Completed
-              // Update connection status
-              updateConnectionStatus(0, useState);
-              if (useState) {
-                reqHttpStatusCode[rn]=rh.status;
-                reqHttpStatusText[rn]=rh.statusText;
-                reqHttpHeaders[rn]=rh.getAllResponseHeaders();
-                reqResponseText[rn]=rh.responseText;
-                // Is there already parsed DOMXML object?
-                try {
-                  if (rh.responseXML.firstChild==null) {
-                    // XML object is not created or not parsed
-                    // Throw an exception
-                    throw(1);
-                  } else {
-                    // Success
-                    reqResponseXML[rn]=rh.responseXML;
-                  }
-                }catch (e) {
-                  try {
-                    // Trying to create "MSXML2.DOMDocument" ActiveX object
-                    reqResponseXML[rn]=new ActiveXObject('MSXML2.DOMDocument');
-                    reqResponseXML[rn].async='false';
-                    reqResponseXML[rn].loadXML(reqResponseText[rn]);
-                  } catch (e) {
-                    try {
-                      // Trying "Microsoft.XMLDOM" ActiveX object
-                      reqResponseXML[rn]=new ActiveXObject('Microsoft.XMLDOM');
-                      reqResponseXML[rn].async='false';
-                      reqResponseXML[rn].loadXML(reqResponseText[rn]);
-                    } catch (e) {
-                      // Failed to initialize DOMXML object
-                      reqResponseXML[rn]=null;
-                    }
-                  }
-                }
-                if (typeof(reqCallBackFunc[rn])=='string' && reqCallBackFunc[rn]!='') {
-                  // Execute callback function
-                  eval(reqCallBackFunc[rn]);
-                }
-              }
-              break;
-  }
-}
+var XmlHttpRequestObjects=new Array();
+
+/**
+ * Array containing PCPIN XmlHttpRequest objects
+ * @var array
+ */
+var PCPIN_XmlHttpRequestObjects=new Array();
 
 
 
-
-
-
-function PCPIN_XmlHttpRequest() {
+/**
+ * PCPIN XmlHttpRequest object core
+ * @param   string      http_user       Optional. Username to use in HTTP authentication
+ * @param   string      http_pass       Optional. Password to use in HTTP authentication
+ */
+function PCPIN_XmlHttpRequest(http_user, http_pass) {
 
   /**
-   * Number of XMLHttpRequest handler in global reqHandler array
+   * Index for XmlHttpRequestObjects and PCPIN_XmlHttpRequestObjects arrays
    * @var int
    */
-  this.reqHandlerNr=reqHandlerLen++;
+  PCPIN_XmlHttpRequestObjects.push(this);
+  this.index=PCPIN_XmlHttpRequestObjects.length-1;
+
+  /**
+   * XMLHttpRequest handler
+   * @var object
+   */
+  XmlHttpRequestObjects[this.index]=null;
+
+  /**
+   * HTTP authentication username
+   * @var string
+   */
+  this.HttpAuthUser=typeof(http_user)=='string'? http_user : '';
+
+  /**
+   * HTTP authentication username
+   * @var string
+   */
+  this.HttpAuthPass=typeof(http_pass)=='string'? http_pass : '';
+
+  /**
+   * HTTP response status code
+   * @var int
+   */
+  this.HttpStatusCode=0;
+
+  /**
+   * HTTP response status text
+   * @var string
+   */
+  this.HttpStatusText='';
+
+  /**
+   * HTTP response headers
+   * @var string
+   */
+  this.HttpHeaders='';
+
+  /**
+   * HTTP response data as complete string
+   * @var string
+   */
+  this.ResponseText='';
+
+  /**
+   * HTTP response data as XML DOM object
+   * @var object
+   */
+  this.ResponseXML=null;
+
+  /**
+   * The function name to call after request is completed
+   * @var string
+   */
+  this.CallBackFunc='';
+
+  /**
+   * Service name parsed from XML response
+   * @var string
+   */
+  this.service='';
+
+  /**
+   * Status parsed from XML response
+   * @var int
+   */
+  this.status=0;
+
+  /**
+   * Status message parsed from XML response
+   * @var string
+   */
+  this.message='';
+
+  /**
+   * Data parsed from XML response
+   * @var array
+   */
+  this.data=new Array();
+
+
+  /**
+   * Reset XML response data
+   */
+  this.resetResponseData=function() {
+    if (XmlHttpRequestObjects[this.index]!=null) {
+      try {
+        XmlHttpRequestObjects[this.index].abort();
+      } catch (e) {}
+    }
+    this.createXMLHttpRequestObject();
+    this.HttpStatusCode=0;
+    this.HttpStatusText='';
+    this.HttpHeaders='';
+    this.ResponseText='';
+    this.ResponseXML=null;
+    this.service='';
+    this.status=-1;
+    this.message='Error: Invalid XML received!';
+    this.data=new Array();
+  }
+
+
+  /**
+   * Create new XMLHttpRequest object
+   */
+  this.createXMLHttpRequestObject=function() {
+    // Initialize XMLHttpRequest engine
+    XmlHttpRequestObjects[this.index]=null;
+    // Trying to initialize an ActiveX object
+    try {
+      // Newer Microsoft XMLHttpRequest object
+      XmlHttpRequestObjects[this.index]=new ActiveXObject('Msxml2.XMLHTTP');
+    } catch (e) {
+      XmlHttpRequestObjects[this.index]=null;
+      try {
+        // Older Microsoft XMLHttpRequest object
+        XmlHttpRequestObjects[this.index]=new ActiveXObject('Microsoft.XMLHTTP');
+      } catch (e) {
+        XmlHttpRequestObjects[this.index]=null;
+        try {
+          // Trying to initialize native XMLHttpRequest object
+          XmlHttpRequestObjects[this.index]=new XMLHttpRequest();
+        } catch (e) {
+          XmlHttpRequestObjects[this.index]=null;
+        }
+      }
+    }
+    // Define ReadyState trigger handler
+    if (XmlHttpRequestObjects[this.index]!=null) {
+      if (isIE) {
+        try {
+          // Internet Explorer only
+          eval('XmlHttpRequestObjects['+this.index+'].onreadystatechange=function() { PCPIN_XmlHttpRequestObjects['+this.index+'].readyStateHandler('+this.index+', true); return true; }');
+        } catch (e) {
+          XmlHttpRequestObjects[this.index]=null;
+        }
+      } else {
+        // Non-IE browsers
+        try {
+          eval('XmlHttpRequestObjects['+this.index+'].onprogress=function() { PCPIN_XmlHttpRequestObjects['+this.index+'].readyStateHandler('+this.index+', true); return true; }');
+          eval('XmlHttpRequestObjects['+this.index+'].onload=function() { PCPIN_XmlHttpRequestObjects['+this.index+'].readyStateHandler('+this.index+', true); return true; }');
+          eval('XmlHttpRequestObjects['+this.index+'].onreadystatechange=function() { PCPIN_XmlHttpRequestObjects['+this.index+'].readyStateHandler('+this.index+', false); return true; }');
+        } catch (e) {
+          // Could not set event handler.
+          XmlHttpRequestObjects[this.index]=null;
+        }
+      }
+    }
+  }
+
 
   /**
    * Activate the connection and make the request
    * @param   string      callBackFunc    Function name to call after completing the request.
-   *                                      If not empty, then request will be executed in asynchronous mode,
-   *                                      otherwise, the synchronous mode will be used.
-   * @param   string      method          HTTP request method (GET, POST ...)
+   *                                      If not empty, then request will be executed in asynchronous mode (doSync argument will be ignored),
+   *                                      otherwise, the mode will be set based on doSync argument value.
+   * @param   string      method          HTTP request method (GET, POST ...). Default is GET.
    * @param   string      reqUrl          Request URL
    * @param   string      overrideMime    If not empty, then overrides the mime type returned by the server
    * @param   string      data            Data string to send
@@ -155,42 +213,24 @@ function PCPIN_XmlHttpRequest() {
    *                                      undependant on callBackFunc parameter. Default is FALSE
    */
   this.sendXmlHttpRequest=function(callBackFunc, method, reqUrl, overrideMime, data, doSync) {
-    var http_user=HttpAuthUser;
-    var http_pass=HttpAuthPass;
+    // Reset response data
+    this.resetResponseData();
     var requestType;
     if (typeof(doSync)!='boolean') {
       doSync=false;
     }
-
-    reqHandler[this.reqHandlerNr]=null;
-    reqHttpStatusCode[this.reqHandlerNr]=0;
-    reqHttpStatusText[this.reqHandlerNr]='';
-    reqHttpHeaders[this.reqHandlerNr]='';
-    reqResponseText[this.reqHandlerNr]='';
-    reqResponseXML[this.reqHandlerNr]=null;
-
     if (typeof(callBackFunc)=='string' && callBackFunc!='') {
       requestType=true; // asynchronous request mode
-      reqCallBackFunc[this.reqHandlerNr]=callBackFunc;
+      this.CallBackFunc=callBackFunc;
     } else {
       requestType=false; // synchronous request mode
-      reqCallBackFunc[this.reqHandlerNr]='';
+      this.CallBackFunc='';
     }
     if (doSync) {
       requestType=false;
     }
-    // Set defaults
-    if (typeof(http_user)!='string') {
-      http_user='';
-    }
-    if (typeof(http_pass)!='string') {
-      http_pass='';
-    }
-    // Request type
-    // Initialize XMLHttpRequest engine
-    reqHandler[this.reqHandlerNr]=this.XMLHttpRequestInit();
-    if (reqHandler[this.reqHandlerNr]!=null) {
-      if (typeof(method)!='string') {
+    if (XmlHttpRequestObjects[this.index]!=null) {
+      if (typeof(method)!='string' || method=='') {
         method='GET';
       } else {
         method=method.toUpperCase();
@@ -201,66 +241,17 @@ function PCPIN_XmlHttpRequest() {
       if (typeof(overrideMime)!='string') {
         overrideMime='';
       }
-      if (this.openConnection(method, reqUrl, overrideMime, requestType, http_user, http_pass)) {
+      if (this.openConnection(method, reqUrl, overrideMime, requestType)) {
         // POST method requires "Content-Type" header to be set
         if (method=='POST') {
-          reqHandler[this.reqHandlerNr].setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+          XmlHttpRequestObjects[this.index].setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         }
         // Update connection status
         updateConnectionStatus(1, true);
         // Send data
-        reqHandler[this.reqHandlerNr].send(data);
+        XmlHttpRequestObjects[this.index].send(data);
       }
     }
-  }
-
-
-  /**
-   * Initialize XMLHttpRequest object
-   * @return  mixed XMLHttpRequest object on success or null on error
-   */
-  this.XMLHttpRequestInit=function(){
-    var req=null;
-    if (isIE) {
-      // IE
-      // Trying to initialize an ActiveX object
-      try {
-        // Newer Microsoft XMLHttpRequest object
-        req=new ActiveXObject('Msxml2.XMLHTTP');
-      } catch (e) {
-        try {
-          // Older Microsoft XMLHttpRequest object
-          req=new ActiveXObject('Microsoft.XMLHTTP');
-        } catch (e) {
-          // Failed to initialize XMLHttpRequest object
-          return null;
-        }
-      }
-    } else {
-      // Not IE
-      try {
-        // Trying to initialize native XMLHttpRequest object
-        req=new XMLHttpRequest();
-      } catch (e) { }
-    }
-    // Define ReadyState trigger handler
-    if (isIE) {
-      try {
-        // Internet Explorer only
-        eval('req.onreadystatechange=function() { reqStateHandlerTpl('+this.reqHandlerNr+', true); return true; }');
-      } catch (e) { }
-    } else {
-      // Non-IE browsers
-      try {
-        eval('req.onprogress=function() { reqStateHandlerTpl('+this.reqHandlerNr+', true); return true; }');
-        eval('req.onload=function() { reqStateHandlerTpl('+this.reqHandlerNr+', true); return true; }');
-        eval('req.onreadystatechange=function() { reqStateHandlerTpl('+this.reqHandlerNr+', false); return true; }');
-      } catch (e) {
-        // Could not set event handler.
-        req=null;
-      }
-    }
-    return req;
   }
 
 
@@ -271,29 +262,21 @@ function PCPIN_XmlHttpRequest() {
    * @param   string      overrideMime    If not empty, then overrides the mime type returned by the server
    * @param   boolean     request_type    Whether the request is made asynchronously (true, the default)
    *                                      or synchronously (false)
-   * @param   string      http_user       Username to use in HTTP authentication
-   * @param   string      http_pass       Password to use in HTTP authentication
    * @return  boolen      true on success or false on error
    */
-  this.openConnection=function(method, reqUrl, overrideMime, request_type, http_user, http_pass) {
+  this.openConnection=function(method, reqUrl, overrideMime, request_type) {
     // Set defaults
-    if (typeof(request_type)=='undefined' || request_type!=true && request_type!=false) {
-      request_type=true; // Asynchronous connection
-    }
-    if (typeof(http_user)!='string') {
-      http_user='';
-    }
-    if (typeof(http_pass)!='string') {
-      http_pass='';
+    if (typeof(request_type)!='boolean') {
+      var request_type=true; // Asynchronous connection
     }
     // Initialize a connection
     try {
-      if (http_user=='') {
+      if (typeof(this.HttpAuthPass)!='string' || this.HttpAuthUser=='') {
         // Do not use HTTP authentication
-        reqHandler[this.reqHandlerNr].open(method, reqUrl, request_type);
+        XmlHttpRequestObjects[this.index].open(method, reqUrl, request_type);
       } else {
         // Connect using HTTP authentication
-        reqHandler[this.reqHandlerNr].open(method, reqUrl, request_type, http_user, http_pass);
+        XmlHttpRequestObjects[this.index].open(method, reqUrl, request_type, this.HttpAuthUser, this.HttpAuthPass);
       }
     } catch (e) {
       // An error occured
@@ -302,7 +285,7 @@ function PCPIN_XmlHttpRequest() {
     if (typeof(overrideMime)=='string' && overrideMime!='') {
       try {
         // Override the mime type returned by the server
-        reqHandler[this.reqHandlerNr].overrideMimeType(overrideMime);
+        XmlHttpRequestObjects[this.index].overrideMimeType(overrideMime);
       } catch (e) {}
     }
     return true;
@@ -336,98 +319,79 @@ function PCPIN_XmlHttpRequest() {
 
 
   /**
-   * Get element
-   * @param   string    elementName     Element name
-   * @param   int       elementNr       Element number
-   * @param   object    parentElement   Optional: parent element; if empty, then XML Response root element will be assumed
-   * @return  object
+   * XMLHttpRequest.readyState change handler
+   * Stores the HTTP response code returned by last transaction
+   * @param   boolean   useState    Optional. Default: TRUE. If FALSE, no action will be performed but status monitor change
    */
-  this.getElement=function(elementName, elementNr, parentElement) {
-    var Element=null;
-    if (typeof(elementName)=='string' && elementName!='') {
-      if (typeof(elementNr)!='number') {
-        elementNr=0;
-      }
-      try {
-        if (typeof(parentElement)!='object' || parentElement==null) {
-          parentElement=reqResponseXML[this.reqHandlerNr].getElementsByTagName(rootXmlElementName)[0];
-        }
-        for (var i=0; i<parentElement.childNodes.length; i++) {
-          if (parentElement.childNodes[i].nodeType==1 && parentElement.childNodes[i].nodeName==elementName) {
-            if (elementNr==0) {
-              Element=parentElement.childNodes[i];
-              break;
-            } else {
-              elementNr--;
-            }
-          }
-        }
-      } catch (e) {
-        Element=null;
-      }
+  this.readyStateHandler=function(index, useState) {
+    var rh=XmlHttpRequestObjects[index];
+    var prh=null;
+    if (useState) {
+      prh=PCPIN_XmlHttpRequestObjects[index];
     }
-    return Element;
+    if (typeof(useState)!='boolean') {
+      var useState=false;
+    }
+    switch (rh.readyState) {
+      case 0 :  // Uninitialised
+                break;
+      case 1 :  // Loading
+                // Update connection status
+                updateConnectionStatus(2, useState);
+                break;
+      case 2 :  // Headers loaded
+                break;
+      case 3 :  // Interactive
+                break;
+      case 4 :  // Completed
+                // Update connection status
+                updateConnectionStatus(0, useState);
+                if (useState) {
+                  prh.HttpStatusCode=rh.status;
+                  prh.HttpStatusText=rh.statusText;
+                  prh.HttpHeaders=rh.getAllResponseHeaders();
+                  prh.ResponseText=rh.responseText;
+                  // Is there already parsed DOMXML object?
+                  try {
+                    if (rh.responseXML.firstChild==null) {
+                      // XML object is not created or not parsed
+                      // Throw an exception
+                      throw(1);
+                    } else {
+                      // Success
+                      prh.ResponseXML=rh.responseXML;
+                    }
+                  } catch (e) {
+                    try {
+                      // Trying to create "MSXML2.DOMDocument" ActiveX object
+                      prh.ResponseXML=new ActiveXObject('MSXML2.DOMDocument');
+                      prh.ResponseXML.async='false';
+                      prh.ResponseXML.loadXML(prh.ResponseText);
+                    } catch (e) {
+                      try {
+                        // Trying "Microsoft.XMLDOM" ActiveX object
+                        prh.ResponseXML=new ActiveXObject('Microsoft.XMLDOM');
+                        prh.ResponseXML.async='false';
+                        prh.ResponseXML.loadXML(prh.ResponseText);
+                      } catch (e) {
+                        // Failed to initialize DOMXML object
+                        prh.ResponseXML=null;
+                      }
+                    }
+                  }
+                  if (prh.ResponseXML!=null) {
+                    prh.parse();
+                  }
+                  if (typeof(prh.CallBackFunc)=='string' && prh.CallBackFunc!='') {
+                    // Execute callback function
+                    eval(prh.CallBackFunc);
+                  }
+                }
+                break;
+    }
+    return true;
   }
 
-
-  /**
-   * Get element's CDATA value
-   * @param   string  elementName     Element name
-   * @param   int     elementNr       Element number
-   * @param   object  parentElement   Optional: parent element; if empty, then XML Response root element will be assumed
-   * @param   string  defaultValue    Optional: if element does not exists or has no CDATA, then this value will be returned
-   * @return  string  CDATA or NULL if requested element does not exists
-   */
-  this.getCdata=function(elementName, elementNr, parentElement, defaultValue) {
-    var Cdata=null;
-    if (typeof(elementName)=='string' && elementName!='') {
-      if (typeof(elementNr)!='number') {
-        elementNr=0;
-      }
-      try {
-        if (typeof(parentElement)!='object' || parentElement==null) {
-          parentElement=reqResponseXML[this.reqHandlerNr].getElementsByTagName(rootXmlElementName)[0];
-        }
-        var myElement=this.getElement(elementName, elementNr, parentElement);
-        for (var i=0; i<myElement.childNodes.length; i++) {
-          if (myElement.childNodes[i].nodeType==3 || myElement.childNodes[i].nodeType==4) {
-            if (Cdata!=null) {
-              Cdata+=myElement.childNodes[i].nodeValue;
-            } else {
-              Cdata=myElement.childNodes[i].nodeValue;
-            }
-          }
-        }
-      } catch (e) {
-        Cdata=null;
-      }
-    }
-    if (Cdata==null && typeof(defaultValue)=='string') {
-      Cdata=defaultValue;
-    }
-    return Cdata;
-  }
-
-  /**
-   * Count elements
-   * @param   string  elementName     Element name
-   * @param   object  parentElement   Optional: parent element; if empty, then XML Response root element will be assumed
-   * @return  int
-   */
-  this.countElements=function(elementName, parentElement) {
-    elementsCount=0;
-    try {
-      if (typeof(parentElement)!='object' || parentElement==null) {
-        parentElement=reqResponseXML[this.reqHandlerNr].getElementsByTagName(rootXmlElementName)[0];
-      }
-      for (var i=0; i<parentElement.childNodes.length; i++) {
-        if (parentElement.childNodes[i].nodeType==1 && parentElement.childNodes[i].nodeName==elementName) {
-          elementsCount++;
-        }
-      }
-    } catch (e) {}
-    return elementsCount;
-  }
 
   /**
    * Get complete XML response object
@@ -435,7 +399,7 @@ function PCPIN_XmlHttpRequest() {
    */
   this.getXML=function() {
     try {
-      return reqResponseXML[this.reqHandlerNr];
+      return this.ResponseXML;
     } catch (e) {
       return null;
     }
@@ -448,12 +412,129 @@ function PCPIN_XmlHttpRequest() {
    */
   this.getResponseString=function() {
     try {
-      return reqResponseText[this.reqHandlerNr];
+      return this.ResponseText;
     } catch (e) {
       return '';
     }
   }
 
+  /**
+   * Parsed DOM XML and set object properties
+   * @return  boolean   TRUE on success or FALSE on any error
+   */
+  this.parse=function() {
+    var xml=this.getXML();
+    var root=null;
+    var header=null;
+    var service=null;
+    var status=null;
+    var message=null;
+    var data=null;
+    if (xml) {
+      root=xml.getElementsByTagName(rootXmlElementName);
+      if (root.length==1) {
+        root=root[0];
+        // <header>
+        header=root.getElementsByTagName('header');
+        if (header.length) {
+          header=header[0];
+          service=header.getElementsByTagName('service');
+          if (service.length) this.service=this.getCdata(service[0], false);
+          status=header.getElementsByTagName('status');
+          if (status.length) this.status=stringToNumber(this.getCdata(status[0], false));
+          message=header.getElementsByTagName('message');
+          if (message.length) this.message=this.getCdata(message[0], false);
+        }
+        // <data>
+        data=root.getElementsByTagName('data');
+        if (data.length) this.data=this.parseXMLToArray(data[0], 0);
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
 
 
+  /**
+   * Convert DOM XML to an array
+   * @param   object    node    DOM node
+   * @return  array
+   */
+  this.parseXMLToArray=function(node, level) {
+    var out=new Array();
+    var child=null;
+    var has_cdata=null;
+    var cdata=null;
+    var use=false;
+    var tmp=null;
+    try {
+      if (node.childNodes.length>0) {
+        for (var i=0; i<node.childNodes.length; i++) {
+          child=node.childNodes[i];
+          if (child.nodeType==1) {
+            has_cdata=false;
+            level++;
+            tmp=this.parseXMLToArray(child, level);
+            if (typeof(out[child.nodeName])=='undefined') {
+              out[child.nodeName]=new Array();
+            }
+            use=(typeof(tmp)=='string');
+            if (!use) {
+              for (var iii in tmp) {
+                use=true;
+                break;
+              }
+            }
+            if (use) {
+              out[child.nodeName].push(tmp);
+            }
+            level--;
+          } else if (has_cdata==null && child.nodeType==4) {
+            has_cdata=true;
+          }
+        }
+        if (has_cdata==true && null!=(cdata=this.getCdata(node))) {
+          out=cdata;
+        }
+      }
+    } catch (e) {}
+    return out;
+  }
+
+
+  /**
+   * Parse CDATA contents
+   * @param     object    node        Node
+   * @return string
+   */
+  this.getCdata=function(node) {
+    var cdata=null;
+    try {
+      var cdata_replaces_count=0;
+      var cdata_replaced_from=0;
+      var cdata_replaced_to=0;
+      for (var i=0; i<node.childNodes.length; i++) {
+        if (node.childNodes[i].nodeType==4) {
+          cdata=node.childNodes[i].nodeValue;
+          break;
+        }
+      }
+      if (cdata!=null && cdata.length>0) {
+        cdata_replaces_count=stringToNumber(node.getAttribute('cdata_replaces_count'));
+        if (cdata_replaces_count>0) {
+          cdata_replaced_from=node.getAttribute('cdata_replaced_from');
+          cdata_replaced_to=node.getAttribute('cdata_replaced_to');
+          if (cdata_replaced_from!=null && cdata_replaced_from!='' && cdata_replaced_to!=null && cdata_replaced_to!='') {
+            cdata=cdata.split(cdata_replaced_to, cdata_replaces_count+1).join(cdata_replaced_from);
+          }
+        }
+      }
+    } catch (e) {}
+    return cdata;
+  }
+
+
+  // Create new XMLHttpRequest object
+  this.createXMLHttpRequestObject();
 }

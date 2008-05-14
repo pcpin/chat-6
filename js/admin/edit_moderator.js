@@ -62,33 +62,23 @@ function initEditModeratorWindow() {
 function getRoomStructure() {
   CategoryTree=new Array();
   $('categories_and_rooms').innerHTML='&nbsp;';
-  sendData('_CALLBACK_getRoomStructure()', formlink, 'POST', 'ajax='+urlencode('get_room_structure')+'&s_id='+urlencode(s_id), true);
+  sendData('_CALLBACK_getRoomStructure()', formlink, 'POST', 'ajax=get_room_structure&s_id='+urlencode(s_id), true);
 }
 function _CALLBACK_getRoomStructure() {
-//debug(actionHandler.getResponseString());
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  var cats=null;
-  var additional_data=null;
-  switch (status) {
-
-    case  '-1':
+//debug(actionHandler.getResponseString()); return false;
+  switch (actionHandler.status) {
+    case  -1:
       // Session is invalid
       document.location.href=formlink+'?session_timeout';
       return false;
     break;
-
-    case '0':
+    case 0:
       // Success
-      // Get categories
-      if (null!=(cats=actionHandler.getElement('categories'))) {
-        // Make category tree
-        makeCategoryTree(cats);
-        // Display category tree
-        displayCategories();
-      }
+      // Make category tree
+      makeCategoryTree(actionHandler.data['category']);
+      // Display category tree
+      displayCategories();
     break;
-
   }
   toggleProgressBar(false);
 }
@@ -99,55 +89,63 @@ function _CALLBACK_getRoomStructure() {
  * @return  array
  */
 function makeCategoryTree(cats) {
-  var cat=null;
-  var cat_nr=0;
   var cat_id=0;
   var cat_parent_id=0;
   var room=null;
   var room_nr=0;
   var room_id=0;
+  var user_nr=0;
+  var user=null;
+  var user_id=0;
   if (cats) {
-    while (cat=actionHandler.getElement('category', cat_nr++, cats)) {
+    for (var cat_nr=0; cat_nr<cats.length; cat_nr++) {
+      cat_id=stringToNumber(cats[cat_nr]['id'][0]);
+      cat_parent_id=stringToNumber(cats[cat_nr]['parent_id'][0]);
       // Add category to the global array
-      cat_id=stringToNumber(actionHandler.getCdata('id', 0, cat));
-      cat_parent_id=actionHandler.getCdata('parent_id', 0, cat);
-      if (cat_parent_id!=null) {
-        cat_parent_id=stringToNumber(cat_parent_id);
-      }
       CategoryTree[cat_id]=new Array();
+      CategoryTree[cat_id]['id']=cat_id;
       CategoryTree[cat_id]['parent_id']=cat_parent_id;
-      CategoryTree[cat_id]['name']=actionHandler.getCdata('name', 0, cat);
-      CategoryTree[cat_id]['description']=actionHandler.getCdata('description', 0, cat, '');
-      CategoryTree[cat_id]['creatable_rooms']=actionHandler.getCdata('creatable_rooms', 0, cat)=='1';
+      CategoryTree[cat_id]['name']=cats[cat_nr]['name'][0];
+      CategoryTree[cat_id]['description']=cats[cat_nr]['description'][0];
+      CategoryTree[cat_id]['creatable_rooms']=cats[cat_nr]['creatable_rooms'][0]=='1';
       CategoryTree[cat_id]['children']=new Array();
       CategoryTree[cat_id]['child_ids']=new Array();
       CategoryTree[cat_id]['rooms']=new Array();
       CategoryTree[cat_id]['rooms_local']=0;
       CategoryTree[cat_id]['rooms_total']=0;
-      if (CategoryTree[cat_id]['parent_id']!=null) {
+      CategoryTree[cat_id]['users_total']=0;
+      if (cat_parent_id!=-1) {
         // Make a reference
-        CategoryTree[CategoryTree[cat_id]['parent_id']]['children'][cat_id]=CategoryTree[cat_id];
+        CategoryTree[cat_parent_id]['children'][cat_id]=CategoryTree[cat_id];
       }
       // Get child categories
-      makeCategoryTree(actionHandler.getElement('categories', 0, cat));
+      if (cats[cat_nr]['category'].length) {
+        makeCategoryTree(cats[cat_nr]['category']);
+      }
       // Get rooms
-      room_nr=0;
-      while (room=actionHandler.getElement('room', room_nr++, cat)) {
-        room_id=actionHandler.getCdata('id', 0, room);
+      for (room_nr=0; room_nr<cats[cat_nr]['room'].length; room_nr++) {
+        room=cats[cat_nr]['room'][room_nr];
+        room_id=stringToNumber(room['id'][0]);
         CategoryTree[cat_id]['rooms'][room_id]=new Array();
-        CategoryTree[cat_id]['rooms'][room_id]['password_protected']='0'!=actionHandler.getCdata('password_protected', 0, room);
-        CategoryTree[cat_id]['rooms'][room_id]['name']=actionHandler.getCdata('name', 0, room);
-        CategoryTree[cat_id]['rooms'][room_id]['description']=actionHandler.getCdata('description', 0, room, '');
+        CategoryTree[cat_id]['rooms'][room_id]['id']=room_id;
+        CategoryTree[cat_id]['rooms'][room_id]['password_protected']='0'!=room['password_protected'][0];
+        CategoryTree[cat_id]['rooms'][room_id]['name']=room['name'][0];
+        CategoryTree[cat_id]['rooms'][room_id]['description']=room['description'][0];
+        CategoryTree[cat_id]['rooms'][room_id]['moderated_by_me']='1'==room['moderated_by_me'][0];
+        CategoryTree[cat_id]['rooms'][room_id]['users']=new Array();
+        CategoryTree[cat_id]['rooms'][room_id]['users_total']=0;
         CategoryTree[cat_id]['rooms_local']++;
         CategoryTree[cat_id]['rooms_total']++;
       }
-      // Save child categories' IDs and rooms counters
+      // Save child categories' IDs and rooms/users counters
       for (var i in CategoryTree[cat_id]['children']) {
         CategoryTree[cat_id]['child_ids'][CategoryTree[cat_id]['child_ids'].length]=i;
         CategoryTree[cat_id]['rooms_total']+=CategoryTree[cat_id]['children'][i]['rooms_total'];
-        if (CategoryTree[cat_id]['parent_id']!=null) {
+        CategoryTree[cat_id]['users_total']+=CategoryTree[cat_id]['children'][i]['users_total'];
+        if (CategoryTree[cat_id]['parent_id']!=-1) {
           CategoryTree[CategoryTree[cat_id]['parent_id']]['child_ids'][CategoryTree[CategoryTree[cat_id]['parent_id']]['child_ids'].length]=i;
           CategoryTree[cat_id]['parent_id']['rooms_total']+=CategoryTree[cat_id]['rooms_total'];
+          CategoryTree[cat_id]['parent_id']['users_total']+=CategoryTree[cat_id]['users_total'];
         }
       }
     }
@@ -260,7 +258,7 @@ function moderatorSearchUser() {
   autoShowSingleUserForm=true;
   Users=new Array();
   $('nickname_search').value=trimString($('nickname_search').value);
-  sendData('_CALLBACK_getMemberlist()', formlink, 'POST', 'ajax='+urlencode('get_memberlist')
+  sendData('_CALLBACK_getMemberlist()', formlink, 'POST', 'ajax=get_memberlist'
                                                          +'&s_id='+urlencode(s_id)
                                                          +'&sort_by=1'
                                                          +'&sort_dir=0'
@@ -269,28 +267,27 @@ function moderatorSearchUser() {
 }
 function _CALLBACK_getMemberlist() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
   var members=null;
   var member_nr=0;
   var user_id=0;
   var nickname='';
   var users_count=0;
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.close();
     opener.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (status=='0' && null!=(members=actionHandler.getElement('members', 0))) {
-      while (member=actionHandler.getElement('member', member_nr++, members)) {
+    if (actionHandler.status==0 && typeof(actionHandler.data['member'])!='undefined' && actionHandler.data['member'].length) {
+      for (member_nr=0; member_nr<actionHandler.data['member'].length; member_nr++) {
+        member=actionHandler.data['member'][member_nr];
         users_count++;
-        user_id=stringToNumber(actionHandler.getCdata('id', 0, member));
-        nickname=actionHandler.getCdata('nickname', 0, member);
+        user_id=stringToNumber(member['id'][0]);
+        nickname=member['nickname'][0];
         Users[user_id]=nickname;
-        ModeratedCategories[user_id]=actionHandler.getCdata('moderated_categories', 0, member, '');
-        ModeratedRooms[user_id]=actionHandler.getCdata('moderated_rooms', 0, member, '');
+        ModeratedCategories[user_id]=member['moderated_categories'][0];
+        ModeratedRooms[user_id]=member['moderated_rooms'][0];
       }
     }
   }
@@ -441,7 +438,7 @@ function saveModerator(cats, cat_ids, room_ids, level) {
       }
     }
   }
-  sendData('_CALLBACK_saveModerator()', formlink, 'POST', 'ajax='+urlencode('update_moderator')
+  sendData('_CALLBACK_saveModerator()', formlink, 'POST', 'ajax=update_moderator'
                                                          +'&s_id='+urlencode(s_id)
                                                          +'&moderator_user_id='+urlencode($('moderator_user_id').value)
                                                          +'&categories='+urlencode(cat_ids.join(','))
@@ -450,22 +447,11 @@ function saveModerator(cats, cat_ids, room_ids, level) {
 }
 function _CALLBACK_saveModerator() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  var cats=null;
-  var additional_data=null;
-  switch (status) {
-
-    case  '-1':
-      // Session is invalid
-      document.location.href=formlink+'?session_timeout';
-      return false;
-    break;
-
+  if (actionHandler.status==-1) {
+    // Session is invalid
+    document.location.href=formlink+'?session_timeout';
+    return false;
   }
-  toggleProgressBar(false);
-  if (message!=null) {
-    alert(message);
-  }
-  hideModeratorForm();
+  alert(actionHandler.message);
+  moderatorSearchUser();
 }

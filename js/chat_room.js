@@ -21,7 +21,7 @@
  */
 PCPIN_MP3_Player_PlayLockedAfterInit='./sounds/welcome.mp3';
 
-/**
+/** 
  * Default player volume (must be between 0 and 100)
  * @var int
  */
@@ -411,6 +411,7 @@ var UpdaterGetFullData=false;
  * @param   boolean   userlist_avatar         Flag: if TRUE, then avatar thumbs will be displayed in userlist
  * @param   boolean   userlist_privileged     Flag: if TRUE, then "Admin" and "Moderator" flags will be displayed in userlist
  * @param   boolean   display_time_stamp      Flag: if TRUE, then message timestamp will be also displayed
+ * @param   boolean   allow_sounds            Flag: if TRUE, then sounds will be active
  * @param   string    message_color           Preferenced messages color
  * @param   string    default_room_bgcolor    Background color for messages area
  * @param   boolean   msg_attachments_limit   How many message attachments are allowed? 0: Disable feature.
@@ -520,7 +521,7 @@ function initChatRoom(room_id,
     MainInputTextArea.msgHistoriePtr=0;
     MainInputTextArea.gotFromHistory=false;
     MainInputTextArea.addMsgHistorie=function() {
-      msg=trimString(this.value);
+      var msg=trimString(this.value);
       if (msg!='') {
         this.msgHistoriePtr=0;
         if (this.msgHistorie.length==0 || this.msgHistorie[this.msgHistorie.length-1]!=msg) {
@@ -743,7 +744,7 @@ function setAreas() {
   var chatroom_bottom_banner=$('chatroom_bottom_banner');
   var smilie_selection_box=$('smilie_selection_box');
 
-//  try {
+  try {
     if ($('attached_files').style.display!='none') {
       controlsHeight_local+=$('attached_files').scrollHeight;
     }
@@ -858,7 +859,7 @@ function setAreas() {
       clearInterval(FixSmilieRowInterval);
       FixSmilieRowInterval=setInterval('fixSmilieRow()', 500);
     }
-//  } catch (e) {}
+  } catch (e) {}
 }
 
 
@@ -983,48 +984,32 @@ function sendUpdaterRequest(full_request, first_request, get_last_msgs, show_pro
  */
 function _CALLBACK_sendUpdaterRequest(show_progressbar) {
 //debug(ajaxUpdater.getResponseString()); return false;
-  var message=ajaxUpdater.getCdata('message');
-  var status=ajaxUpdater.getCdata('status');
-  var full_data=null;
+//debug(ajaxUpdater.getResponseString());
+
   var room=null;
-  var room_id=0;
-  var room_name='';
-  var room_description='';
-  var users=null;
   var user=null;
-  var user_id=0;
   var user_nr=0;
-  var abuses=null;
-  var messages=null;
-  var msg=null;
-  var msg_nr=0;
-  var global_muted_until=0;
-  var invitations=null;
-  var invitation=null;
-  var invitation_nr=0;
-  var categories=null;
-  var attachment=null;
-  var attachment_nr=0;
-  var attachment_id=0;
-  var attachments=new Array();
-  var banner_display_positions=null;
+  var userlist_refresh_needed=false;
   var banner_display_position=null;
   var banner_display_position_nr=0;
   var DisplayBannersData_old=null;
   var dummy_form=$('dummyform');
+  var message_nr=0;
+  var attachments=null;
+  var attachment_nr=0;
+  var attachment_id=0;
+  var invitation_nr=0;
 
-  var userlist_refresh_needed=false;
+  try {
+    switch (ajaxUpdater.status) {
 
-//  try {
-    switch (status) {
-
-      case  '-1':
+      case  -1:
         // Session is invalid
         document.location.href=formlink+'?session_timeout';
         return false;
       break;
 
-      case  '100':
+      case  100:
         // Session owner is not in a room
         dummy_form.s_id.value=s_id;
         dummy_form.inc.value='profile_main';
@@ -1033,7 +1018,7 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
         return false;
       break;
 
-      case  '200':
+      case  200:
         // Session owner is in another room now
         dummy_form.s_id.value=s_id;
         dummy_form.inc.value='chat_room';
@@ -1042,7 +1027,7 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
         return false;
       break;
 
-      case  '300':
+      case  300:
         // Room does not exists (anymore)
         dummy_form.s_id.value=s_id;
         dummy_form.inc.value='profile_main';
@@ -1051,100 +1036,115 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
         return false;
       break;
 
-      case '0':
+      case 0:
         // OK
-        // Parse response
-        full_data=ajaxUpdater.getElement('full_data');
-        if (full_data!=null) {
-          // Full data responded
-          room=ajaxUpdater.getElement('room', 0, full_data);
-          room_id=ajaxUpdater.getCdata('id', 0, room);
-          room_name=ajaxUpdater.getCdata('name', 0, room);
-          $('chatroom_userlist_room_name').innerHTML=htmlspecialchars(room_name);
-          room_description=ajaxUpdater.getCdata('description', 0, room, '');
-          BackgroundImageID=stringToNumber(ajaxUpdater.getCdata('background_image', 0, room, 0));
-          BackgroundImageWidth=stringToNumber(ajaxUpdater.getCdata('background_image_width', 0, room, 0));
-          BackgroundImageHeight=stringToNumber(ajaxUpdater.getCdata('background_image_height', 0, room, 0));
-          fixBackgroundImagePos();
-          defaultMessageColor=ajaxUpdater.getCdata('default_message_color', 0, room);
-          if (outgoingMessageColor=='') {
-            outgoingMessageColor=defaultMessageColor;
+        // Parse response:
+        // ... category tree
+        if (typeof(ajaxUpdater.data['category'])!='undefined') {
+          // Search for current room data
+          for (var i=0; i<ajaxUpdater.data['category'].length; i++) {
+            for (var ii=0; ii<ajaxUpdater.data['category'][i]['room'].length; ii++) {
+              room=ajaxUpdater.data['category'][i]['room'][ii];
+              if (stringToNumber(room['id'][0])==currentRoomID) {
+                // Data found
+                // ... room name
+                $('chatroom_userlist_room_name').innerHTML=htmlspecialchars(room['name'][0]);
+                // ... message color
+                defaultMessageColor=room['default_message_color'][0];
+                if (outgoingMessageColor=='') {
+                  outgoingMessageColor=defaultMessageColor;
+                }
+                MainInputTextArea.style.color='#'+outgoingMessageColor;
+                $('message_colors_btn').style.backgroundColor='#'+outgoingMessageColor;
+                // ... background image data
+                BackgroundImageID=stringToNumber(room['background_image'][0]);
+                BackgroundImageWidth=stringToNumber(room['background_image_width'][0]);
+                BackgroundImageHeight=stringToNumber(room['background_image_height'][0]);
+                fixBackgroundImagePos();
+                // ... users
+                userlist_refresh_needed=true;
+                UserList.initialize();
+                for (user_nr=0; user_nr<room['user'].length; user_nr++) {
+                  user=room['user'][user_nr];
+                  UserList.addRecord(stringToNumber(user['id'][0]),
+                                     user['nickname'][0],
+                                     user['online_status'][0],
+                                     user['online_status_message'][0]!=''? user['online_status_message'][0] : getLng('online_status_'+user['online_status'][0]),
+                                     '1'==user['muted_locally'][0],
+                                     '1'==user['global_muted'][0],
+                                     user['global_muted_until'][0],
+                                     user['ip_address'][0],
+                                     user['gender'][0],
+                                     user['avatar_bid'][0],
+                                     '1'==user['is_admin'][0],
+                                     '1'==user['is_moderator'][0],
+                                     null,
+                                     null,
+                                     null,
+                                     null,
+                                     null,
+                                     null,
+                                     null,
+                                     null,
+                                     null,
+                                     null,
+                                     null,
+                                     '1'==user['is_guest'][0]
+                                     );
+                }
+
+                i=ajaxUpdater.data['category'].length;
+                break;
+              }
+            }
           }
-          MainInputTextArea.style.color='#'+outgoingMessageColor;
-          $('message_colors_btn').style.backgroundColor='#'+outgoingMessageColor;
-          // Users
-          userlist_refresh_needed=true;
-          UserList.initialize();
-          users=ajaxUpdater.getElement('users', 0, full_data);
-          while (user=ajaxUpdater.getElement('user', user_nr++, users)) {
-            user_id=stringToNumber(ajaxUpdater.getCdata('id', 0, user));
-            UserList.addRecord(user_id,
-                               ajaxUpdater.getCdata('nickname', 0, user),
-                               ajaxUpdater.getCdata('online_status', 0, user),
-                               ajaxUpdater.getCdata('online_status_message', 0, user),
-                               '1'==ajaxUpdater.getCdata('muted_locally', 0, user),
-                               '1'==ajaxUpdater.getCdata('global_muted', 0, user),
-                               ajaxUpdater.getCdata('global_muted_until', 0, user),
-                               ajaxUpdater.getCdata('ip_address', 0, user),
-                               ajaxUpdater.getCdata('gender', 0, user),
-                               ajaxUpdater.getCdata('avatar_bid', 0, user),
-                               '1'==ajaxUpdater.getCdata('is_admin', 0, user),
-                               '1'==ajaxUpdater.getCdata('is_moderator', 0, user),
-                               null,
-                               null,
-                               null,
-                               null,
-                               null,
-                               null,
-                               null,
-                               null,
-                               null,
-                               null,
-                               null,
-                               '1'==ajaxUpdater.getCdata('is_guest', 0, user)
-                               );
-          }
-          if (false==welcomeMessageDisplayed) {
-            welcomeMessageDisplayed=true;
-            displayMessage(null, htmlspecialchars(ajaxUpdater.getCdata('welcome_message', 0, full_data)), null, false);
-          }
+          updateRoomList(ajaxUpdater.data['category']);
         }
-        if (messages=ajaxUpdater.getElement('chat_messages')) {
-          while (null!=(msg=ajaxUpdater.getElement('message', msg_nr++, messages))) {
+        // ... welcome message
+        if (typeof(ajaxUpdater.data['welcome_message'])!='undefined' && false==welcomeMessageDisplayed) {
+          welcomeMessageDisplayed=true;
+          displayMessage(null, htmlspecialchars(ajaxUpdater.data['welcome_message'][0]), null, false);
+        }
+        // ... chat messages
+        if (typeof(ajaxUpdater.data['chat_message'])!='undefined') {
+          for (message_nr=0; message_nr<ajaxUpdater.data['chat_message'].length; message_nr++) {
+            message=ajaxUpdater.data['chat_message'][message_nr];
             // Attachments?
             attachments=new Array();
-            attachment_nr=0;
-            while (null!=(attachment=ajaxUpdater.getElement('attachment', attachment_nr++, msg))) {
-              attachment_id=stringToNumber(ajaxUpdater.getCdata('id', 0, attachment));
-              attachments[attachment_id]=new Array();
-              attachments[attachment_id]['binaryfile_id']=stringToNumber(ajaxUpdater.getCdata('binaryfile_id', 0, attachment));
-              attachments[attachment_id]['filename']=ajaxUpdater.getCdata('filename', 0, attachment);
+            if ('1'==message['has_attachments'][0] && typeof(message['attachment'])!='undefined') {
+              for (attachment_nr=0; attachment_nr<message['attachment'].length; attachment_nr++) {
+                attachment_id=stringToNumber(message['attachment'][attachment_nr]['id'][0]);
+                attachments[attachment_id]=new Array();
+                attachments[attachment_id]['binaryfile_id']=stringToNumber(message['attachment'][attachment_nr]['binaryfile_id'][0]);
+                attachments[attachment_id]['filename']=message['attachment'][attachment_nr]['filename'][0];
+              }
             }
             // Process message
-            processMessage(stringToNumber(ajaxUpdater.getCdata('id', 0, msg)),
-                           stringToNumber(ajaxUpdater.getCdata('type', 0, msg)),
-                           stringToNumber(ajaxUpdater.getCdata('offline', 0, msg)),
-                           stringToNumber(ajaxUpdater.getCdata('date', 0, msg)),
-                           stringToNumber(ajaxUpdater.getCdata('author_id', 0, msg)),
-                           ajaxUpdater.getCdata('author_nickname', 0, msg),
-                           stringToNumber(ajaxUpdater.getCdata('target_user_id', 0, msg)),
-                           stringToNumber(ajaxUpdater.getCdata('target_room_id', 0, msg)),
-                           stringToNumber(ajaxUpdater.getCdata('privacy', 0, msg)),
-                           ajaxUpdater.getCdata('body', 0, msg, ''),
-                           ajaxUpdater.getCdata('css_properties', 0, msg),
-                           ajaxUpdater.getCdata('actor_nickname', 0, msg),
+            processMessage(stringToNumber(message['id'][0]),
+                           stringToNumber(message['type'][0]),
+                           stringToNumber(message['offline'][0]),
+                           stringToNumber(message['date'][0]),
+                           stringToNumber(message['author_id'][0]),
+                           message['author_nickname'][0],
+                           stringToNumber(message['target_user_id'][0]),
+                           stringToNumber(message['target_room_id'][0]),
+                           stringToNumber(message['privacy'][0]),
+                           message['body'][0],
+                           message['css_properties'][0],
+                           message['actor_nickname'][0],
                            attachments
                            );
           }
         }
-        if (null!=(invitations=ajaxUpdater.getElement('invitations'))) {
-          while (null!=(invitation=ajaxUpdater.getElement('invitation', invitation_nr++, invitations))) {
-            openWindow(formlink+'?s_id='+s_id+'&inc=invitation&invitation_id='+urlencode(ajaxUpdater.getCdata('id', 0, invitation)), 'invitation'+ajaxUpdater.getCdata('id', 0, invitation), 600, 300, false, false, false, false, true);
+        // ... invitations
+        if (typeof(ajaxUpdater.data['invitation'])!='undefined') {
+          for (invitation_nr=0; invitation_nr<ajaxUpdater.data['invitation'].length; invitation_nr++) {
+            openWindow(formlink+'?s_id='+s_id+'&inc=invitation&invitation_id='+urlencode(ajaxUpdater.data['invitation'][invitation_nr]['id'][0]), 'invitation'+ajaxUpdater.data['invitation'][invitation_nr]['id'][0], 600, 300, false, false, false, false, true);
           }
         }
-        // Abuses
-        if (null!=(abuses=ajaxUpdater.getElement('abuses'))) {
-          processAbuses(abuses, ajaxUpdater);
+        // ... abuses
+        if (typeof(ajaxUpdater.data['abuses'])!='undefined') {
+          processAbuses(ajaxUpdater.data['abuses'][0]['abuse'], ajaxUpdater);
         }
       break;
     }
@@ -1154,14 +1154,12 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
       // Refresh userlist
       redrawUserlist();
     }
-    if (null!=(categories=ajaxUpdater.getElement('categories'))) {
-      updateRoomList(categories);
-    }
     // Get banner display positions
     DisplayBannersData_old=DisplayBannersData;
     DisplayBannersData=null;
-    if (null!=(banner_display_positions=ajaxUpdater.getElement('banner_display_positions'))) {
-      while (null!=(banner_display_position=ajaxUpdater.getCdata('banner_display_position', banner_display_position_nr++, banner_display_positions))) {
+    if (typeof(ajaxUpdater.data['banner_display_position'])!='undefined') {
+      for (banner_display_position_nr=0; banner_display_position_nr<ajaxUpdater.data['banner_display_position'].length; banner_display_position_nr++) {
+        banner_display_position=ajaxUpdater.data['banner_display_position'][banner_display_position_nr];
         if (DisplayBannersData==null) {
           DisplayBannersData=new Array();
         }
@@ -1182,7 +1180,7 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
         }
       }
     }
-//  } catch(e) {}
+  } catch (e) {}
   // Start new updater round
   updaterBusy=false;
   if (typeof(show_progressbar)=='boolean' && show_progressbar==true) {
@@ -1315,7 +1313,7 @@ function redrawUserlist() {
  * @param   array   attachments         Message attachments
  */
 function processMessage(id, type, offline, date, author_id, author_nickname, target_user_id, target_room_id, privacy, body, css_properties, actor_nickname, attachments) {
-//  try {
+  try {
     var parts=body.split('/');
     var tmp=null;
     var tmp2=null;
@@ -1571,7 +1569,7 @@ function processMessage(id, type, offline, date, author_id, author_nickname, tar
       break;
 
     }
-//  } catch (e) {}
+  } catch (e) {}
   if (displayMsgBanner) {
     loadMsgBanner();
   }
@@ -1749,7 +1747,9 @@ function displayMessage(author, message, css_properties, show_date, timestamp, t
         timestampSpans.splice(0, timestampSpans.length-100);
       }
       date_span.innerHTML='['+htmlspecialchars(date(dateFormat, timestamp))+'] ';
-      date_span.style.color='#'+defaultMessageColor;
+      if (defaultMessageColor!='') {
+        date_span.style.color='#'+defaultMessageColor;
+      }
       $('chatroom_messages_contents', tgt_doc).appendChild(date_span);
       if (displayTimeStamp) {
         date_span.style.display='';
@@ -1781,15 +1781,21 @@ function displayMessage(author, message, css_properties, show_date, timestamp, t
                                                                                  );
         }
       }
-      author_span.style.color='#'+defaultMessageColor;
+      if (defaultMessageColor!='') {
+        author_span.style.color='#'+defaultMessageColor;
+      }
       $('chatroom_messages_contents', tgt_doc).appendChild(author_span);
       sp=tgt_doc.createElement('SPAN');
-      sp.style.color='#'+defaultMessageColor;
+      if (defaultMessageColor!='') {
+        sp.style.color='#'+defaultMessageColor;
+      }
       sp.innerHTML='&nbsp;:&nbsp;';
       $('chatroom_messages_contents', tgt_doc).appendChild(sp);
     }
     msg_span=tgt_doc.createElement('SPAN');
-    msg_span.style.color='#'+defaultMessageColor;
+    if (defaultMessageColor!='') {
+      msg_span.style.color='#'+defaultMessageColor;
+    }
     // Parse CSS attributes
     if (typeof(css_properties)=='string' && css_properties!='') {
       pair=null;
@@ -2057,17 +2063,13 @@ function closeOnlineStatusBox(online_status, online_status_message) {
       } else {
         online_status_message=trimString(online_status_message);
       }
-      sendData('_CALLBACK_changeOnlineStatus()', formlink, 'POST', 'ajax='+urlencode('change_online_status')+'&s_id='+urlencode(s_id)+'&online_status='+urlencode(online_status)+'&online_status_message='+urlencode(online_status_message));
+      sendData('_CALLBACK_changeOnlineStatus()', formlink, 'POST', 'ajax=change_online_status&s_id='+urlencode(s_id)+'&online_status='+urlencode(online_status)+'&online_status_message='+urlencode(online_status_message));
     }
   }
 }
 function _CALLBACK_changeOnlineStatus() {
-  var status=actionHandler.getCdata('status');
-  if (status!='-1') {
-    // OK
-    toggleProgressBar(false);
-    startUpdater(true);
-  }
+  toggleProgressBar(false);
+  startUpdater(true);
 }
 
 /**
@@ -2177,11 +2179,11 @@ function pmClosed(pm_window) {
 
 /**
  * Update room list
- * @param   object    categories    Categories XML element
+ * @param   object    categories    Categories array as returned by AJAX interface
  */
 function updateRoomList(categories) {
   var rs=$('chatroom_userlist_room_selection');
-  if (typeof(categories)=='object' && categories && rs) {
+  if (typeof(categories)=='object' && categories && categories.length && rs) {
     var cat=null;
     var cat_nr=0;
     var room=null;
@@ -2189,22 +2191,22 @@ function updateRoomList(categories) {
     var room_id=0;
     var s_cat=null;
     var s_room=null;
-
     rs.innerHTML='';
-    while (null!=(cat=ajaxUpdater.getElement('category', cat_nr++, categories))) {
-      if (ajaxUpdater.countElements('room', cat)>0) {
+    for (cat_nr=0; cat_nr<categories.length; cat_nr++) {
+      cat=categories[cat_nr];
+      if (cat['room'].length) {
         s_cat=document.createElement('OPTGROUP');
-        s_cat.label=ajaxUpdater.getCdata('name', 0, cat);
-        room_nr=0;
-        while (null!=(room=ajaxUpdater.getElement('room', room_nr++, cat))) {
-          room_id=stringToNumber(ajaxUpdater.getCdata('id', 0, room));
+        s_cat.label=cat['name'][0];
+        for (room_nr=0; room_nr<cat['room'].length; room_nr++) {
+          room=cat['room'][room_nr];
+          room_id=stringToNumber(room['id'][0]);
           s_room=document.createElement('OPTION');
           s_room.value=room_id;
-          s_room.password_protect='1'==ajaxUpdater.getCdata('password_protected', 0, room);
+          s_room.password_protect='1'==room['password_protected'][0];
           s_room.innerHTML=(s_room.password_protect? '* ' : '')
                           +(room_id==currentRoomID? '&gt; ' : '')
-                          +htmlspecialchars(ajaxUpdater.getCdata('name', 0, room))
-                          +'&nbsp;['+ajaxUpdater.getCdata('users_count', 0, room)+']';
+                          +htmlspecialchars(room['name'][0])
+                          +'&nbsp;['+room['users_count'][0]+']';
           s_cat.appendChild(s_room);
         }
         if (room_nr>1 || room!=null) {
@@ -2236,23 +2238,21 @@ function switchChatRoom(id, ask_pass, password) {
     password='';
   }
   if (typeof(id)=='number' && id>0 && id!=currentRoomID) {
-    sendData('_CALLBACK_switchChatRoom()', formlink, 'POST', 'ajax='+urlencode('enter_chat_room')+'&s_id='+urlencode(s_id)+'&room_id='+urlencode(id)+'&stealth_mode='+urlencode(stealthActivated? 'y' : 'n')+'&password='+urlencode(base64encode(password)));
+    sendData('_CALLBACK_switchChatRoom()', formlink, 'POST', 'ajax=enter_chat_room&s_id='+urlencode(s_id)+'&room_id='+urlencode(id)+'&stealth_mode='+urlencode(stealthActivated? 'y' : 'n')+'&password='+urlencode(base64encode(password)));
   }
 }
 function _CALLBACK_switchChatRoom() {
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
   var dummy_form=$('dummyform');
-  switch (status) {
+  switch (actionHandler.status) {
 
-    case  '-1':
+    case  -1:
       // Session is invalid
       SkipPageUnloadedMsg=true;
       document.location.href=formlink+'?session_timeout';
       return false;
     break;
 
-    case '0':
+    case 0:
       // Room changed. Load room page.
       SkipPageUnloadedMsg=true;
       dummy_form.s_id.value=s_id;
@@ -2262,15 +2262,15 @@ function _CALLBACK_switchChatRoom() {
       return false;
     break;
 
-    case '400':
+    case 400:
       // Error: Room does not exists
-      alert(message);
+      alert(actionHandler.message);
       startUpdater(true, true);
     break;
 
-    case '600':
+    case 600:
       // Error: Wrong password
-      alert(message);
+      alert(actionHandler.message);
       $('chatroom_userlist_room_selection').value=numberToString(currentRoomID);
     break;
 
@@ -2375,9 +2375,9 @@ function invertTimeStampView() {
 }
 
 
-/**
- * Activate/deactivate sound effects
- */
+/** 
+ * Activate/deactivate sound effects 
+ */ 
 function toggleSounds() {
   var btn=$('invert_sounds_btn');
   allowSounds=!allowSounds;
@@ -2485,7 +2485,7 @@ function deleteAttachment(binaryfile_id) {
   }
   MsgAttachments=MsgAttachments_new;
   displayAttachments();
-  ajaxMiscHandler.sendData('displayAttachments()', 'POST', formlink, 'ajax='+urlencode('delete_msg_attachment')+'&s_id='+urlencode(s_id)+'&binaryfile_id='+urlencode(binaryfile_id));
+  ajaxMiscHandler.sendData('displayAttachments()', 'POST', formlink, 'ajax=delete_msg_attachment&s_id='+urlencode(s_id)+'&binaryfile_id='+urlencode(binaryfile_id));
 }
 
 /**
@@ -2594,30 +2594,29 @@ function loadBanner(area, display_type, force_url) {
  * Display a banner in messages area
  */
 function loadMsgBanner() {
-  ajaxBannersHandler.sendData('_CALLBACK_loadMsgBanner()', 'POST', formlink, 'ajax='+urlencode('load_banner')+'&s_id='+urlencode(s_id)+'&display_position=m', false);
+  ajaxBannersHandler.sendData('_CALLBACK_loadMsgBanner()', 'POST', formlink, 'ajax=load_banner&s_id='+urlencode(s_id)+'&display_position=m', false);
 }
 function _CALLBACK_loadMsgBanner() {
 //debug(ajaxBannersHandler.getResponseString()); return false;
-  var message=ajaxBannersHandler.getCdata('message');
-  var status=ajaxBannersHandler.getCdata('status');
   var banner_data=null;
   var banner_span='';
   var cmc=$('chatroom_messages_contents');
-  if (status=='-1') {
+  if (ajaxBannersHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   }
-  if (null!=(banner_data=ajaxBannersHandler.getElement('banner_data'))) {
+  if (typeof(ajaxBannersHandler.data['banner_data'])!='undefined') {
+    banner_data=ajaxBannersHandler.data['banner_data'][0];
     banner_span=document.createElement('SPAN');
     banner_span.style.padding='0px';
     banner_span.style.margin='5px';
     banner_span.innerHTML='<iframe'
-                         +' src="'+formlink+'?load_banner=m&banner_id='+htmlspecialchars(ajaxBannersHandler.getCdata('id', 0, banner_data))+'"'
+                         +' src="'+formlink+'?load_banner=m&banner_id='+htmlspecialchars(banner_data['id'][0])+'"'
                          +' scrolling="No"'
                          +' frameborder="0"'
-                         +' width="'+htmlspecialchars(ajaxBannersHandler.getCdata('width', 0, banner_data))+'"'
-                         +' height="'+htmlspecialchars(ajaxBannersHandler.getCdata('height', 0, banner_data))+'"'
+                         +' width="'+htmlspecialchars(banner_data['width'][0])+'"'
+                         +' height="'+htmlspecialchars(banner_data['height'][0])+'"'
                          +' style="padding:0px;margin:0px;"'
                          +'></iframe><br />';
   }
@@ -2636,26 +2635,25 @@ function _CALLBACK_loadMsgBanner() {
  * Display a popup banner
  */
 function loadPopupBanner() {
-  ajaxBannersHandler.sendData('_CALLBACK_loadPopupBanner()', 'POST', formlink, 'ajax='+urlencode('load_banner')+'&s_id='+urlencode(s_id)+'&display_position=p', false);
+  ajaxBannersHandler.sendData('_CALLBACK_loadPopupBanner()', 'POST', formlink, 'ajax=load_banner&s_id='+urlencode(s_id)+'&display_position=p', false);
 }
 function _CALLBACK_loadPopupBanner() {
 //debug(ajaxBannersHandler.getResponseString()); return false;
-  var message=ajaxBannersHandler.getCdata('message');
-  var status=ajaxBannersHandler.getCdata('status');
   var banner_data=null;
   var width=0;
   var height=0;
   var banner_popup=$('banner_popup');
   var banner_popup_frame=$('banner_popup_frame');
 
-  if (status=='-1') {
+  if (ajaxBannersHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   }
-  if (null!=(banner_data=ajaxBannersHandler.getElement('banner_data'))) {
-    width=stringToNumber(ajaxBannersHandler.getCdata('width', 0, banner_data));
-    height=stringToNumber(ajaxBannersHandler.getCdata('height', 0, banner_data));
+  if (typeof(ajaxBannersHandler.data['banner_data'])!='undefined') {
+    banner_data=ajaxBannersHandler.data['banner_data'][0];
+    width=stringToNumber(banner_data['width'][0]);
+    height=stringToNumber(banner_data['height'][0]);
 
     banner_popup.style.width=(width+14)+'px';
     banner_popup.style.height=(height+26)+'px';
@@ -2663,7 +2661,7 @@ function _CALLBACK_loadPopupBanner() {
     banner_popup_frame.style.width=width+'px';
     banner_popup_frame.style.height=height+'px';
 
-    banner_popup_frame.src=formlink+'?load_banner=m&banner_id='+ajaxBannersHandler.getCdata('id', 0, banner_data)+(isOpera? '&killCache='+unixTimeStamp() : '');
+    banner_popup_frame.src=formlink+'?load_banner=m&banner_id='+ajaxBannersHandler.data['banner_data'][0]['id'][0]+(isOpera? '&killCache='+unixTimeStamp() : '');
     banner_popup.style.display='';
     moveToCenter(banner_popup);
   }

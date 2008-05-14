@@ -31,12 +31,10 @@ function initSmiliesForm() {
  * Get smilies
  */
 function getSmilies() {
-  sendData('_CALLBACK_getSmilies()', formlink, 'POST', 'ajax='+urlencode('get_smilies')+'&s_id='+urlencode(s_id));
+  sendData('_CALLBACK_getSmilies()', formlink, 'POST', 'ajax=get_smilies&s_id='+urlencode(s_id));
 }
 function _CALLBACK_getSmilies() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
 
   var smilie=null;
   var smilie_nr=0;
@@ -50,27 +48,27 @@ function _CALLBACK_getSmilies() {
   var td=null;
   var td_nr=0;
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (message=='OK') {
+    if (actionHandler.message=='OK') {
       // OK
       smilies_tbl=$('smilies_tbl');
       // Clear table
       while (smilies_tbl.rows.length>1) {
         smilies_tbl.deleteRow(-1);
       }
-      while (null!=(smilie=actionHandler.getElement('smilie', smilie_nr++))) {
-        smilie_id=stringToNumber(actionHandler.getCdata('id', 0, smilie));
-        smilie_code=actionHandler.getCdata('code', 0, smilie);
-        smilie_binaryfile_id=actionHandler.getCdata('binaryfile_id', 0, smilie);
-        smilie_description=actionHandler.getCdata('description', 0, smilie);
+      for (smilie_nr=0; smilie_nr<actionHandler.data['smilie'].length; smilie_nr++) {
+        smilie=actionHandler.data['smilie'][smilie_nr];
+        smilie_id=stringToNumber(smilie['id'][0]);
+        smilie_code=smilie['code'][0];
+        smilie_binaryfile_id=smilie['binaryfile_id'][0];
+        smilie_description=smilie['description'][0];
         if (td_nr==0) {
           tr=smilies_tbl.insertRow(-1);
         }
-
         td=tr.insertCell(-1);
         td.innerHTML='<img src="'+htmlspecialchars(formlink)+'?b_id='+htmlspecialchars(smilie_binaryfile_id)+'" alt="'+htmlspecialchars(smilie_description)+'" title="'+htmlspecialchars(smilie_description)+'" border="0" />'
                     +'<br />'
@@ -88,7 +86,6 @@ function _CALLBACK_getSmilies() {
                     +'<br /><br />';
         setCssClass(td, '.tbl_row');
         td.style.textAlign='center';
-
         if (++td_nr==4) {
           td_nr=0;
         }
@@ -100,8 +97,8 @@ function _CALLBACK_getSmilies() {
           setCssClass(td, '.tbl_row');
         }
       }
-    } else if (message!=null) {
-      alert(message);
+    } else {
+      alert(actionHandler.message);
     }
   }
   toggleProgressBar(false);
@@ -179,7 +176,7 @@ function addNewSmilie() {
     alert(errors.join("\n"));
   } else {
     // Send data to server
-    sendData('_CALLBACK_addNewSmilie()', formlink, 'POST', 'ajax='+urlencode('add_smilie')+'&s_id='+urlencode(s_id)
+    sendData('_CALLBACK_addNewSmilie()', formlink, 'POST', 'ajax=add_smilie&s_id='+urlencode(s_id)
              +'&code='+urlencode($('new_smilie_code').value)
              +'&description='+urlencode($('new_smilie_description').value)
              );
@@ -189,17 +186,13 @@ function addNewSmilie() {
 }
 function _CALLBACK_addNewSmilie() {
 //alert(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
   toggleProgressBar(false);
-  if (message!=null) {
-    alert(message);
-  }
-  if (status=='-1') {
+  alert(actionHandler.message);
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
-  } else if (status=='0') {
+  } else if (actionHandler.status==0) {
     $('smilie_image').innerHTML='';
     $('smilie_image').binaryfile_id=0;
     $('delete_image_link').style.display='none';
@@ -219,23 +212,19 @@ function deleteSmilie(smilie_id) {
     smilie_id=stringToNumber(smilie_id);
   }
   if (smilie_id>0 && confirm(getLng('confirm_delete_smilie'))) {
-    sendData('_CALLBACK_deleteSmilie()', formlink, 'POST', 'ajax='+urlencode('delete_smilie')+'&s_id='+urlencode(s_id)+'&smilie_id='+urlencode(smilie_id));
+    sendData('_CALLBACK_deleteSmilie()', formlink, 'POST', 'ajax=delete_smilie&s_id='+urlencode(s_id)+'&smilie_id='+urlencode(smilie_id));
   }
   return false;
 }
 function _CALLBACK_deleteSmilie() {
 //alert(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
   toggleProgressBar(false);
-  if (message!=null) {
-    alert(message);
-  }
-  if (status=='-1') {
+  alert(actionHandler.message);
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
-  } else if (status=='0') {
+  } else if (actionHandler.status==0) {
     getSmilies();
   }
 }

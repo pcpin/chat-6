@@ -42,12 +42,12 @@ if (!isset($moderators_only) || $current_user->is_admin!=='y') $moderators_only=
 if (!isset($admins_only) || $current_user->is_admin!=='y') $admins_only=false;
 if (!isset($not_activated_only) || $current_user->is_admin!=='y') $not_activated_only=false;
 
-$members_xml='';
+$members_xml=array();
 $total_members_count=0;
 
 if (is_object($session) && !empty($current_user->id)) {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
 
   $nickname=trim($nickname);
 
@@ -68,14 +68,14 @@ if (is_object($session) && !empty($current_user->id)) {
 
   // Create XML
   foreach ($members as $member) {
-    $moderated_rooms='';
-    $moderated_categories='';
+    $moderated_rooms=array();
+    $moderated_categories=array();
     $room_ids=array();
     if (!empty($moderators_only)) {
       // Get moderated categories
       if (!empty($member['moderated_categories']) && $category->_db_getList('name', 'id IN '.$member['moderated_categories'], 'name ASC')) {
         foreach ($category->_db_list as $category_data) {
-          $moderated_categories.='      <moderated_category>'.htmlspecialchars($category_data['name']).'</moderated_category>'."\n";
+          $moderated_categories[]=$category_data['name'];
         }
         $category->_db_freeList();
         if ($room->_db_getList('id', 'category_id IN '.$member['moderated_categories'])) {
@@ -95,31 +95,19 @@ if (is_object($session) && !empty($current_user->id)) {
       $room_ids=array_unique($room_ids);
       if (!empty($room_ids) && $room->_db_getList('name', 'id IN '.implode(',', $room_ids), 'name ASC')) {
         foreach ($room->_db_list as $room_data) {
-          $moderated_rooms.='      <moderated_room>'.htmlspecialchars($room_data['name']).'</moderated_room>'."\n";
+          $moderated_rooms[]=$room_data['name'];
         }
         $room->_db_freeList();
       }
     }
-    $members_xml.='    <member>'."\n";
-    foreach ($member as $key=>$val) {
-      $members_xml.='      <'.$key.'>'.htmlspecialchars($val).'</'.$key.'>'."\n";
-    }
-    $members_xml.=$moderated_categories;
-    $members_xml.=$moderated_rooms;
-    $members_xml.='    </member>'."\n";
+    $member['moderated_category']=$moderated_categories;
+    $member['moderated_room']=$moderated_rooms;
+    $members_xml[]=$member;
   }
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-  <total_members>'.htmlspecialchars($total_members_count).'</total_members>
-  <page>'.htmlspecialchars($page).'</page>
-  <total_pages>'.htmlspecialchars($total_pages).'</total_pages>
-  <members>
-'.$members_xml.'  </members>
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('total_members'=>$total_members_count,
+                          'page'=>$page,
+                          'total_pages'=>$total_pages,
+                          'member'=>$members_xml
+                          ));
 ?>

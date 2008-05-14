@@ -22,28 +22,12 @@
 
 _pcpin_loadClass('badword'); $badword=new PCPIN_Badword($session);
 
-$words_xml='';
+$words=array();
 
 if (is_object($session) && !empty($current_user->id)) {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   $words=$badword->getWords();
-  foreach ($words as $word_data) {
-    $words_xml.='  <word>
-    <id>'.htmlspecialchars($word_data['id']).'</id>
-    <word>'.htmlspecialchars($word_data['word']).'</word>
-    <replacement>'.htmlspecialchars($word_data['replacement']).'</replacement>
-  </word>
-';
-  }
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-'.$words_xml
-.'</pcpin_xml>';
-die();
+$xmlwriter->setData(array('word'=>$words));
 ?>

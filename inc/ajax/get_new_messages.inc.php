@@ -24,10 +24,10 @@
 _pcpin_loadClass('message'); $msg=new PCPIN_Message($session);
 _pcpin_loadClass('room'); $room=new PCPIN_Room($session);
 
-$abuses_xml='';
+$abuses_xml=array();
 if (!empty($current_user->id)) {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   $messages=$msg->getNewMessages($current_user->id);
   $last_message_id=$session->_s_last_message_id;
   foreach ($messages as $message_data) {
@@ -72,18 +72,16 @@ if (!empty($current_user->id)) {
         break;
 
       }
-      $abuses_xml.='
-  <abuse>
-    <id>'.htmlspecialchars($message_data['id']).'</id>
-    <date>'.htmlspecialchars($current_user->makeDate(PCPIN_Common::datetimeToTimestamp($message_data['date']))).'</date>
-    <author_id>'.htmlspecialchars($message_data['author_id']).'</author_id>
-    <author_nickname>'.htmlspecialchars($message_data['author_nickname']).'</author_nickname>
-    <category>'.htmlspecialchars($abuse_category).'</category>
-    <room_id>'.htmlspecialchars($msg_parts[1]).'</room_id>
-    <room_name>'.htmlspecialchars($room_name).'</room_name>
-    <abuser_nickname>'.htmlspecialchars($msg_parts[3]).'</abuser_nickname>
-    <description>'.htmlspecialchars($msg_parts[4]).'</description>
-  </abuse>';
+      $abuses_xml[]=array('id'=>$message_data['id'],
+                          'date'=>$current_user->makeDate(PCPIN_Common::datetimeToTimestamp($message_data['date'])),
+                          'author_id'=>$message_data['author_id'],
+                          'author_nickname'=>$message_data['author_nickname'],
+                          'category'=>$abuse_category,
+                          'room_id'=>$msg_parts[1],
+                          'room_name'=>$room_name,
+                          'abuser_nickname'=>$msg_parts[3],
+                          'description'=>$msg_parts[4]
+                          );
     }
   }
   if ($last_message_id>$session->_s_last_message_id) {
@@ -98,14 +96,5 @@ if (!empty($current_user->id)) {
                                $last_message_id);
   }
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-<abuses>'.$abuses_xml.'
-</abuses>
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('abuse'=>$abuses_xml));
 ?>

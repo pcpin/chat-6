@@ -163,6 +163,8 @@ class PCPIN_Banner extends PCPIN_Session {
     $banners=array();
     if ($this->_db_getList('display_position DESC, name ASC')) {
       foreach ($this->_db_list as $data) {
+        $data['start_date']=PCPIN_Common::datetimeToTimestamp($data['start_date']);
+        $data['expiration_date']=$data['expiration_date']>'0000-00-00 00:00:00'? PCPIN_Common::datetimeToTimestamp($data['expiration_date']) : 0;
         $banners[]=$data;
       }
       $this->_db_freeList();

@@ -41,7 +41,7 @@ function initAvatarGallery(profile_user_id) {
  */
 function pickAvatar(avatar_img) {
   if (typeof(avatar_img)=='object' && avatar_img!=null) {
-    sendData('_CALLBACK_pickAvatar()', formlink, 'POST', 'ajax='+urlencode('set_avatar_from_gallery')
+    sendData('_CALLBACK_pickAvatar()', formlink, 'POST', 'ajax=set_avatar_from_gallery'
                                                         +'&s_id='+urlencode(s_id)
                                                         +'&avatar_id='+urlencode(avatar_img.id.substring(15))
                                                         +'&profile_user_id='+urlencode(profileUserId)
@@ -50,16 +50,14 @@ function pickAvatar(avatar_img) {
 }
 function _CALLBACK_pickAvatar() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     opener.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     window.close();
     return false;
   } else {
-    if (status=='0') {
+    if (actionHandler.status==0) {
       if (window.opener && window.opener.getAvatars) {
         window.opener.getAvatars();
       }
@@ -67,9 +65,7 @@ function _CALLBACK_pickAvatar() {
     } else {
       // An error occured
       toggleProgressBar(false);
-      if (message!=null) {
-        alert(message);
-      }
+      alert(actionHandler.message);
     }
   }
 }

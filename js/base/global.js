@@ -68,12 +68,6 @@ var lngExpressions=new Array();
 // Default XMLHttpRequest handler for *NOT* simultaneously executed requests
 var actionHandler=new PCPIN_XmlHttpRequest();
 
-// HTTP auth. username
-var HttpAuthUser='';
-
-// HTTP auth. password
-var HttpAuthPass='';
-
 // Flag: if true, then Progress bar is currently On
 var progressBarState=false;
 
@@ -1270,24 +1264,22 @@ function getAbuseData(aw, id) {
 /**
  * Process received abuses
  * @param   object    abuses
- * @param   object    ah
  */
-function processAbuses(abuses, ah) {
+function processAbuses(abuses) {
   var abuse=null;
-  var abuse_nr=0;
   var abuse_id=0;
   var abuse_data=null;
-  while (null!=(abuse=ah.getElement('abuse', abuse_nr++, abuses))) {
+  for (var abuse_nr=0; abuse_nr<abuses.length; abuse_nr++) {
     abuse_data=new Array();
-    abuse_data['id']=stringToNumber(ah.getCdata('id', 0, abuse));
-    abuse_data['date']=ah.getCdata('date', 0, abuse);
-    abuse_data['author_id']=stringToNumber(ah.getCdata('author_id', 0, abuse));
-    abuse_data['author_nickname']=ah.getCdata('author_nickname', 0, abuse);
-    abuse_data['category']=ah.getCdata('category', 0, abuse);
-    abuse_data['room_id']=stringToNumber(ah.getCdata('room_id', 0, abuse));
-    abuse_data['room_name']=ah.getCdata('room_name', 0, abuse);
-    abuse_data['abuser_nickname']=ah.getCdata('abuser_nickname', 0, abuse);
-    abuse_data['description']=ah.getCdata('description', 0, abuse);
+    abuse_data['id']=stringToNumber(abuses[abuse_nr]['id'][0]);
+    abuse_data['date']=abuses[abuse_nr]['date'][0];
+    abuse_data['author_id']=stringToNumber(abuses[abuse_nr]['author_id'][0]);
+    abuse_data['author_nickname']=abuses[abuse_nr]['author_nickname'][0];
+    abuse_data['category']=abuses[abuse_nr]['category'][0];
+    abuse_data['room_id']=stringToNumber(abuses[abuse_nr]['room_id'][0]);
+    abuse_data['room_name']=abuses[abuse_nr]['room_name'][0];
+    abuse_data['abuser_nickname']=abuses[abuse_nr]['author_nickname'][0];
+    abuse_data['description']=abuses[abuse_nr]['description'][0];
     receivedAbuses[abuse_data['id']]=abuse_data;
     openWindow(formlink+'?s_id='+s_id+'&inc=abuse', 'abuse_'+abuse_data['id'], 600, 450, false, false, false, false, true);
   }

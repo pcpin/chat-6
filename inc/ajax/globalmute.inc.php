@@ -33,14 +33,14 @@ if (!isset($duration) || !is_scalar($duration) || !pcpin_ctype_digit($duration))
 }
 
 if (!empty($current_user->id)) {
-  $status=1;
+  $xmlwriter->setHeaderStatus(1);
   if (!empty($target_user_id) && $current_user->_db_getList('is_admin', 'id = '.$target_user_id, 1)) {
     // User exists
     // Check permissions
     $allowed=$current_user->is_admin==='y' && $current_user->_db_list[0]['is_admin']!='y';
     if (true==$allowed) {
-      $status=0;
-      $message='OK';
+      $xmlwriter->setHeaderStatus(0);
+      $xmlwriter->setHeaderMessage('OK');
       // Action permitted
       if ($session->_db_getList('_s_room_id', '_s_user_id = '.$target_user_id, 1)) {
         // Add new message
@@ -57,11 +57,4 @@ if (!empty($current_user->id)) {
     }
   } 
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

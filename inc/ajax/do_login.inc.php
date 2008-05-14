@@ -30,25 +30,27 @@ $password_ok=false;
 $new_password_ok=false;
 $userdata=array();
 
+$xmlwriter->setHeaderMessage($l->g('login_failed'));
+
 // Check IP address against IP filter
 if (false!==$blocked=$ipfilter->isBlocked(PCPIN_CLIENT_IP)) {
   // IP address is blocked
   if ($blocked['expires']=='0000-00-00 00:00:00') {
     // IP is permanently banned
     if ($blocked['reason']!='') {
-      $message=str_replace('[REASON]', $blocked['reason'], $l->g('you_are_banned_permanently_with_reason'));
+      $xmlwriter->setHeaderMessage(str_replace('[REASON]', $blocked['reason'], $l->g('you_are_banned_permanently_with_reason')));
     } else {
-      $message=$l->g('you_are_banned_permanently_without_reason');
+      $xmlwriter->setHeaderMessage($l->g('you_are_banned_permanently_without_reason'));
     }
   } else {
     // IP is temporarily banned
     $banned_until_str=$current_user->makeDate(PCPIN_Common::datetimeToTimestamp($blocked['expires']));
     if ($blocked['reason']!='') {
-      $message=str_replace('[REASON]', $blocked['reason'], $l->g('you_are_banned_with_reason'));
+      $xmlwriter->setHeaderMessage(str_replace('[REASON]', $blocked['reason'], $l->g('you_are_banned_with_reason')));
     } else {
-      $message=$l->g('you_are_banned_without_reason');
+      $xmlwriter->setHeaderMessage($l->g('you_are_banned_without_reason'));
     }
-    $message=str_replace('[DATE]', $banned_until_str, $message);
+    $xmlwriter->setHeaderMessage(str_replace('[DATE]', $banned_until_str, $message));
   }
 } elseif ($login!='' && ($password!='' || PCPIN_SLAVE_MODE && $_pcpin_slave_userdata_md5_password!='')) {
   // Registered user login
@@ -71,28 +73,28 @@ if (false!==$blocked=$ipfilter->isBlocked(PCPIN_CLIENT_IP)) {
       // Account activated?
       if (!empty($session->_conf_all['activate_new_accounts']) && $userdata['activated']!='y') {
         // Account is NOT activated
-        $message=$l->g('login_failed');
+        $xmlwriter->setHeaderMessage($l->g('login_failed'));
       } else {
         // User banned?
         if ($userdata['banned_until']>date('Y-m-d H:i:s')) {
           // User is temporarily banned
           $banned_until_str=$current_user->makeDate(PCPIN_Common::datetimeToTimestamp($userdata['banned_until']));
           if ($userdata['ban_reason']!='') {
-            $message=str_replace('[REASON]', $userdata['ban_reason'], $l->g('you_are_banned_with_reason'));
+            $xmlwriter->setHeaderMessage(str_replace('[REASON]', $userdata['ban_reason'], $l->g('you_are_banned_with_reason')));
           } else {
-            $message=$l->g('you_are_banned_without_reason');
+            $xmlwriter->setHeaderMessage($l->g('you_are_banned_without_reason'));
           }
-          $message=str_replace('[DATE]', $banned_until_str, $message);
+          $xmlwriter->setHeaderMessage(str_replace('[DATE]', $banned_until_str, $message));
         } elseif ($userdata['banned_permanently']=='y') {
           // User is permanently banned
           if ($userdata['ban_reason']!='') {
-            $message=str_replace('[REASON]', $userdata['ban_reason'], $l->g('you_are_banned_permanently_with_reason'));
+            $xmlwriter->setHeaderMessage(str_replace('[REASON]', $userdata['ban_reason'], $l->g('you_are_banned_permanently_with_reason')));
           } else {
-            $message=$l->g('you_are_banned_permanently_without_reason');
+            $xmlwriter->setHeaderMessage($l->g('you_are_banned_permanently_without_reason'));
           }
         } else {
-          $message='OK';
-          $status=0;
+          $xmlwriter->setHeaderMessage('OK');
+          $xmlwriter->setHeaderStatus(0);
           // Create new session and log it in
           if (!empty($admin_login) && $userdata['is_admin']==='y') {
             $backend_login='y';
@@ -119,13 +121,13 @@ if (false!==$blocked=$ipfilter->isBlocked(PCPIN_CLIENT_IP)) {
       }
     } else {
       // Invalid password
-      $message=$l->g('login_failed');
+      $xmlwriter->setHeaderMessage($l->g('login_failed'));
       $login_failed=true;
     }
     unset($userdata);
   } else {
     // User does not exists
-    $message=$l->g('login_failed');
+    $xmlwriter->setHeaderMessage($l->g('login_failed'));
     $login_failed=true;
   }
   if (!empty($login_failed)) {
@@ -135,7 +137,7 @@ if (false!==$blocked=$ipfilter->isBlocked(PCPIN_CLIENT_IP)) {
   // Guest login
   if (empty($session->_conf_all['allow_guests'])) {
     // Guest login is disabled
-    $message=$l->g('guest_login_disabled');
+    $xmlwriter->setHeaderMessage($l->g('guest_login_disabled'));
   } else {
     if ($login=='') {
       // Create new user record
@@ -145,8 +147,8 @@ if (false!==$blocked=$ipfilter->isBlocked(PCPIN_CLIENT_IP)) {
         $login=$l->g('guest').mt_rand(0, 999);
         if ($current_user->checkUsernameUnique($login) && $current_user->newUser($login, PCPIN_Common::randomString(mt_rand(100, 255)), '', 1, 'y')) {
           // User created
-          $message='OK';
-          $status=0;
+          $xmlwriter->setHeaderMessage('OK');
+          $xmlwriter->setHeaderStatus(0);
           $user_created=true;
           // Create new session and log it in
           $session->_s_logIn($current_user->id, 0, $language_id);
@@ -166,19 +168,11 @@ if (false!==$blocked=$ipfilter->isBlocked(PCPIN_CLIENT_IP)) {
         }
       } while (true);
       if (!$user_created) {
-        $message=$l->g('error');
+        $xmlwriter->setHeaderMessage($l->g('error'));
       }
     }
   }
 }
 
-if (!PCPIN_SLAVE_MODE || !empty($admin_login)) {
-  echo '<?xml version="1.0" encoding="UTF-8"?>
-  <pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-  <s_id>'.htmlspecialchars($session->_s_id).'</s_id>
-  </pcpin_xml>';
-  die();
-}
+$xmlwriter->setData(array('s_id'=>$session->_s_id));
 ?>

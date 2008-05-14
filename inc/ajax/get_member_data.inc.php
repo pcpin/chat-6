@@ -24,22 +24,22 @@ _pcpin_loadClass('category'); $category=new PCPIN_Category($session);
 
 if (!isset($profile_user_id)) $profile_user_id=0;
 
-$member_xml='';
-$moderated_rooms='';
-$moderated_categories='';
+$member_xml=array();
+$moderated_rooms=array();
+$moderated_categories=array();
 
 // Get client session
 if (is_object($session) && !empty($profile_user_id) && !empty($current_user->id) && $current_user->is_admin==='y') {
   if ($current_user->_db_getList('id = '.$profile_user_id, 1)) {
-    $message='OK';
-    $status=0;
+    $xmlwriter->setHeaderMessage('OK');
+    $xmlwriter->setHeaderStatus(0);
     $member=$current_user->_db_list[0];
     $current_user->_db_freeList();
     $room_ids=array();
     // Get moderated categories
     if (!empty($member['moderated_categories']) && $category->_db_getList('name', 'id IN '.$member['moderated_categories'], 'name ASC')) {
       foreach ($category->_db_list as $category_data) {
-        $moderated_categories.='      <moderated_category>'.htmlspecialchars($category_data['name']).'</moderated_category>'."\n";
+        $moderated_categories[]=$category_data['name'];
       }
       $category->_db_freeList();
       if ($room->_db_getList('id', 'category_id IN '.$member['moderated_categories'])) {
@@ -59,31 +59,25 @@ if (is_object($session) && !empty($profile_user_id) && !empty($current_user->id)
     $room_ids=array_unique($room_ids);
     if (!empty($room_ids) && $room->_db_getList('name', 'id IN '.implode(',', $room_ids), 'name ASC')) {
       foreach ($room->_db_list as $room_data) {
-        $moderated_rooms.='      <moderated_room>'.htmlspecialchars($room_data['name']).'</moderated_room>'."\n";
+        $moderated_rooms[]=$room_data['name'];
       }
       $room->_db_freeList();
     }
-    $member_xml='  <member_data>
-    <login>'.htmlspecialchars($member['login']).'</login>
-    <is_registered>'.htmlspecialchars($member['is_guest']==='n'? 1 : 0).'</is_registered>
-    <is_admin>'.htmlspecialchars($member['is_admin']==='y'? 1 : 0).'</is_admin>
-    <activated>'.htmlspecialchars($member['activated']==='y'? 1 : 0).'</activated>
-'.$moderated_categories.$moderated_rooms.'
-  </member_data>
-';
-
+    $member_xml=array('login'=>$member['login'],
+                      'is_registered'=>$member['is_guest']==='n'? 1 : 0,
+                      'is_admin'=>$member['is_admin']==='y'? 1 : 0,
+                      'activated'=>$member['activated']==='y'? 1 : 0,
+                      );
+    if (!empty($moderated_categories)) {
+      $member_xml['moderated_category']=$moderated_categories;
+    }
+    if (!empty($moderated_rooms)) {
+      $member_xml['moderated_room']=$moderated_rooms;
+    }
   } else {
-    $message=$l->g('user_not_found');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('user_not_found'));
+    $xmlwriter->setHeaderStatus(1);
   }
-
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-'.$member_xml
-.'</pcpin_xml>';
-die();
+$xmlwriter->setData(array('member_data'=>$member_xml));
 ?>

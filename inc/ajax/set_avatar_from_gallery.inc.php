@@ -30,28 +30,21 @@ if (!empty($profile_user_id) && !empty($avatar_id) && $avatar->_db_getList('id,b
   $avatar->_db_getList('COUNT', 'user_id = '.$profile_user_id);
   if ($avatar->_db_list_count>=$session->_conf_all['avatars_max_count']) {
     // Limit reached
-    $message=str_replace('[NUMBER]', $session->_conf_all['avatars_max_count'], $l->g('avatars_limit_reached'));
-    $status=1;
+    $xmlwriter->setHeaderMessage(str_replace('[NUMBER]', $session->_conf_all['avatars_max_count'], $l->g('avatars_limit_reached')));
+    $xmlwriter->setHeaderStatus(1);
   } elseif ($avatar->_db_getList('id', 'user_id = '.$profile_user_id, 'binaryfile_id = '.$binaryfile_id, 1)) {
     // Selected avatar already exists
-    $message=$l->g('avatar_already_exists');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('avatar_already_exists'));
+    $xmlwriter->setHeaderStatus(1);
   } else {
     // Set avatar
     if ($avatar->setAvatarFromGallery($profile_user_id, $avatar_id)) {
-      $message='OK';
-      $status=0;
+      $xmlwriter->setHeaderMessage('OK');
+      $xmlwriter->setHeaderStatus(0);
     } else {
-      $message=$l->g('error');
-      $status=1;
+      $xmlwriter->setHeaderMessage($l->g('error'));
+      $xmlwriter->setHeaderStatus(1);
     }
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

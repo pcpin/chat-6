@@ -43,13 +43,13 @@ if (is_object($session) && !empty($current_user->id) && $current_user->is_admin=
   if ($language_found) {
     if ($active_language_needed && !$active_language_found) {
       // Selected language is last active language and cannot be deleted
-      $message=$l->g('delete_language_last_active_error');
-      $status=1;
+      $xmlwriter->setHeaderMessage($l->g('delete_language_last_active_error'));
+      $xmlwriter->setHeaderStatus(1);
     } else {
       // Delete language
       if ($l->deleteLanguage($language_id)) {
-        $message=$l->g('language_deleted');
-        $status=0;
+        $xmlwriter->setHeaderMessage($l->g('language_deleted'));
+        $xmlwriter->setHeaderStatus(0);
         if ($session->_conf_all['default_language']==$language_id) {
           // Set new default language
           // Trying to set English
@@ -66,21 +66,13 @@ if (is_object($session) && !empty($current_user->id) && $current_user->is_admin=
         }
         // Check default language
       } else {
-        $message=$l->g('error');
-        $status=1;
+        $xmlwriter->setHeaderMessage($l->g('error'));
+        $xmlwriter->setHeaderStatus(1);
       }
     }
   } else {
-    $message=$l->g('error');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('error'));
+    $xmlwriter->setHeaderStatus(1);
   }
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

@@ -16,7 +16,14 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-if (!empty($ajax)) {
+// Initiate XML writer object
+_pcpin_loadClass('xmlwrite'); $xmlwriter=new PCPIN_XMLWrite($ajax);
+
+// Defaults
+$xmlwriter->setHeaderMessage('ACCESS_DENIED');
+$xmlwriter->setHeaderStatus(-1);
+
+if (!empty($ajax) && is_scalar($ajax)) {
   // AJAX request
 
   // Send headers
@@ -28,10 +35,6 @@ if (!empty($ajax)) {
   } else {
     header('Pragma: no-cache');
   }
-
-  // Defaults
-  $message='ACCESS_DENIED';
-  $status='-1';
 
   switch ($ajax) {
 
@@ -189,14 +192,11 @@ if (!empty($ajax)) {
       // Login attempt
       if (PCPIN_SLAVE_MODE && empty($admin_login)) {
         // Not allowed in Slave mode
-        echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>SLAVE_MODE</message>
-  <status>1</status>
-</pcpin_xml>';
-        die();
+        $xmlwriter->setHeaderMessage('SLAVE_MODE');
+        $xmlwriter->setHeaderStatus(1);
+      } else {
+        require_once('./inc/ajax/do_login.inc.php');
       }
-      require_once('./inc/ajax/do_login.inc.php');
     break;
 
     case 'do_logout':
@@ -206,12 +206,24 @@ if (!empty($ajax)) {
 
     case 'do_reset_password':
       // Reset password
-      require_once('./inc/ajax/do_reset_password.inc.php');
+      if (PCPIN_SLAVE_MODE) {
+        // Not allowed in Slave mode
+        $xmlwriter->setHeaderMessage('SLAVE_MODE');
+        $xmlwriter->setHeaderStatus(1);
+      } else {
+        require_once('./inc/ajax/do_reset_password.inc.php');
+      }
     break;
 
     case 'do_register':
       // Register new account
-      require_once('./inc/ajax/do_register.inc.php');
+      if (PCPIN_SLAVE_MODE) {
+        // Not allowed in Slave mode
+        $xmlwriter->setHeaderMessage('SLAVE_MODE');
+        $xmlwriter->setHeaderStatus(1);
+      } else {
+        require_once('./inc/ajax/do_register.inc.php');
+      }
     break;
 
     case 'enter_chat_room':
@@ -421,9 +433,37 @@ if (!empty($ajax)) {
 
     case 'update_userdata':
       // Update userdata (in "userdata" table)
-      require_once('./inc/ajax/update_userdata.inc.php');
+      if (PCPIN_SLAVE_MODE) {
+        // Not allowed in Slave mode
+        $xmlwriter->setHeaderMessage('SLAVE_MODE');
+        $xmlwriter->setHeaderStatus(1);
+      } else {
+        require_once('./inc/ajax/update_userdata.inc.php');
+      }
     break;
 
   }
+  
 }
+
+// Show timers
+if (PCPIN_DEBUGMODE && PCPIN_LOG_TIMER) {
+  $end_times=explode(' ', microtime());
+  $start_times=explode(' ', $_pcpin_log_timer_start);
+  $start=1*(substr($start_times[1], -5).substr($start_times[0], 1, 5));
+  $end=1*(substr($end_times[1], -5).substr($end_times[0], 1, 5));
+  $diff=$end-$start;
+  $mysql_usage=$_GET['_pcpin_log_mysql_usage'];
+  $xmlwriter->setDebugTimers(array('total'=>number_format($diff, 3, '.', ''),
+                                   'code'=>number_format($diff-$mysql_usage, 3, '.', ''),
+                                   'db'=>number_format($mysql_usage, 3, '.', '')
+                                   ));
+}
+
+// Send XML
+echo $xmlwriter->makeXML();
+
+// Terminate script
+// Warning: do not remove next line!
+die();
 ?>

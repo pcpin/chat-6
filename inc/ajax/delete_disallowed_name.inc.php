@@ -25,19 +25,12 @@ if (!empty($current_user->id) && $current_user->is_admin==='y') {
   if (!empty($name_id)) {
     // Delete name
     if ($disallowed_name->deleteName($name_id)) {
-      $status=0;
-      $message=$l->g('name_deleted');
+      $xmlwriter->setHeaderStatus(0);
+      $xmlwriter->setHeaderMessage($l->g('name_deleted'));
     } else {
-      $status=1;
-      $message=$l->g('error');
+      $xmlwriter->setHeaderStatus(1);
+      $xmlwriter->setHeaderMessage($l->g('error'));
     }
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

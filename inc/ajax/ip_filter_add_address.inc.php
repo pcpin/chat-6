@@ -38,8 +38,8 @@ if (!isset($action)) $action='d';
 
 $errortext=array();
 if (is_object($session) && !empty($current_user->id) && $current_user->is_admin==='y') {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
 
   $mask=trim($mask);
   $description=trim($description);
@@ -62,7 +62,7 @@ if (is_object($session) && !empty($current_user->id) && $current_user->is_admin=
 
   if (empty($errortext)) {
     if ($ipfilter->addAddress($mask, empty($expires_never)? ("$expires_year-$expires_month-$expires_day $expires_hour:$expires_minute:00") : '', $description, $action)) {
-      $message=$l->g('ip_address_added');
+      $xmlwriter->setHeaderMessage($l->g('ip_address_added'));
       // Ensure, that current user can access the software with new record
       if ($ipfilter->isBlocked(PCPIN_CLIENT_IP)) {
         // Not good
@@ -74,16 +74,8 @@ if (is_object($session) && !empty($current_user->id) && $current_user->is_admin=
     }
   }
 }
-
 if (!empty($errortext)) {
-  $status=1;
-  $message=implode("\n", $errortext);
+  $xmlwriter->setHeaderStatus(1);
+  $xmlwriter->setHeaderMessage(implode("\n", $errortext));
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

@@ -37,19 +37,12 @@ if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_u
   }
 
   if (!empty($errortext)) {
-    $status=1;
-    $message=implode("\n", $errortext);
+    $xmlwriter->setHeaderStatus(1);
+    $xmlwriter->setHeaderMessage(implode("\n", $errortext));
   } else {
-    $status=0;
-    $message=str_replace('[NAME]', $name, $l->g('category_created'));
+    $xmlwriter->setHeaderStatus(0);
+    $xmlwriter->setHeaderMessage(str_replace('[NAME]', $name, $l->g('category_created')));
     $category->addCategory($parent_id, $name, $description, $creatable_rooms);
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

@@ -62,8 +62,8 @@ if (!isset($height)) $height=0;
 
 $errortext=array();
 if (is_object($session) && !empty($current_user->id) && $current_user->is_admin==='y') {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
 
   $name=trim($name);
   $active=trim($active);
@@ -134,7 +134,7 @@ if (is_object($session) && !empty($current_user->id) && $current_user->is_admin=
     $start_date="$start_year-$start_month-$start_day $start_hour:$start_minute:00";
     $expiration_date=empty($expires_never)? "$expires_year-$expires_month-$expires_day $expires_hour:$expires_minute:00" : '0000-00-00 00:00:00';
     if ($banner->addBanner($name, $active, $source_type, $source, $display_position, $max_views, $start_date, $expiration_date, $width, $height)) {
-      $message=$l->g('banner_added');
+      $xmlwriter->setHeaderMessage($l->g('banner_added'));
     } else {
       $errortext[]=$l->g('error');
     }
@@ -142,14 +142,7 @@ if (is_object($session) && !empty($current_user->id) && $current_user->is_admin=
 }
 
 if (!empty($errortext)) {
-  $status=1;
-  $message=implode("\n", $errortext);
+  $xmlwriter->setHeaderStatus(1);
+  $xmlwriter->setHeaderMessage(implode("\n", $errortext));
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

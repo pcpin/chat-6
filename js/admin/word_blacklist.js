@@ -30,13 +30,10 @@ function initWordBlacklistForm() {
  * Get filtered IP addresses
  */
 function getFilteredWords() {
-  sendData('_CALLBACK_getFilteredWords()', formlink, 'POST', 'ajax='+urlencode('get_filtered_words')+'&s_id='+urlencode(s_id));
+  sendData('_CALLBACK_getFilteredWords()', formlink, 'POST', 'ajax=get_filtered_words&s_id='+urlencode(s_id));
 }
 function _CALLBACK_getFilteredWords() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
   var word=null;
   var word_nr=0;
   var word_id=0;
@@ -45,28 +42,29 @@ function _CALLBACK_getFilteredWords() {
   var tr=null;
   var td=null;
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (message=='OK') {
+    if (actionHandler.message=='OK') {
       // OK
       words_tbl=$('words_tbl');
       // Clear table
       for (var i=words_tbl.rows.length-1; i>1; i--) {
         words_tbl.deleteRow(i);
       }
-      while (null!=(word=actionHandler.getElement('word', word_nr++))) {
-        word_id=stringToNumber(actionHandler.getCdata('id', 0, word));
+      for (word_nr=0; word_nr<actionHandler.data['word'].length; word_nr++) {
+        word=actionHandler.data['word'][word_nr];
+        word_id=stringToNumber(word['id'][0]);
         tr=words_tbl.insertRow(-1);
 
         td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars(actionHandler.getCdata('word', 0, word));
+        td.innerHTML=htmlspecialchars(word['word'][0]);
         setCssClass(td, '.tbl_row');
 
         td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars(actionHandler.getCdata('replacement', 0, word));
+        td.innerHTML=htmlspecialchars(word['replacement'][0]);
         setCssClass(td, '.tbl_row');
 
         td=tr.insertCell(-1);
@@ -74,8 +72,8 @@ function _CALLBACK_getFilteredWords() {
         setCssClass(td, '.tbl_row');
 
       }
-    } else if (message!=null) {
-      alert(message);
+    } else {
+      alert(actionHandler.message);
     }
   }
   toggleProgressBar(false);
@@ -106,7 +104,7 @@ function addBadWord() {
     alert(errors.join("\n"));
   } else {
     // Send data to server
-    sendData('_CALLBACK_addBadWord()', formlink, 'POST', 'ajax='+urlencode('add_filtered_word')+'&s_id='+urlencode(s_id)
+    sendData('_CALLBACK_addBadWord()', formlink, 'POST', 'ajax=add_filtered_word&s_id='+urlencode(s_id)
              +'&word='+urlencode($('new_word_word').value)
              +'&replacement='+urlencode($('new_word_replacement').value)
              );
@@ -116,13 +114,9 @@ function addBadWord() {
 }
 function _CALLBACK_addBadWord() {
 //alert(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  if (message!=null) {
-    alert(message);
-  }
   toggleProgressBar(false);
-  if (status=='0') {
+  alert(actionHandler.message);
+  if (actionHandler.status==0) {
     getFilteredWords();
     initAddBadWordForm();
   }
@@ -137,7 +131,7 @@ function deleteFilteredWord(word_id) {
     word_id=stringToNumber(word_id);
   }
   if (typeof(word_id)=='number' && word_id>0 && confirm(getLng('confirm_delete_word'))) {
-    sendData('_CALLBACK_deleteFilteredWord()', formlink, 'POST', 'ajax='+urlencode('delete_filtered_word')
+    sendData('_CALLBACK_deleteFilteredWord()', formlink, 'POST', 'ajax=delete_filtered_word'
                                                                 +'&s_id='+urlencode(s_id)
                                                                 +'&word_id='+urlencode(word_id)
                                                                 );
@@ -146,11 +140,7 @@ function deleteFilteredWord(word_id) {
 }
 function _CALLBACK_deleteFilteredWord() {
 //alert(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  if (message!=null) {
-    alert(message);
-  }
   toggleProgressBar(false);
+  alert(actionHandler.message);
   getFilteredWords();
 }

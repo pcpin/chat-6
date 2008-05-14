@@ -28,6 +28,13 @@ if (function_exists('debug_backtrace')) {
   unset($_pcpin_dbt);
 }
 
+/**
+ * PHP version
+ */
+$_pcpin_php_version=(defined('PHP_VERSION') && PHP_VERSION!='')? PHP_VERSION : phpversion();
+define('PCPIN_PHP_VERSION', substr($_pcpin_php_version, 0, strpos($_pcpin_php_version, '.')));
+unset($_pcpin_php_version);
+
 
 // Load functons
 require_once('./funcs.inc.php');
@@ -45,6 +52,7 @@ if (PCPIN_DEBUGMODE && PCPIN_LOG_TIMER) {
 
 // Activate debugging
 if (PCPIN_DEBUGMODE) {
+  @ini_set('display_errors', 'on');
   if (PCPIN_DEBUGMODE_STRICT && defined('E_STRICT')) {
     error_reporting(E_ALL|E_STRICT);
   } else {
@@ -56,12 +64,9 @@ if (PCPIN_DEBUGMODE) {
   }
   if (PCPIN_ERRORLOG!='') {
     // Log errors into file using custom error handler function
-    @ini_set('display_errors', 'off');
     if (function_exists('PCPIN_ErrorHandler')) {
       set_error_handler('PCPIN_ErrorHandler');
     }
-  } else {
-    @ini_set('display_errors', 'on');
   }
 } else {
   // No errors will be displayed

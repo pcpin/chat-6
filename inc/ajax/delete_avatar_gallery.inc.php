@@ -34,22 +34,15 @@ if (!empty($current_user->id) && $current_user->is_admin==='y' && !empty($avatar
     $avatar->_db_freeList();
     // Delete avatar
     if ($avatar->deleteGalleryAvatar($avatar_id)) {
-      $message=$l->g('avatar_deleted');
-      $status=0;
+      $xmlwriter->setHeaderMessage($l->g('avatar_deleted'));
+      $xmlwriter->setHeaderStatus(0);
     } else {
-      $message=$l->g('error');
-      $status=1;
+      $xmlwriter->setHeaderMessage($l->g('error'));
+      $xmlwriter->setHeaderStatus(1);
     }
   } else {
-    $message=$l->g('delete_last_avatar_error');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('delete_last_avatar_error'));
+    $xmlwriter->setHeaderStatus(1);
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

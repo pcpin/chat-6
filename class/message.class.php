@@ -259,7 +259,7 @@ class PCPIN_Message extends PCPIN_Session {
    * @param   int   $user_id            User ID
    * @return  array
    */
-  function getNewMessages($user_id=0) {
+  function getNewMessages($user_id) {
     $messages=array();
     if (!empty($user_id)) {
       $query=$this->_db_makeQuery(1300, $user_id);
@@ -268,7 +268,7 @@ class PCPIN_Message extends PCPIN_Session {
         while ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {
           if ($data['has_attachments']=='1') {
             // Get attachments
-            $data['attachments']=$attachment->getAttachments($data['id']);
+            $data['attachment']=$attachment->getAttachments($data['id']);
           }
           $messages[]=$data;
         }
@@ -285,7 +285,7 @@ class PCPIN_Message extends PCPIN_Session {
    * @param   int   $count        Messages count to return
    * @return  array
    */
-  function getLastMessages($user_id=0, $count=0) {
+  function getLastMessages($user_id, $count=0) {
     $messages=array();
     if (!empty($user_id) && !empty($count)) {
       $query=$this->_db_makeQuery(1300, $user_id, $count*1, 3001);
@@ -294,7 +294,7 @@ class PCPIN_Message extends PCPIN_Session {
         while ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {
           if ($data['has_attachments']=='1') {
             // Get attachments
-            $data['attachments']=$attachment->getAttachments($data['id']);
+            $data['attachment']=$attachment->getAttachments($data['id']);
           }
           $messages[]=$data;
         }

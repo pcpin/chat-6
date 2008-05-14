@@ -298,38 +298,36 @@ function setAreas() {
  */
 function getUserDataPM(user_id) {
   if (typeof(user_id)=='number' && user_id>0) {
-    sendData('_CALLBACK_getUserDataPM('+user_id+')', formlink, 'POST', 'ajax='+urlencode('get_public_profile_data')+'&s_id='+urlencode(s_id)+'&user_id='+urlencode(user_id));
+    sendData('_CALLBACK_getUserDataPM('+user_id+')', formlink, 'POST', 'ajax=get_public_profile_data&s_id='+urlencode(s_id)+'&user_id='+urlencode(user_id));
   }
 }
 function _CALLBACK_getUserDataPM(user_id) {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  var profile_data=actionHandler.getElement('profile_data');
+  var profile_data=actionHandler.data['profile_data'][0];
   var nickname='';
   var avatar=null;
   var avatar_bid=0;
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.close();
     opener.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (message=='OK') {
-      if (null!=(avatar=actionHandler.getElement('avatar', 0, profile_data))) {
-        avatar_bid=stringToNumber(actionHandler.getCdata('binaryfile_id', 0, avatar));
+    if (actionHandler.message=='OK') {
+      if (typeof(profile_data['avatar'])!='undefined') {
+        avatar_bid=stringToNumber(profile_data['avatar'][0]['binaryfile_id'][0]);
       }
-      nickname=actionHandler.getCdata('nickname', 0, profile_data);
+      nickname=profile_data['nickname'][0];
       UserList.addRecord(user_id,
                          nickname,
-                         actionHandler.getCdata('online_status', 0, profile_data),
-                         actionHandler.getCdata('online_status_message', 0, profile_data),
-                         '1'==actionHandler.getCdata('muted_locally', 0, profile_data),
-                         '1'==actionHandler.getCdata('global_muted', 0, profile_data),
-                         actionHandler.getCdata('global_muted_until', 0, profile_data),
-                         actionHandler.getCdata('ip_address', 0, profile_data),
-                         actionHandler.getCdata('gender', 0, profile_data),
+                         profile_data['online_status'][0],
+                         profile_data['online_status_message'][0],
+                         '1'==profile_data['muted_locally'][0],
+                         '1'==profile_data['global_muted'][0],
+                         profile_data['global_muted_until'][0],
+                         profile_data['ip_address'][0],
+                         profile_data['gender'][0],
                          avatar_bid
                          );
     }

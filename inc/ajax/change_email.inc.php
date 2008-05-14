@@ -37,13 +37,13 @@ if (!empty($profile_user_id)) {
   }
   if (!PCPIN_Common::checkEmail($email, $session->_conf_all['email_validation_level'])) {
     // Email invalid
-    $status=1;
-    $message=$l->g('email_invalid');
+    $xmlwriter->setHeaderStatus(1);
+    $xmlwriter->setHeaderMessage($l->g('email_invalid'));
   } else {
     if (!$current_user->checkEmailUnique($profile_user_id, $email)) {
       // Email address already taken
-      $status=1;
-      $message=$l->g('email_already_taken');
+      $xmlwriter->setHeaderStatus(1);
+      $xmlwriter->setHeaderMessage($l->g('email_already_taken'));
     } else {
       // Email address is free
       if ($current_user->is_admin!=='y' && !empty($session->_conf_all['activate_new_emails'])) {
@@ -60,8 +60,8 @@ if (!empty($profile_user_id)) {
         $email_body=str_replace('[ACTIVATION_URL]', str_replace(' ', '%20', $session->_conf_all['base_url']).'?activate_email&activation_code='.urlencode($email_new_activation_code), $email_body);
         $email_body=str_replace('[CHAT_NAME]', $session->_conf_all['chat_name'], $email_body);
         PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $l->g('email_address_activation'), null, null, $email_body);
-        $status=0;
-        $message=str_replace('[EMAIL]', $email, $l->g('email_address_activation_sent'));
+        $xmlwriter->setHeaderStatus(0);
+        $xmlwriter->setHeaderMessage(str_replace('[EMAIL]', $email, $l->g('email_address_activation_sent')));
       } else {
         // Save new email address
         $activation_required=0;
@@ -70,20 +70,12 @@ if (!empty($profile_user_id)) {
         $profile_user->email_new_date='';
         $profile_user->email_new_activation_code='';
         $profile_user->_db_updateObj($profile_user->id);
-        $status=0;
-        $message=$l->g('email_address_changed');
+        $xmlwriter->setHeaderStatus(0);
+        $xmlwriter->setHeaderMessage($l->g('email_address_changed'));
         $msg->addMessage(1010, 'n', 0, '', $session->_s_room_id, 0, $profile_user_id);
       }
     }
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-<email>'.htmlspecialchars($email).'</email>
-<activation_required>'.htmlspecialchars($activation_required).'</activation_required>
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('email'=>$email, 'activation_required'=>$activation_required));
 ?>

@@ -20,7 +20,7 @@ _pcpin_loadClass('nickname'); $nickname=new PCPIN_Nickname($session);
 _pcpin_loadClass('avatar'); $avatar=new PCPIN_Avatar($session);
 
 if (!isset($user_id)) $user_id=0;
-$profile_data_xml='';
+$userdata=array();
 
 
 // Get user data
@@ -29,11 +29,11 @@ $current_user->_db_getList('email, hide_email, joined, time_online, global_muted
 if (is_object($session)) {
   if (empty($current_user->_db_list)) {
     // User not found
-    $message=$l->g('user_not_found');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('user_not_found'));
+    $xmlwriter->setHeaderStatus(1);
   } else {
-    $message='OK';
-    $status=0;
+    $xmlwriter->setHeaderMessage('OK');
+    $xmlwriter->setHeaderStatus(0);
     $current_userdata->_db_getList('user_id = '.$user_id, 1);
 
     $userdata=array('hide_email'=>!empty($current_user->_db_list[0]['hide_email']),
@@ -50,7 +50,7 @@ if (is_object($session)) {
                     'location'=>$current_userdata->_db_list[0]['location'],
                     'occupation'=>$current_userdata->_db_list[0]['occupation'],
                     'interests'=>$current_userdata->_db_list[0]['interests'],
-                    'avatars'=>$avatar->getAvatars($user_id),
+                    'avatar'=>$avatar->getAvatars($user_id),
                     'online_status'=>-1,
                     'online_status_message'=>'',
                     'nickname'=>$nickname->getDefaultNickname($user_id),
@@ -78,34 +78,7 @@ if (is_object($session)) {
       }
       $session->_db_freeList();
     }
-
-    // Create XML
-    foreach ($userdata as $key=>$val) {
-      if ($key=='avatars') {
-        foreach ($val as $avatar_data) {
-          $profile_data_xml.='    <avatar>
-      <id>'.htmlspecialchars($avatar_data['id']).'</id>
-      <binaryfile_id>'.htmlspecialchars($avatar_data['binaryfile_id']).'</binaryfile_id>
-      <width>'.htmlspecialchars($avatar_data['width']).'</width>
-      <height>'.htmlspecialchars($avatar_data['height']).'</height>
-    </avatar>
-';
-        }
-      } elseif (is_scalar($val)) {
-        $profile_data_xml.='    <'.$key.'>'.htmlspecialchars($val).'</'.$key.'>'."\n";
-      }
-    }
   }
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-  <profile_data>
-'.$profile_data_xml.'
-  </profile_data>
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('profile_data'=>$userdata));
 ?>

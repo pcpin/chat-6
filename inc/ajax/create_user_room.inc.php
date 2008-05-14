@@ -32,27 +32,27 @@ if (!isset($password) || !is_scalar($password)) $password='';
 if (!empty($current_user->id) && !empty($category_id) && is_scalar($category_id)) {
   if (!$category->_db_getList('name, creatable_rooms', 'id = '.$category_id, 1)) {
     // Category does not exists
-    $status=1;
+    $xmlwriter->setHeaderStatus(1);
     $errortext[]=$l->g('category_not_exists');
   } elseif ($category->_db_list[0]['creatable_rooms']=='n' || $category->_db_list[0]['creatable_rooms']=='r' && $current_user->is_guest=='y') {
     // New user room cannot be created in this category
-    $status=1;
+    $xmlwriter->setHeaderStatus(1);
     $errortext[]=$l->g('user_room_create_category_error');
   } else {
     $name=trim($name);
     $description=trim($description);
     if ($name=='') {
-      $status=1;
+      $xmlwriter->setHeaderStatus(1);
       $errortext[]=$l->g('room_name_empty');
     } elseif ($room->_db_getList('id', 'category_id = '.$category_id, 'name = '.$name)) {
       // Duplicate room name
-      $status=1;
+      $xmlwriter->setHeaderStatus(1);
       $errortext[]=str_replace('[NAME]', $name, $l->g('room_already_exists_in_category'));
     }
     if (!empty($password_protect)) {
       $password=base64_decode($password);
       if (_pcpin_strlen($password)<3) {
-        $status=1;
+        $xmlwriter->setHeaderStatus(1);
         $errortext[]=$l->g('password_too_short');
       }
     }
@@ -68,26 +68,19 @@ if (!empty($current_user->id) && !empty($category_id) && is_scalar($category_id)
       $tmpdata->deleteUserRecords($session->_s_user_id, 1, 0, true);
     }
     if ($room->createRoom($category_id, 'u', $name, $description, $session->_conf_all['default_message_color'], !empty($password_protect)? $password : '', $background_image)) {
-      $status=0;
-      $message='OK';
+      $xmlwriter->setHeaderStatus(0);
+      $xmlwriter->setHeaderMessage('OK');
       // Room created
       $room_id=$room->id;
       // Add system message
       $msg->addMessage(1100, 'n', 0, '', 0, 0, '-', date('Y-m-d H:i:s'), 0, '');
     } else {
-      $status=1;
-      $message=$l->g('error');
+      $xmlwriter->setHeaderStatus(1);
+      $xmlwriter->setHeaderMessage($l->g('error'));
     }
   } else {
-    $message=implode("\n", $errortext);
+    $xmlwriter->setHeaderMessage(implode("\n", $errortext));
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-<room_id>'.htmlspecialchars($room_id).'</room_id>
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('room_id'=>$room_id));
 ?>

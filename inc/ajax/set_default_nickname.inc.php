@@ -27,18 +27,11 @@ if (empty($nickname_id) || !is_scalar($nickname_id)) {
 
 if (!empty($nickname_id) && $nickname->_db_getList('id,default', 'id = '.$nickname_id, 'user_id = '.$profile_user_id, 1)) {
   // Nickname exists
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   if ($nickname->_db_list[0]['default']!='y') {
     $nickname->setDefault($nickname_id, $profile_user_id);
   }
   $nickname->_db_freeList();
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

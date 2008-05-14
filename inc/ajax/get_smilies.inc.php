@@ -24,33 +24,16 @@
 
 _pcpin_loadClass('smilie'); $smilie=new PCPIN_Smilie($session);
 
-$smilies_xml='';
+$smilies=array();
 
 if (!isset($sort_by)) $sort_by=0;
 if (!isset($sort_dir)) $sort_dir=0;
 
 // Get client session
 if (is_object($session) && !empty($current_user->id)) {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   $smilies=$smilie->getSmilies();
-  foreach ($smilies as $smilie_data) {
-    $smilies_xml.='  <smilie>
-    <id>'.htmlspecialchars($smilie_data['id']).'</id>
-    <binaryfile_id>'.htmlspecialchars($smilie_data['binaryfile_id']).'</binaryfile_id>
-    <code>'.htmlspecialchars($smilie_data['code']).'</code>
-    <description>'.htmlspecialchars($smilie_data['description']).'</description>
-  </smilie>
-';
-  }
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-'.$smilies_xml
-.'</pcpin_xml>';
-die();
+$xmlwriter->setData(array('smilie'=>$smilies));
 ?>

@@ -22,38 +22,13 @@
 
 _pcpin_loadClass('banner'); $banner=new PCPIN_Banner($session);
 
-$banners_xml='';
+$banners=array();
 
 // Get client session
 if (is_object($session) && !empty($current_user->id) && $current_user->is_admin==='y') {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   $banners=$banner->getBanners();
-  foreach ($banners as $banner_data) {
-    $banners_xml.='  <banner>
-    <id>'.htmlspecialchars($banner_data['id']).'</id>
-    <name>'.htmlspecialchars($banner_data['name']).'</name>
-    <active>'.htmlspecialchars($banner_data['active']).'</active>
-    <source_type>'.htmlspecialchars($banner_data['source_type']).'</source_type>
-    <source>'.htmlspecialchars($banner_data['source']).'</source>
-    <display_position>'.htmlspecialchars($banner_data['display_position']).'</display_position>
-    <views>'.htmlspecialchars($banner_data['views']).'</views>
-    <max_views>'.htmlspecialchars($banner_data['max_views']).'</max_views>
-    <start_date>'.htmlspecialchars(PCPIN_Common::datetimeToTimestamp($banner_data['start_date'])).'</start_date>
-    <expiration_date>'.htmlspecialchars($banner_data['expiration_date']>'0000-00-00 00:00:00'? PCPIN_Common::datetimeToTimestamp($banner_data['expiration_date']) : '0').'</expiration_date>
-    <width>'.htmlspecialchars($banner_data['width']).'</width>
-    <height>'.htmlspecialchars($banner_data['height']).'</height>
-  </banner>
-';
-  }
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-'.$banners_xml
-.'</pcpin_xml>';
-die();
+$xmlwriter->setData(array('banner'=>$banners));
 ?>

@@ -80,82 +80,96 @@ class PCPIN_Category extends PCPIN_Session {
   /**
    * Get chat rooms list grouped in categories (tree) and sorted by name, including list of users in each room
    * This method creates an array with categories where element with KEY 0 is a category tree built from references to other elements (categories)
-   * @param   int   $current_user_id    ID of user who calls this method
-   * @param   int   $category_id        If not empty: only this category' data will be returned
-   * @param   int   $room_id            If not empty: only this room' category data will be returned
+   * @param   int       $current_user_id    Optional. ID of user who calls this method
+   * @param   int       $userlist_room_id   Optional. If empty: get userlist for all rooms, if not empty: get userlist for specified room only
+   * @param   boolean   $recursion          Optional. Default TRUE. If TRUE, tree will be returned, otherwise: plain array.
    * @return  array
    */
-  function getTree($current_user_id=0, $category_id=0, $room_id=0) {
+  function getTree($current_user_id=0, $userlist_room_id=0, $recursion=true) {
     $categories=array();
-    if (empty($category_id) && empty($room_id)) {
-      $categories[0]=array('name'=>'[ROOT]',
-                           'description'=>'[ROOT]',
-                           'parent_id'=>null,
-                           'creatable_rooms'=>0,
-                           'creatable_rooms_flag'=>'n',
-                           'children'=>array(),
-                           'rooms'=>array()
-                           );
-    }
+    $categories[0]=array('id'=>0,
+                         'name'=>'[ROOT]',
+                         'description'=>'[ROOT]',
+                         'parent_id'=>'-1',
+                         'creatable_rooms'=>0,
+                         'creatable_rooms_flag'=>'n',
+                         'category'=>array(),
+                         'room'=>array()
+                         );
     if (!pcpin_ctype_digit($current_user_id)) {
       $current_user_id=0;
     }
-    $query=$this->_db_makeQuery(1200, $current_user_id, $category_id, $room_id);
+    $query=$this->_db_makeQuery(1200, $current_user_id);
     if ($result=$this->_db_query($query)) {
       while ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {
-        $user_data=array('nickname'=>$data['nickname'],
-                         'nickname_plain'=>$data['nickname_plain'],
-                         'avatar_bid'=>$data['avatar_bid'],
-                         'online_status'=>$data['online_status'],
-                         'online_status_message'=>$data['online_status_message'],
-                         'global_muted_by'=>$data['global_muted_by'],
-                         'global_muted_by_username'=>$data['global_muted_by_username'],
-                         'global_muted_until'=>$data['global_muted_until'],
-                         'global_muted_permanently'=>$data['global_muted_permanently'],
-                         'global_muted_reason'=>$data['global_muted_reason'],
-                         'ip_address'=>$data['ip_address'],
-                         'gender'=>$data['gender'],
-                         'is_admin'=>$data['is_admin'],
-                         'is_moderator'=>$data['is_moderator'],
-                         'is_guest'=>$data['is_guest'],
-                         );
-        $room_data=array('name'=>$data['room_name'],
+        if (empty($userlist_room_id) || $userlist_room_id==$data['room_id']) {
+          $user_data=array('id'=>$data['user_id'],
+                           'nickname'=>$data['nickname'],
+                           'nickname_plain'=>$data['nickname_plain'],
+                           'avatar_bid'=>$data['avatar_bid'],
+                           'online_status'=>$data['online_status'],
+                           'online_status_message'=>$data['online_status_message'],
+                           'muted_locally'=>$data['muted_locally'],
+                           'global_muted'=>$data['global_muted'],
+                           'global_muted_by'=>$data['global_muted_by'],
+                           'global_muted_by_username'=>$data['global_muted_by_username'],
+                           'global_muted_until'=>$data['global_muted_until'],
+                           'global_muted_permanently'=>$data['global_muted_permanently'],
+                           'global_muted_reason'=>$data['global_muted_reason'],
+                           'ip_address'=>$data['ip_address'],
+                           'gender'=>$data['gender'],
+                           'is_admin'=>$data['is_admin'],
+                           'is_moderator'=>$data['is_moderator'],
+                           'is_guest'=>$data['is_guest'],
+                           );
+        }
+        $room_data=array('id'=>$data['room_id'],
+                         'name'=>$data['room_name'],
                          'description'=>$data['room_description'],
                          'background_image'=>$data['background_image'],
                          'background_image_width'=>$data['background_image_width'],
                          'background_image_height'=>$data['background_image_height'],
                          'default_message_color'=>$data['default_message_color'],
                          'password_protected'=>$data['password_protected'],
-                         'users'=>array(),
+                         'moderated_by_me'=>$data['moderated_by_me'],
+                         'users_count'=>0,
+                         'user'=>array(),
                          );
-        $category_data=array('name'=>$data['category_name'],
+        $category_data=array('id'=>$data['category_id'],
+                             'name'=>$data['category_name'],
                              'description'=>$data['category_description'],
                              'parent_id'=>$data['category_parent_id'],
                              'creatable_rooms'=>$data['creatable_rooms'],
                              'creatable_rooms_flag'=>$data['creatable_rooms_flag'],
-                             'children'=>array(),
-                             'rooms'=>array(),
+                             'category'=>array(),
+                             'room'=>array(),
                              );
         if (!isset($categories[$data['category_id']])) {
           $categories[$data['category_id']]=$category_data;
         }
-        if(!is_null($data['room_id']) && !isset($categories[$data['category_id']]['rooms'][$data['room_id']])) {
-          $categories[$data['category_id']]['rooms'][$data['room_id']]=$room_data;
+        if(!is_null($data['room_id']) && !isset($categories[$data['category_id']]['room'][$data['room_id']])) {
+          $categories[$data['category_id']]['room'][$data['room_id']]=$room_data;
         }
-        if (!is_null($data['user_id'])) {
-          $categories[$data['category_id']]['rooms'][$data['room_id']]['users'][$data['user_id']]=$user_data;
+        if (!empty($data['user_id'])) {
+          $categories[$data['category_id']]['room'][$data['room_id']]['users_count']++;
+          if (!empty($user_data)) {
+            $categories[$data['category_id']]['room'][$data['room_id']]['user'][$data['user_id']]=$user_data;
+          }
         }
       }
       $this->_db_freeResult($result);
     }
-    if (empty($category_id) && empty($room_id)) {
-      // Make recursion
+    // Make recursion
+    if ($recursion) {
       foreach ($categories as $category_id=>$category_data) {
         if (isset($categories[$category_data['parent_id']])) {
           // Category has a parent
-          $categories[$category_data['parent_id']]['children'][$category_id]=&$categories[$category_id];
+          $categories[$category_data['parent_id']]['category'][$category_id]=&$categories[$category_id];
         }
       }
+    } else {
+      unset($categories[0]);
+      $categories=array(0=>array($categories));
     }
     return $categories;
   }

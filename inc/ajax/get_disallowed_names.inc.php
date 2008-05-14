@@ -22,27 +22,12 @@
 
 _pcpin_loadClass('disallowed_name'); $disallowed_name=new PCPIN_Disallowed_Name($session);
 
-$names_xml='';
+$names=array();
 
 if (!empty($current_user->id) && $current_user->is_admin==='y') {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   $names=$disallowed_name->getDisallowedNames();
-  foreach ($names as $name_data) {
-    $names_xml.='  <name>
-    <id>'.htmlspecialchars($name_data['id']).'</id>
-    <name>'.htmlspecialchars($name_data['name']).'</name>
-  </name>
-';
-  }
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-'.$names_xml
-.'</pcpin_xml>';
-die();
+$xmlwriter->setData(array('name'=>$names));
 ?>

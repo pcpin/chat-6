@@ -29,12 +29,12 @@ if (!isset($creatable_rooms) || !is_scalar($creatable_rooms)) $creatable_rooms='
 $errortext=array();
 
 if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_user_id==$current_user->id) {
-  $status=1;
-  $message=$l->g('error');
+  $xmlwriter->setHeaderStatus(1);
+  $xmlwriter->setHeaderMessage($l->g('error'));
   if (!empty($category_id) && $category->_db_getList('id = '.$category_id)) {
     // Category exists
-    $status=0;
-    $message='OK';
+    $xmlwriter->setHeaderStatus(0);
+    $xmlwriter->setHeaderMessage('OK');
     $category_data=$category->_db_list[0];
     $category->_db_freelist();
     switch ($action) {
@@ -83,11 +83,11 @@ if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_u
         }
 
         if (!empty($errortext)) {
-          $status=1;
-          $message=implode("\n", $errortext);
+          $xmlwriter->setHeaderStatus(1);
+          $xmlwriter->setHeaderMessage(implode("\n", $errortext));
         } else {
-          $status=0;
-          $message=$l->g('changes_saved');
+          $xmlwriter->setHeaderStatus(0);
+          $xmlwriter->setHeaderMessage($l->g('changes_saved'));
           $category->updateCategory($category_id, false, true, $parent_id, $name, $description, $creatable_rooms);
         }
 
@@ -96,11 +96,4 @@ if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_u
     }
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

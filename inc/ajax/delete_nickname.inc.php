@@ -23,30 +23,21 @@ if (empty($profile_user_id) || $current_user->is_admin!=='y') {
   $profile_user_id=$current_user->id;
 }
 
-$nicknames_xml='';
+$nicknames_xml=array();
 if (!empty($profile_user_id) && !empty($nickname_id)) {
   // Delete nickname
   $nickname->deleteNickname($profile_user_id, $nickname_id);
-  $message='OK';
-  $status=$l->g('nickname_deleted');
+  $xmlwriter->setHeaderMessage($l->g('nickname_deleted'));
+  $xmlwriter->setHeaderStatus(0);
   // Get nicknames list
   $nicknames=$nickname->getNicknames($profile_user_id);
   foreach ($nicknames as $nickname_data) {
-    $nicknames_xml.='
-  <nickname>
-    <id>'.htmlspecialchars($nickname_data['id']).'</id>
-    <nickname>'.htmlspecialchars($nickname_data['nickname']).'</nickname>
-    <nickname_plain>'.htmlspecialchars($nickname_data['nickname_plain']).'</nickname_plain>
-    <default>'.htmlspecialchars($nickname_data['default']).'</default>
-  </nickname>';
+    $nicknames_xml[]=array('id'=>$nickname_data['id'],
+                           'nickname'=>$nickname_data['nickname'],
+                           'nickname_plain'=>$nickname_data['nickname_plain'],
+                           'default'=>$nickname_data['default']
+                           );
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-'.$nicknames_xml.'
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('nickname'=>$nicknames_xml));
 ?>

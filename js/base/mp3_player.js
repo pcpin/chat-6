@@ -34,7 +34,6 @@ PCPIN_MP3_Player_PlayLockedAfterInit='';
  */
 var PCPIN_MP3_PlayerDefaultVolume=75;
 
-
 /**
  * This function called by player after it finished initialisation
  */

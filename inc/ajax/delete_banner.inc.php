@@ -26,16 +26,8 @@ if (!isset($banner_id)) $banner_id=0;
 
 // Get client session
 if (is_object($session) && !empty($current_user->id) && $current_user->is_admin==='y') {
-  $message=$l->g('banner_deleted');
-  $status=0;
+  $xmlwriter->setHeaderMessage($l->g('banner_deleted'));
+  $xmlwriter->setHeaderStatus(0);
   $banner->deleteBanner($banner_id*1);
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

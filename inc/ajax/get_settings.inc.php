@@ -17,14 +17,12 @@
  */
 
 if (!isset($group)) $group='';
-$settings_xml='';
-
+$settings=array();
 
 // Get client session
 if (is_object($session) && !empty($current_user->id) && $session->_s_user_id==$current_user->id && $current_user->is_admin==='y') {
-
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   if (!empty($session->_conf_all_grouped[$group])) {
     // Create XML
     foreach ($session->_conf_all_grouped[$group] as $conf) {
@@ -39,29 +37,13 @@ if (is_object($session) && !empty($current_user->id) && $session->_s_user_id==$c
       } elseif ($conf['_conf_value']===false) {
         $conf['_conf_value']=0;
       }
-      $settings_xml.='    <setting>
-      <id>'.htmlspecialchars($conf['_conf_id']).'</id>
-      <group>'.htmlspecialchars($conf['_conf_group']).'</group>
-      <subgroup>'.htmlspecialchars($conf['_conf_subgroup']).'</subgroup>
-      <name>'.htmlspecialchars($conf['_conf_name']).'</name>
-      <value>'.htmlspecialchars($conf['_conf_value']).'</value>
-      <type>'.htmlspecialchars($conf['_conf_type']).'</type>
-      <choices>'.htmlspecialchars($conf['_conf_choices']).'</choices>
-      <description>'.htmlspecialchars($conf['_conf_description']).'</description>
-    </setting>
-';
+      $setting=array();
+      foreach ($conf as $key=>$val) {
+        $setting[substr($key, 6)]=$val;
+      }
+      $settings[]=$setting;
     }
   }
-
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-  <settings>
-'.$settings_xml.'</settings>
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('setting'=>$settings));
 ?>

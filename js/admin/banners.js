@@ -48,52 +48,43 @@ function initBannersWindow(top_banner_height_, bottom_banner_height_) {
  * Get banners
  */
 function getBanners() {
-  sendData('_CALLBACK_getBanners()', formlink, 'POST', 'ajax='+urlencode('get_banners')+'&s_id='+urlencode(s_id));
+  sendData('_CALLBACK_getBanners()', formlink, 'POST', 'ajax=get_banners&s_id='+urlencode(s_id));
 }
 function _CALLBACK_getBanners() {
 //debug(actionHandler.getResponseString()); return false;
 
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
   var banner=null;
   var banner_array=null;
-  var banner_nr=0;
-  var banner_id=0;
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (message=='OK') {
+    if (actionHandler.message=='OK') {
       // OK
       Banners=new Array();
-
-      while (null!=(banner=actionHandler.getElement('banner', banner_nr++))) {
-        banner_array=new Array();
-
-        banner_array['id']=stringToNumber(actionHandler.getCdata('id', 0, banner));
-        banner_array['name']=actionHandler.getCdata('name', 0, banner, '');
-        banner_array['active']=actionHandler.getCdata('active', 0, banner, '');
-        banner_array['source_type']=actionHandler.getCdata('source_type', 0, banner, '');
-        banner_array['source']=actionHandler.getCdata('source', 0, banner, '');
-        banner_array['display_position']=actionHandler.getCdata('display_position', 0, banner, '');
-        banner_array['period_minutes']=actionHandler.getCdata('period_minutes', 0, banner, '');
-        banner_array['period_messages']=actionHandler.getCdata('period_messages', 0, banner, '');
-        banner_array['views']=actionHandler.getCdata('views', 0, banner, '');
-        banner_array['max_views']=actionHandler.getCdata('max_views', 0, banner, '');
-        banner_array['start_date']=actionHandler.getCdata('start_date', 0, banner, '');
-        banner_array['start_date_hr']=actionHandler.getCdata('start_date_hr', 0, banner, '');
-        banner_array['expiration_date']=actionHandler.getCdata('expiration_date', 0, banner, '');
-        banner_array['expiration_date_hr']=actionHandler.getCdata('expiration_date_hr', 0, banner, '');
-        banner_array['width']=actionHandler.getCdata('width', 0, banner, '');
-        banner_array['height']=actionHandler.getCdata('height', 0, banner, '');
-
-        Banners[banner_array['id']]=banner_array;
+      if (typeof(actionHandler.data['banner'])!='undefined') {
+        for (var i=0; i<actionHandler.data['banner'].length; i++) {
+          banner=actionHandler.data['banner'][i];
+          banner_array=new Array();
+          banner_array['id']=stringToNumber(banner['id'][0]);
+          banner_array['name']=banner['name'][0];
+          banner_array['active']=banner['active'][0];
+          banner_array['source_type']=banner['source_type'][0];
+          banner_array['source']=banner['source'][0];
+          banner_array['display_position']=banner['display_position'][0];
+          banner_array['views']=banner['views'][0];
+          banner_array['max_views']=banner['max_views'][0];
+          banner_array['start_date']=banner['start_date'][0];
+          banner_array['expiration_date']=banner['expiration_date'][0];
+          banner_array['width']=banner['width'][0];
+          banner_array['height']=banner['height'][0];
+          Banners[banner_array['id']]=banner_array;
+        }
       }
-    } else if (message!=null) {
-      alert(message);
+    } else {
+      alert(actionHandler.message);
     }
   }
 
@@ -496,7 +487,7 @@ function addNewBanner() {
     } else if ($('new_banner_display_position_m').checked) {
       display_position='m';
     }
-    sendData('_CALLBACK_addNewBanner()', formlink, 'POST', 'ajax='+urlencode('add_banner')+'&s_id='+urlencode(s_id)
+    sendData('_CALLBACK_addNewBanner()', formlink, 'POST', 'ajax=add_banner&s_id='+urlencode(s_id)
              +'&name='+urlencode($('new_banner_name').value)
              +'&active='+urlencode($('new_banner_active_y').checked? 'y' : 'n')
              +'&source_type='+urlencode($('new_banner_source_u').checked? 'u' : 'c')
@@ -521,13 +512,9 @@ function addNewBanner() {
 }
 function _CALLBACK_addNewBanner() {
 //alert(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  if (message!=null) {
-    alert(message);
-  }
+  alert(actionHandler.message);
   toggleProgressBar(false);
-  if (status=='0') {
+  if (actionHandler.status==0) {
     hideNewBannerForm();
     getBanners();
   }
@@ -540,22 +527,17 @@ function _CALLBACK_addNewBanner() {
  */
 function deleteBanner(banner_id) {
   if (Banners[banner_id] && confirm(getLng('confirm_delete_banner').split('[NAME]').join(Banners[banner_id]['name']))) {
-    sendData('_CALLBACK_deleteBanner()', formlink, 'POST', 'ajax='+urlencode('delete_banner')+'&s_id='+urlencode(s_id)+'&banner_id='+urlencode(banner_id));
+    sendData('_CALLBACK_deleteBanner()', formlink, 'POST', 'ajax=delete_banner&s_id='+urlencode(s_id)+'&banner_id='+urlencode(banner_id));
   }
 }
 function _CALLBACK_deleteBanner() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (message!=null) {
-      alert(message);
-    }
+    alert(actionHandler.message);
     getBanners();
   }
 }
@@ -741,7 +723,7 @@ function updateBanner() {
     } else if ($('edit_banner_display_position_m').checked) {
       display_position='m';
     }
-    sendData('_CALLBACK_updateBanner()', formlink, 'POST', 'ajax='+urlencode('update_banner')+'&s_id='+urlencode(s_id)
+    sendData('_CALLBACK_updateBanner()', formlink, 'POST', 'ajax=update_banner&s_id='+urlencode(s_id)
              +'&banner_id='+urlencode($('edit_banner_id').value)
              +'&name='+urlencode($('edit_banner_name').value)
              +'&active='+urlencode($('edit_banner_active_y').checked? 'y' : 'n')
@@ -767,13 +749,9 @@ function updateBanner() {
 }
 function _CALLBACK_updateBanner() {
 //alert(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  if (message!=null) {
-    alert(message);
-  }
+  alert(actionHandler.message);
   toggleProgressBar(false);
-  if (status=='0') {
+  if (actionHandler.status==0) {
     hideEditBannerForm();
     getBanners();
   }

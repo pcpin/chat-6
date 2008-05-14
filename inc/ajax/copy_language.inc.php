@@ -29,28 +29,20 @@ if (is_object($session) && !empty($current_user->id) && $current_user->is_admin=
 
   // Check language availability
   if (!$l->_db_getList('id', 'iso_name = '.$src_language, 1) || $l->_db_getList('id', 'iso_name = '.$dst_language, 1)) {
-    $message=$l->g('error');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('error'));
+    $xmlwriter->setHeaderStatus(1);
   } else {
     $lang=new PCPIN_Language($session);
     if ($lang->copyLanguage($src_language, $dst_language)) {
       $new_language_id=$lang->id;
       unset($lang);
-      $message='OK';
-      $status=0;
+      $xmlwriter->setHeaderMessage('OK');
+      $xmlwriter->setHeaderStatus(0);
     } else {
-      $message=$l->g('error');
-      $status=1;
+      $xmlwriter->setHeaderMessage($l->g('error'));
+      $xmlwriter->setHeaderStatus(1);
     }
   }
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-  <language_id>'.htmlspecialchars($new_language_id).'</language_id>
-</pcpin_xml>';
-die();
+$xmlwriter->setData(array('language_id'=>$new_language_id));
 ?>

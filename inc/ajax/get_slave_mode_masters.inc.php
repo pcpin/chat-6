@@ -17,14 +17,14 @@
  */
 
 
-$masters_xml='';
+$masters=array();
 
 
 // Get client session
 if (is_object($session) && !empty($current_user->id) && $session->_s_user_id==$current_user->id && $current_user->is_admin==='y') {
 
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
 
   if ($h=opendir('./mods/slave')) {
     while ($file=@readdir($h)) {
@@ -32,8 +32,7 @@ if (is_object($session) && !empty($current_user->id) && $session->_s_user_id==$c
         if ($hh=@opendir('./mods/slave/'.$file)) {
           while ($file2=@readdir($hh)) {
             if ($file2===($file.'.php')) {
-              $masters_xml.='  <master>'.htmlspecialchars($file).'</master>
-';
+              $masters[]=$file;
               break;
             }
           }
@@ -43,14 +42,6 @@ if (is_object($session) && !empty($current_user->id) && $session->_s_user_id==$c
     }
     closedir($h);
   }
-
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-'.$masters_xml
-.'</pcpin_xml>';
-die();
+$xmlwriter->setData(array('master'=>$masters));
 ?>

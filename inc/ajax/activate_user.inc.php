@@ -17,28 +17,20 @@
  */
 
 /**
- * Set new user level
+ * Activate new user
  */
 
 if (!isset($profile_user_id)) $profile_user_id=0;
 
 // Get client session
 if (is_object($session) && !empty($profile_user_id) && !empty($current_user->id) && $current_user->is_admin==='y') {
-  $message=$l->g('account_activated');
-  $status=0;
+  $xmlwriter->setHeaderMessage($l->g('account_activated'));
+  $xmlwriter->setHeaderStatus(0);
   if ($current_user->_db_getList('activated', 'id = '.$profile_user_id, 1)) {
     if ($current_user->_db_list[0]['activated']==='n') {
       $current_user->activateUser($profile_user_id);
     }
     $current_user->_db_freeList();
   }
-
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

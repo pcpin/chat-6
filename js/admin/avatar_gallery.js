@@ -31,13 +31,10 @@ function initAvatarsForm() {
  * Get avatars
  */
 function getAvatars() {
-  sendData('_CALLBACK_getAvatars()', formlink, 'POST', 'ajax='+urlencode('get_avatars_gallery')+'&s_id='+urlencode(s_id));
+  sendData('_CALLBACK_getAvatars()', formlink, 'POST', 'ajax=get_avatars_gallery&s_id='+urlencode(s_id));
 }
 function _CALLBACK_getAvatars() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
   var avatar=null;
   var avatar_nr=0;
   var avatar_id=0;
@@ -49,23 +46,23 @@ function _CALLBACK_getAvatars() {
   var td=null;
   var td_nr=0;
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (message=='OK') {
+    if (actionHandler.message=='OK') {
       // OK
       avatars_tbl=$('avatars_tbl');
       // Clear table
       while (avatars_tbl.rows.length>1) {
         avatars_tbl.deleteRow(-1);
       }
-      while (null!=(avatar=actionHandler.getElement('avatar', avatar_nr++))) {
-        avatar_id=stringToNumber(actionHandler.getCdata('id', 0, avatar));
-        avatar_code=actionHandler.getCdata('code', 0, avatar);
-        avatar_binaryfile_id=actionHandler.getCdata('binaryfile_id', 0, avatar);
-        avatar_primary='y'==actionHandler.getCdata('primary', 0, avatar);
+      for (avatar_nr=0; avatar_nr<actionHandler.data['avatar'].length; avatar_nr++) {
+        avatar=actionHandler.data['avatar'][avatar_nr];
+        avatar_id=stringToNumber(avatar['id'][0]);
+        avatar_binaryfile_id=avatar['binaryfile_id'][0];
+        avatar_primary='y'==avatar['primary'][0];
         if (td_nr==0) {
           tr=avatars_tbl.insertRow(-1);
         }
@@ -74,7 +71,7 @@ function _CALLBACK_getAvatars() {
         td.innerHTML='<img id="avatar_img_'+htmlspecialchars(avatar_id)+'" src="'+htmlspecialchars(formlink)+'?b_id='+htmlspecialchars(avatar_binaryfile_id)+'&amp;s_id='+htmlspecialchars(s_id)+'&amp;b_x=100&amp;b_y=85" border="0" alt="'+htmlspecialchars(getLng('avatar'))+'" title="'+htmlspecialchars(getLng('avatar'))+'" style="cursor:pointer" />'
                     +'<br />'
                     +'<label for="avatar_primary_'+htmlspecialchars(avatar_id)+'" title="'+htmlspecialchars(getLng('primary'))+'">'
-                    +'<input type="radio" name="avatar_primary" id="avatar_primary_'+htmlspecialchars(avatar_id)+'" onclick="setPrimaryAvatar('+htmlspecialchars(avatar_id)+')"; return false;" '+(actionHandler.getCdata('primary', 0, avatar, 'n')=='y'? 'checked="checked"' : '')+'>'
+                    +'<input type="radio" name="avatar_primary" id="avatar_primary_'+htmlspecialchars(avatar_id)+'" onclick="setPrimaryAvatar('+htmlspecialchars(avatar_id)+')"; return false;" '+(avatar['primary'][0]=='y'? 'checked="checked"' : '')+'>'
                     +'&nbsp;'+htmlspecialchars(getLng('primary'))
                     +'</label>'
                     +'<br />'
@@ -86,8 +83,8 @@ function _CALLBACK_getAvatars() {
         setCssClass(td, '.tbl_row');
         td.style.textAlign='center';
         $('avatar_img_'+avatar_id).binaryfile_id=avatar_binaryfile_id;
-        $('avatar_img_'+avatar_id).ow_width=stringToNumber(actionHandler.getCdata('width', 0, avatar))+10;
-        $('avatar_img_'+avatar_id).ow_height=stringToNumber(actionHandler.getCdata('height', 0, avatar))+10;
+        $('avatar_img_'+avatar_id).ow_width=stringToNumber(avatar['width'][0])+10;
+        $('avatar_img_'+avatar_id).ow_height=stringToNumber(avatar['height'][0])+10;
         $('avatar_img_'+avatar_id).onclick=function() {
           openWindow(mainFormlink+'?inc=show_image&img_b_id='+this.binaryfile_id+'&s_id='+s_id, '', this.ow_width, this.ow_height, false, false, false, false, true);
           return false;
@@ -104,8 +101,8 @@ function _CALLBACK_getAvatars() {
           setCssClass(td, '.tbl_row');
         }
       }
-    } else if (message!=null) {
-      alert(message);
+    } else {
+      alert(actionHandler.message);
     }
   }
   toggleProgressBar(false);
@@ -177,24 +174,20 @@ function addNewAvatar() {
     alert(errors.join("\n"));
   } else {
     // Send data to server
-    sendData('_CALLBACK_addNewAvatar()', formlink, 'POST', 'ajax='+urlencode('add_avatar_gallery')+'&s_id='+urlencode(s_id));
+    sendData('_CALLBACK_addNewAvatar()', formlink, 'POST', 'ajax=add_avatar_gallery&s_id='+urlencode(s_id));
 
   }
   return false;
 }
 function _CALLBACK_addNewAvatar() {
 //alert(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
   toggleProgressBar(false);
-  if (message!=null) {
-    alert(message);
-  }
-  if (status=='-1') {
+  alert(actionHandler.message);
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
-  } else if (status=='0') {
+  } else if (actionHandler.status==0) {
     $('avatar_image').innerHTML='';
     $('avatar_image').binaryfile_id=0;
     $('delete_image_link').style.display='none';
@@ -212,23 +205,18 @@ function deleteAvatar(avatar_id) {
     avatar_id=stringToNumber(avatar_id);
   }
   if (avatar_id>0 && confirm(getLng('confirm_delete_avatar'))) {
-    sendData('_CALLBACK_deleteAvatar()', formlink, 'POST', 'ajax='+urlencode('delete_avatar_gallery')+'&s_id='+urlencode(s_id)+'&avatar_id='+urlencode(avatar_id));
+    sendData('_CALLBACK_deleteAvatar()', formlink, 'POST', 'ajax=delete_avatar_gallery&s_id='+urlencode(s_id)+'&avatar_id='+urlencode(avatar_id));
   }
   return false;
 }
 function _CALLBACK_deleteAvatar() {
-//alert(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
   toggleProgressBar(false);
-  if (message!=null) {
-    alert(message);
-  }
-  if (status=='-1') {
+  alert(actionHandler.message);
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
-  } else if (status=='0') {
+  } else if (actionHandler.status==0) {
     getAvatars();
   }
 }
@@ -239,5 +227,5 @@ function _CALLBACK_deleteAvatar() {
  * @param   int   id    Avatar ID
  */
 function setPrimaryAvatar(id) {
-  sendData('toggleProgressBar(false)', formlink, 'POST', 'ajax='+urlencode('set_primary_avatar_gallery')+'&s_id='+urlencode(s_id)+'&avatar_id='+urlencode(id));
+  sendData('toggleProgressBar(false)', formlink, 'POST', 'ajax=set_primary_avatar_gallery&s_id='+urlencode(s_id)+'&avatar_id='+urlencode(id));
 }

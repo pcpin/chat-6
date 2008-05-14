@@ -31,19 +31,11 @@ if (is_object($session) && !empty($profile_user_id) && !empty($current_user->id)
     $is_admin=$level==='a'? 'y' : 'n';
     $is_guest=($level!=='a' && $level!=='r')? 'y' : 'n';
     $current_user->_db_updateRow($profile_user_id, 'id', array('is_admin'=>$is_admin, 'is_guest'=>$is_guest));
-    $message=$l->g('changes_saved');
-    $status=0;
+    $xmlwriter->setHeaderMessage($l->g('changes_saved'));
+    $xmlwriter->setHeaderStatus(0);
   } else {
-    $message=$l->g('error');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('error'));
+    $xmlwriter->setHeaderStatus(1);
   }
-
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

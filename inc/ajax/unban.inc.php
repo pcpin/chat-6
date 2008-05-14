@@ -24,11 +24,11 @@ if (!isset($target_user_id) || !is_scalar($target_user_id)) {
 
 
 if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_user_id==$current_user->id) {
-  $status=1;
+  $xmlwriter->setHeaderStatus(1);
   if (!empty($target_user_id) && $current_user->_db_getList('banned_permanently,banned_until', 'id = '.$target_user_id, 1)) {
     // User exists
-    $status=0;
-    $message='OK';
+    $xmlwriter->setHeaderStatus(0);
+    $xmlwriter->setHeaderMessage('OK');
     if ($current_user->_db_list[0]['banned_permanently']=='y' || $current_user->_db_list[0]['banned_until']>date('Y-m-d H:i:s')) {
       // Add new message
       $msg->addMessage(10107, 'n', $current_user->id, $current_nickname, 0, 0, $target_user_id.'/'.$current_user->id, date('Y-m-d H:i:s'), 0, '');
@@ -37,11 +37,4 @@ if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_u
     }
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

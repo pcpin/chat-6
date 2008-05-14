@@ -140,7 +140,7 @@ function loadLngExpressions(language_id, start_from) {
   }
   currentStartFrom=start_from;
   $('edit_expressions_tbl').style.display='none';
-  sendData('_CALLBACK_loadLngExpressions()', formlink, 'POST', 'ajax='+urlencode('manage_language_expressions')
+  sendData('_CALLBACK_loadLngExpressions()', formlink, 'POST', 'ajax=manage_language_expressions'
                                                               +'&s_id='+urlencode(s_id)
                                                               +'&language_id='+urlencode(currentLanguageId)
                                                               +'&start_from='+urlencode(currentStartFrom)
@@ -149,33 +149,31 @@ function loadLngExpressions(language_id, start_from) {
 }
 function _CALLBACK_loadLngExpressions() {
 //debug(actionHandler.getResponseString());// return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
   var expr=null;
   var expr_nr=0;
   var code='';
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
-  } else if (status=='0') {
+  } else if (actionHandler.status==0) {
     LngExpressions=new Array();
-    while (null!=(expr=actionHandler.getElement('expression', expr_nr++))) {
-      code=actionHandler.getCdata('code', 0, expr, '');
+    for (expr_nr=0; expr_nr<actionHandler.data['expression'].length; expr_nr++) {
+      expr=actionHandler.data['expression'][expr_nr];
+      code=expr['code'][0];
       if (code!='') {
         LngExpressions[code]=new LngExpressionObject(code,
-                                                     actionHandler.getCdata('value', 0, expr, ''),
-                                                     actionHandler.getCdata('multi_row', 0, expr, 'n')
+                                                     expr['value'][0],
+                                                     expr['multi_row'][0]
                                                      );
       }
     }
-    totalExpressions=stringToNumber(actionHandler.getCdata('expressions_total'));
+    totalExpressions=stringToNumber(actionHandler.data['expressions_total'][0]);
     showEditPage();
-  } else if (message!=null) {
+  } else {
     toggleProgressBar(false);
-    alert(message);
+    alert(actionHandler.message);
   }
 }
 
@@ -281,7 +279,7 @@ function saveEditTranslationPage() {
     req.push('update_lng_expr['+i+']='+urlencode($('lng_expr_'+i).value));
   }
   // Send data to server
-  sendData('_CALLBACK_loadLngExpressions()', formlink, 'POST', 'ajax='+urlencode('manage_language_expressions')
+  sendData('_CALLBACK_loadLngExpressions()', formlink, 'POST', 'ajax=manage_language_expressions'
                                                                +'&s_id='+urlencode(s_id)
                                                                +'&language_id='+urlencode(currentLanguageId)
                                                                +'&start_from='+urlencode(currentStartFrom)
@@ -347,7 +345,7 @@ function copyLanguage(from, to) {
   if (to=='') {
     alert(getLng('please_select_language'));
   } else {
-    sendData('_CALLBACK_copyLanguage()', formlink, 'POST', 'ajax='+urlencode('copy_language')
+    sendData('_CALLBACK_copyLanguage()', formlink, 'POST', 'ajax=copy_language'
                                                           +'&s_id='+urlencode(s_id)
                                                           +'&src_language='+urlencode(from)
                                                           +'&dst_language='+urlencode(to)
@@ -356,18 +354,15 @@ function copyLanguage(from, to) {
 }
 function _CALLBACK_copyLanguage() {
 //debug(actionHandler.getResponseString());// return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
   toggleProgressBar(false);
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
-  } else if (status=='0') {
+  } else if (actionHandler.status==0) {
     // OK
     hideNewTranslationPage();
-    getAvailableLanguages('loadLngExpressions('+actionHandler.getCdata('language_id')+')', true, true);
+    getAvailableLanguages('loadLngExpressions('+actionHandler.data['language_id'][0]+')', true, true);
   } else if (message!=null) {
     // An error. Should not happen...
     alert(message);

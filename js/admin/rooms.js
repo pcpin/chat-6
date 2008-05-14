@@ -39,13 +39,10 @@ function initRoomsForm() {
  * Get category tree
  */
 function getCategoryTree() {
-  sendData('_CALLBACK_getCategoryTree()', formlink, 'POST', 'ajax='+urlencode('get_room_structure')+'&s_id='+urlencode(s_id));
+  sendData('_CALLBACK_getCategoryTree()', formlink, 'POST', 'ajax=get_room_structure&s_id='+urlencode(s_id));
 }
 function _CALLBACK_getCategoryTree() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
   var categories_tbl=$('categories_tbl');
 
   var categories=null;
@@ -62,7 +59,7 @@ function _CALLBACK_getCategoryTree() {
   var room_name='';
   var room_description='';
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
@@ -75,145 +72,146 @@ function _CALLBACK_getCategoryTree() {
       categories_tbl.deleteRow(-1);
     }
     // Get categories root
-    if (null!=(categories=actionHandler.getElement('categories', 0, actionHandler.getElement('category', 0, actionHandler.getElement('categories'))))) {
-      while (null!=(category=actionHandler.getElement('category', category_nr++, categories))) {
-        category_id=stringToNumber(actionHandler.getCdata('id', 0, category));
-        category_name=actionHandler.getCdata('name', 0, category, '');
-        category_description=actionHandler.getCdata('description', 0, category, '');
-        Categories[category_id]=new Array();
-        Categories[category_id]['id']=category_id;
-        Categories[category_id]['parent_id']=stringToNumber(actionHandler.getCdata('parent_id', 0, category));
-        Categories[category_id]['name']=category_name;
-        Categories[category_id]['description']=category_description;
-        Categories[category_id]['creatable_rooms']=(1==actionHandler.getCdata('creatable_rooms', 0, category));
-        Categories[category_id]['creatable_rooms_flag']=actionHandler.getCdata('creatable_rooms_flag', 0, category);
+    categories=actionHandler.data['category'][0];
+    for (category_nr=0; category_nr<categories['category'].length; category_nr++) {
+      category=categories['category'][category_nr];
+      category_id=stringToNumber(category['id'][0]);
+      category_name=category['name'][0];
+      category_description=category['description'][0];
+      Categories[category_id]=new Array();
+      Categories[category_id]['id']=category_id;
+      Categories[category_id]['parent_id']=stringToNumber(category['parent_id'][0]);
+      Categories[category_id]['name']=category_name;
+      Categories[category_id]['description']=category_description;
+      Categories[category_id]['creatable_rooms']=(1==category['creatable_rooms'][0]);
+      Categories[category_id]['creatable_rooms_flag']=category['creatable_rooms_flag'][0];
 
-        tr=categories_tbl.insertRow(-1);
-        tr.title=htmlspecialchars(getLng('chat_category')+' '+category_name+' ('+actionHandler.countElements('room', category)+' '+getLng('rooms')+')'+"\n"+category_description);
+      tr=categories_tbl.insertRow(-1);
+      tr.title=htmlspecialchars(getLng('chat_category')+' '+category_name+' ('+(typeof(category['room'])!='undefined'? category['room'].length : 0)+' '+getLng('rooms')+')'+"\n"+category_description);
 
-        td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars(category_name);
-        td.colSpan=3;
-        setCssClass(td, '.tbl_header_sub');
+      td=tr.insertCell(-1);
+      td.innerHTML=htmlspecialchars(category_name);
+      td.colSpan=3;
+      setCssClass(td, '.tbl_header_sub');
 
-        td=tr.insertCell(-1);
-        td.innerHTML='<a class="tbl_header_sub_link" href=":" title="'+htmlspecialchars(getLng('edit'))+'" onclick="showEditCategoryForm('+htmlspecialchars(category_id)+'); return false;">'+htmlspecialchars(getLng('edit'))+'</a>';
-        setCssClass(td, '.tbl_header_sub');
-        td.style.width='1%';
-        td.style.textAlign='center';
-        td.noWrap=true;
+      td=tr.insertCell(-1);
+      td.innerHTML='<a class="tbl_header_sub_link" href=":" title="'+htmlspecialchars(getLng('edit'))+'" onclick="showEditCategoryForm('+htmlspecialchars(category_id)+'); return false;">'+htmlspecialchars(getLng('edit'))+'</a>';
+      setCssClass(td, '.tbl_header_sub');
+      td.style.width='1%';
+      td.style.textAlign='center';
+      td.noWrap=true;
 
-        td=tr.insertCell(-1);
-        td.innerHTML='<a class="tbl_header_sub_link" href=":" title="'+htmlspecialchars(getLng('delete'))+'" onclick="deleteCategory('+htmlspecialchars(category_id)+'); return false;">'+htmlspecialchars(getLng('delete'))+'</a>';
-        setCssClass(td, '.tbl_header_sub');
-        td.style.width='1%';
-        td.style.textAlign='center';
-        td.noWrap=true;
+      td=tr.insertCell(-1);
+      td.innerHTML='<a class="tbl_header_sub_link" href=":" title="'+htmlspecialchars(getLng('delete'))+'" onclick="deleteCategory('+htmlspecialchars(category_id)+'); return false;">'+htmlspecialchars(getLng('delete'))+'</a>';
+      setCssClass(td, '.tbl_header_sub');
+      td.style.width='1%';
+      td.style.textAlign='center';
+      td.noWrap=true;
 
-        td=tr.insertCell(-1);
-        td.innerHTML='<a class="tbl_header_sub_link" href=":" title="'+htmlspecialchars(getLng('move_up'))+'" onclick="moveCategory('+htmlspecialchars(category_id)+', 0); return false;">'+htmlspecialchars(getLng('move_up'))+'</a>'
-                    +'&nbsp;&nbsp;&nbsp;&nbsp;'
-                    +'<a class="tbl_header_sub_link" href=":" title="'+htmlspecialchars(getLng('move_down'))+'" onclick="moveCategory('+htmlspecialchars(category_id)+', 1); return false;">'+htmlspecialchars(getLng('move_down'))+'</a>';
-        setCssClass(td, '.tbl_header_sub');
-        td.style.width='1%';
-        td.style.textAlign='center';
-        td.noWrap=true;
+      td=tr.insertCell(-1);
+      td.innerHTML='<a class="tbl_header_sub_link" href=":" title="'+htmlspecialchars(getLng('move_up'))+'" onclick="moveCategory('+htmlspecialchars(category_id)+', 0); return false;">'+htmlspecialchars(getLng('move_up'))+'</a>'
+                  +'&nbsp;&nbsp;&nbsp;&nbsp;'
+                  +'<a class="tbl_header_sub_link" href=":" title="'+htmlspecialchars(getLng('move_down'))+'" onclick="moveCategory('+htmlspecialchars(category_id)+', 1); return false;">'+htmlspecialchars(getLng('move_down'))+'</a>';
+      setCssClass(td, '.tbl_header_sub');
+      td.style.width='1%';
+      td.style.textAlign='center';
+      td.noWrap=true;
 
-        // Rooms
-        if (0==actionHandler.countElements('room', category)) {
-          // Category has no rooms
-          tr=categories_tbl.insertRow(-1);
-          td=tr.insertCell(-1);
-          td.innerHTML=htmlspecialchars(getLng('category_has_no_rooms'));
-          td.colSpan=6;
-          setCssClass(td, '.tbl_row');
-        } else {
-          // Display rooms
-          room_nr=0;
-          while (null!=(room=actionHandler.getElement('room', room_nr++, category))) {
-            room_id=actionHandler.getCdata('id', 0, room);
-            room_name=actionHandler.getCdata('name', 0, room, '');
-            room_description=actionHandler.getCdata('description', 0, room, '');
-            Rooms[room_id]=new Array();
-            Rooms[room_id]['id']=room_id;
-            Rooms[room_id]['category_id']=category_id;
-            Rooms[room_id]['name']=room_name;
-            Rooms[room_id]['description']=room_description;
-            Rooms[room_id]['background_image']=stringToNumber(actionHandler.getCdata('background_image', 0, room));
-            Rooms[room_id]['background_image_width']=stringToNumber(actionHandler.getCdata('background_image_width', 0, room));
-            Rooms[room_id]['background_image_height']=stringToNumber(actionHandler.getCdata('background_image_height', 0, room));
-            Rooms[room_id]['password_protected']='1'==actionHandler.getCdata('password_protected', 0, room);
-            Rooms[room_id]['default_message_color']=actionHandler.getCdata('default_message_color', 0, room);
-
-            tr=categories_tbl.insertRow(-1);
-
-            td=tr.insertCell(-1);
-            if (true==ImgResizeSupported && Rooms[room_id]['background_image']>0) {
-              td.innerHTML='<img id="room_'+htmlspecialchars(room_id)+'_image" src="'+htmlspecialchars(formlink)+'?s_id='+htmlspecialchars(s_id)+'&amp;b_id='+htmlspecialchars(Rooms[room_id]['background_image'])+'&amp;b_x=30&amp;b_y=40" alt="'+htmlspecialchars(getLng('background_image'))+'" title="'+htmlspecialchars(getLng('background_image'))+'" border="0" />';
-              $('room_'+htmlspecialchars(room_id)+'_image').binaryfile_id=Rooms[room_id]['background_image'];
-              $('room_'+htmlspecialchars(room_id)+'_image').ow_width=Rooms[room_id]['background_image_width'];
-              $('room_'+htmlspecialchars(room_id)+'_image').ow_height=Rooms[room_id]['background_image_height'];
-              $('room_'+htmlspecialchars(room_id)+'_image').style.cursor='pointer';
-              $('room_'+htmlspecialchars(room_id)+'_image').onclick=function() {
-                openWindow(formlink+'?ainc=show_image&img_b_id='+this.binaryfile_id+'&s_id='+s_id, '', this.ow_width, this.ow_height, false, false, false, false, true);
-                return false;
-              }
-            } else {
-              td.innerHTML='';
-            }
-            setCssClass(td, '.tbl_row');
-            td.style.width='1%';
-            td.style.textAlign='center';
-
-            td=tr.insertCell(-1);
-            td.innerHTML='<b>'+htmlspecialchars(room_name)+'</b>'
-                        +'<br />'
-                        +nl2br(htmlspecialchars(room_description));
-            setCssClass(td, '.tbl_row');
-
-            td=tr.insertCell(-1);
-            if ('1'==actionHandler.getCdata('password_protected', 0, room)) {
-              td.innerHTML='<img src="./pic/room_locked_15x12.gif" title="'+htmlspecialchars(getLng('room_is_password_protected'))+'" alt="" />';
-            } else {
-              td.innerHTML='<img src="./pic/clearpixel_1x1.gif" alt="" width="15" height="1" />';
-            }
-            setCssClass(td, '.tbl_row');
-            td.style.width='1%';
-            td.style.textAlign='center';
-
-            td=tr.insertCell(-1);
-            td.innerHTML='<a class="tbl_row_link" href=":" title="'+htmlspecialchars(getLng('edit'))+'" onclick="showEditRoomForm('+htmlspecialchars(room_id)+'); return false;">'+htmlspecialchars(getLng('edit'))+'</a>';
-            setCssClass(td, '.tbl_row');
-            td.style.width='1%';
-            td.style.textAlign='center';
-            td.noWrap=true;
-
-            td=tr.insertCell(-1);
-            td.innerHTML='<a class="tbl_row_link" href=":" title="'+htmlspecialchars(getLng('delete'))+'" onclick="deleteRoom('+htmlspecialchars(room_id)+'); return false;">'+htmlspecialchars(getLng('delete'))+'</a>';
-            setCssClass(td, '.tbl_row');
-            td.style.width='1%';
-            td.style.textAlign='center';
-            td.noWrap=true;
-
-            td=tr.insertCell(-1);
-            td.innerHTML='<a class="tbl_row_link" href=":" title="'+htmlspecialchars(getLng('move_up'))+'" onclick="moveRoom('+htmlspecialchars(room_id)+', 0); return false;">'+htmlspecialchars(getLng('move_up'))+'</a>'
-                        +'<br />'
-                        +'<a class="tbl_row_link" href=":" title="'+htmlspecialchars(getLng('move_down'))+'" onclick="moveRoom('+htmlspecialchars(room_id)+', 1); return false;">'+htmlspecialchars(getLng('move_down'))+'</a>';
-            setCssClass(td, '.tbl_row');
-            td.style.width='1%';
-            td.style.textAlign='center';
-            td.noWrap=true;
-          }
-        }
-        // "Create new room" button
+      // Rooms
+      if (typeof(category['room'])=='undefined' || category['room'].length==0) {
+        // Category has no rooms
         tr=categories_tbl.insertRow(-1);
         td=tr.insertCell(-1);
-        td.innerHTML='<button type="button" title="'+htmlspecialchars(getLng('create_new_room_in_category').split('[CATEGORY]').join(category_name))+'" onclick="showCreateRoomForm('+htmlspecialchars(category_id)+'); return false;">'
-                    +htmlspecialchars(getLng('create_new_room_in_category').split('[CATEGORY]').join(category_name))
-                    +'</a>';
+        td.innerHTML=htmlspecialchars(getLng('category_has_no_rooms'));
         td.colSpan=6;
         setCssClass(td, '.tbl_row');
+      } else {
+        // Display rooms
+        room_nr=0;
+        for (room_nr=0; room_nr<category['room'].length; room_nr++) {
+          room=category['room'][room_nr];
+          room_id=room['id'][0];
+          room_name=room['name'][0];
+          room_description=room['description'][0];
+          Rooms[room_id]=new Array();
+          Rooms[room_id]['id']=room_id;
+          Rooms[room_id]['category_id']=category_id;
+          Rooms[room_id]['name']=room_name;
+          Rooms[room_id]['description']=room_description;
+          Rooms[room_id]['background_image']=stringToNumber(room['background_image'][0]);
+          Rooms[room_id]['background_image_width']=stringToNumber(room['background_image_width'][0]);
+          Rooms[room_id]['background_image_height']=stringToNumber(room['background_image_height'][0]);
+          Rooms[room_id]['password_protected']='1'==room['password_protected'][0];
+          Rooms[room_id]['default_message_color']=room['default_message_color'][0];
+
+          tr=categories_tbl.insertRow(-1);
+
+          td=tr.insertCell(-1);
+          if (true==ImgResizeSupported && Rooms[room_id]['background_image']>0) {
+            td.innerHTML='<img id="room_'+htmlspecialchars(room_id)+'_image" src="'+htmlspecialchars(formlink)+'?s_id='+htmlspecialchars(s_id)+'&amp;b_id='+htmlspecialchars(Rooms[room_id]['background_image'])+'&amp;b_x=30&amp;b_y=40" alt="'+htmlspecialchars(getLng('background_image'))+'" title="'+htmlspecialchars(getLng('background_image'))+'" border="0" />';
+            $('room_'+htmlspecialchars(room_id)+'_image').binaryfile_id=Rooms[room_id]['background_image'];
+            $('room_'+htmlspecialchars(room_id)+'_image').ow_width=Rooms[room_id]['background_image_width'];
+            $('room_'+htmlspecialchars(room_id)+'_image').ow_height=Rooms[room_id]['background_image_height'];
+            $('room_'+htmlspecialchars(room_id)+'_image').style.cursor='pointer';
+            $('room_'+htmlspecialchars(room_id)+'_image').onclick=function() {
+              openWindow(formlink+'?ainc=show_image&img_b_id='+this.binaryfile_id+'&s_id='+s_id, '', this.ow_width, this.ow_height, false, false, false, false, true);
+              return false;
+            }
+          } else {
+            td.innerHTML='';
+          }
+          setCssClass(td, '.tbl_row');
+          td.style.width='1%';
+          td.style.textAlign='center';
+
+          td=tr.insertCell(-1);
+          td.innerHTML='<b>'+htmlspecialchars(room_name)+'</b>'
+                      +'<br />'
+                      +nl2br(htmlspecialchars(room_description));
+          setCssClass(td, '.tbl_row');
+
+          td=tr.insertCell(-1);
+          if ('1'==room['password_protected'][0]) {
+            td.innerHTML='<img src="./pic/room_locked_15x12.gif" title="'+htmlspecialchars(getLng('room_is_password_protected'))+'" alt="" />';
+          } else {
+            td.innerHTML='<img src="./pic/clearpixel_1x1.gif" alt="" width="15" height="1" />';
+          }
+          setCssClass(td, '.tbl_row');
+          td.style.width='1%';
+          td.style.textAlign='center';
+
+          td=tr.insertCell(-1);
+          td.innerHTML='<a class="tbl_row_link" href=":" title="'+htmlspecialchars(getLng('edit'))+'" onclick="showEditRoomForm('+htmlspecialchars(room_id)+'); return false;">'+htmlspecialchars(getLng('edit'))+'</a>';
+          setCssClass(td, '.tbl_row');
+          td.style.width='1%';
+          td.style.textAlign='center';
+          td.noWrap=true;
+
+          td=tr.insertCell(-1);
+          td.innerHTML='<a class="tbl_row_link" href=":" title="'+htmlspecialchars(getLng('delete'))+'" onclick="deleteRoom('+htmlspecialchars(room_id)+'); return false;">'+htmlspecialchars(getLng('delete'))+'</a>';
+          setCssClass(td, '.tbl_row');
+          td.style.width='1%';
+          td.style.textAlign='center';
+          td.noWrap=true;
+
+          td=tr.insertCell(-1);
+          td.innerHTML='<a class="tbl_row_link" href=":" title="'+htmlspecialchars(getLng('move_up'))+'" onclick="moveRoom('+htmlspecialchars(room_id)+', 0); return false;">'+htmlspecialchars(getLng('move_up'))+'</a>'
+                      +'<br />'
+                      +'<a class="tbl_row_link" href=":" title="'+htmlspecialchars(getLng('move_down'))+'" onclick="moveRoom('+htmlspecialchars(room_id)+', 1); return false;">'+htmlspecialchars(getLng('move_down'))+'</a>';
+          setCssClass(td, '.tbl_row');
+          td.style.width='1%';
+          td.style.textAlign='center';
+          td.noWrap=true;
+        }
       }
+      // "Create new room" button
+      tr=categories_tbl.insertRow(-1);
+      td=tr.insertCell(-1);
+      td.innerHTML='<button type="button" title="'+htmlspecialchars(getLng('create_new_room_in_category').split('[CATEGORY]').join(category_name))+'" onclick="showCreateRoomForm('+htmlspecialchars(category_id)+'); return false;">'
+                  +htmlspecialchars(getLng('create_new_room_in_category').split('[CATEGORY]').join(category_name))
+                  +'</a>';
+      td.colSpan=6;
+      setCssClass(td, '.tbl_row');
     }
   }
   toggleProgressBar(false);
@@ -228,7 +226,7 @@ function _CALLBACK_getCategoryTree() {
 function moveCategory(id, dir) {
   id=stringToNumber(id);
   if (id>0) {
-    sendData('getCategoryTree()', formlink, 'POST', 'ajax='+urlencode('update_category')+'&s_id='+urlencode(s_id)+'&category_id='+urlencode(id)+'&action=change_listpos&dir='+urlencode(dir));
+    sendData('getCategoryTree()', formlink, 'POST', 'ajax=update_category&s_id='+urlencode(s_id)+'&category_id='+urlencode(id)+'&action=change_listpos&dir='+urlencode(dir));
   }
 }
 
@@ -241,7 +239,7 @@ function moveCategory(id, dir) {
 function moveRoom(id, dir) {
   id=stringToNumber(id);
   if (id>0) {
-    sendData('getCategoryTree()', formlink, 'POST', 'ajax='+urlencode('update_room')+'&s_id='+urlencode(s_id)+'&room_id='+urlencode(id)+'&action=change_listpos&dir='+urlencode(dir));
+    sendData('getCategoryTree()', formlink, 'POST', 'ajax=update_room&s_id='+urlencode(s_id)+'&room_id='+urlencode(id)+'&action=change_listpos&dir='+urlencode(dir));
   }
 }
 
@@ -394,7 +392,7 @@ function updateCategory() {
   if (errors.length) {
     alert(errors.join("\n"));
   } else {
-    sendData('_CALLBACK_updateCategory()', formlink, 'POST', 'ajax='+urlencode('update_category')
+    sendData('_CALLBACK_updateCategory()', formlink, 'POST', 'ajax=update_category'
                                                               +'&s_id='+urlencode(s_id)
                                                               +'&category_id='+urlencode(category_id)
                                                               +'&action=change_data'
@@ -406,16 +404,13 @@ function updateCategory() {
 }
 function _CALLBACK_updateCategory() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   } else {
-    alert(message);
-    if (status=='0') {
+    alert(actionHandler.message);
+    if (actionHandler.status==0) {
       getCategoryTree();
     } else {
       // An error
@@ -499,7 +494,7 @@ function parseUploadResponse(code, message, binaryfile_id, width, height, filena
       break;
 
       default:
-        alert(message);
+        alert(actionHandler.message);
       break;
 
     }
@@ -594,7 +589,7 @@ function updateRoom() {
   if (errors.length>0) {
     alert(errors.join("\n"));
   } else {
-    sendData('_CALLBACK_updateRoom()', formlink, 'POST', 'ajax='+urlencode('update_room')
+    sendData('_CALLBACK_updateRoom()', formlink, 'POST', 'ajax=update_room'
                                                         +'&s_id='+urlencode(s_id)
                                                         +'&room_id='+urlencode(room_id)
                                                         +'&action=change_data'
@@ -611,16 +606,13 @@ function updateRoom() {
 }
 function _CALLBACK_updateRoom() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   } else {
-    alert(message);
-    if (status=='0') {
+    alert(actionHandler.message);
+    if (actionHandler.status==0) {
       getCategoryTree();
     } else {
       // An error
@@ -638,22 +630,19 @@ function deleteCategory(id) {
   id=stringToNumber(id);
   if (id>0) {
     if (confirm(getLng('confirm_delete_category').split('[NAME]').join(Categories[id]['name']))) {
-      sendData('_CALLBACK_deleteCategory()', formlink, 'POST', 'ajax='+urlencode('delete_category')+'&s_id='+urlencode(s_id)+'&category_id='+urlencode(id));
+      sendData('_CALLBACK_deleteCategory()', formlink, 'POST', 'ajax=delete_category&s_id='+urlencode(s_id)+'&category_id='+urlencode(id));
     }
   }
 }
 function _CALLBACK_deleteCategory() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   } else {
-    alert(message);
-    if (status=='0') {
+    alert(actionHandler.message);
+    if (actionHandler.status==0) {
       getCategoryTree();
     } else {
       // An error
@@ -671,22 +660,19 @@ function deleteRoom(id) {
   id=stringToNumber(id);
   if (id>0) {
     if (confirm(getLng('confirm_delete_room').split('[NAME]').join(Rooms[id]['name']))) {
-      sendData('_CALLBACK_deleteRoom()', formlink, 'POST', 'ajax='+urlencode('delete_room')+'&s_id='+urlencode(s_id)+'&room_id='+urlencode(id));
+      sendData('_CALLBACK_deleteRoom()', formlink, 'POST', 'ajax=delete_room&s_id='+urlencode(s_id)+'&room_id='+urlencode(id));
     }
   }
 }
 function _CALLBACK_deleteRoom() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   } else {
-    alert(message);
-    if (status=='0') {
+    alert(actionHandler.message);
+    if (actionHandler.status==0) {
       getCategoryTree();
     } else {
       // An error
@@ -740,7 +726,7 @@ function createCategory() {
   if (errors.length) {
     alert(errors.join("\n"));
   } else {
-    sendData('_CALLBACK_createCategory()', formlink, 'POST', 'ajax='+urlencode('create_category')
+    sendData('_CALLBACK_createCategory()', formlink, 'POST', 'ajax=create_category'
                                                               +'&s_id='+urlencode(s_id)
                                                               +'&name='+urlencode($('create_category_name').value)
                                                               +'&description='+urlencode($('create_category_description').value)
@@ -750,16 +736,13 @@ function createCategory() {
 }
 function _CALLBACK_createCategory() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   } else {
-    alert(message);
-    if (status=='0') {
+    alert(actionHandler.message);
+    if (actionHandler.status==0) {
       getCategoryTree();
     } else {
       // An error
@@ -834,7 +817,7 @@ function createRoom() {
   if (errors.length>0) {
     alert(errors.join("\n"));
   } else {
-    sendData('_CALLBACK_createRoom()', formlink, 'POST', 'ajax='+urlencode('create_room')
+    sendData('_CALLBACK_createRoom()', formlink, 'POST', 'ajax=create_room'
                                                         +'&s_id='+urlencode(s_id)
                                                         +'&name='+urlencode($('create_room_name').value)
                                                         +'&category_id='+urlencode($('create_room_category_id').value)
@@ -848,16 +831,13 @@ function createRoom() {
 }
 function _CALLBACK_createRoom() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   } else {
-    alert(message);
-    if (status=='0') {
+    alert(actionHandler.message);
+    if (actionHandler.status==0) {
       getCategoryTree();
     } else {
       // An error

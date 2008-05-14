@@ -24,35 +24,25 @@
 
 _pcpin_loadClass('ipfilter'); $ipfilter=new PCPIN_IPFilter($session);
 
-$ip_addresses_xml='';
+$ip_addresses=array();
 
 if (!isset($sort_by)) $sort_by=0;
 if (!isset($sort_dir)) $sort_dir=0;
 
 // Get client session
 if (is_object($session) && !empty($current_user->id) && $current_user->is_admin==='y') {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   $addresses=$ipfilter->readAddresses($sort_by, $sort_dir);
   foreach ($addresses as $address_data) {
-    $ip_addresses_xml.='  <address>
-    <id>'.htmlspecialchars($address_data['id']).'</id>
-    <mask>'.htmlspecialchars($address_data['address']).'</mask>
-    <added_on>'.htmlspecialchars($current_user->makeDate(PCPIN_Common::datetimeToTimestamp($address_data['added_on']))).'</added_on>
-    <expires>'.htmlspecialchars(($address_data['expires']>'0000-00-00 00:00:00')? $current_user->makeDate(PCPIN_Common::datetimeToTimestamp($address_data['expires'])) : $l->g('never')).'</expires>
-    <action>'.htmlspecialchars($address_data['action']).'</action>
-    <description>'.htmlspecialchars($address_data['description']).'</description>
-  </address>
-';
+    $ip_addresses[]=array('id'=>$address_data['id'],
+                          'mask'=>$address_data['address'],
+                          'added_on'=>$current_user->makeDate(PCPIN_Common::datetimeToTimestamp($address_data['added_on'])),
+                          'expires'=>($address_data['expires']>'0000-00-00 00:00:00')? $current_user->makeDate(PCPIN_Common::datetimeToTimestamp($address_data['expires'])) : $l->g('never'),
+                          'action'=>$address_data['action'],
+                          'description'=>$address_data['description'],
+                          );
   }
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-'.$ip_addresses_xml
-.'</pcpin_xml>';
-die();
+$xmlwriter->setData(array('address'=>$ip_addresses));
 ?>

@@ -80,23 +80,20 @@ function initSettingsForm(group) {
  * Get master modules for slave mode
  */
 function getSlaveMasters() {
-  sendData('_CALLBACK_getSlaveMasters()', formlink, 'POST', 'ajax='+urlencode('get_slave_mode_masters')+'&s_id='+urlencode(s_id));
+  sendData('_CALLBACK_getSlaveMasters()', formlink, 'POST', 'ajax=get_slave_mode_masters&s_id='+urlencode(s_id));
 }
 function _CALLBACK_getSlaveMasters() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
   var master=null;
   var master_nr=0;
   SlaveModeMasters=new Array();
-
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    while (null!=(master=actionHandler.getCdata('master', master_nr++))) {
+    for (master_nr=0; master_nr<actionHandler.data['master'].length; master_nr++) {
+      master=actionHandler.data['master'][master_nr];
       SlaveModeMasters.push(master);
     }
     getAvailableLanguages('getSettings()');
@@ -109,54 +106,47 @@ function _CALLBACK_getSlaveMasters() {
 function getSettings() {
   SettingObjects=new Array();
   if (typeof(CurrentSettingsGroup)=='string' && CurrentSettingsGroup!='') {
-    sendData('_CALLBACK_getSettings()', formlink, 'POST', 'ajax='+urlencode('get_settings')+'&group='+htmlspecialchars(CurrentSettingsGroup)+'&s_id='+urlencode(s_id));
+    sendData('_CALLBACK_getSettings()', formlink, 'POST', 'ajax=get_settings&group='+htmlspecialchars(CurrentSettingsGroup)+'&s_id='+urlencode(s_id));
   }
 }
 function _CALLBACK_getSettings() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
   var settings=null;
   var setting=null;
   var setting_id=0;
   var setting_nr=0;
-
   var settings_tbl=$('settings_tbl');
   var tr=null;
   var td=null;
   var last_subgroup='';
-
   var inputs_data=null;
-
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (message=='OK') {
+    if (actionHandler.message=='OK') {
       // OK
       RoomListInputID='';
       while (settings_tbl.rows.length>3) {
         settings_tbl.deleteRow(settings_tbl.rows.length-2);
       }
-      if (null!=(settings=actionHandler.getElement('settings', 0))) {
-        while (null!=(setting=actionHandler.getElement('setting', setting_nr++, settings))) {
-          setting_id=stringToNumber(actionHandler.getCdata('id', 0, setting));
-          SettingObjects[setting_id]=new Setting(setting_id,
-                                                 setting_nr,
-                                                 actionHandler.getCdata('type', 0, setting, ''),
-                                                 actionHandler.getCdata('name', 0, setting, ''),
-                                                 actionHandler.getCdata('value', 0, setting, ''),
-                                                 actionHandler.getCdata('choices', 0, setting, ''),
-                                                 actionHandler.getCdata('description', 0, setting, ''),
-                                                 actionHandler.getCdata('group', 0, setting, ''),
-                                                 actionHandler.getCdata('subgroup', 0, setting, '')
-                                                 );
-        }
+      for (setting_nr=0; setting_nr<actionHandler.data['setting'].length; setting_nr++) {
+        setting=actionHandler.data['setting'][setting_nr];
+        setting_id=stringToNumber(setting['id'][0]);
+        SettingObjects[setting_id]=new Setting(setting_id,
+                                               setting_nr,
+                                               setting['type'][0],
+                                               setting['name'][0],
+                                               setting['value'][0],
+                                               setting['choices'][0],
+                                               setting['description'][0],
+                                               setting['group'][0],
+                                               setting['subgroup'][0]
+                                               );
       }
-    } else if (message!=null) {
-      alert(message);
+    } else {
+      alert(actionHandler.message);
     }
   }
   // Display settings table
@@ -452,20 +442,17 @@ function updateSettings() {
       post_settings.push('settings['+SettingObjects[i].Name+']='+urlencode(SettingObjects[i].Value));
     }
     // Send new settings to server
-    sendData('_CALLBACK_updateSettings()', formlink, 'POST', 'ajax='+urlencode('update_settings')+'&s_id='+urlencode(s_id)+'&'+post_settings.join('&'));
+    sendData('_CALLBACK_updateSettings()', formlink, 'POST', 'ajax=update_settings&s_id='+urlencode(s_id)+'&'+post_settings.join('&'));
   }
 }
 function _CALLBACK_updateSettings() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
-  } else if (message!=null) {
-    alert(message);
+  } else {
+    alert(actionHandler.message);
   }
   toggleProgressBar(false);
 }
@@ -476,13 +463,12 @@ function _CALLBACK_updateSettings() {
  * @param   object    categories    Categories XML element
  */
 function getRoomList() {
-  sendData('_CALLBACK_getRoomList()', formlink, 'POST', 'ajax='+urlencode('get_room_structure')+'&s_id='+urlencode(s_id), true);
+  sendData('_CALLBACK_getRoomList()', formlink, 'POST', 'ajax=get_room_structure&recursion=0&s_id='+urlencode(s_id), true);
 }
 function _CALLBACK_getRoomList() {
-  var categories=actionHandler.getElement('categories', 0, actionHandler.getElement('category', 0, actionHandler.getElement('categories')));
 //debug(actionHandler.getResponseString()); return false;
   var rs=$(RoomListInputID);
-  if (typeof(categories)=='object' && categories && rs) {
+  if (rs) {
     var cat=null;
     var cat_nr=0;
     var room=null;
@@ -495,17 +481,19 @@ function _CALLBACK_getRoomList() {
     s_room.innerHTML='&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
     s_room.value='0';
     rs.appendChild(s_room);
-    while (null!=(cat=actionHandler.getElement('category', cat_nr++, categories))) {
-      if (actionHandler.countElements('room', cat)>0) {
+    for (cat_nr=0; cat_nr<actionHandler.data['category'].length; cat_nr++) {
+      cat=actionHandler.data['category'][cat_nr];
+      if (typeof(cat['room'])!='undefined' && cat['room'].length) {
         s_cat=document.createElement('OPTGROUP');
-        s_cat.label=actionHandler.getCdata('name', 0, cat);
+        s_cat.label=cat['name'][0];
         room_nr=0;
-        while (null!=(room=actionHandler.getElement('room', room_nr++, cat))) {
-          room_id=stringToNumber(actionHandler.getCdata('id', 0, room));
+        for (room_nr=0; room_nr<cat['room'].length; room_nr++) {
+          room=cat['room'][room_nr];
+          room_id=stringToNumber(room['id'][0]);
           s_room=document.createElement('OPTION');
           s_room.value=room_id;
-          s_room.password_protect='1'==actionHandler.getCdata('password_protected', 0, room);
-          s_room.innerHTML=(s_room.password_protect? '* ' : '')+htmlspecialchars(actionHandler.getCdata('name', 0, room));
+          s_room.password_protect='1'==room['password_protected'][0];
+          s_room.innerHTML=(s_room.password_protect? '* ' : '')+htmlspecialchars(room['name'][0]);
           s_cat.appendChild(s_room);
           if (stringToNumber(s_room.value)==stringToNumber(SettingObjects[RoomListSettingID].Value)) {
             s_room.selected=true;

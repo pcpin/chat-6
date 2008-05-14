@@ -29,18 +29,11 @@ if ($profile_user_id!=$current_user->id) {
 if (!empty($profile_user_id) && isset($password) && is_scalar($password) && false!==$password=base64_decode($password)) {
   $profile_user->password=md5($password);
   if ($profile_user->_db_updateObj($profile_user->id)) {
-    $message=$l->g('password_changed');
-    $status=0;
+    $xmlwriter->setHeaderMessage($l->g('password_changed'));
+    $xmlwriter->setHeaderStatus(0);
   } else {
-    $message=$l->g('error');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('error'));
+    $xmlwriter->setHeaderStatus(1);
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

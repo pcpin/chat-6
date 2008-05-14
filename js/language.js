@@ -70,13 +70,10 @@ function getAvailableLanguages(callback, all, names) {
   } else {
     GetLanguagesCallback='';
   }
-  sendData('_CALLBACK_getAvailableLanguages()', formlink, 'POST', 'ajax='+urlencode('get_languages')+'&s_id='+urlencode(s_id)+((typeof(all)=='boolean' && all)? '&all_languages=1' : '')+((typeof(names)=='boolean' && names)? '&get_iso_names=1' : ''));
+  sendData('_CALLBACK_getAvailableLanguages()', formlink, 'POST', 'ajax=get_languages&s_id='+urlencode(s_id)+((typeof(all)=='boolean' && all)? '&all_languages=1' : '')+((typeof(names)=='boolean' && names)? '&get_iso_names=1' : ''));
 }
 function _CALLBACK_getAvailableLanguages() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
   var language=null;
   var language_nr=0;
   var lang_obj=null;
@@ -85,24 +82,26 @@ function _CALLBACK_getAvailableLanguages() {
   var language_name_nr=0;
   var language_name_obj=null;
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (message=='OK') {
-      while (null!=(language=actionHandler.getElement('language', language_nr++))) {
-        lang_obj=new LanguageObject(actionHandler.getCdata('id', 0, language),
-                                    actionHandler.getCdata('iso_name', 0, language),
-                                    actionHandler.getCdata('name', 0, language),
-                                    actionHandler.getCdata('local_name', 0, language),
-                                    actionHandler.getCdata('active', 0, language)
+    if (actionHandler.message=='OK') {
+      for (language_nr=0; language_nr<actionHandler.data['language'].length; language_nr++) {
+        language=actionHandler.data['language'][language_nr];
+        lang_obj=new LanguageObject(language['id'][0],
+                                    language['iso_name'][0],
+                                    language['name'][0],
+                                    language['local_name'][0],
+                                    language['active'][0]
                                     );
         AvailableLanguages.push(lang_obj);
       }
-      while (null!=(language_name=actionHandler.getElement('language_name', language_name_nr++))) {
-        lang_name_obj=new LanguageNameObject(actionHandler.getCdata('iso_name', 0, language_name),
-                                             actionHandler.getCdata('name', 0, language_name)
+      for (language_name_nr=0; language_name_nr<actionHandler.data['language_name'].length; language_name_nr++) {
+        language_name=actionHandler.data['language_name'][language_name_nr];
+        lang_name_obj=new LanguageNameObject(language_name['iso_name'][0],
+                                             language_name['name'][0]
                                             );
         AvailableLanguageNames[lang_name_obj.ISO_Name]=lang_name_obj;
       }

@@ -20,13 +20,7 @@ if (!empty($current_user->id)) {
   $session->_s_logOut();
   // Reinit current user object
   _pcpin_loadClass('user'); $current_user=new PCPIN_User($session);
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
 }
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

@@ -26,17 +26,10 @@ if (!isset($binaryfile_id) || !pcpin_ctype_digit($binaryfile_id)) $binaryfile_id
 _pcpin_loadClass('tmpdata'); $tmpdata=new PCPIN_TmpData($session);
 
 if (!empty($current_user->id)) {
-  $status='0';
-  $message='OK';
+  $xmlwriter->setHeaderStatus(0);
+  $xmlwriter->setHeaderMessage('OK');
   if (!empty($binaryfile_id)) {
     $tmpdata->deleteUserRecords($current_user->id, 3, $binaryfile_id);
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

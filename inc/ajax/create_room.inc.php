@@ -44,8 +44,8 @@ if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_u
   }
 
   if (!empty($errortext)) {
-    $status=1;
-    $message=implode("\n", $errortext);
+    $xmlwriter->setHeaderStatus(1);
+    $xmlwriter->setHeaderMessage(implode("\n", $errortext));
   } else {
     // Check image
     if (!empty($image) && $tmpdata->_db_getList('binaryfile_id', 'user_id = '.$session->_s_user_id, 'type = 1', 1)) {
@@ -68,15 +68,8 @@ if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_u
                       $default_message_color,
                       $password,
                       $binaryfile_id);
-    $status=0;
-    $message=str_replace('[NAME]', $name, $l->g('room_created'));
+    $xmlwriter->setHeaderStatus(0);
+    $xmlwriter->setHeaderMessage(str_replace('[NAME]', $name, $l->g('room_created')));
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

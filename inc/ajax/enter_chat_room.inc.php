@@ -35,28 +35,28 @@ if (!empty($current_user->id)) {
   if (empty($nickname_id)) {
     // No nickname selected
     $enter_allowed=false;
-    $status=100;
-    $message=$l->g('error');
+    $xmlwriter->setHeaderStatus(100);
+    $xmlwriter->setHeaderMessage($l->g('error'));
   } elseif (!$nickname->_db_getList('id = '.$nickname_id, 'user_id = '.$current_user->id, 1)) {
     // Nickname does not exists ot not belongs to user
     $enter_allowed=false;
-    $status=200;
-    $message=$l->g('error');
+    $xmlwriter->setHeaderStatus(200);
+    $xmlwriter->setHeaderMessage($l->g('error'));
   } elseif (empty($room_id)) {
     // No room selected
     $enter_allowed=false;
-    $status=300;
-    $message=$l->g('error');
+    $xmlwriter->setHeaderStatus(300);
+    $xmlwriter->setHeaderMessage($l->g('error'));
   } elseif (!$room->_db_getList('id, category_id, password', 'id = '.$room_id, 1)) {
     // Room does not exists
     $enter_allowed=false;
-    $status=400;
-    $message=$l->g('room_not_exists');
+    $xmlwriter->setHeaderStatus(400);
+    $xmlwriter->setHeaderMessage($l->g('room_not_exists'));
   } elseif ($current_user->is_admin!=='y' && $room->_db_list[0]['password']!='' && $room->_db_list[0]['password']!=md5(base64_decode($password)) && false===strpos(','.$current_user->moderated_rooms.',', ','.$room_id.',')) {
     // Invalid password
     $enter_allowed=false;
-    $status=600;
-    $message=$l->g('invalid_password');
+    $xmlwriter->setHeaderStatus(600);
+    $xmlwriter->setHeaderMessage($l->g('invalid_password'));
   } else {
     $category_id=$room->_db_list[0]['category_id'];
     if ($nickname->_db_list[0]['default']!='y') {
@@ -73,19 +73,12 @@ if (!empty($current_user->id)) {
     }
     // Enter room
     if ($room->putUser($session->_s_user_id, $room_id, $stealth_mode=='y', $stealth_mode)) {
-      $status=0;
-      $message='OK';
+      $xmlwriter->setHeaderStatus(0);
+      $xmlwriter->setHeaderMessage('OK');
     } else {
-      $status=500;
-      $message=$l->g('error');
+      $xmlwriter->setHeaderStatus(500);
+      $xmlwriter->setHeaderMessage($l->g('error'));
     }
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

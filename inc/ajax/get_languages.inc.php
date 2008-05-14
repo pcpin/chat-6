@@ -27,47 +27,26 @@ if (!empty($get_iso_names) && $current_user->is_admin!=='y') {
   unset($get_iso_names);
 }
 
-$languages_xml='';
-$language_names_xml='';
+$languages=array();
+$language_names=array();
 
 if (is_object($session)) {
-  $message='OK';
-  $status=0;
+  $xmlwriter->setHeaderMessage('OK');
+  $xmlwriter->setHeaderStatus(0);
   $languages=$l->getLanguages(!empty($all_languages));
-  foreach ($languages as $language_data) {
-    $languages_xml.='  <language>
-    <id>'.htmlspecialchars($language_data['id']).'</id>
-    <iso_name>'.htmlspecialchars($language_data['iso_name']).'</iso_name>
-    <name>'.htmlspecialchars($language_data['name']).'</name>
-    <local_name>'.htmlspecialchars($language_data['local_name']).'</local_name>
-    <active>'.htmlspecialchars($language_data['active']).'</active>
-  </language>
-';
-  }
   if (!empty($get_iso_names)) {
     // Get language names
     $consts=get_defined_constants();
     foreach ($consts as $const=>$data) {
       if (0===strpos($const, 'PCPIN_ISO_LNG_')) {
-        $language_names_xml.='  <language_name>
-    <iso_name>'.htmlspecialchars(substr($data, 0, 2)).'</iso_name>
-    <name>'.htmlspecialchars(substr($data, 3)).'</name>
-  </language_name>
-';
+        $language_names[]=array('iso_name'=>substr($data, 0, 2),
+                                'name'=>substr($data, 3)
+                                );
       }
     }
   }
   unset($const);
   unset($consts);
 }
-
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-'.$languages_xml
-.$language_names_xml
-.'</pcpin_xml>';
-die();
+$xmlwriter->setData(array('language'=>$languages, 'language_name'=>$language_names));
 ?>

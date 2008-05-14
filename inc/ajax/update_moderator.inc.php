@@ -30,8 +30,8 @@ if (!isset($rooms) || !is_scalar($rooms)) $rooms='';
 // Get client session
 if (is_object($session) && !empty($moderator_user_id) && !empty($current_user->id) && $current_user->is_admin==='y') {
   if ($current_user->_db_getList('id = '.$moderator_user_id, 1)) {
-    $message='OK';
-    $status=0;
+    $xmlwriter->setHeaderMessage('OK');
+    $xmlwriter->setHeaderStatus(0);
     $current_user->_db_freeList();
     // Check categories
     $categories_new=array();
@@ -70,18 +70,11 @@ if (is_object($session) && !empty($moderator_user_id) && !empty($current_user->i
     $current_user->_db_updateRow($moderator_user_id, 'id', array('moderated_categories'=>implode(',', $categories_new),
                                                                  'moderated_rooms'=>implode(',', $rooms_new),
                                                                  ));
-    $message=$l->g('changes_saved');
+    $xmlwriter->setHeaderMessage($l->g('changes_saved'));
   } else {
-    $message=$l->g('user_not_found');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('user_not_found'));
+    $xmlwriter->setHeaderStatus(1);
   }
 
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

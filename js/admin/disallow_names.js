@@ -30,13 +30,10 @@ function initDisallowNamesForm() {
  * Get filtered IP addresses
  */
 function getDisallowedNames() {
-  sendData('_CALLBACK_getDisallowedNames()', formlink, 'POST', 'ajax='+urlencode('get_disallowed_names')+'&s_id='+urlencode(s_id));
+  sendData('_CALLBACK_getDisallowedNames()', formlink, 'POST', 'ajax=get_disallowed_names&s_id='+urlencode(s_id));
 }
 function _CALLBACK_getDisallowedNames() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-
   var name=null;
   var name_nr=0;
   var name_id=0;
@@ -44,24 +41,25 @@ function _CALLBACK_getDisallowedNames() {
   var tr=null;
   var td=null;
 
-  if (status=='-1') {
+  if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (message=='OK') {
+    if (actionHandler.message=='OK') {
       // OK
       names_tbl=$('names_tbl');
       // Clear table
       for (var i=names_tbl.rows.length-1; i>1; i--) {
         names_tbl.deleteRow(i);
       }
-      while (null!=(name=actionHandler.getElement('name', name_nr++))) {
-        name_id=stringToNumber(actionHandler.getCdata('id', 0, name));
+      for (name_nr=0; name_nr<actionHandler.data['name'].length; name_nr++) {
+        name=actionHandler.data['name'][name_nr];
+        name_id=stringToNumber(name['id'][0]);
         tr=names_tbl.insertRow(-1);
 
         td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars(actionHandler.getCdata('name', 0, name));
+        td.innerHTML=htmlspecialchars(name['name'][0]);
         setCssClass(td, '.tbl_row');
 
         td=tr.insertCell(-1);
@@ -99,7 +97,7 @@ function addDisallowedName() {
     alert(errors.join("\n"));
   } else {
     // Send data to server
-    sendData('_CALLBACK_addDisallowedName()', formlink, 'POST', 'ajax='+urlencode('add_disallowed_name')+'&s_id='+urlencode(s_id)
+    sendData('_CALLBACK_addDisallowedName()', formlink, 'POST', 'ajax=add_disallowed_name&s_id='+urlencode(s_id)
              +'&name='+urlencode($('new_name_name').value)
              );
 
@@ -108,13 +106,9 @@ function addDisallowedName() {
 }
 function _CALLBACK_addDisallowedName() {
 //alert(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  if (message!=null) {
-    alert(message);
-  }
+  alert(actionHandler.message);
   toggleProgressBar(false);
-  if (status=='0') {
+  if (actionHandler.status==0) {
     getDisallowedNames();
     initAddDisallowedNameForm();
   }
@@ -129,7 +123,7 @@ function deleteDisallowedName(name_id) {
     name_id=stringToNumber(name_id);
   }
   if (typeof(name_id)=='number' && name_id>0 && confirm(getLng('confirm_delete_name'))) {
-    sendData('_CALLBACK_deleteDisallowedName()', formlink, 'POST', 'ajax='+urlencode('delete_disallowed_name')
+    sendData('_CALLBACK_deleteDisallowedName()', formlink, 'POST', 'ajax=delete_disallowed_name'
                                                                           +'&s_id='+urlencode(s_id)
                                                                           +'&name_id='+urlencode(name_id)
                                                                           );
@@ -138,11 +132,6 @@ function deleteDisallowedName(name_id) {
 }
 function _CALLBACK_deleteDisallowedName() {
 //alert(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  if (message!=null) {
-    alert(message);
-  }
-  toggleProgressBar(false);
+  alert(actionHandler.message);
   getDisallowedNames();
 }

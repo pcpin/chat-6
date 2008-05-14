@@ -35,12 +35,12 @@ if (!isset($image) || !pcpin_ctype_digit($image)) $image=0;
 
 
 if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_user_id==$current_user->id) {
-  $status=1;
-  $message=$l->g('error');
+  $xmlwriter->setHeaderStatus(1);
+  $xmlwriter->setHeaderMessage($l->g('error'));
   if (!empty($room_id) && $room->_db_getList('id = '.$room_id)) {
     // Room exists
-    $status=0;
-    $message='OK';
+    $xmlwriter->setHeaderStatus(0);
+    $xmlwriter->setHeaderMessage('OK');
     $room_data=$room->_db_list[0];
     $room->_db_freelist();
     switch ($action) {
@@ -92,8 +92,8 @@ if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_u
         }
 
         if (!empty($errortext)) {
-          $status=1;
-          $message=implode("\n", $errortext);
+          $xmlwriter->setHeaderStatus(1);
+          $xmlwriter->setHeaderMessage(implode("\n", $errortext));
         } else {
           // Check image
           if (!empty($image)) {
@@ -110,8 +110,8 @@ if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_u
             $binaryfile_id=0;
           }
           $tmpdata->deleteUserRecords($session->_s_user_id, 1, 0, true);
-          $status=0;
-          $message=$l->g('changes_saved');
+          $xmlwriter->setHeaderStatus(0);
+          $xmlwriter->setHeaderMessage($l->g('changes_saved'));
           $room_password=null;
           if (!empty($password_protect) && !empty($change_password)) {
             $room_password=md5(base64_decode($password));
@@ -139,11 +139,4 @@ if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_u
     }
   }
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

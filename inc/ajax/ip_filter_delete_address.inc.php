@@ -28,8 +28,8 @@ if (!isset($ids) || !is_array($ids)) $ids=array();
 $errortext=array();
 if (is_object($session) && !empty($current_user->id) && $current_user->is_admin==='y') {
   if (!empty($ids)) {
-    $message=$l->g('selected_addresses_were_deleted');
-    $status=0;
+    $xmlwriter->setHeaderMessage($l->g('selected_addresses_were_deleted'));
+    $xmlwriter->setHeaderStatus(0);
     foreach ($ids as $id) {
       if ($ipfilter->_db_getList('address', 'id = '.$id, 1)) {
         // Check wether IP address can be deleted from filter without blocking current user
@@ -43,20 +43,13 @@ if (is_object($session) && !empty($current_user->id) && $current_user->is_admin=
       }
     }
   } else {
-    $message=$l->g('error');
-    $status=1;
+    $xmlwriter->setHeaderMessage($l->g('error'));
+    $xmlwriter->setHeaderStatus(1);
   }
 }
 
 if (!empty($errortext)) {
-  $status=1;
-  $message=implode("\n", $errortext);
+  $xmlwriter->setHeaderStatus(1);
+  $xmlwriter->setHeaderMessage(implode("\n", $errortext));
 }
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-  <message>'.htmlspecialchars($message).'</message>
-  <status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
-die();
 ?>

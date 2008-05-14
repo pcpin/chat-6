@@ -289,4 +289,27 @@ define('PCPIN_ISO_LNG_ZU', 'zu=Zulu');
  * Separator char for window title
  */
 define('PCPIN_WINDOW_TITLE_SEPARATOR', chr(226).chr(128).chr(162));
+
+
+/**
+ * PCPIN XML: Character encoding
+ */
+define('PCPIN_XMLDOC_ENCODING', 'UTF-8');
+
+/**
+ * PCPIN XML: Root element name
+ */
+define('PCPIN_XMLDOC_ROOT_NAME', 'pcpin');
+
+/**
+ * PCPIN XML: Whether to use indentation in XML or not. Makes XML more readable, should be disabled in production environments
+ */
+define('PCPIN_XMLDOC_INDENT', PCPIN_DEBUGMODE);
+
+/**
+ * PCPIN XML: Indentation string
+ */
+define('PCPIN_XMLDOC_INDENT_STRING', '    ');
+
+
 ?>
