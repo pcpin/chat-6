@@ -363,8 +363,8 @@ function _CALLBACK_copyLanguage() {
     // OK
     hideNewTranslationPage();
     getAvailableLanguages('loadLngExpressions('+actionHandler.data['language_id'][0]+')', true, true);
-  } else if (message!=null) {
+  } else {
     // An error. Should not happen...
-    alert(message);
+    alert(actionHandler.message);
   }
 }

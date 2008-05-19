@@ -602,9 +602,9 @@ function _CALLBACK_getNickNames() {
     if (actionHandler.message=='OK') {
       // Redraw nicknames table
       flushNickNamesTable();
-    } else if (message!=null) {
+    } else {
       // An error
-      alert(message);
+      alert(actionHandler.message);
     }
   }
   toggleProgressBar(false);

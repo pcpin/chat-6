@@ -67,8 +67,8 @@ function _CALLBACK_getDisallowedNames() {
         setCssClass(td, '.tbl_row');
 
       }
-    } else if (message!=null) {
-      alert(message);
+    } else {
+      alert(actionHandler.message);
     }
   }
   toggleProgressBar(false);

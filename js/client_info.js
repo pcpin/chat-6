@@ -73,8 +73,8 @@ function _CALLBACK_getClientInfo(user_id) {
 
       // Display table
       $('client_table').style.display='';
-    } else if (message!=null) {
-      alert(message);
+    } else {
+      alert(actionHandler.message);
       window.close();
     }
   }

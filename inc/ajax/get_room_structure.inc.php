@@ -42,7 +42,7 @@ if (!empty($current_user->id)) {
     }
   }
 }
-$xmlwriter->setData(array('category'=>$categories_tree[0],
+$xmlwriter->setData(array('category'=>!empty($categories_tree)? $categories_tree[0] : array(),
                           'additional_data'=>array('new_invitations'=>$invitations_arrived,
                                                    'new_messages'=>$messages_arrived)
                           )
