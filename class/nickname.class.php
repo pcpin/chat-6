@@ -230,11 +230,11 @@ class PCPIN_Nickname extends PCPIN_Session {
 
 
   /**
-   * Get default nickname
+   * Get default nickname. If user has no nicknames, his username will be returned.
    * @param   int   $user_id    User ID
    * @return  string
    */
-  function getDefaultNickname($user_id=0) {
+  function getDefaultNickname($user_id) {
     $nickname='';
     if (!empty($user_id)) {
       if (!$this->_db_getList('nickname', 'user_id = '.$user_id, 'default = y', 1)) {
@@ -243,6 +243,14 @@ class PCPIN_Nickname extends PCPIN_Session {
       if (!empty($this->_db_list)) {
         $nickname=$this->_db_list[0]['nickname'];
         $this->_db_freeList();
+      }
+      if ($nickname=='') {
+        // User has no nicknames, get username
+        $usr=new PCPIN_User($this);
+        if ($usr->_db_getList('login', 'id =# '.$user_id, 1)) {
+          $nickname=$usr->_db_list[0]['login'];
+          $usr->_db_freeList();
+        }
       }
     }
     return $nickname;
