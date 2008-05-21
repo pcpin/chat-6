@@ -90,17 +90,22 @@ function hideLanguages() {
 
 /**
  * Delete language
- * @param   int   id    Language ID
+ * @param   int       id          Language ID
+ * @param   boolean   confirmed   Optional. If TRUE: no confirmation will be displayed. Default: FALSE.
  */
-function deleteLanguage(id) {
+function deleteLanguage(id, confirmed) {
   var lng=null;
   for (var i in AvailableLanguages) {
     if (AvailableLanguages[i].ID==id) {
       lng=AvailableLanguages[i];
     }
   }
-  if (lng && confirm(getLng('sure_to_delete_language').split('[LANGUAGE]').join(lng.Name))) {
-    sendData('_CALLBACK_deleteLanguage()', formlink, 'POST', 'ajax=delete_language&s_id='+urlencode(s_id)+'&language_id='+urlencode(id));
+  if (lng) {
+    if (typeof(confirmed)!='boolean' || !confirmed) {
+      confirm(getLng('sure_to_delete_language').split('[LANGUAGE]').join(lng.Name), null, null, 'deleteLanguage('+id+', true)');
+    } else {
+      sendData('_CALLBACK_deleteLanguage()', formlink, 'POST', 'ajax=delete_language&s_id='+urlencode(s_id)+'&language_id='+urlencode(id));
+    }
   }
 }
 function _CALLBACK_deleteLanguage() {
@@ -111,10 +116,11 @@ function _CALLBACK_deleteLanguage() {
     return false;
   } else {
     toggleProgressBar(false);
-    alert(actionHandler.message);
     if (actionHandler.status==0) {
       // Language deleted
-      initLanguagesPage();
+      alert(actionHandler.message, 0, 0, 'initLanguagesPage()');
+    } else {
+      alert(actionHandler.message);
     }
   }
 }

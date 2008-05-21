@@ -116,22 +116,27 @@ function _CALLBACK_addDisallowedName() {
 
 /**
  * Delete name from filter
- * @param   int   name_id   Name ID
+ * @param   int       name_id     Name ID
+ * @param   boolean   confirmed   Optional. If TRUE: no confirmation will be displayed. Default: FALSE.
  */
-function deleteDisallowedName(name_id) {
+function deleteDisallowedName(name_id, confirmed) {
   if (typeof(name_id)=='string') {
     name_id=stringToNumber(name_id);
   }
-  if (typeof(name_id)=='number' && name_id>0 && confirm(getLng('confirm_delete_name'))) {
-    sendData('_CALLBACK_deleteDisallowedName()', formlink, 'POST', 'ajax=delete_disallowed_name'
-                                                                          +'&s_id='+urlencode(s_id)
-                                                                          +'&name_id='+urlencode(name_id)
-                                                                          );
+  if (typeof(name_id)=='number' && name_id>0) {
+    if (typeof(confirmed)!='boolean' || !confirmed) {
+      confirm(getLng('confirm_delete_name'), null, null, 'deleteDisallowedName('+name_id+', true)');
+    } else {
+      sendData('_CALLBACK_deleteDisallowedName()', formlink, 'POST', 'ajax=delete_disallowed_name'
+                                                                            +'&s_id='+urlencode(s_id)
+                                                                            +'&name_id='+urlencode(name_id)
+                                                                            );
+    }
   }
   return false;
 }
 function _CALLBACK_deleteDisallowedName() {
 //alert(actionHandler.getResponseString()); return false;
-  alert(actionHandler.message);
-  getDisallowedNames();
+  toggleProgressBar(false);
+  alert(actionHandler.message, null, null, 'getDisallowedNames()');
 }

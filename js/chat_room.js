@@ -2040,19 +2040,12 @@ function closeOnlineStatusBox(online_status, online_status_message) {
     }
     if (online_status==-1) {
       // Leave this room
-      if (confirm(getLng('sure_to_leave_room'))) {
-        if (typeof(leaveRoom)=='function') {
-          leaveRoom();
-        }
-      }
+      confirm(getLng('sure_to_leave_room'), 0, 0, 'leaveRoom()');
+      return false;
     } else if (online_status==-2) {
       // Log out
-      if (confirm(getLng('sure_to_log_out'))) {
-        if (typeof(logOut)=='function') {
-          SkipPageUnloadedMsg=true;
-          logOut();
-        }
-      }
+      confirm(getLng('sure_to_log_out'), 0, 0, 'SkipPageUnloadedMsg=true;logOut();');
+      return false;
     } else if (online_status==-3) {
       // Edit profile
       openEditProfileWindow(currentUserId, 'own_profile');

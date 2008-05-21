@@ -198,14 +198,19 @@ function _CALLBACK_addNewAvatar() {
 
 /**
  * Delete avatar
- * @param   int   avatar_id   Avatar ID
+ * @param   int       avatar_id   Avatar ID
+ * @param   boolean   confirmed   Optional. If TRUE: no confirmation will be displayed. Default: FALSE.
  */
-function deleteAvatar(avatar_id) {
+function deleteAvatar(avatar_id, confirmed) {
   if (typeof(avatar_id)=='string') {
     avatar_id=stringToNumber(avatar_id);
   }
-  if (avatar_id>0 && confirm(getLng('confirm_delete_avatar'))) {
-    sendData('_CALLBACK_deleteAvatar()', formlink, 'POST', 'ajax=delete_avatar_gallery&s_id='+urlencode(s_id)+'&avatar_id='+urlencode(avatar_id));
+  if (avatar_id>0) {
+    if (typeof(confirmed)!='boolean' || !confirmed) {
+      confirm(getLng('confirm_delete_avatar'), null, null, 'deleteAvatar('+avatar_id+', true)');
+    } else {
+      sendData('_CALLBACK_deleteAvatar()', formlink, 'POST', 'ajax=delete_avatar_gallery&s_id='+urlencode(s_id)+'&avatar_id='+urlencode(avatar_id));
+    }
   }
   return false;
 }
@@ -215,7 +220,6 @@ function _CALLBACK_deleteAvatar() {
   if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
-    return false;
   } else if (actionHandler.status==0) {
     getAvatars();
   }

@@ -124,23 +124,27 @@ function _CALLBACK_addBadWord() {
 
 /**
  * Delete word from filter
- * @param   int   word_id   Word ID
+ * @param   int       word_id     Word ID
+ * @param   boolean   confirmed   Optional. If TRUE: no confirmation will be displayed. Default: FALSE.
  */
-function deleteFilteredWord(word_id) {
+function deleteFilteredWord(word_id, confirmed) {
   if (typeof(word_id)=='string') {
     word_id=stringToNumber(word_id);
   }
-  if (typeof(word_id)=='number' && word_id>0 && confirm(getLng('confirm_delete_word'))) {
-    sendData('_CALLBACK_deleteFilteredWord()', formlink, 'POST', 'ajax=delete_filtered_word'
-                                                                +'&s_id='+urlencode(s_id)
-                                                                +'&word_id='+urlencode(word_id)
-                                                                );
+  if (typeof(word_id)=='number' && word_id>0) {
+    if (typeof(confirmed)!='boolean' || !confirmed) {
+      confirm(getLng('confirm_delete_word'), 0, 0, 'deleteFilteredWord('+word_id+', true)');
+    } else {
+      sendData('_CALLBACK_deleteFilteredWord()', formlink, 'POST', 'ajax=delete_filtered_word'
+                                                                  +'&s_id='+urlencode(s_id)
+                                                                  +'&word_id='+urlencode(word_id)
+                                                                  );
+    }
   }
   return false;
 }
 function _CALLBACK_deleteFilteredWord() {
 //alert(actionHandler.getResponseString()); return false;
   toggleProgressBar(false);
-  alert(actionHandler.message);
-  getFilteredWords();
+  alert(actionHandler.message, 0, 0, 'getFilteredWords()');
 }

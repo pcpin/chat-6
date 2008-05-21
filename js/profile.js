@@ -379,11 +379,8 @@ function _CALLBACK_getNewInvitations() {
       invitation_msg=getLng('user_invited_you');
       invitation_msg=invitation_msg.split('[USER]').join(coloredToPlain(actionHandler.data['invitation'][i]['author_nickname'][0], false));
       invitation_msg=invitation_msg.split('[ROOM]').join(actionHandler.data['invitation'][i]['room_name'][0]);
-      if (confirm(invitation_msg)) {
-        ActiveRoomId=stringToNumber(actionHandler.data['invitation'][i]['room_id'][0]);
-        enterChatRoom();
-        return false;
-      }
+      confirm(invitation_msg, null, null, 'ActiveRoomId='+actionHandler.data['invitation'][i]['room_id'][0]+'; enterChatRoom();');
+      return false;
     }
   }
 }
@@ -411,10 +408,16 @@ function _CALLBACK_getNewMessages() {
 
 /**
  * Delete avatar
+ * @param   int       avatar_id     Avatar ID
+ * @param   boolean   confirmed     Optional. If TRUE: no confirmation will be displayed. Default: FALSE. 
  */
-function deleteAvatar(avatar_id) {
-  flushDisplay();
-  if (typeof(avatar_id)=='number' && avatar_id>0 && confirm(getLng('confirm_delete_avatar'))) {
+function deleteAvatar(avatar_id, confirmed) {
+  if (typeof(confirmed)!='boolean' || !confirmed) {
+    flushDisplay();
+    if (typeof(avatar_id)=='number' && avatar_id>0) {
+      confirm(getLng('confirm_delete_avatar'), null, null, 'deleteAvatar('+avatar_id+', true)');
+    }
+  } else {
     sendData('_CALLBACK_deleteAvatar()', formlink, 'POST', 'ajax=delete_avatar&s_id='+urlencode(s_id)+'&avatar_id='+urlencode(avatar_id)+'&profile_user_id='+urlencode(profileUserId));
   }
   return false;
@@ -426,11 +429,12 @@ function _CALLBACK_deleteAvatar() {
     return false;
   } else {
     toggleProgressBar(false);
-    alert(actionHandler.message);
     if (actionHandler.status==0) {
       // Avatar deleted
       // Reload avatars
-      getAvatars();
+      alert(actionHandler.message, 0, 0, 'getAvatars()');
+    } else {
+      alert(actionHandler.message);
     }
   }
 }
@@ -484,11 +488,14 @@ function parseUploadResponse(code, message, binaryfile_id, width, height) {
 
 /**
  * Delete nickname
- * @param   int   nickname_id   Nickname ID
+ * @param   int       nickname_id   Nickname ID
+ * @param   boolean   confirmed     Optional. If TRUE: no confirmation will be displayed.
  */
-function deleteNickname(nickname_id) {
-  var msg=getLng('confirm_delete_nickname').split('[NICKNAME]').join($('nickname_span_'+nickname_id).nickname_plain);
-  if (confirm(msg)) {
+function deleteNickname(nickname_id, confirmed) {
+  if (typeof(confirmed)!='boolean' || !confirmed) {
+    var msg=getLng('confirm_delete_nickname').split('[NICKNAME]').join($('nickname_span_'+nickname_id).nickname_plain);
+    confirm(msg, null, null, 'deleteNickname('+nickname_id+', true)');
+  } else {
     sendData('_CALLBACK_deleteNickname('+nickname_id+')', formlink, 'POST', 'ajax=delete_nickname&s_id='+urlencode(s_id)+'&nickname_id='+urlencode(nickname_id)+'&profile_user_id='+urlencode(profileUserId));
   }
   return false;
@@ -516,11 +523,15 @@ function _CALLBACK_deleteNickname(nickname_id) {
  */
 function manageNickname(callBack, nickname_id, nickname) {
   flushDisplay();
-  if (typeof(nickname)!='string') {
-    nickname=prompt(getLng('enter_new_nickname')+':', last_nickname);
+  if (typeof(callBack)!='string') {
+    callBack='';
   }
   if (typeof(nickname_id)!='number') {
     nickname_id=0;
+  }
+  if (typeof(nickname)!='string') {
+    prompt(getLng('enter_new_nickname')+':', last_nickname, null, null, 'manageNickname(\''+callBack.split("'").join("\\'")+'\', '+nickname_id+', promptboxValue)');
+    return false;
   }
   var nickname_plain='';
   if (nickname!=null) {
@@ -536,7 +547,7 @@ function manageNickname(callBack, nickname_id, nickname) {
     } else {
       if (nickname_id>0) {
         // Update nickname
-        sendData('_CALLBACK_manageNickname(\''+(typeof(callBack)=='string'? callBack : '')+'\')', formlink, 'POST', 'ajax=update_nickname'
+        sendData('_CALLBACK_manageNickname(\''+callBack+'\')', formlink, 'POST', 'ajax=update_nickname'
                                                                                                                    +'&s_id='+urlencode(s_id)
                                                                                                                    +'&new_nickname='+urlencode(nickname)
                                                                                                                    +'&nickname_id='+urlencode(nickname_id)
@@ -544,7 +555,7 @@ function manageNickname(callBack, nickname_id, nickname) {
                                                                                                                    );
       } else {
         // Add new nickname
-        sendData('_CALLBACK_manageNickname(\''+(typeof(callBack)=='string'? callBack : '')+'\')', formlink, 'POST', 'ajax=add_nickname'
+        sendData('_CALLBACK_manageNickname(\''+callBack+'\')', formlink, 'POST', 'ajax=add_nickname'
                                                                                                                    +'&s_id='+urlencode(s_id)
                                                                                                                    +'&new_nickname='+urlencode(nickname)
                                                                                                                    +'&profile_user_id='+urlencode(profileUserId)
@@ -700,17 +711,19 @@ function flushDisplay() {
 
 /**
  * Validate and save new email address
+ * @param   string    email     Email address
  */
-function changeEmailAddress() {
+function changeEmailAddress(email) {
   flushDisplay();
-  var email=prompt(getLng('enter_new_email_address')+':', last_email);
-  if (email!=null) {
+  if (typeof(email)!='string') {
+    prompt(getLng('enter_new_email_address')+':', last_email, 0, 0, 'changeEmailAddress(promptboxValue)');
+  } else {
     email=trimString(email).substring(0, 255);
     last_email=email;
     if (email!=$('email_address_span').innerHTML) {
       if (!checkEmail(email)) {
         // New email address is invalid
-        alert(getLng('email_invalid'));
+        alert(getLng('email_invalid'), 0, 0, "prompt(getLng('enter_new_email_address')+':', last_email, 0, 0, 'changeEmailAddress(promptboxValue)')");
       } else {
         // Email address seems to be OK
         sendData('_CALLBACK_changeEmailAddress()', formlink, 'POST', 'ajax=change_email&s_id='+urlencode(s_id)+'&email='+urlencode(email)+'&profile_user_id='+urlencode(profileUserId));
@@ -720,6 +733,7 @@ function changeEmailAddress() {
   return false;
 }
 function _CALLBACK_changeEmailAddress() {
+  toggleProgressBar(false);
   switch (actionHandler.status) {
     case  -1:
       // Session is invalid
@@ -744,24 +758,29 @@ function _CALLBACK_changeEmailAddress() {
       alert(actionHandler.message);
     break;
   }
-  // Reset window status resolution
-  toggleProgressBar(false);
 }
 
 
 /**
  * Change password
+ * @param   string    new_pass      New password
+ * @param   string    new_pass2     New password again (for confirmation)
  */
-function changePassword() {
+function changePassword(new_pass, new_pass2) {
   flushDisplay();
-  var new_pass=prompt(getLng('enter_new_password')+':', '');
-  if (new_pass!=null) {
+  if (typeof(new_pass)!='string') {
+    prompt(getLng('enter_new_password')+':', '', 0, 0, 'changePassword(promptboxValue)', true);
+  } else {
     if (new_pass=='') {
       // Password is empty
-      alert(getLng('password_empty'));
+      alert(getLng('password_empty'), 0, 0, "prompt(getLng('enter_new_password')+':', '', 0, 0, 'changePassword(promptboxValue)', true)");
     } else if (new_pass.length<3) {
       // Password is too short
-      alert(getLng('password_too_short'));
+      alert(getLng('password_too_short'), 0, 0, "prompt(getLng('enter_new_password')+':', '', 0, 0, 'changePassword(promptboxValue)', true)");
+    } else if (typeof(new_pass2)!='string') {
+      prompt(getLng('confirm_password')+':', '', 0, 0, 'changePassword("'+new_pass.split('"').join('\\"')+'", promptboxValue)', true);
+    } else if (new_pass.length!=new_pass2.length || new_pass!=new_pass2) {
+      alert(getLng('passwords_not_ident'), 0, 0, "prompt(getLng('enter_new_password')+':', '', 0, 0, 'changePassword(promptboxValue)', true)");
     } else {
       // Store new password
       sendData('_CALLBACK_changePassword()', formlink, 'POST', 'ajax=change_password&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId)+'&password='+base64encode(urlencode(new_pass)));
@@ -769,6 +788,7 @@ function changePassword() {
   }
 }
 function _CALLBACK_changePassword() {
+  toggleProgressBar(false);
   switch (actionHandler.status) {
     case  -1:
       // Session is invalid
@@ -785,8 +805,6 @@ function _CALLBACK_changePassword() {
       alert(actionHandler.message);
     break;
   }
-  // Reset window status resolution
-  toggleProgressBar(false);
 }
 
 
@@ -1013,12 +1031,14 @@ function _CALLBACK_changeEmailVisibility() {
  * Update userdata field
  * @param   string    field       Field name
  * @param   string    init_val    Optional default value
+ * @param   string    new_val     Optional. New value
  */
-function updateUserdataField(field, init_val) {
+function updateUserdataField(field, init_val, new_val) {
   flushDisplay();
   if ($(field+'_span')) {
-    var new_val=prompt(getLng('enter_your_'+field)+':', typeof(init_val)=='string'? init_val : htmlspecialchars_decode($(field+'_span').innerHTML));
-    if (new_val!=null) {
+    if (typeof(new_val)!='string') {
+      prompt(getLng('enter_your_'+field)+':', typeof(init_val)=='string'? init_val : htmlspecialchars_decode($(field+'_span').innerHTML), 0, 0, 'updateUserdataField("'+field.split('"').join('\\"')+'", "'+init_val.split('"').join('\\"')+'", promptboxValue)');
+    } else {
       // Store new age
       new_val=trimString(new_val).substring(0, 255);
       sendData('_CALLBACK_updateUserdataField()', formlink, 'POST', 'ajax=update_userdata&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId)+'&'+field+'='+urlencode(new_val));
@@ -1026,45 +1046,34 @@ function updateUserdataField(field, init_val) {
   }
 }
 function _CALLBACK_updateUserdataField() {
-  switch (actionHandler.status) {
-
-    case  -1:
-      // Session is invalid
-      document.location.href=formlink+'?session_timeout';
-      return false;
-    break;
-
-    case 0:
-      // Data updated
-      flushDisplay();
-
-      if (actionHandler.data['homepage'][0]!='') {
-        $('homepage_span').innerHTML='<a href="'+formlink+'?external_url='+urlencode(actionHandler.data['homepage'][0])+'" title="'+htmlspecialchars(actionHandler.data['homepage'][0])+'" target="_blank">'+htmlspecialchars(actionHandler.data['homepage'][0])+'</a>';
-        currentProfileHomepage=actionHandler.data['homepage'][0];
-      } else {
-        $('homepage_span').innerHTML='&nbsp;';
-      }
-      $('age_span').innerHTML=htmlspecialchars(actionHandler.data['age'][0]);
-      $('icq_span').innerHTML=htmlspecialchars(actionHandler.data['icq'][0]);
-      $('msn_span').innerHTML=htmlspecialchars(actionHandler.data['msn'][0]);
-      $('aim_span').innerHTML=htmlspecialchars(actionHandler.data['aim'][0]);
-      $('yim_span').innerHTML=htmlspecialchars(actionHandler.data['yim'][0]);
-      $('location_span').innerHTML=htmlspecialchars(actionHandler.data['location'][0]);
-      $('occupation_span').innerHTML=htmlspecialchars(actionHandler.data['occupation'][0]);
-      $('interests_span').innerHTML=htmlspecialchars(actionHandler.data['interests'][0]);
-      // Display gender image
-      currentProfileGender=actionHandler.data['gender'][0];
-      showGenderImage();
-      alert(actionHandler.message);
-    break;
-
-    default:
-      // An error occured
-      alert(actionHandler.message);
-    break;
-
-  }
   toggleProgressBar(false);
+  if (actionHandler.status==-1) {
+    // Session is invalid
+    document.location.href=formlink+'?session_timeout';
+    return false;
+  }
+  if (actionHandler.status==0) {
+    // Data updated
+    flushDisplay();
+    if (actionHandler.data['homepage'][0]!='') {
+      $('homepage_span').innerHTML='<a href="'+formlink+'?external_url='+urlencode(actionHandler.data['homepage'][0])+'" title="'+htmlspecialchars(actionHandler.data['homepage'][0])+'" target="_blank">'+htmlspecialchars(actionHandler.data['homepage'][0])+'</a>';
+      currentProfileHomepage=actionHandler.data['homepage'][0];
+    } else {
+      $('homepage_span').innerHTML='&nbsp;';
+    }
+    $('age_span').innerHTML=htmlspecialchars(actionHandler.data['age'][0]);
+    $('icq_span').innerHTML=htmlspecialchars(actionHandler.data['icq'][0]);
+    $('msn_span').innerHTML=htmlspecialchars(actionHandler.data['msn'][0]);
+    $('aim_span').innerHTML=htmlspecialchars(actionHandler.data['aim'][0]);
+    $('yim_span').innerHTML=htmlspecialchars(actionHandler.data['yim'][0]);
+    $('location_span').innerHTML=htmlspecialchars(actionHandler.data['location'][0]);
+    $('occupation_span').innerHTML=htmlspecialchars(actionHandler.data['occupation'][0]);
+    $('interests_span').innerHTML=htmlspecialchars(actionHandler.data['interests'][0]);
+    // Display gender image
+    currentProfileGender=actionHandler.data['gender'][0];
+    showGenderImage();
+  }
+  alert(actionHandler.message);
 }
 
 
@@ -1116,48 +1125,50 @@ function _CALLBACK_getMemberData() {
     return false;
   }
 
-  // Username (login)
-  $('member_username').innerHTML=htmlspecialchars(ajaxMember.data['member_data'][0]['login'][0]);
-  // Level
-  if ('1'==ajaxMember.data['member_data'][0]['is_admin'][0]) {
-    // "Admin" level
-    $('member_level_name').innerHTML=htmlspecialchars(getLng('admin'));
-    $('member_level_id').value='a';
-  } else if ('1'==ajaxMember.data['member_data'][0]['is_registered'][0]) {
-    // "Registered user" level
-    $('member_level_id').value='r';
-    $('member_level_name').innerHTML=htmlspecialchars(getLng('registered'));
-  } else {
-    // Guest
-    $('member_level_id').value='g';
-    $('member_level_name').innerHTML=htmlspecialchars(getLng('guest'));
-  }
-  // Moderated categories
-  if (typeof(ajaxMember.data['member_data'][0]['moderated_category'])!='undefined') {
-    for (i=0; i<ajaxMember.data['member_data'][0]['moderated_category'].length; i++) {
-      category_names.push(ajaxMember.data['member_data'][0]['moderated_category'][i]);
+  if (typeof(ajaxMember.data['member_data'])!='undefined' && ajaxMember.data['member_data'].length) {
+    // Username (login)
+    $('member_username').innerHTML=htmlspecialchars(ajaxMember.data['member_data'][0]['login'][0]);
+    // Level
+    if ('1'==ajaxMember.data['member_data'][0]['is_admin'][0]) {
+      // "Admin" level
+      $('member_level_name').innerHTML=htmlspecialchars(getLng('admin'));
+      $('member_level_id').value='a';
+    } else if ('1'==ajaxMember.data['member_data'][0]['is_registered'][0]) {
+      // "Registered user" level
+      $('member_level_id').value='r';
+      $('member_level_name').innerHTML=htmlspecialchars(getLng('registered'));
+    } else {
+      // Guest
+      $('member_level_id').value='g';
+      $('member_level_name').innerHTML=htmlspecialchars(getLng('guest'));
     }
-  }
-  if (category_names.length) {
-    $('member_moderated_categories').innerHTML=htmlspecialchars('"'+category_names.join('", "')+'"');
-  } else {
-    $('member_moderated_categories').innerHTML='-';
-  }
-  // Moderated rooms
-  if (typeof(ajaxMember.data['member_data'][0]['moderated_room'])!='undefined') {
-    for (i=0; i<ajaxMember.data['member_data'][0]['moderated_room'].length; i++) {
-      room_names.push(ajaxMember.data['member_data'][0]['moderated_room'][i]);
+    // Moderated categories
+    if (typeof(ajaxMember.data['member_data'][0]['moderated_category'])!='undefined') {
+      for (i=0; i<ajaxMember.data['member_data'][0]['moderated_category'].length; i++) {
+        category_names.push(ajaxMember.data['member_data'][0]['moderated_category'][i]);
+      }
     }
-  }
-  if (room_names.length) {
-    $('member_moderated_rooms').innerHTML=htmlspecialchars('"'+room_names.join('", "')+'"');
-  } else {
-    $('member_moderated_rooms').innerHTML='-';
-  }
-  // Activated?
-  if ('1'!=ajaxMember.data['member_data'][0]['activated'][0]) {
-    // No
-    $('member_not_activated_row').style.display='';
+    if (category_names.length) {
+      $('member_moderated_categories').innerHTML=htmlspecialchars('"'+category_names.join('", "')+'"');
+    } else {
+      $('member_moderated_categories').innerHTML='-';
+    }
+    // Moderated rooms
+    if (typeof(ajaxMember.data['member_data'][0]['moderated_room'])!='undefined') {
+      for (i=0; i<ajaxMember.data['member_data'][0]['moderated_room'].length; i++) {
+        room_names.push(ajaxMember.data['member_data'][0]['moderated_room'][i]);
+      }
+    }
+    if (room_names.length) {
+      $('member_moderated_rooms').innerHTML=htmlspecialchars('"'+room_names.join('", "')+'"');
+    } else {
+      $('member_moderated_rooms').innerHTML='-';
+    }
+    // Activated?
+    if ('1'!=ajaxMember.data['member_data'][0]['activated'][0]) {
+      // No
+      $('member_not_activated_row').style.display='';
+    }
   }
   toggleProgressBar(false);
 }
@@ -1186,8 +1197,10 @@ function hideMemberLevelForm() {
 
 /**
  * Set new member level
+ * @param   boolean   confirmed     First confirmation
+ * @param   boolean   confirmed2    Second confirmation
  */
-function setMemberLevel() {
+function setMemberLevel(confirmed, confirmed2) {
   var new_level='';
   if (isAdmin) {
     if ($('member_level_option_r').checked) {
@@ -1200,14 +1213,17 @@ function setMemberLevel() {
     } else if (new_level=='') {
       alert(getLng('select_new_level_or_cancel'));
       return false;
-    } else if (confirm(getLng('sure_change_user_level')) && confirm(getLng('really_sure'))) {
-      toggleProgressBar(true);
-      ajaxMember.sendData('_CALLBACK_setMemberLevel()', 'POST', formlink, 'ajax=set_user_level&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId)+'&level='+urlencode(new_level), true);
+    } else {
+      if (typeof(confirmed)!='boolean' || !confirmed) {
+        confirm(getLng('sure_change_user_level'), null, null, 'setMemberLevel(true)');
+      } else if (typeof(confirmed2)!='boolean' || !confirmed2) {
+        confirm(getLng('really_sure'), null, null, "toggleProgressBar(true); ajaxMember.sendData('_CALLBACK_setMemberLevel()', 'POST', formlink, 'ajax=set_user_level&s_id="+urlencode(s_id)+"&profile_user_id="+urlencode(profileUserId)+"&level="+urlencode(new_level)+"', true);");
+      }
     }
-    hideMemberLevelForm();
   }
 }
 function _CALLBACK_setMemberLevel() {
+  hideMemberLevelForm();
   switch (ajaxMember.status) {
     case  -1:
       // Session is invalid
@@ -1224,16 +1240,24 @@ function _CALLBACK_setMemberLevel() {
 
 /**
  * Delete user
+ * @param   boolean   confirmed     First confirmation
+ * @param   boolean   confirmed2    Second confirmation
  */
-function deleteUser() {
-  if (currentUserId==profileUserId) {
-    alert(getLng('delete_yourself_error'));
-  } else if (confirm(getLng('sure_delete_user')) && confirm(getLng('really_sure'))) {
-    toggleProgressBar(true);
-    ajaxMember.sendData('_CALLBACK_deleteUser()', 'POST', formlink, 'ajax=delete_user&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId), true);
+function deleteUser(confirmed, confirmed2) {
+  if (isAdmin) {
+    if (currentUserId==profileUserId) {
+      alert(getLng('delete_yourself_error'));
+    } else {
+      if (typeof(confirmed)!='boolean' || !confirmed) {
+        confirm(getLng('sure_delete_user'), null, null, 'deleteUser(true)');
+      } else if (typeof(confirmed2)!='boolean' || !confirmed2) {
+        confirm(getLng('really_sure'), null, null, "toggleProgressBar(true); ajaxMember.sendData('_CALLBACK_deleteUser()', 'POST', formlink, 'ajax=delete_user&s_id="+urlencode(s_id)+"&profile_user_id="+urlencode(profileUserId)+"', true);");
+      }
+    }
   }
 }
 function _CALLBACK_deleteUser() {
+  toggleProgressBar(false);
   switch (ajaxMember.status) {
     case  -1:
       // Session is invalid
@@ -1242,15 +1266,10 @@ function _CALLBACK_deleteUser() {
     break;
     case  0:
       // User deleted
-      alert(ajaxMember.message);
-      try {
-        $('memberlist_search_button', window.opener.document).click();
-      } catch (e) {}
-      window.close();
+      alert(ajaxMember.message, null, null, "$('memberlist_search_button', window.opener.document).click(); window.close();");
     break;
     default:
-      alert(ajaxMember.message);
-      getMemberData();
+      alert(ajaxMember.message, null, null, 'getMemberData()');
     break;
   }
 }
@@ -1284,11 +1303,16 @@ function showAvatarGallery() {
 
 /**
  * Activate user account manually
+ * @param   boolean   confirmed     First confirmation
  */
-function activateUser() {
-  if (confirm(getLng('sure_activate_account')) && confirm(getLng('really_sure'))) {
-    toggleProgressBar(true);
-    ajaxMember.sendData('_CALLBACK_activateUser()', 'POST', formlink, 'ajax=activate_user&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId), true);
+function activateUser(confirmed) {
+  if (isAdmin) {
+    if (typeof(confirmed)!='boolean' || !confirmed) {
+      confirm(getLng('sure_activate_account'), null, null, 'activateUser(true)');
+    } else {
+      toggleProgressBar(true);
+      ajaxMember.sendData('_CALLBACK_activateUser()', 'POST', formlink, 'ajax=activate_user&s_id='+urlencode(s_id)+'&profile_user_id='+urlencode(profileUserId), true);
+    }
   }
 }
 function _CALLBACK_activateUser() {
@@ -1307,6 +1331,7 @@ function _CALLBACK_activateUser() {
     default:
       // An error occured
       toggleProgressBar(false);
+      alert(ajaxMember.message);
     break;
   }
 }

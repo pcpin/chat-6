@@ -217,7 +217,7 @@ a:hover {
   background-color: #ffffff;
 }
 
-/* Color selection box */
+/* Smilie box */
 #smilie_selection_box {
   position: absolute;
   top: 0px;
@@ -227,6 +227,66 @@ a:hover {
   overflow: hidden;
   margin: 0px;
   padding: 0px;
+}
+
+/* Alert box */
+#alertbox {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  border: solid 1px #999999;
+  overflow: hidden;
+  margin: 0px;
+  padding: 0px;
+  z-index: 9999;
+}
+#alertbox .text {
+  background-color: #f9f9ff;
+  margin: 0px;
+  padding: 10px;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+/* Confirm box */
+#confirmbox {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  border: solid 1px #999999;
+  overflow: hidden;
+  margin: 0px;
+  padding: 0px;
+  z-index: 9999;
+}
+#confirmbox .text {
+  background-color: #f9f9ff;
+  margin: 0px;
+  padding: 10px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+/* Prompt box */
+#promptbox {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  border: solid 1px #999999;
+  overflow: hidden;
+  margin: 0px;
+  padding: 0px;
+  z-index: 9999;
+}
+#promptbox .text {
+  background-color: #f9f9ff;
+  margin: 0px;
+  padding: 10px;
+  text-align: left;
+  vertical-align: middle;
+  font-size: 14px;
 }
 
 /* Password field box */
@@ -407,6 +467,7 @@ a:hover {
   padding-right: 30px;
   padding-top: 15px;
   padding-bottom: 15px;
+  z-index: 10000;
 }
 
 /* Page numbers area */

@@ -44,6 +44,12 @@
 <PCPIN:TPL name="userlist_record_tpl" src="userlist_record_tpl.tpl" />
 <!-- USER OPTIONS CONTEXT MENU -->
 <PCPIN:TPL name="context_menu_user_options" src="context_menu_user_options.tpl" type="simplecondition" requiredvars="DISPLAY" />
+<!-- alert() box -->
+<PCPIN:TPL name="alert_tpl" src="alertbox.tpl" />
+<!-- confirm() box -->
+<PCPIN:TPL name="confirm_tpl" src="confirmbox.tpl" />
+<!-- prompt() box -->
+<PCPIN:TPL name="prompt_tpl" src="promptbox.tpl" />
 <noscript>
   <br /><br /><br /><br /><br />
   <div style="text-align:center;width:100%;">

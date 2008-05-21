@@ -196,8 +196,9 @@ function _CALLBACK_addIPAddress() {
 
 /**
  * Delete selected IP addresses
+ * @param   boolean   confirmed   Optional. If TRUE: no confirmation will be displayed. Default: FALSE.
  */
-function deleteSelectedAddresses() {
+function deleteSelectedAddresses(confirmed) {
   var inputs=$$('INPUT');
   var ids=new Array();
   for (var i=0; i<inputs.length; i++) {
@@ -205,14 +206,17 @@ function deleteSelectedAddresses() {
       ids.push('ids[]='+urlencode(inputs[i].id.substring(13)));
     }
   }
-  if (ids.length && confirm(getLng('confirm_delete_addresses'))) {
-    sendData('_CALLBACK_deleteSelectedAddresses()', formlink, 'POST', 'ajax=ip_filter_delete_address&s_id='+urlencode(s_id)+'&'+ids.join('&'));
+  if (ids.length) {
+    if (typeof(confirmed)!='boolean' || !confirmed) {
+      confirm(getLng('confirm_delete_addresses'), null, null, 'deleteSelectedAddresses(true)')
+    } else {
+      sendData('_CALLBACK_deleteSelectedAddresses()', formlink, 'POST', 'ajax=ip_filter_delete_address&s_id='+urlencode(s_id)+'&'+ids.join('&'));
+    }
   }
   return false;
 }
 function _CALLBACK_deleteSelectedAddresses() {
 //alert(actionHandler.getResponseString()); return false;
   toggleProgressBar(false);
-  alert(actionHandler.message);
-  getFilteredIPAddresses();
+  alert(actionHandler.message, null, null, 'getFilteredIPAddresses()');
 }

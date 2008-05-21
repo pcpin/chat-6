@@ -205,26 +205,32 @@ function _CALLBACK_addNewSmilie() {
 
 /**
  * Delete smilie
- * @param   int   smilie_id   Smilie ID
+ * @param   int       smilie_id   Smilie ID
+ * @param   boolean   confirmed   Optional. If TRUE: no confirmation will be displayed. Default: FALSE.
  */
-function deleteSmilie(smilie_id) {
+function deleteSmilie(smilie_id, confirmed) {
   if (typeof(smilie_id)=='string') {
     smilie_id=stringToNumber(smilie_id);
   }
-  if (smilie_id>0 && confirm(getLng('confirm_delete_smilie'))) {
-    sendData('_CALLBACK_deleteSmilie()', formlink, 'POST', 'ajax=delete_smilie&s_id='+urlencode(s_id)+'&smilie_id='+urlencode(smilie_id));
+  if (smilie_id>0) {
+    if (typeof(confirmed)!='boolean' || !confirmed) {
+      confirm(getLng('confirm_delete_smilie'), 0, 0, 'deleteSmilie('+smilie_id+', true)');
+    } else {
+      sendData('_CALLBACK_deleteSmilie()', formlink, 'POST', 'ajax=delete_smilie&s_id='+urlencode(s_id)+'&smilie_id='+urlencode(smilie_id));
+    }
   }
   return false;
 }
 function _CALLBACK_deleteSmilie() {
 //alert(actionHandler.getResponseString()); return false;
   toggleProgressBar(false);
-  alert(actionHandler.message);
   if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else if (actionHandler.status==0) {
-    getSmilies();
+    alert(actionHandler.message, 0, 0, 'getSmilies()');
+  } else {
+    alert(actionHandler.message);
   }
 }

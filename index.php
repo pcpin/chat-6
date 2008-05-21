@@ -115,6 +115,9 @@ $_js_files=array('./js/base/screen.js',
                  './js/base/connectionstatus.js',
                  './js/base/global.js',
                  './js/base/main.js',
+                 './js/base/alertbox.js',
+                 './js/base/confirmbox.js',
+                 './js/base/promptbox.js',
                  );
 
 // Add mp3 player javascript code

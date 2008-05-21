@@ -279,9 +279,11 @@ function showUserOptionsBox(user_id, user_nickname) {
 
 /**
  * Hide user options context menu and open submenu, if needed
- * @param     int     selected_option     Selected option (see below)
+ * @param     int       selected_option     Selected option (see below)
+ * @param     string    prompt_response     Optional. Response from prompt() box, if needed.
+ * @param     string    prompt_response2    Optional. Response from second prompt() box, if needed.
  */
-function hideUserOptionsBox(selected_option) {
+function hideUserOptionsBox(selected_option, prompt_response, prompt_response2) {
   var user_id=$('user_options_box').targetUserId;
   var reason='';
   var duration='';
@@ -328,9 +330,11 @@ function hideUserOptionsBox(selected_option) {
       break;
 
       case 5  : // Kick user
-        reason=prompt(getLng('enter_reason')+': ('+getLng('optional')+')', '');
-        if (reason!=null) {
-          reason=trimString(reason);
+        if (typeof(prompt_response)!='string') {
+          prompt(getLng('enter_reason')+': ('+getLng('optional')+')', '', 0, 0, 'hideUserOptionsBox('+selected_option+', promptboxValue)');
+          return false;
+        } else {
+          reason=trimString(prompt_response);
           kickUser(user_id, reason);
           callback_needed=true;
         }
@@ -342,20 +346,23 @@ function hideUserOptionsBox(selected_option) {
       break;
 
       case 7  : // Global mute user
-        reason=prompt(getLng('enter_reason')+': ('+getLng('optional')+')', '');
-        if (reason!=null) {
-          reason=trimString(reason);
-          duration=prompt(getLng('enter_duration'), '');
-          if (duration!=null) {
-            duration=trimString(duration);
+        if (typeof(prompt_response)!='string') {
+          prompt(getLng('enter_reason')+': ('+getLng('optional')+')', '', 0, 0, 'hideUserOptionsBox('+selected_option+', promptboxValue)');
+          return false;
+        } else {
+          reason=trimString(prompt_response);
+          if (typeof(prompt_response2)!='string') {
+            prompt(getLng('enter_duration'), '', 0, 0, 'hideUserOptionsBox('+selected_option+', \''+reason.split("'").join("\\'")+'\', promptboxValue)');
+            return false;
+          } else {
+            duration=trimString(prompt_response2);
             if (duration!='' && !isDigitString(duration)) {
               alert(getLng('canceled_duration_invalid'));
-              duration=null;
+              return false;
+            } else {
+              globalMuteUser(user_id, reason, duration);
+              callback_needed=true;
             }
-          }
-          if (duration!=null) {
-            globalMuteUser(user_id, reason, duration);
-            callback_needed=true;
           }
         }
       break;
@@ -366,20 +373,23 @@ function hideUserOptionsBox(selected_option) {
       break;
 
       case 9  : // Ban user
-        reason=prompt(getLng('enter_reason')+': ('+getLng('optional')+')', '');
-        if (reason!=null) {
-          reason=trimString(reason);
-          duration=prompt(getLng('enter_duration'), '');
-          if (duration!=null) {
-            duration=trimString(duration);
+        if (typeof(prompt_response)!='string') {
+          prompt(getLng('enter_reason')+': ('+getLng('optional')+')', '', 0, 0, 'hideUserOptionsBox('+selected_option+', promptboxValue)');
+          return false;
+        } else {
+          reason=trimString(prompt_response);
+          if (typeof(prompt_response2)!='string') {
+            prompt(getLng('enter_duration'), '', 0, 0, 'hideUserOptionsBox('+selected_option+', \''+reason.split("'").join("\\'")+'\', promptboxValue)');
+            return false;
+          } else {
+            duration=trimString(prompt_response2);
             if (duration!='' && !isDigitString(duration)) {
               alert(getLng('canceled_duration_invalid'));
-              duration=null;
+              return false;
+            } else {
+              banUser(user_id, reason, duration, false);
+              callback_needed=true;
             }
-          }
-          if (duration!=null) {
-            banUser(user_id, reason, duration, false);
-            callback_needed=true;
           }
         }
       break;
@@ -389,20 +399,23 @@ function hideUserOptionsBox(selected_option) {
           // Client IP address equals to your current IP address
           alert(getLng('ban_canceled_ip_equals').split('[IP]').join(currentIP));
         } else {
-          reason=prompt(getLng('enter_reason')+': ('+getLng('optional')+')', '');
-          if (reason!=null) {
-            reason=trimString(reason);
-            duration=prompt(getLng('enter_duration'), '');
-            if (duration!=null) {
-              duration=trimString(duration);
+          if (typeof(prompt_response)!='string') {
+            prompt(getLng('enter_reason')+': ('+getLng('optional')+')', '', 0, 0, 'hideUserOptionsBox('+selected_option+', promptboxValue)');
+            return false;
+          } else {
+            reason=trimString(prompt_response);
+            if (typeof(prompt_response2)!='string') {
+              prompt(getLng('enter_duration'), '', 0, 0, 'hideUserOptionsBox('+selected_option+', \''+reason.split("'").join("\\'")+'\', promptboxValue)');
+              return false;
+            } else {
+              duration=trimString(prompt_response2);
               if (duration!='' && !isDigitString(duration)) {
                 alert(getLng('canceled_duration_invalid'));
-                duration=null;
+                return false;
+              } else {
+                banUser(user_id, reason, duration, true);
+                callback_needed=true;
               }
-            }
-            if (duration!=null) {
-              banUser(user_id, reason, duration, true);
-              callback_needed=true;
             }
           }
         }

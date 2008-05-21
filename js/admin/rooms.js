@@ -624,29 +624,32 @@ function _CALLBACK_updateRoom() {
 
 /**
  * Delete category
- * @param   int   id    Category ID
+ * @param   int       id          Category ID
+ * @param   boolean   confirmed   Optional. If TRUE: no confirmation will be displayed. Default: FALSE.
  */
-function deleteCategory(id) {
+function deleteCategory(id, confirmed) {
   id=stringToNumber(id);
   if (id>0) {
-    if (confirm(getLng('confirm_delete_category').split('[NAME]').join(Categories[id]['name']))) {
+    if (typeof(confirmed)!='boolean' || !confirmed) {
+      confirm(getLng('confirm_delete_category').split('[NAME]').join(Categories[id]['name']), 0, 0, 'deleteCategory('+id+', true)');
+    } else {
       sendData('_CALLBACK_deleteCategory()', formlink, 'POST', 'ajax=delete_category&s_id='+urlencode(s_id)+'&category_id='+urlencode(id));
     }
   }
 }
 function _CALLBACK_deleteCategory() {
 //debug(actionHandler.getResponseString()); return false;
+  toggleProgressBar(false);
   if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   } else {
-    alert(actionHandler.message);
     if (actionHandler.status==0) {
-      getCategoryTree();
+      alert(actionHandler.message, 0, 0, 'getCategoryTree()');
     } else {
       // An error
-      toggleProgressBar(false);
+      alert(actionHandler.message);
     }
   }
 }
@@ -654,29 +657,32 @@ function _CALLBACK_deleteCategory() {
 
 /**
  * Delete room
- * @param   int   id    Room ID
+ * @param   int       id          Room ID
+ * @param   boolean   confirmed   Optional. If TRUE: no confirmation will be displayed. Default: FALSE.
  */
-function deleteRoom(id) {
+function deleteRoom(id, confirmed) {
   id=stringToNumber(id);
   if (id>0) {
-    if (confirm(getLng('confirm_delete_room').split('[NAME]').join(Rooms[id]['name']))) {
+    if (typeof(confirmed)!='boolean' || !confirmed) {
+      confirm(getLng('confirm_delete_room').split('[NAME]').join(Rooms[id]['name']), 0, 0, 'deleteRoom('+id+', true)');
+    } else {
       sendData('_CALLBACK_deleteRoom()', formlink, 'POST', 'ajax=delete_room&s_id='+urlencode(s_id)+'&room_id='+urlencode(id));
     }
   }
 }
 function _CALLBACK_deleteRoom() {
 //debug(actionHandler.getResponseString()); return false;
+  toggleProgressBar(false);
   if (actionHandler.status==-1) {
     // Session is invalid
     document.location.href=formlink+'?session_timeout';
     return false;
   } else {
-    alert(actionHandler.message);
     if (actionHandler.status==0) {
-      getCategoryTree();
+      alert(actionHandler.message, 0, 0, 'getCategoryTree()');
     } else {
       // An error
-      toggleProgressBar(false);
+      alert(actionHandler.message);
     }
   }
 }

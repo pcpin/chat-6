@@ -147,9 +147,8 @@ function _CALLBACK_doLogin() {
   } else {
     // Login failed
     $('login_password').value='';
-    alert(actionHandler.message);
     toggleProgressBar(false);
-    showLoginForm();
+    alert(actionHandler.message, null, null, 'showLoginForm()');
   }
 }
 
@@ -170,7 +169,7 @@ function doGuestLogin() {
 
 /**
  * Display "Register" form
- * @param   boolean   no_reset    If TRUE, then input fields will be not cleared
+ * @param   boolean   no_reset    Optional. If TRUE, then input fields will be not cleared. Default: FALSE.
  */
 function showRegisterForm(no_reset) {
   hideLoginForm();
@@ -200,9 +199,14 @@ function hideRegisterForm() {
 
 /**
  * Display "Reset password" form
+ * @param   boolean   no_reset    Optional. If TRUE, then input fields will be not cleared. Default: FALSE.
  */
-function showResetPasswordForm() {
+function showResetPasswordForm(no_reset) {
   hideLoginForm();
+  if (typeof(no_reset)!='boolean' || !no_reset) {
+    $('reset_pw_username').value='';
+    $('reset_pw_email').value='';
+  }
   $('reset_pw_table').style.display='';
   $('reset_pw_username').focus();
   $('reset_pw_username').select();
@@ -246,10 +250,10 @@ function doRegister() {
     errors.push(getLng('passwords_not_ident'));
   }
 
+  hideRegisterForm();
   if (errors.length>0) {
-    alert('- '+errors.join("\n- "));
+    alert('- '+errors.join("\n- "), null, null, 'showRegisterForm(true)');
   } else {
-    hideRegisterForm();
     sendData('_CALLBACK_doRegister()', formlink, 'POST', 'ajax=do_register'
                                                         +'&login='+urlencode($('register_username').value)
                                                         +'&password='+urlencode($('register_password1').value)
@@ -262,13 +266,12 @@ function doRegister() {
 function _CALLBACK_doRegister() {
 //debug(actionHandler.getResponseString()); return false;
   toggleProgressBar(false);
-  alert(actionHandler.message);
   if (actionHandler.status==0) {
     // Register successfull
-    showLoginForm();
+    alert(actionHandler.message, null, null, 'showLoginForm()');
   } else {
     // Register failed
-    showRegisterForm(true);
+    alert(actionHandler.message, null, null, 'showRegisterForm(true)');
   }
 }
 
@@ -287,10 +290,10 @@ function doResetPassword() {
   if (!checkEmail($('reset_pw_email').value)) {
     errors.push(getLng('email_invalid'));
   }
+  hideResetPasswordForm();
   if (errors.length>0) {
-    alert('- '+errors.join("\n- "));
+    alert('- '+errors.join("\n- "), null, null, 'showResetPasswordForm(true)');
   } else {
-    hideResetPasswordForm();
     sendData('_CALLBACK_doResetPassword()', formlink, 'POST', 'ajax=do_reset_password'
                                                              +'&login='+urlencode($('reset_pw_username').value)
                                                              +'&email='+urlencode($('reset_pw_email').value)
@@ -302,13 +305,12 @@ function _CALLBACK_doResetPassword() {
 //debug(actionHandler.getResponseString());
 //return false;
   toggleProgressBar(false);
-  alert(actionHandler.message);
   if (actionHandler.status==0) {
     // Password reset successfull
-    showLoginForm();
+    alert(actionHandler.message, null, null, 'showLoginForm()');
   } else {
     // An error
-    showResetPasswordForm();
+    alert(actionHandler.message, null, null, 'showResetPasswordForm(true)');
   }
 }
 

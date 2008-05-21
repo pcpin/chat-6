@@ -269,9 +269,7 @@ function _cmd_exit(args) {
  * @param   array   args    Command arguments
  */
 function _cmd_exitroom(args) {
-  if (confirm(getLng('sure_to_leave_room'))) {
-    leaveRoom();
-  }
+  confirm(getLng('sure_to_leave_room'), 0, 0, 'leaveRoom()');
 }
 
 /**
@@ -542,9 +540,7 @@ function _cmd_kick(args) {
  * @param   array   args    Command arguments
  */
 function _cmd_logout(args) {
-  if (confirm(getLng('sure_to_log_out'))) {
-    logOut();
-  }
+  confirm(getLng('sure_to_log_out'), 0, 0, 'logOut()');
 }
 
 /**

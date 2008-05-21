@@ -123,21 +123,24 @@ function hideLanguageSelectionPage() {
 
 /**
  * Load language expressions of selected language and display first page
- * @param   int   language_id     Language ID
- * @param   int   start_from      Start from N-th expression
+ * @param   int       language_id   Language ID
+ * @param   int       start_from    Start from N-th expression
+ * @param   boolean   confirmed     Optional. If TRUE: no confirmation will be displayed. Default: FALSE.
  */
-function loadLngExpressions(language_id, start_from) {
-  if (currentPageChanges && !confirm(getLng('discard_changes_continue'))) {
-    return false;
-  }
+function loadLngExpressions(language_id, start_from, confirmed) {
   if (typeof(language_id)=='undefined') {
     language_id=currentLanguageId;
   } else {
-    currentLanguageId=stringToNumber(language_id);
+    language_id=stringToNumber(language_id);
   }
   if (typeof(start_from)!='number') {
     start_from=currentStartFrom;
   }
+  if (currentPageChanges && (typeof(confirmed)!='boolean' || !confirmed)) {
+    confirm(getLng('discard_changes_continue'), 0, 0, 'loadLngExpressions('+language_id+', '+start_from+', true)');
+    return false;
+  }
+  currentLanguageId=language_id;
   currentStartFrom=start_from;
   $('edit_expressions_tbl').style.display='none';
   sendData('_CALLBACK_loadLngExpressions()', formlink, 'POST', 'ajax=manage_language_expressions'
@@ -153,6 +156,7 @@ function _CALLBACK_loadLngExpressions() {
   var expr_nr=0;
   var code='';
 
+  toggleProgressBar(false);
   if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
@@ -172,7 +176,6 @@ function _CALLBACK_loadLngExpressions() {
     totalExpressions=stringToNumber(actionHandler.data['expressions_total'][0]);
     showEditPage();
   } else {
-    toggleProgressBar(false);
     alert(actionHandler.message);
   }
 }

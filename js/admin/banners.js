@@ -523,11 +523,16 @@ function _CALLBACK_addNewBanner() {
 
 /**
  * Delete banner
- * @param   int   banner_id   Banner ID
+ * @param   int       banner_id   Banner ID
+ * @param   boolean   confirmed   Optional. If TRUE: no confirmation will be displayed. Default: FALSE.
  */
-function deleteBanner(banner_id) {
-  if (Banners[banner_id] && confirm(getLng('confirm_delete_banner').split('[NAME]').join(Banners[banner_id]['name']))) {
-    sendData('_CALLBACK_deleteBanner()', formlink, 'POST', 'ajax=delete_banner&s_id='+urlencode(s_id)+'&banner_id='+urlencode(banner_id));
+function deleteBanner(banner_id, confirmed) {
+  if (Banners[banner_id]) {
+    if (typeof(confirmed)!='boolean' || !confirmed) {
+      confirm(getLng('confirm_delete_banner').split('[NAME]').join(Banners[banner_id]['name']), null, null, 'deleteBanner('+banner_id+', true)');
+    } else {
+      sendData('_CALLBACK_deleteBanner()', formlink, 'POST', 'ajax=delete_banner&s_id='+urlencode(s_id)+'&banner_id='+urlencode(banner_id));
+    }
   }
 }
 function _CALLBACK_deleteBanner() {
