@@ -1141,6 +1141,7 @@ function activateUser(confirmed) {
   }
 }
 function _CALLBACK_activateUser() {
+  toggleProgressBar(false);
   switch (ajaxMember.status) {
     case  -1:
       // Session is invalid
@@ -1149,13 +1150,10 @@ function _CALLBACK_activateUser() {
     break;
     case  0:
       // Account activated
-      alert(ajaxMember.message);
-      window.location.reload();
-      toggleProgressBar(false);
+      alert(ajaxMember.message, 0, 0, "$('memberlist_search_button', window.opener.document).click(); window.location.reload();");
     break;
     default:
       // An error occured
-      toggleProgressBar(false);
       alert(ajaxMember.message);
     break;
   }

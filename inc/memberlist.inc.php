@@ -125,5 +125,5 @@ if (isset($banned_members)) {
 
 $template->addVar('moderator_user_options', 'display', $current_user->is_admin==='y');
 $template->addVar('admin_user_options', 'display', $current_user->is_admin==='y');
-$template->addVar('admin_filter_options_not_activated', 'display', !PCPIN_SLAVE_MODE);
+$tpl->addVar('admin_filter_options_not_activated', 'display', !PCPIN_SLAVE_MODE);
 ?>
