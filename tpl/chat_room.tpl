@@ -75,7 +75,7 @@
               <td><button style="width:23px;background-image:url(./pic/members_15x15.gif);background-repeat:no-repeat;background-position:center center;" onclick="openMemberlistWindow()" title="{LNG_MEMBERLIST}" onfocus="blur()"></button></td>
               <PCPIN:TPL name="your_profile_button" type="simplecondition" requiredvars="DISPLAY">
                 <td style="width:1px"><img src="./pic/clearpixel_1x1.gif" alt="" width="5" height="1" /></td>
-                <td><button style="width:23px;background-image:url({FORMLINK}?b_x=15&b_y=15&b_id={AVATAR_BID}&s_id={S_ID});background-repeat:no-repeat;background-position:center center;" onclick="openEditProfileWindow(currentUserId, 'own_profile')" title="{LNG_YOUR_PROFILE}" onfocus="blur()"></button></td>
+                <td><button id="your_profile_button" style="width:23px;background-image:url({FORMLINK}?b_x=15&b_y=15&b_id={AVATAR_BID}&s_id={S_ID});background-repeat:no-repeat;background-position:center center;" onclick="openEditProfileWindow(currentUserId, 'own_profile')" title="{LNG_YOUR_PROFILE}" onfocus="blur()"></button></td>
               </PCPIN:TPL>
               <PCPIN:TPL name="admin_btn" type="simplecondition" requiredvars="DISPLAY">
                 <td style="width:1px"><img src="./pic/clearpixel_1x1.gif" alt="" width="5" height="1" /></td>

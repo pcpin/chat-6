@@ -1222,6 +1222,9 @@ function redrawUserlist() {
   var gender='-';
   var avatar_bid=0;
   var ignored_img_suffix='';
+  var your_profile_button=$('your_profile_button');
+  var tmp=new Array();
+  var tmp2='';
 
   // Delete current rows
   while (ulist_tbl_body.rows.length>0) {
@@ -1251,6 +1254,14 @@ function redrawUserlist() {
       }
     } else {
       urec=urec.split('[AVATAR_THUMB]').join('');
+    }
+    if (stringToNumber(user_id)==currentUserId && your_profile_button) {
+      // Update "Your profile" button
+      tmp=your_profile_button.style.backgroundImage.split('b_id=');
+      tmp2=parseInt(tmp[1]);
+      if (tmp.length==2 && avatar_bid!=tmp2) {
+        your_profile_button.style.backgroundImage=tmp[0]+'b_id='+avatar_bid+tmp[1].substring(numberToString(tmp2).length);
+      }
     }
     // Nickname
     urec=urec.split('[NICKNAME_PLAIN]').join('"'+coloredToPlain(records[user_id].getNickname(), true)+'"');
