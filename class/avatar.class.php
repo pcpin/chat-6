@@ -67,22 +67,16 @@ class PCPIN_Avatar extends PCPIN_Session {
    * @param   int     $user_if        User ID
    * @return  boolean TRUE on success or FALSE on error
    */
-  function addAvatar($binaryfile_id=0, $user_id=0) {
+  function addAvatar($binaryfile_id, $user_id=0) {
     $result=false;
     $this->id=0;
     if (!empty($binaryfile_id)) {
       $this->binaryfile_id=$binaryfile_id;
       $this->user_id=$user_id;
-      if ($this->_db_getList('user_id = '.$user_id, 'primary = y', 1)) {
-        // User already has primary avatar
-        $this->primary='n';
-        $this->_db_freeList();
-      } else {
-        // User has no avatars yet
-        $this->primary='y';
-      }
+      $this->primary='n';
       if ($result=$this->_db_insertObj()) {
         $this->id=$this->_db_lastInsertID();
+        $this->setPrimaryAvatar($user_id, $this->id);
       }
     }
     return $result;
