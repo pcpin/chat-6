@@ -31,10 +31,8 @@ if (!empty($avatar_id) && $avatar->_db_getList('id,primary', 'id = '.$avatar_id,
   $xmlwriter->setHeaderStatus(0);
   if ($avatar->_db_list[0]['primary']!='y') {
     $avatar->setPrimaryAvatar($profile_user_id, $avatar_id);
-    if (!empty($session->_s_room_id)) {
-      _pcpin_loadClass('message'); $msg=new PCPIN_Message($session);
-      $msg->addMessage(1010, 'n', 0, '', $session->_s_room_id, 0, $profile_user_id);
-    }
+    _pcpin_loadClass('message'); $msg=new PCPIN_Message($session);
+    $msg->addMessage(1010, 'n', 0, '', $session->_s_room_id, 0, $profile_user_id);
   }
   $avatar->_db_freeList();
 }
