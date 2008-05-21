@@ -139,7 +139,7 @@ function _CALLBACK_doLogin() {
     var df=$('dummyform');
     if (df) {
       df.s_id.value=s_id;
-      df.inc.value='profile_main';
+      df.inc.value='room_selection';
       df.ts.value=unixTimeStamp();
       df.just_logged_in.value='1';
       df.submit();

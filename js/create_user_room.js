@@ -167,25 +167,17 @@ function createRoom() {
   }
 }
 function _CALLBACK_createRoom(password) {
-  switch (actionHandler.status) {
-
-    case  -1:
-      // Session is invalid
-      document.location.href=formlink+'?session_timeout';
-      return false;
-    break;
-
-    case 0:
-      // Room created
-      opener.ActiveRoomId=stringToNumber(actionHandler.data['room_id'][0]);
-      opener.enterChatRoom(null, base64decode(password));
-      window.close();
-    break;
-
-    default:
-      alert(actionHandler.message);
-    break;
-
-  }
   toggleProgressBar(false);
+  if (actionHandler.status==-1) {
+    // Session is invalid
+    document.location.href=formlink+'?session_timeout';
+    return false;
+  } else if (actionHandler.status==0) {
+    // Room created
+    opener.ActiveRoomId=stringToNumber(actionHandler.data['room_id'][0]);
+    opener.enterChatRoom(base64decode(password));
+    window.close();
+  } else {
+     alert(actionHandler.message);
+  }
 }

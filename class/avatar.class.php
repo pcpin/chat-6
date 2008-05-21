@@ -207,14 +207,16 @@ class PCPIN_Avatar extends PCPIN_Session {
 
   /**
    * Get list of avatars owned by specified user
-   * @param   int     $user_id        User ID
+   * @param   int       $user_id        User ID
+   * @param   int       $limit          Optional. If not empty, limit number of returned avatars.
    * @return  array   If user has no avatars, then default avatar (ID=0) will be returned.
    */
-  function getAvatars($user_id=0) {
+  function getAvatars($user_id=0, $limit=0) {
     $avatars=array();
     _pcpin_loadClass('binaryfile'); $binaryfile=new PCPIN_BinaryFile($this);
     if (!empty($user_id)) {
-      if ($this->_db_getList('id, primary, binaryfile_id', 'user_id = '.$user_id, 'primary ASC', 'id ASC')) {
+      if (   empty($limit) && $this->_db_getList('id, primary, binaryfile_id', 'user_id = '.$user_id, 'primary ASC', 'id ASC')
+          || !empty($limit) && $this->_db_getList('id, primary, binaryfile_id', 'user_id = '.$user_id, 'primary ASC', 'id ASC', $limit)) {
         foreach ($this->_db_list as $data) {
           if ($binaryfile->_db_getList('width, height', 'id = '.$data['binaryfile_id'])) {
             $data['width']=$binaryfile->_db_list[0]['width'];

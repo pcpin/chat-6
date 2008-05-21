@@ -34,12 +34,6 @@ var profileUserId=currentUserId;
 var profileUserLogin='';
 
 /**
- * Opened child window handlers
- * @var object
- */
-var openedWindows=new Array();
-
-/**
  * Minimum allowed nickname length, chars
  * @var int
  */
@@ -76,18 +70,6 @@ var last_email='';
 var defaultNicknameColor='';
 
 /**
- * Updater interval in seconds
- * @var int
- */
-var updaterInterval=0;
-
-/**
- * Updater interval handle
- * @var int
- */
-var updaterIntervalHandle=0;
-
-/**
  * Current profile homepage
  * @var string
  */
@@ -118,12 +100,6 @@ var avatarsMaxCount=0;
 var nicknamesMaxCount=0;
 
 /**
- * Room selection area default display type (0: Tree, 1: Simplified)
- * @var int
- */
-var roomSelectionDisplayType=0;
-
-/**
  * Flag: if TRUE, then avatar gallery is allowed
  * @var boolean
  */
@@ -149,21 +125,16 @@ var enterChatRoomTimeOut=0;
  * @param   int       nickname_length_max_          Maximum allowed nickname length, chars
  * @param   string    homepage                      Homepage
  * @param   string    gender                        Gender: 'm' (male), 'f' (female) or '-' (not specified)
- * @param   boolean   updater_interval              Updater interval in seconds
  * @param   string    default_nickname_color        Default nickname color
  * @param   boolean   hide_email                    Hide email address?
  * @param   int       avatars_max_count             How many avatars are allowed?
  * @param   int       nicknames_max_count           How many nicknames are allowed?
- * @param   int       room_selection_display_type   Room selection area default display type (0: Tree, 1: Simplified)
- * @param   boolean   userlist_gender               Flag: if TRUE, then gender icons will be displayed in userlist
- * @param   boolean   userlist_avatar               Flag: if TRUE, then avatar thumbs will be displayed in userlist
- * @param   boolean   userlist_privileged           Flag: if TRUE, then "Admin" and "Moderator" flags will be displayed in userlist
- * @param   boolean   edit_by_admin                 Optional. Flag: if TRUE, no room structure will be loaded and user data will be displayed
+ * @param   boolean   edit_by_admin                 DEPRECATED. Optional. Flag: if TRUE, no room structure will be loaded and user data will be displayed
  * @param   boolean   profile_user_id               User ID
  * @param   boolean   skip_rooms                    Optional. Flag: if TRUE, then no room structure will be loaded
  * @param   boolean   avatar_gallery_allowed        Optional. Flag: if TRUE, then avatar gallery is allowed
  */
-function initProfile(nickname_length_min_, nickname_length_max_, homepage, gender, updater_interval, default_nickname_color, hide_email, avatars_max_count, nicknames_max_count, room_selection_display_type, userlist_gender, userlist_avatar, userlist_privileged, edit_by_admin, profile_user_id, skip_rooms, avatar_gallery_allowed) {
+function initProfile(nickname_length_min_, nickname_length_max_, homepage, gender, default_nickname_color, hide_email, avatars_max_count, nicknames_max_count, edit_by_admin, profile_user_id, skip_rooms, avatar_gallery_allowed) {
   profileUserId=profile_user_id;
   if (isAdmin && edit_by_admin) {
     // Get member data
@@ -171,10 +142,6 @@ function initProfile(nickname_length_min_, nickname_length_max_, homepage, gende
   }
   // Set "onunload" handler
   window.onunload=function() {
-    // Send "Page unloaded" signal to server
-    if (!SkipPageUnloadedMsg && (typeof(window.opener)=='undefined' || window.opener==null || typeof(window.opener.appName_)!='string' || window.opener.appName_!='pcpin_chat' || typeof(window.opener.initChatRoom)=='undefined')) {
-      openWindow(formlink+'?inc=page_unloaded&s_id='+urlencode(s_id), '', 1, 1, false, false, false, false, false, false, false, false, false, false, 0, 0);
-    }
     try {
       if (uploadWindow) {
         uploadWindow.close();
@@ -202,15 +169,10 @@ function initProfile(nickname_length_min_, nickname_length_max_, homepage, gende
   nickname_length_max=nickname_length_max_;
   defaultNicknameColor=default_nickname_color;
   hideEmail=hide_email;
-  updaterInterval=updater_interval;
   currentProfileHomepage=homepage;
   currentProfileGender=gender;
   avatarsMaxCount=avatars_max_count;
   nicknamesMaxCount=nicknames_max_count;
-  roomSelectionDisplayType=room_selection_display_type;
-  userlistGender=userlist_gender;
-  userlistAvatar=userlist_avatar;
-  userlistPrivileged=userlist_privileged;
   profileUserLogin=$('profile_username_hidden').value;
   avatarGalleryAllowed=avatar_gallery_allowed;
   document.onkeyup=function(e) {
@@ -223,8 +185,6 @@ function initProfile(nickname_length_min_, nickname_length_max_, homepage, gende
   if (avatarsMaxCount==0) {
     avatars_tbl.style.display='none';
   }
-  // Define callback function for user options context menu
-  CallBackContextMenuFunc='getRoomStructure()';
   // Load nicknames from server
   getNickNames();
   // Get avatars
@@ -232,22 +192,16 @@ function initProfile(nickname_length_min_, nickname_length_max_, homepage, gende
   // Display gender image
   showGenderImage();
   if ((typeof(edit_by_admin)!='boolean' || edit_by_admin==false) && (typeof(skip_rooms)!='boolean' || skip_rooms==false)) {
-    $('profile_header_tbl').style.display='';
-    $('room_selection_tbl').style.display='';
     $('other_profile_header_tbl').style.display='none';
     $('user_profile_data_header').innerHTML=htmlspecialchars(getLng('your_profile'));
     $('user_nicknames_data_header').innerHTML=htmlspecialchars(getLng('your_nicknames'));
     $('user_avatars_data_header').innerHTML=htmlspecialchars(getLng('your_avatars'));
-    // Get and display room tree
-    getRoomStructure();
     // Start updaters
     profile_start_update();
   } else {
-    $('profile_header_tbl').style.display='none';
-    $('room_selection_tbl').style.display='none';
     if (typeof(edit_by_admin)=='boolean' && edit_by_admin==true) {
       $('other_profile_header_tbl').style.display='';
-      $('other_profile_header_tbl_title').innerHTML=htmlspecialchars(getLng('users_profile').split('[USER]').join(profileUserLogin));
+      $('other_profile_header_tbl_title').innerHTML=htmlspecialchars(profileUserLogin);
       $('user_profile_data_header').innerHTML=htmlspecialchars(getLng('profile'));
       $('user_nicknames_data_header').innerHTML=htmlspecialchars(getLng('nicknames'));
       $('user_avatars_data_header').innerHTML=htmlspecialchars(getLng('avatars'));
@@ -343,66 +297,6 @@ function _CALLBACK_getAvatars() {
     }
   }
   toggleProgressBar(false);
-}
-
-
-/**
- * Update profile
- * @param   boolean   now   If TRUE, then request will be sent immediately
- */
-function profile_start_update(now) {
-  clearTimeout(updaterIntervalHandle);
-  // Request new room structure
-  if (typeof(now)=='boolean' && true==now) {
-    getRoomStructure('profile_start_update(), false, true');
-  } else {
-    // Set new interval
-    updaterIntervalHandle=setTimeout('getRoomStructure("profile_start_update()", true)', updaterInterval*1000);
-  }
-}
-
-
-/**
- * This function will be triggered after new invitation has been arrived
- */
-function getNewInvitations() {
-  sendData('_CALLBACK_getNewInvitations()', formlink, 'POST', 'ajax=get_invitations&s_id='+urlencode(s_id));
-}
-function _CALLBACK_getNewInvitations() {
-  var invitation_msg='';
-  if (actionHandler.status==-1) {
-    // Session is invalid
-    document.location.href=formlink+'?session_timeout';
-    return false;
-  } else {
-    for (var i=0; i<actionHandler.data['invitation'].length; i++) {
-      invitation_msg=getLng('user_invited_you');
-      invitation_msg=invitation_msg.split('[USER]').join(coloredToPlain(actionHandler.data['invitation'][i]['author_nickname'][0], false));
-      invitation_msg=invitation_msg.split('[ROOM]').join(actionHandler.data['invitation'][i]['room_name'][0]);
-      confirm(invitation_msg, null, null, 'ActiveRoomId='+actionHandler.data['invitation'][i]['room_id'][0]+'; enterChatRoom();');
-      return false;
-    }
-  }
-}
-
-
-/**
- * This function will be triggered after new messages arrived
- */
-function getNewMessages() {
-  sendData('_CALLBACK_getNewMessages()', formlink, 'POST', 'ajax=get_new_messages&s_id='+urlencode(s_id));
-}
-function _CALLBACK_getNewMessages() {
-//debug(actionHandler.getResponseString()); return false;
-  if (actionHandler.status==-1) {
-    // Session is invalid
-    document.location.href=formlink+'?session_timeout';
-    return false;
-  } else {
-    if (actionHandler.data['abuse'].length) {
-      processAbuses(actionHandler.data['abuse']);
-    }
-  }
 }
 
 
@@ -619,6 +513,7 @@ function _CALLBACK_getNickNames() {
     }
   }
   toggleProgressBar(false);
+  setTimeout('resizeForDocumentHeight(10)', 200);
 }
 
 
@@ -839,79 +734,6 @@ function showGenderImage() {
 
 
 /**
- * Enter chat room
- * @param   int       nickname_id     ID of the nickname to use in the room
- * @param   string    password        Optional. Room password
- * @param   int       room_id         Optional. Room ID.
- */
-function enterChatRoom(nickname_id, password, room_id) {
-  clearTimeout(enterChatRoomTimeOut);
-  try {
-    var stealthbox=$('stealth_mode_chkbox');
-    var stealth_mode=(typeof(stealthbox)=='object' && stealthbox && true==stealthbox.checked)? 'y' : 'n';
-    if (typeof(nickname_id)!='string' && typeof(nickname_id)!='number') {
-      nickname_id=CurrentNicknameID;
-    }
-    nickname_id=stringToNumber(nickname_id);
-    if (typeof(room_id)=='number' && room_id>0) {
-      ActiveRoomId=room_id;
-    }
-    if (ActiveRoomId==0) {
-      // No room selected
-      alert(getLng('select_room'));
-    } else if (nickname_id==0) {
-      // User has no nicknames
-      manageNickname('enterChatRoom(null, null);');
-    } else {
-      if (typeof(password)=='undefined' || null==password) {
-        if (!isAdmin && CategoryTree[ActiveCategoryId]['rooms'][ActiveRoomId] && CategoryTree[ActiveCategoryId]['rooms'][ActiveRoomId]['password_protected'] && !CategoryTree[ActiveCategoryId]['rooms'][ActiveRoomId]['moderated_by_me']) {
-          showPasswordFieldBox(mouseX, mouseY, 'enterChatRoom('+nickname_id+', \'/RESULT/\')', null, getLng('room_password'));
-          return false;
-        } else {
-          password='';
-        }
-      }
-      sendData('_CALLBACK_enterChatRoom()', formlink, 'POST', 'ajax=enter_chat_room&s_id='+urlencode(s_id)+'&room_id='+urlencode(ActiveRoomId)+'&nickname_id='+urlencode(nickname_id)+'&stealth_mode='+urlencode(stealth_mode)+'&password='+urlencode(base64encode(password)));
-    }
-  } catch (e) {
-    toggleProgressBar(true);
-    enterChatRoomTimeOut=setTimeout('enterChatRoom('+nickname_id+', '+(typeof(password)=='string'? '"'+password.split('"').join('\\"')+'"' : 'null')+', '+room_id+')', 200);
-  }
-}
-function _CALLBACK_enterChatRoom() {
-//debug(actionHandler.getResponseString()); return false;
-  switch (actionHandler.status) {
-    case  -1:
-      // Session is invalid
-      document.location.href=formlink+'?session_timeout';
-      return false;
-    break;
-    case 0:
-      // Room changed. Load room page.
-      SkipPageUnloadedMsg=true;
-      $('dummyform').s_id.value=s_id;
-      $('dummyform').inc.value='chat_room';
-      $('dummyform').ts.value=unixTimeStamp();
-      $('dummyform').submit();
-      return false;
-    break;
-    case 400:
-      // Error: Room does not exists
-      alert(actionHandler.message);
-      getRoomStructure();
-      clearCategoryRooms();
-    break;
-    default:
-      // Other error
-      alert(actionHandler.message);
-    break;
-  }
-  // Reset window status resolution
-  toggleProgressBar(false);
-}
-
-
-/**
  * Show nickname form
  * @param   int   nickname_id   Nickname ID
  */
@@ -1036,8 +858,11 @@ function _CALLBACK_changeEmailVisibility() {
 function updateUserdataField(field, init_val, new_val) {
   flushDisplay();
   if ($(field+'_span')) {
+    if (typeof(init_val)!='string') {
+      init_val=htmlspecialchars_decode($(field+'_span').innerHTML);
+    }
     if (typeof(new_val)!='string') {
-      prompt(getLng('enter_your_'+field)+':', typeof(init_val)=='string'? init_val : htmlspecialchars_decode($(field+'_span').innerHTML), 0, 0, 'updateUserdataField("'+field.split('"').join('\\"')+'", "'+init_val.split('"').join('\\"')+'", promptboxValue)');
+      prompt(getLng('enter_your_'+field)+':', init_val, 0, 0, 'updateUserdataField("'+field.split('"').join('\\"')+'", "'+init_val.split('"').join('\\"')+'", promptboxValue)');
     } else {
       // Store new age
       new_val=trimString(new_val).substring(0, 255);

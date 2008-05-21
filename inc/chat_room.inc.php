@@ -42,6 +42,17 @@ $room->_db_getList('background_image', 'id = '.$session->_s_room_id, 1);
 $background_image=$room->_db_list[0]['background_image'];
 $room->_db_freeList();
 
+// Get default avatar
+_pcpin_loadClass('avatar'); $avatar=new PCPIN_Avatar($session);
+$avatars=$avatar->getAvatars($current_user->id, 1);
+if (!empty($avatars)) {
+  $avatar_bid=$avatars[0]['binaryfile_id'];
+} else {
+  $avatar_bid=0;
+}
+unset($avatars);
+
+
 // JS files to load
 $_js_files[]='./js/user.js';
 $_js_files[]='./js/message_queue.js';
@@ -192,7 +203,7 @@ $tpl->addVar('leave_room_link', 'display', empty($session->_conf_all['default_ro
 $tpl->addVar('invert_sounds_btn', 'display', !empty($session->_conf_all['allow_sounds']));
 
 // "Your profile" menu topic
-$tpl->addVar('your_profile_link', 'display', !PCPIN_SLAVE_MODE);
+$tpl->addVar('your_profile_button', 'display', !PCPIN_SLAVE_MODE);
 
 // Room selection
 $tpl->addVar('room_selection', 'display', empty($session->_conf_all['default_room']));
@@ -247,6 +258,9 @@ if (!empty($smilies)) {
   }
 }
 unset($smilies);
+
+// Add profile image source
+$tpl->addVar('your_profile_button', 'avatar_bid', $avatar_bid);
 
 // Admin and moderator controls
 $tpl->addVar('admin_btn', 'display', $current_user->is_admin==='y');

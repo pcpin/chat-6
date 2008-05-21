@@ -1114,8 +1114,8 @@ function openEditProfileWindow(user_id, action) {
   if (user_id>0) {
     openWindow(formlink+'?s_id='+urlencode(s_id)+'&inc=profile_main&profile_user_id='+urlencode(user_id)+'&'+action,
                'user_profile_'+user_id,
-               screen.width-10,
-               screen.height-10,
+               900,
+               600,
                false,
                false,
                false,
@@ -1141,10 +1141,10 @@ function openEditModeratorWindow(user_id) {
     user_id=stringToNumber(user_id);
   }
   if (user_id>0) {
-    openWindow(adminFormlink+'?s_id='+urlencode(s_id)+'&ainc=edit_moderator&moderator_user_id='+urlencode(user_id),
+    openWindow(adminFormlink+'?s_id='+urlencode(s_id)+'&ainc=edit_moderator&popup=1&moderator_user_id='+urlencode(user_id),
                'edit_moderator_'+user_id,
-               screen.width,
-               screen.height,
+               600,
+               600,
                false,
                false,
                false,

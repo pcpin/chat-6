@@ -73,6 +73,10 @@
               <td width="100%"><img src="./pic/clearpixel_1x1.gif" width="1" height="1" alt="" /></td>
 
               <td><button style="width:23px;background-image:url(./pic/members_15x15.gif);background-repeat:no-repeat;background-position:center center;" onclick="openMemberlistWindow()" title="{LNG_MEMBERLIST}" onfocus="blur()"></button></td>
+              <PCPIN:TPL name="your_profile_button" type="simplecondition" requiredvars="DISPLAY">
+                <td style="width:1px"><img src="./pic/clearpixel_1x1.gif" alt="" width="5" height="1" /></td>
+                <td><button style="width:23px;background-image:url({FORMLINK}?b_x=15&b_y=15&b_id={AVATAR_BID}&s_id={S_ID});background-repeat:no-repeat;background-position:center center;" onclick="openEditProfileWindow(currentUserId, 'own_profile')" title="{LNG_YOUR_PROFILE}" onfocus="blur()"></button></td>
+              </PCPIN:TPL>
               <PCPIN:TPL name="admin_btn" type="simplecondition" requiredvars="DISPLAY">
                 <td style="width:1px"><img src="./pic/clearpixel_1x1.gif" alt="" width="5" height="1" /></td>
                 <td><button style="width:23px;background-image:url(./pic/admin_18x18.gif);background-repeat:no-repeat;background-position:center center;" onclick="openAdminWindow()" title="{LNG_ADMINISTRATION_AREA}" onfocus="blur()"></button></td>
@@ -128,14 +132,6 @@
       <td width="1%"><img src="./pic/online_status_3_10x10.gif" alt="" /></td>
       <td nowrap="nowrap">&nbsp;{LNG_ONLINE_STATUS_3}&nbsp;</td>
     </tr>
-    <PCPIN:TPL name="your_profile_link" type="simplecondition" requiredvars="DISPLAY">
-      <tr class="context_menu_table_row">
-        <td colspan="3" class="context_menu_table_separator_row"></td>
-      </tr>
-      <tr title="{LNG_YOUR_PROFILE}" class="context_menu_table_row" onmouseover="setCssClass(this, '.context_menu_table_hrow')" onmouseout="setCssClass(this, '.context_menu_table_row')" onclick="closeOnlineStatusBox(-3, '')">
-        <td nowrap="nowrap" colspan="3" align="center">&nbsp;{LNG_YOUR_PROFILE}&nbsp;</td>
-      </tr>
-    </PCPIN:TPL>
     <tr class="context_menu_table_row">
       <td colspan="3" class="context_menu_table_separator_row"></td>
     </tr>

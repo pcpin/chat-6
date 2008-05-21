@@ -461,7 +461,7 @@ function makeCategoryRoomsHTML(category_id) {
             + '<img src="./pic/'+room_pic+'" border="0" alt="" />'
             + '</a>'
             + '<img src="./pic/clearpixel_1x1.gif" border="0" width="8" height="12" />'
-            + '<a onclick="setActiveRoomId('+ii+'); enterChatRoom(CurrentNicknameID); return false;" style="cursor:pointer" title="'+htmlspecialchars(room_title)+'">'
+            + '<a onclick="setActiveRoomId('+ii+'); enterChatRoom(); return false;" style="cursor:pointer" title="'+htmlspecialchars(room_title)+'">'
             + '<span class="'+(ii==ActiveRoomId? 'div_selection_scrollable_active' : 'div_selection_scrollable_inactive')+'">'
             + htmlspecialchars(CategoryTree[category_id]['rooms'][ii]['name'])
             + htmlspecialchars(' ['+CategoryTree[category_id]['rooms'][ii]['users_total']+']')
@@ -642,7 +642,7 @@ function makeSimpleCategoryTreeHtml(cats) {
           html+='<span onclick="setActiveRoomId('+ii+'); openCloseRoom('+ii+', '+i+', true); displaySimpleCategoryTree('+i+'); showStealthSwitch('+(cats[i]['rooms'][ii]['moderated_by_me']? 'true' : 'false')+'); $(\'enterChatRoom_btn\').focus(); return false;" style="cursor:pointer" title="'+htmlspecialchars(room_title)+'" class="div_selection_scrollable_link">'
               + '<img src="./pic/'+room_pic+'" border="0" alt="" />'
               + '<img src="./pic/clearpixel_1x1.gif" border="0" width="5" height="12" />'
-              + '<span class="'+(ii==ActiveRoomId? 'div_selection_scrollable_active' : 'div_selection_scrollable_inactive')+'"  onclick="setActiveRoomId('+ii+'); setActiveCategoryId('+i+'); enterChatRoom(CurrentNicknameID); return false;" style="cursor:pointer">'
+              + '<span class="'+(ii==ActiveRoomId? 'div_selection_scrollable_active' : 'div_selection_scrollable_inactive')+'"  onclick="setActiveRoomId('+ii+'); setActiveCategoryId('+i+'); enterChatRoom(); return false;" style="cursor:pointer">'
               + htmlspecialchars(cats[i]['rooms'][ii]['name'])
               + htmlspecialchars(' ['+cats[i]['rooms'][ii]['users_total']+']')
               + '</span>'

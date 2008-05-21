@@ -37,7 +37,7 @@ if (!empty($moderator_user_id)) {
   }
   if ($name!='') {
     $_body_onload[]='$(\'nickname_search\').value=\''.addslashes($name).'\'';
-    $_body_onload[]='moderatorSearchUser()';
+    $_body_onload[]='moderatorSearchUser('.(!empty($popup)? 'true' : 'false').')';
   }
 }
 
@@ -52,7 +52,7 @@ $_js_lng[]='chat_category';
 $_js_lng[]='chat_room';
 $_js_lng[]='category_has_no_rooms';
 
-$_body_onload[]='initEditModeratorWindow()';
+$_body_onload[]='initEditModeratorWindow('.(!empty($popup)? 'true' : 'false').')';
 
 // Initialize template handler
 _pcpin_loadClass('pcpintpl'); $tpl=new PcpinTpl();

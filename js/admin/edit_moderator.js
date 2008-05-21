@@ -47,12 +47,23 @@ var CategoryTree=new Array();
  */
 var autoShowSingleUserForm=true;
 
+/**
+ * Flag: if TRUE, then window is a popup and on submit opener will be reloaded
+ * @var boolean
+ */
+var isPopUp=false;
+
 
 /**
  * Init window
+ * @param   boolean   is_popup      Flag: if TRUE, then window is a popup and on submit opener will be reloaded
  */
-function initEditModeratorWindow() {
+function initEditModeratorWindow(is_popup) {
+  isPopUp=typeof(is_popup)=='boolean' && is_popup;
   showUserSearchForm();
+  if (isPopUp) {
+    $('close_window_span').style.display='';
+  }
 }
 
 
@@ -253,19 +264,20 @@ function hideUserSearchForm() {
 
 /**
  * Search for user
+ * @param     boolean     resize    Optional. If TRUE, the window will be automatically resized after search complete. Default: FALSE.
  */
-function moderatorSearchUser() {
+function moderatorSearchUser(resize) {
   autoShowSingleUserForm=true;
   Users=new Array();
   $('nickname_search').value=trimString($('nickname_search').value);
-  sendData('_CALLBACK_getMemberlist()', formlink, 'POST', 'ajax=get_memberlist'
-                                                         +'&s_id='+urlencode(s_id)
-                                                         +'&sort_by=1'
-                                                         +'&sort_dir=0'
-                                                         +'&nickname='+urlencode($('nickname_search').value)
-                                                         );
+  sendData('_CALLBACK_getMemberlist('+(typeof(resize)=='boolean' && resize ? 'true' : 'false')+')', formlink, 'POST', 'ajax=get_memberlist'
+                                                                                                                     +'&s_id='+urlencode(s_id)
+                                                                                                                     +'&sort_by=1'
+                                                                                                                     +'&sort_dir=0'
+                                                                                                                     +'&nickname='+urlencode($('nickname_search').value)
+                                                                                                                     );
 }
-function _CALLBACK_getMemberlist() {
+function _CALLBACK_getMemberlist(resize) {
 //debug(actionHandler.getResponseString()); return false;
   var members=null;
   var member_nr=0;
@@ -301,6 +313,9 @@ function _CALLBACK_getMemberlist() {
   }
   toggleProgressBar(false);
   showUserSearchForm();
+  if (users_count!=0 && resize) {
+    setTimeout('resizeForDocumentHeight(10)', 1100);
+  }
 }
 
 
@@ -452,6 +467,9 @@ function _CALLBACK_saveModerator() {
     document.location.href=formlink+'?session_timeout';
     return false;
   }
-  alert(actionHandler.message);
-  moderatorSearchUser();
+  if (actionHandler.status==0 && isPopUp) {
+    alert(actionHandler.message, 0, 0, 'try { window.opener.document.location.reload() } catch (e) {} window.close()');
+  } else {
+    alert(actionHandler.message, 0, 0, 'moderatorSearchUser()');
+  }
 }

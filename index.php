@@ -239,6 +239,11 @@ if (empty($session->_s_user_id)) {
       require_once('./inc/profile_public.inc.php');
     break;
 
+    case 'room_selection':
+      // Room selection page
+      require_once('./inc/room_selection.inc.php');
+    break;
+
     case 'show_image':
       // Image window
       require_once('./inc/show_image.inc.php');

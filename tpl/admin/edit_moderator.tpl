@@ -45,8 +45,11 @@
       <button type="button" title="{LNG_SAVE_CHANGES}" onclick="saveModerator()">{LNG_SAVE_CHANGES}</button>
       &nbsp;
       <button type="button" title="{LNG_CANCEL}" onclick="hideModeratorForm()">{LNG_CANCEL}</button>
+      <span id="close_window_span" style="display:none">
+        <br /><br />
+        <button type="button" title="{LNG_CLOSE_WINDOW}" onclick="window.close()">{LNG_CLOSE_WINDOW}</button>
+      </span>
     </td>
   </tr>
 </table>
-
 </PCPIN:TPL>

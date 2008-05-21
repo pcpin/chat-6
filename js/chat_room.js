@@ -1012,7 +1012,7 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
       case  100:
         // Session owner is not in a room
         dummy_form.s_id.value=s_id;
-        dummy_form.inc.value='profile_main';
+        dummy_form.inc.value='room_selection';
         dummy_form.ts.value=unixTimeStamp();
         dummy_form.submit();
         return false;
@@ -1030,7 +1030,7 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
       case  300:
         // Room does not exists (anymore)
         dummy_form.s_id.value=s_id;
-        dummy_form.inc.value='profile_main';
+        dummy_form.inc.value='room_selection';
         dummy_form.ts.value=unixTimeStamp();
         dummy_form.submit();
         return false;
@@ -1232,6 +1232,7 @@ function redrawUserlist() {
     // Create new row
     newRow=document.createElement('TR');
     // Get user data
+    // Gender
     gender=records[user_id].getGender();
     urec=urec_tpl;
     urec=urec.split('[ID]').join(user_id);
@@ -1240,8 +1241,9 @@ function redrawUserlist() {
     } else {
       urec=urec.split('[GENDER_ICON]').join('');
     }
+    // Avatar
+    avatar_bid=records[user_id].getAvatarBID();
     if (userlistAvatar) {
-      avatar_bid=records[user_id].getAvatarBID();
       if (avatar_bid>0) {
         urec=urec.split('[AVATAR_THUMB]').join('<img style="cursor:pointer" onclick="showUserProfile('+user_id+')" src="'+htmlspecialchars(formlink)+'?b_x='+htmlspecialchars(userlistAvatarHeight)+'&amp;b_y='+htmlspecialchars(userlistAvatarWidth)+'&amp;b_id='+htmlspecialchars(avatar_bid)+'&amp;s_id='+htmlspecialchars(s_id)+'" alt="'+htmlspecialchars(getLng('avatar'))+'" title="'+htmlspecialchars(getLng('avatar'))+'" border="0" />');
       } else {
@@ -2072,7 +2074,7 @@ function leaveRoom() {
   SkipPageUnloadedMsg=true;
   var dummy_form=$('dummyform');
   dummy_form.s_id.value=s_id;
-  dummy_form.inc.value='profile_main';
+  dummy_form.inc.value='room_selection';
   dummy_form.ts.value=unixTimeStamp();
   dummy_form.submit();
 }

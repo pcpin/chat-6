@@ -39,22 +39,6 @@ if (!empty($session->_conf_all['allow_language_selection']) && $session->_s_user
   $languages=$l->getLanguages(false);
 }
 
-if (   (!empty($just_logged_in) || (!isset($do_edit) || $current_user->is_admin!=='y') && !isset($own_profile))
-    && !empty($session->_conf_all['default_room'])
-    && $room->_db_getList('id', 'id = '.$session->_conf_all['default_room'], 1)) {
-  // Default room specified and exists
-  $room->_db_freeList();
-  if ($room->putUser($profile_user_id, $session->_conf_all['default_room'])) {
-    header('Location: '.PCPIN_FORMLINK.'?s_id='.$session->_s_id.'&inc=chat_room&ts='.time());
-    die();
-  }
-}
-if (!empty($session->_s_room_id) && (!isset($do_edit) || $current_user->is_admin!=='y') && !isset($own_profile)) {
-  // User was in chat room. Push him out.
-  $room->putUser($current_user->id, 0, $session->_s_stealth_mode=='y', 'n');
-}
-
-
 if (isset($do_edit) && $current_user->is_admin==='y' && $current_user->_db_getList('id = '.$profile_user_id, 1)) {
   // Load other user's profile
   $profile_user=new PCPIN_User($session);
@@ -85,15 +69,10 @@ $_body_onload[1000000]='initProfile('.$session->_conf_all['nickname_length_min']
                                      .$session->_conf_all['nickname_length_max'].','
                                      .'\''.$profile_userdata->homepage.'\','
                                      .'\''.$profile_userdata->gender.'\','
-                                     .$session->_conf_all['updater_interval'].','
                                      .'\''.$session->_conf_all['default_nickname_color'].'\','
                                      .(!empty($current_user->hide_email)? 'true' : 'false').','
                                      .$session->_conf_all['avatars_max_count'].','
                                      .$session->_conf_all['nicknames_max_count'].','
-                                     .$session->_conf_all['room_selection_display_type'].','
-                                     .(!empty($session->_conf_all['userlist_gender_icon'])? 'true' : 'false').','
-                                     .((!empty($session->_conf_all['userlist_avatar_thumb']) && 2==PCPIN_GD_VERSION)? 'true' : 'false').','
-                                     .((!empty($session->_conf_all['userlist_privileged_flags']) && 2==PCPIN_GD_VERSION)? 'true' : 'false').','
                                      .((isset($do_edit))? 'true' : 'false').','
                                      .$profile_user_id.','
                                      .((isset($own_profile))? 'true' : 'false').','
