@@ -109,7 +109,7 @@ function execQuery($query) {
     if(false===$result=$session->_db_query($query)) {
       $errortext[]="\n".$l->g('following_query_caused_error').":\n".$query."\n---------------------------------------------------";
     } else {
-      $this->_db_freeResult($result);
+      $session->_db_freeResult($result);
     }
     $queries_count++;
   }

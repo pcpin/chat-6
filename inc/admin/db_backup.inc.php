@@ -53,18 +53,38 @@ if (!empty($do_download)) {
   foreach ($db_structure as $table=>$tabledata) {
     $fields=array();
     foreach ($tabledata['fields'] as $key=>$field) {
-      if (!empty($field['Null'])) {
+      if (!empty($field['Null']) && strtolower($field['Null'])!='no' && strtolower($field['Null'])!='false') {
         $is_null='';
-        $default='default NULL';
         $extra='';
       }else{
         $is_null='NOT NULL';
-        $default="default '".$session->_db_escapeStr($field['Default'])."'";
+        $type_lowered=strtolower($field['Type']);
         $extra='';
       }
+      $default='';
       if (!empty($field['Extra'])) {
-        $default='';
         $extra=$field['Extra'];
+      } else {
+        // Check indexes; members of PRIMARY index can't have default value
+        $default_allowed=true;
+        foreach ($tabledata['indexes'] as $index_name=>$index_fields) {
+          if ($index_name=='PRIMARY') {
+            foreach ($index_fields['columns'] as $column) {
+              if ($column==$field['Field']) {
+                $default_allowed=false;
+                break;
+              }
+            }
+            break;
+          }
+        }
+        if ($default_allowed) {
+          if (false===strpos($type_lowered, 'blob') && false===strpos($type_lowered, 'text')) {
+            if (!is_null($field['Default'])) {
+              $default='default \''.$session->_db_escapeStr($field['Default']).'\'';
+            }
+          }
+        }
       }
       $fields[]="  `".$field['Field']."` ".$field['Type']." $is_null $default $extra";
     }
@@ -134,7 +154,7 @@ if (!empty($do_download)) {
           // Send query to client
           queryOut("INSERT INTO `$table` VALUES (".implode(', ', $values).')');
         }
-        $this->_db_freeResult($result);
+        $session->_db_freeResult($result);
       }
     }
   }
