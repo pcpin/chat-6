@@ -152,6 +152,8 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
         // http://bugs.pcpin.com/view.php?id=382
         $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."user` ADD `room_selection_view` ENUM( 's', 'a' ) DEFAULT 's' NOT NULL");
         $__pcpin_upgrade['session']->_db_query("TRUNCATE TABLE `".PCPIN_DB_PREFIX."cache`");
+        $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."config` SET `_conf_type` = 'string_choice', `_conf_choices` = 'a={LNG_ADVANCED_VIEW}|s={LNG_SIMPLIFIED_VIEW}' WHERE `_conf_id` = 46 LIMIT 1");
+        $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."config` SET `_conf_value` = IF( `_conf_value` = '0', 'a', 's' ) WHERE `_conf_id` = 46 LIMIT 1");
 
       break;
 

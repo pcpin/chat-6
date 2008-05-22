@@ -84,7 +84,7 @@ INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`
 (43, 'design', '{LNG_CHAT_ROOM}', 'userlist_gender_icon', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_USERLIST_GENDER_ICON}'),
 (44, 'design', '{LNG_CHAT_ROOM}', 'userlist_avatar_thumb', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_USERLIST_AVATAR_THUMB}'),
 (45, 'chat', '{LNG_FILTER}', 'bad_language_mute', '2', 'int_range', '0|*', '{LNG__CONF_BAD_LANGUAGE_MUTE}'),
-(46, 'design', '{LNG_CATEGORIES_AND_ROOMS}', 'room_selection_display_type', '1', 'int_choice', '0={LNG_ADVANCED_VIEW}|1={LNG_SIMPLIFIED_VIEW}', '{LNG__CONF_ROOM_SELECTION_DISPLAY_TYPE}'),
+(46, 'design', '{LNG_CATEGORIES_AND_ROOMS}', 'room_selection_display_type', 's', 'string_choice', 'a={LNG_ADVANCED_VIEW}|s={LNG_SIMPLIFIED_VIEW}', '{LNG__CONF_ROOM_SELECTION_DISPLAY_TYPE}'),
 (47, 'design', '{LNG_CHAT_ROOM}', 'userlist_privileged_flags', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_USERLIST_PRIVILEGED_FLAGS}'),
 (48, 'chat', '{LNG_ATTACHMENTS}', 'msg_attachments_limit', '2', 'int_range', '0|*', '{LNG__CONF_MSG_ATTACHMENTS_LIMIT}'),
 (49, 'chat', '{LNG_ATTACHMENTS}', 'msg_attachments_maxsize', '64', 'int_range', '1|*', '{LNG__CONF_MSG_ATTACHMENTS_MAXSIZE}'),
