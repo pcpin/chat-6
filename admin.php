@@ -185,7 +185,11 @@ if (empty($session->_s_user_id)) {
 
       case 'add_new_user':
         // Add new user
-        require_once('./inc/admin/add_new_user.inc.php');
+        if (!PCPIN_SLAVE_MODE) {
+          require_once('./inc/admin/add_new_user.inc.php');
+        } else {
+          require_once('./inc/dummy.inc.php');
+        }
       break;
 
       case 'avatar_gallery':

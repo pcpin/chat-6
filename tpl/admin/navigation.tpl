@@ -144,6 +144,13 @@
       &nbsp;<a href="{MAIN_FORMLINK}?s_id={S_ID}&amp;inc=memberlist" target="main_frame" title="{LNG_USERS} &bull; {LNG_EDIT_PROFILE}" onfocus="blur()">{LNG_EDIT_PROFILE}</a>
     </td>
   </tr>
+  <PCPIN:TPL name="add_new_user" type="simplecondition" requiredvars="DISPLAY">
+    <tr>
+      <td class="tbl_row">
+        &nbsp;<a href="{FORMLINK}?s_id={S_ID}&amp;ainc=add_new_user" target="main_frame" title="{LNG_USERS} &bull; {LNG_ADD_NEW_USER}" onfocus="blur()">{LNG_ADD_NEW_USER}</a>
+      </td>
+    </tr>
+  </PCPIN:TPL>
   <tr>
     <td class="tbl_row">
       &nbsp;

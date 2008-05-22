@@ -60,7 +60,13 @@ if (!empty($ajax) && is_scalar($ajax)) {
 
     case 'add_new_user':
       // Add new user
-      require_once('./inc/ajax/add_new_user.inc.php');
+      if (PCPIN_SLAVE_MODE) {
+        // Not allowed in Slave mode
+        $xmlwriter->setHeaderMessage('SLAVE_MODE');
+        $xmlwriter->setHeaderStatus(1);
+      } else {
+        require_once('./inc/ajax/add_new_user.inc.php');
+      }
     break;
 
     case 'add_nickname':
