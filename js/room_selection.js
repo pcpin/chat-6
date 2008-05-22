@@ -34,10 +34,10 @@ var updaterInterval=0;
 var updaterIntervalHandle=0;
 
 /**
- * Room selection area default display type (0: Tree, 1: Simplified)
- * @var int
+ * Room selection area default display type ("a": Tree, "s": Simplified)
+ * @var string
  */
-var roomSelectionDisplayType=0;
+var roomSelectionDisplayType="s";
 
 /**
  * Additional timeout handler for enterChatRoom() function
@@ -50,7 +50,7 @@ var enterChatRoomTimeOut=0;
 /**
  * Initialize room list page
  * @param   boolean   updater_interval              Updater interval in seconds
- * @param   int       room_selection_display_type   Room selection area default display type (0: Tree, 1: Simplified)
+ * @param   string    room_selection_display_type   Room selection area default display type ("a": Tree, "s": Simplified)
  * @param   boolean   userlist_gender               Flag: if TRUE, then gender icons will be displayed in userlist
  * @param   boolean   userlist_avatar               Flag: if TRUE, then avatar thumbs will be displayed in userlist
  * @param   boolean   userlist_privileged           Flag: if TRUE, then "Admin" and "Moderator" flags will be displayed in userlist
@@ -206,5 +206,16 @@ function _CALLBACK_enterChatRoom() {
       // Other error
       alert(actionHandler.message);
     break;
+  }
+}
+
+/**
+ * Set new room structure display type
+ * @param   string    room_selection_type     New room structure display type
+ */
+function setRoomSelectionDisplayType(room_selection_type) {
+  if (typeof(room_selection_type)=='string' && room_selection_type!=roomSelectionDisplayType) {
+    roomSelectionDisplayType=room_selection_type;
+    sendData('roomStructureUpdaterStart(true)', formlink, 'POST', 'ajax=set_room_selection_view&s_id='+urlencode(s_id)+'&room_selection_view='+urlencode(roomSelectionDisplayType));
   }
 }

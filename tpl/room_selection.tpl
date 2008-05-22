@@ -18,10 +18,10 @@
     <td colspan="2" class="tbl_header_main">
       {LNG_ROOM_SELECTION}
       <span id="simplified_view_link" style="display:none">
-        ( <a class="tbl_header_main_link" href=":" title="{LNG_ADVANCED_VIEW}" onclick="roomSelectionDisplayType=1; displaySimpleCategoryTree(); return false;">{LNG_ADVANCED_VIEW}</a> )
+        ( <a class="tbl_header_main_link" href=":" title="{LNG_ADVANCED_VIEW}" onclick="setRoomSelectionDisplayType('s'); return false;">{LNG_ADVANCED_VIEW}</a> )
       </span>
       <span id="advanced_view_link" style="display:none">
-        ( <a class="tbl_header_main_link" href=":" title="{LNG_SIMPLIFIED_VIEW}" onclick="roomSelectionDisplayType=0; displayCategoryTree(); return false;">{LNG_SIMPLIFIED_VIEW}</a> )
+        ( <a class="tbl_header_main_link" href=":" title="{LNG_SIMPLIFIED_VIEW}" onclick="setRoomSelectionDisplayType('a'); return false;">{LNG_SIMPLIFIED_VIEW}</a> )
       </span>
     </td>
   </tr>

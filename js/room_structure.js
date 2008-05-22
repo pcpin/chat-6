@@ -130,7 +130,7 @@ function _CALLBACK_getRoomStructure(callback2) {
         // Make category tree
         makeCategoryTree(actionHandler.data['category']);
         // Display category tree
-        if (typeof(roomSelectionDisplayType)=='number' && roomSelectionDisplayType==1) {
+        if (typeof(roomSelectionDisplayType)=='string' && roomSelectionDisplayType=='s') {
           displaySimpleCategoryTree();
         } else {
           displayCategoryTree();

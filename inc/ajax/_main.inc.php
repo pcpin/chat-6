@@ -391,6 +391,11 @@ if (!empty($ajax) && is_scalar($ajax)) {
       require_once('./inc/ajax/set_primary_avatar_gallery.inc.php');
     break;
 
+    case 'set_room_selection_view':
+      // Set new room selection view type
+      require_once('./inc/ajax/set_room_selection_view.inc.php');
+    break;
+
     case 'set_user_level':
       // Set new user level
       require_once('./inc/ajax/set_user_level.inc.php');
