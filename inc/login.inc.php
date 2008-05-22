@@ -113,4 +113,7 @@ if (!empty($session->_conf_all['allow_language_selection']) && !empty($session->
     $tpl->parseTemplate('language_selection_option', 'a');
   }
 }
+
+// Display "Register" link
+$tpl->addVar('account_options_register', 'display', $session->_conf_all['allow_user_registration']);
 ?>

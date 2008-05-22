@@ -34,8 +34,10 @@
     <PCPIN:TPL name="account_options" type="simplecondition" requiredvars="DISPLAY">
       <tr>
         <td nowrap="nowrap" class="tbl_row" colspan="2" style="text-align:center">
-          <a href=":" title="{LNG_REGISTER}" onclick="showRegisterForm(); return false;">{LNG_REGISTER}</a>
-          <br />
+          <PCPIN:TPL name="account_options_register" type="simplecondition" requiredvars="DISPLAY">
+            <a href=":" title="{LNG_REGISTER}" onclick="showRegisterForm(); return false;">{LNG_REGISTER}</a>
+            <br />
+          </PCPIN:TPL>
           <a href=":" title="{LNG_FORGOT_PASSWORD}" onclick="showResetPasswordForm(); return false;">{LNG_FORGOT_PASSWORD}</a>
         </td>
       </tr>
