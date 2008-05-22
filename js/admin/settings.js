@@ -345,7 +345,7 @@ function makeSettingInput(id, val, type, choices, description) {
         if (choices=='<color>') {
           // Show color box
           input_html+='<input type="hidden" id="setting_'+htmlspecialchars(id)+'" value="'+htmlspecialchars(val)+'" />'
-                     +'<div id="setting_color_'+htmlspecialchars(id)+'" style="border: solid 1px #000000; cursor:pointer; background-color:#'+htmlspecialchars(val)+'; width:60px; height: 20px;" title="'+htmlspecialchars(description)+'" onclick="openColorBox(\'setting_color_'+htmlspecialchars(id)+'\', \'background-color\', this, \'$(\\\'setting_'+htmlspecialchars(id)+'\\\').value\', true); return false;">'
+                     +'<div id="setting_color_'+htmlspecialchars(id)+'" style="border: solid 1px #000000; cursor:pointer; background-color:#'+htmlspecialchars(val)+'; width:60px; height: 20px;" title="'+htmlspecialchars(description)+'" onclick="openColorBox(\'setting_color_'+htmlspecialchars(id)+'\', \'background-color\', this, \'$(\\\'setting_'+htmlspecialchars(id)+'\\\').value\', true, null, true, this.style.backgroundColor.substring(1)); return false;">'
                      + '&nbsp;'
                      +'</div>'
                      ;

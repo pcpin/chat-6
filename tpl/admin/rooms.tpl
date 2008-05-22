@@ -192,7 +192,7 @@
         </td>
         <td class="tbl_row">
           <input type="hidden" id="edit_room_default_message_color" value="" />
-          <div id="setting_color_edit_room_default_message_color" style="border: solid 1px #000000; cursor:pointer; width:60px; height: 20px;" title="{LNG__CONF_DEFAULT_MESSAGE_COLOR}" onclick="openColorBox('setting_color_edit_room_default_message_color', 'background-color', this, '$(\'edit_room_default_message_color\').value', true); return false;">
+          <div id="setting_color_edit_room_default_message_color" style="border: solid 1px #000000; cursor:pointer; width:60px; height: 20px;" title="{LNG__CONF_DEFAULT_MESSAGE_COLOR}" onclick="openColorBox('setting_color_edit_room_default_message_color', 'background-color', this, '$(\'edit_room_default_message_color\').value', true, null, true, this.style.backgroundColor.substring(1)); return false;">
             &nbsp;
           </div>
         </td>

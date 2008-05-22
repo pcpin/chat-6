@@ -54,15 +54,17 @@ var colorbox_callback_func=null;
 
 /**
  * Display color selection box and set clicked color to supplied object as CSS property
- * @param   string    tgt_obj_id  ID of an object to set color on. If empty, clicked color code will be returmed as string.
- * @param   string    css_attr    Name of CSS attribute from tgt_obj to set clicked color to
- * @param   object    openerObj   Opener object
- * @param   string    tgt_var     Name of the global variable to set clicked color to
- * @param   boolean   center      Optional. If TRUE, then colorbox will be displayed at the center of the window
- * @param   string    opener_css  Optional. If specified, then opener object' CSS property will be also updated with picked color.
- *                                Opener object MUST have an ID in this case!
+ * @param   string    tgt_obj_id      ID of an object to set color on. If empty, clicked color code will be returmed as string.
+ * @param   string    css_attr        Name of CSS attribute from tgt_obj to set clicked color to
+ * @param   object    openerObj       Opener object
+ * @param   string    tgt_var         Name of the global variable to set clicked color to
+ * @param   boolean   center          Optional. If TRUE, then colorbox will be displayed at the center of the window
+ * @param   string    opener_css      Optional. If specified, then opener object' CSS property will be also updated with picked color.
+ *                                    Opener object MUST have an ID in this case!
+ * @param   boolean   show_input      Optional. If TRUE: Text input field will be also displayed in color box. Default: FALSE.
+ * @param   string    initial_color   Optional. Default value for text input field
  */
-function openColorBox(tgt_obj_id, css_attr, openerObj, tgt_var, center, opener_css) {
+function openColorBox(tgt_obj_id, css_attr, openerObj, tgt_var, center, opener_css, show_input, initial_color) {
   var openerTop=getTopPos(openerObj);
   var openerLeft=getLeftPos(openerObj);
   var color_selection_box=$('color_selection_box');
@@ -106,6 +108,14 @@ function openColorBox(tgt_obj_id, css_attr, openerObj, tgt_var, center, opener_c
       colorbox_opener_id='';
       colorbox_opener_css_attr='';
     }
+    if (typeof(show_input)=='boolean' && show_input) {
+      $('colorbox_selected_color_input_row').style.display='';
+      if (typeof(initial_color)=='string') {
+        $('colorbox_selected_color_input').value=initial_color.substring(0, 6);
+      }
+    } else {
+      $('colorbox_selected_color_input_row').style.display='none';
+    }
     color_selection_box.style.display='none';
     setTimeout("$('color_selection_box').style.display=''", 10);
   }
@@ -118,20 +128,28 @@ function openColorBox(tgt_obj_id, css_attr, openerObj, tgt_var, center, opener_c
  */
 function closeColorBox(color_code, keep_open) {
   var clicked_color='';
-  if (typeof(color_code)=='string' && color_code.length==6) {
-    clicked_color=color_code;
-  }
-  if (colorbox_tgt_obj_id!='' && colorbox_tgt_css_attr!='') {
-    if (clicked_color!='') {
-      eval('try { $(\''+colorbox_tgt_obj_id+'\').style.'+cssToJs(colorbox_tgt_css_attr)+'=\'#'+clicked_color+'\'; } catch (e) {}');
+  if (typeof(color_code)=='string') {
+    var reg=new RegExp(/^[abcdefABCDEF0-9]{6}$/);
+    if (null!=color_code.match(reg)) {
+      clicked_color=color_code.toLowerCase();
     }
-    eval('try { $(\''+colorbox_tgt_obj_id+'\').focus(); } catch (e) {}');
   }
-  if (colorbox_tgt_tgt_var!='' && clicked_color!='') {
-    eval('try { '+colorbox_tgt_tgt_var+'=\''+clicked_color+'\'; } catch (e) {}');
-  }
-  if (colorbox_opener_id!='' && colorbox_opener_css_attr!='') {
-    eval('try { $(\''+colorbox_opener_id+'\').style.'+cssToJs(colorbox_opener_css_attr)+'=\'#'+clicked_color+'\'; } catch (e) {}');
+  if (clicked_color!='') {
+    if ($('colorbox_selected_color_input').value!=clicked_color) {
+      $('colorbox_selected_color_input').value=clicked_color;
+    }
+    if (colorbox_tgt_obj_id!='' && colorbox_tgt_css_attr!='') {
+      if (clicked_color!='') {
+        eval('try { $(\''+colorbox_tgt_obj_id+'\').style.'+cssToJs(colorbox_tgt_css_attr)+'=\'#'+clicked_color+'\'; } catch (e) {}');
+      }
+      eval('try { $(\''+colorbox_tgt_obj_id+'\').focus(); } catch (e) {}');
+    }
+    if (colorbox_tgt_tgt_var!='' && clicked_color!='') {
+      eval('try { '+colorbox_tgt_tgt_var+'=\''+clicked_color+'\'; } catch (e) {}');
+    }
+    if (colorbox_opener_id!='' && colorbox_opener_css_attr!='') {
+      eval('try { $(\''+colorbox_opener_id+'\').style.'+cssToJs(colorbox_opener_css_attr)+'=\'#'+clicked_color+'\'; } catch (e) {}');
+    }
   }
   if (typeof(keep_open)!='boolean' || !keep_open) {
     $('color_selection_box').style.display='none';
