@@ -22,15 +22,23 @@ if (empty($current_user->id) || $current_user->is_admin!=='y') {
 }
 
 
-// Init template
+// JS files
+$_js_files[]='./js/admin/add_new_user.js';
+
+
+// JS language expressions
+$_js_lng[]='username_empty';
+$_js_lng[]='username_length_error';
+$_js_lng[]='email_invalid';
+
+$_body_onload[]='initNewUserForm('.htmlspecialchars($session->_conf_all['login_length_min']).', '
+                                  .htmlspecialchars($session->_conf_all['login_length_max'])
+                                 .')';
+
+// Initialize template handler
 _pcpin_loadClass('pcpintpl'); $tpl=new PcpinTpl();
 $tpl->setBasedir('./tpl');
-$tpl->readTemplatesFromFile('./admin/navigation.tpl');
-
-// JS files
-$_js_files[]='./js/admin/navigation.js';
-
-$_body_onload[]='initNavigationWindow()';
+$tpl->readTemplatesFromFile('./admin/add_new_user.tpl');
 
 // Add global vars to template
 foreach ($global_tpl_vars as $key=>$val) {
@@ -44,8 +52,5 @@ foreach ($tpl->tpl_vars_plain as $var) {
     $tpl->addGlobalVar($var, htmlspecialchars($l->g(substr($var, 4))));
   }
 }
-
-// Display "Add new user" link
-$tpl->addVar('add_new_user', 'display', !PCPIN_SLAVE_MODE);
 
 ?>

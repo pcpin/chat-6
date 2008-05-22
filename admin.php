@@ -183,6 +183,11 @@ if (empty($session->_s_user_id)) {
         require_once('./inc/dummy.inc.php');
       break;
 
+      case 'add_new_user':
+        // Add new user
+        require_once('./inc/admin/add_new_user.inc.php');
+      break;
+
       case 'avatar_gallery':
         // Manage avatar gallery
         require_once('./inc/admin/avatar_gallery.inc.php');

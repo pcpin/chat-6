@@ -58,6 +58,11 @@ if (!empty($ajax) && is_scalar($ajax)) {
       require_once('./inc/ajax/add_filtered_word.inc.php');
     break;
 
+    case 'add_new_user':
+      // Add new user
+      require_once('./inc/ajax/add_new_user.inc.php');
+    break;
+
     case 'add_nickname':
       // Add new nickname
       require_once('./inc/ajax/add_nickname.inc.php');
