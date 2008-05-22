@@ -89,7 +89,7 @@ INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`
 (48, 'chat', '{LNG_ATTACHMENTS}', 'msg_attachments_limit', '2', 'int_range', '0|*', '{LNG__CONF_MSG_ATTACHMENTS_LIMIT}'),
 (49, 'chat', '{LNG_ATTACHMENTS}', 'msg_attachments_maxsize', '64', 'int_range', '1|*', '{LNG__CONF_MSG_ATTACHMENTS_MAXSIZE}'),
 (50, 'account', '{LNG_USERS}', 'allow_guests', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_GUESTS}'),
-(51, 'account', '{LNG_USERS}', 'activate_new_accounts', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ACTIVATE_NEW_ACCOUNTS}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
+(51, 'account', '{LNG_USERS}', 'activate_new_accounts', '1', 'int_choice', '0={LNG_NO}|1={LNG_YES}: {LNG_ACTIVATION_EMAIL}|2={LNG_YES}: {LNG_ACTIVATION_BY_ADMIN}', '{LNG__CONF_ACTIVATE_NEW_ACCOUNTS}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
 (52, 'account', '{LNG_USERS}', 'new_account_activation_timeout', '24', 'int_range', '1|*', '{LNG__CONF_NEW_ACCOUNT_ACTIVATION_TIMEOUT}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
 (56, 'banners', '', 'top_banner_height', '90', 'int_range', '1|*', '{LNG__CONF_TOP_BANNER_HEIGHT}'),
 (57, 'banners', '', 'bottom_banner_height', '90', 'int_range', '1|*', '{LNG__CONF_BOTTOM_BANNER_HEIGHT}'),

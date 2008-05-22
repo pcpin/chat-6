@@ -285,10 +285,10 @@ class PCPIN_Session extends PCPIN_Config {
       }
     }
     // Delete idle and/or not activated user accounts
-    if (!PCPIN_SLAVE_MODE && !empty($this->_conf_all['activate_new_accounts']) || !empty($this->_conf_all['account_pruning'])) {
+    if (!PCPIN_SLAVE_MODE && $this->_conf_all['activate_new_accounts']==1 || !empty($this->_conf_all['account_pruning'])) {
       _pcpin_loadClass('user'); $user=new PCPIN_User($this);
       $query=$this->_db_makeQuery(2060,
-                                  !empty($this->_conf_all['activate_new_accounts'])? date('Y-m-d H:i:s', time()-3600*$this->_conf_all['new_account_activation_timeout']) : '',
+                                  $this->_conf_all['activate_new_accounts']==1? date('Y-m-d H:i:s', time()-3600*$this->_conf_all['new_account_activation_timeout']) : '',
                                   !empty($this->_conf_all['account_pruning'])? date('Y-m-d H:i:s', time()-$this->_conf_all['account_pruning']*86400) : ''
                                   );
       $user_ids=array();

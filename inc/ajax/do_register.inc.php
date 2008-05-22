@@ -118,19 +118,58 @@ if ($session->_conf_all['allow_user_registration']) {
         }
       }
     } else {
-      // Send activation email
-      $email_body=$l->g('email_new_account_activation');
-      $email_body=str_replace('[CHAT_NAME]', $session->_conf_all['chat_name'], $email_body);
-      $email_body=str_replace('[EMAIL_ADDRESS]', $email, $email_body);
-      $email_body=str_replace('[USERNAME]', $login, $email_body);
-      $email_body=str_replace('[PASSWORD]', $password, $email_body);
-      $email_body=str_replace('[URL]', str_replace(' ', '%20', $session->_conf_all['base_url']), $email_body);
-      $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
-      $email_body=str_replace('[ACTIVATION_URL]', str_replace(' ', '%20', $session->_conf_all['base_url']).'?activate_account&activation_code='.urlencode($activation_code_plain), $email_body);
-      $email_body=str_replace('[HOURS]', $session->_conf_all['new_account_activation_timeout'], $email_body);
-      PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $l->g('new_account_activation'), null, null, $email_body);
-      $xmlwriter->setHeaderStatus(0);
-      $xmlwriter->setHeaderMessage(str_replace('[EMAIL_ADDRESS]', $email, $l->g('account_activation_email_sent')));
+      if ($session->_conf_all['activate_new_accounts']==1) {
+        // Send activation email
+        $email_body=$l->g('email_new_account_activation');
+        $email_body=str_replace('[CHAT_NAME]', $session->_conf_all['chat_name'], $email_body);
+        $email_body=str_replace('[EMAIL_ADDRESS]', $email, $email_body);
+        $email_body=str_replace('[USERNAME]', $login, $email_body);
+        $email_body=str_replace('[PASSWORD]', $password, $email_body);
+        $email_body=str_replace('[URL]', str_replace(' ', '%20', $session->_conf_all['base_url']), $email_body);
+        $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
+        $email_body=str_replace('[ACTIVATION_URL]', str_replace(' ', '%20', $session->_conf_all['base_url']).'?activate_account&activation_code='.urlencode($activation_code_plain), $email_body);
+        $email_body=str_replace('[HOURS]', $session->_conf_all['new_account_activation_timeout'], $email_body);
+        PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $l->g('new_account_activation'), null, null, $email_body);
+        $xmlwriter->setHeaderStatus(0);
+        $xmlwriter->setHeaderMessage(str_replace('[EMAIL_ADDRESS]', $email, $l->g('account_activation_email_sent')));
+      } else {
+        // Manual activation by Admin
+        $xmlwriter->setHeaderStatus(0);
+        $xmlwriter->setHeaderMessage($l->g('account_will_be_activated_by_admin'));
+        // Send notification to admins
+        $old_language_id=$l->id;
+        if ($current_user->_db_getList('email,language_id', 'is_admin = y')) {
+          $users=$current_user->_db_list;
+          $current_user->_db_freeList();
+          // Group users by language
+          $language_emails=array();
+          foreach ($users as $data) {
+            if (!isset($language_users[$data['language_id']])) {
+              $language_emails[$data['language_id']]=array();
+            }
+            $language_emails[$data['language_id']][]=$data['email'];
+          }
+          unset($users);
+          foreach ($language_emails as $language_id=>$emails) {
+            if (true!==$l->setLanguage($language_id)) {
+              $l->setLanguage($session->_s_language_id);
+            }
+            foreach ($emails as $email) {
+              $email_body=$l->g('email_new_user_activation_notification');
+              $email_body=str_replace('[CHAT_NAME]', $session->_conf_all['chat_name'], $email_body);
+              $email_body=str_replace('[EMAIL_ADDRESS]', $email, $email_body);
+              $email_body=str_replace('[USERNAME]', $login, $email_body);
+              $email_body=str_replace('[REMOTE_IP]', PCPIN_CLIENT_IP, $email_body);
+              $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
+              PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $session->_conf_all['chat_name'].': '.$l->g('new_account_activation'), null, null, $email_body);
+            }
+          }
+          // Restore original language
+          if ($l->id!=$old_language_id) {
+            $l->setLanguage($old_language_id);
+          }
+        }
+      }
     }
   }
 }
