@@ -148,6 +148,11 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
         // http://bugs.pcpin.com/view.php?id=374
         $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."language_expression` ( `language_id`, `code`, `value`, `multi_row` ) SELECT DISTINCT `".PCPIN_DB_PREFIX."language_expression`.`language_id` AS `language_id`, 'optimize_database' AS `code`, 0x4f7074696d697a65206461746162617365 AS `value`, 'n' AS `multi_row` FROM `".PCPIN_DB_PREFIX."language_expression`");
 
+        // 0000382: Store last used room selection view setting
+        // http://bugs.pcpin.com/view.php?id=382
+        $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."user` ADD `room_selection_view` ENUM( 's', 'a' ) DEFAULT 's' NOT NULL");
+        $__pcpin_upgrade['session']->_db_query("TRUNCATE TABLE `".PCPIN_DB_PREFIX."cache`");
+
       break;
 
     }
