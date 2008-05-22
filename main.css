@@ -309,6 +309,15 @@ a:hover {
   margin: 0px;
 }
 
+/* Exit options selection box */
+#exit_selection_box {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  padding: 0px;
+  margin: 0px;
+}
+
 /* Help box */
 #help_box {
   position: absolute;

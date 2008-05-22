@@ -1982,7 +1982,7 @@ function flushMessagesArea() {
 function showOwnOnlineStatus(online_status, online_status_message) {
   var status_button=$('online_status_pulldown');
   if (status_button) {
-    status_button.style.backgroundImage='url(./pic/status_'+online_status+'_pulldown_33x18.gif)';
+    status_button.style.backgroundImage='url(./pic/online_status_'+online_status+'_16x16.gif)';
     if (typeof(online_status_message)!='string') {
       online_status_message='';
     }
@@ -2051,18 +2051,7 @@ function closeOnlineStatusBox(online_status, online_status_message) {
     if (typeof(online_status_message)=='undefined') {
       online_status_message='';
     }
-    if (online_status==-1) {
-      // Leave this room
-      confirm(getLng('sure_to_leave_room'), 0, 0, 'leaveRoom()');
-      return false;
-    } else if (online_status==-2) {
-      // Log out
-      confirm(getLng('sure_to_log_out'), 0, 0, 'SkipPageUnloadedMsg=true;logOut();');
-      return false;
-    } else if (online_status==-3) {
-      // Edit profile
-      openEditProfileWindow(currentUserId, 'own_profile');
-    } else if (online_status_code!=online_status) {
+    if (online_status>0 && online_status_code!=online_status) {
       // Set new online status
       if (typeof(online_status_message)!='string' || online_status_message=='') {
         online_status_message=getLng('online_status_'+online_status);
@@ -2077,6 +2066,69 @@ function _CALLBACK_changeOnlineStatus() {
   toggleProgressBar(false);
   startUpdater(true);
 }
+
+
+/**
+ * Display menu box with exit options
+ * @param   object    openerObj   Opener object
+ */
+function openExitBox(openerObj) {
+  var openerTop=getTopPos(openerObj);
+  var openerLeft=getLeftPos(openerObj);
+  var exit_selection_box=$('exit_selection_box');
+  if (exit_selection_box.style.display=='none') {
+    disableSelection();
+    document.onclick_original=document.onclick;
+    document.onkeypress_original=document.onkeypress;
+    exit_selection_box.style.display='';
+    exit_selection_box.style.top=(openerTop-exit_selection_box.scrollHeight)+'px';
+    exit_selection_box.style.left=(openerLeft+1)+'px';
+    setTimeout('document.onclick=function() { closeExitBox() }', 10);
+    setTimeout('document.onkeypress=function() { closeExitBox() }', 10);
+    exit_selection_box.style.display='none';
+    setTimeout("$('exit_selection_box').style.display='';", 10);
+    setTimeout('fixExitBox()', 15);
+  }
+}
+
+/**
+ * Fix exit options menu box position
+ */
+function fixExitBox() {
+  var exit_selection_box=$('exit_selection_box');
+  if (exit_selection_box) {
+    winWidth=getWinWidth();
+    winHeight=getWinHeight();
+    if (exit_selection_box.scrollWidth+mouseX+5>winWidth) {
+      exit_selection_box.style.left=(winWidth-exit_selection_box.scrollWidth-5)+'px';
+    } else {
+      exit_selection_box.style.left=mouseX+'px';
+    }
+  }
+}
+
+/**
+ * Hide exit options menu box
+ * @param   int       result      Optional. If not empty, -1: Leave current chat room, -2: Logout
+ */
+function closeExitBox(result) {
+  enableSelection();
+  document.onclick=document.onclick_original;
+  document.onkeypress=document.onkeypress_original
+  $('exit_selection_box').style.display='none';
+  if (typeof(result)!='undefined') {
+    if (result==-1) {
+      // Leave this room
+      confirm(getLng('sure_to_leave_room'), 0, 0, 'leaveRoom()');
+      return false;
+    } else if (result==-2) {
+      // Log out
+      confirm(getLng('sure_to_log_out'), 0, 0, 'SkipPageUnloadedMsg=true; logOut();');
+      return false;
+    }
+  }
+}
+
 
 /**
  * Leave current chat room and load user profile page

@@ -82,11 +82,11 @@
                 <td><button style="width:23px;background-image:url(./pic/admin_18x18.gif);background-repeat:no-repeat;background-position:center center;" onclick="openAdminWindow()" title="{LNG_ADMINISTRATION_AREA}" onfocus="blur()"></button></td>
               </PCPIN:TPL>
               <td style="width:1px"><img src="./pic/clearpixel_1x1.gif" alt="" width="5" height="1" /></td>
-              <td><button id="online_status_pulldown" style="width:40px;background-repeat:no-repeat;background-position:center center;" onclick="openOnlineStatusBox(this)" onfocus="blur()"></button></td>
+              <td><button id="online_status_pulldown" style="width:23px;background-repeat:no-repeat;background-position:center center;" onclick="openOnlineStatusBox(this)" onfocus="blur()"></button></td>
               <td style="width:1px"><img src="./pic/clearpixel_1x1.gif" alt="" width="5" height="1" /></td>
               <td><button type="button" style="width:23px;background-image:url(./pic/help_18x18.gif);background-repeat:no-repeat;background-position:center center;" onclick="showHelpBox(this)" title="{LNG_HELP}" onfocus="blur()"></button></td>
               <td style="width:1px"><img src="./pic/clearpixel_1x1.gif" alt="" width="5" height="1" /></td>
-              <td><button type="button" style="width:23px;background-image:url(./pic/close_red_18x18.gif);background-repeat:no-repeat;background-position:center center;" onclick="_cmd_logout()" title="{LNG_LOG_OUT}" onfocus="blur()"></button></td>
+              <td><button type="button" style="width:23px;background-image:url(./pic/close_red_18x18.gif);background-repeat:no-repeat;background-position:center center;"  onclick="openExitBox(this)" title="{LNG_LEAVE_THIS_ROOM}" onfocus="blur()"></button></td>
               <td style="width:1px"><img src="./pic/clearpixel_1x1.gif" alt="" width="5" height="1" /></td>
               <td><button type="button" id="scroll_ctl_btn" style="width:11px;background-image:url(./pic/scroll_active_5x18.gif);background-repeat:no-repeat;background-position:center center;" onclick="setAutoScroll()" title="" onfocus="blur()"></button></td>
             </tr>
@@ -132,15 +132,21 @@
       <td width="1%"><img src="./pic/online_status_3_10x10.gif" alt="" /></td>
       <td nowrap="nowrap">&nbsp;{LNG_ONLINE_STATUS_3}&nbsp;</td>
     </tr>
-    <tr class="context_menu_table_row">
-      <td colspan="3" class="context_menu_table_separator_row"></td>
+  </table>
+</div>
+
+<!-- EXIT OPTIONS SELECTION BOX -->
+<div id="exit_selection_box" style="display:none">
+  <table border="0" cellspacing="0" cellpadding="2" width="1px" class="context_menu_table">
+    <tr>
+      <td align="left" class="context_menu_table_header" colspan="3" nowrap="nowrap">{LNG_LEAVE_THIS_ROOM}</td>
     </tr>
     <PCPIN:TPL name="leave_room_link" type="simplecondition" requiredvars="DISPLAY">
-      <tr title="{LNG_LEAVE_THIS_ROOM}" class="context_menu_table_row" onmouseover="setCssClass(this, '.context_menu_table_hrow')" onmouseout="setCssClass(this, '.context_menu_table_row')" onclick="closeOnlineStatusBox(-1, '')">
+      <tr title="{LNG_LEAVE_THIS_ROOM}" class="context_menu_table_row" onmouseover="setCssClass(this, '.context_menu_table_hrow')" onmouseout="setCssClass(this, '.context_menu_table_row')" onclick="closeExitBox(-1)">
         <td nowrap="nowrap" colspan="3" align="center">&nbsp;{LNG_LEAVE_THIS_ROOM}&nbsp;</td>
       </tr>
     </PCPIN:TPL>
-    <tr title="{LNG_LOG_OUT_OF_CHAT}" class="context_menu_table_row" onmouseover="setCssClass(this, '.context_menu_table_hrow')" onmouseout="setCssClass(this, '.context_menu_table_row')" onclick="closeOnlineStatusBox(-2, '')">
+    <tr title="{LNG_LOG_OUT_OF_CHAT}" class="context_menu_table_row" onmouseover="setCssClass(this, '.context_menu_table_hrow')" onmouseout="setCssClass(this, '.context_menu_table_row')" onclick="closeExitBox(-2)">
       <td nowrap="nowrap" colspan="3" align="center">&nbsp;{LNG_LOG_OUT_OF_CHAT}&nbsp;</td>
     </tr>
   </table>
