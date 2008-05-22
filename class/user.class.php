@@ -314,7 +314,7 @@ class PCPIN_User extends PCPIN_Session {
       $this->outgoing_message_color='';
       $this->language_id=!empty($language_id)? $language_id : $this->_s_language_id;
       $this->allow_sounds='';
-      $this->room_selection_view=$session->_conf_all['room_selection_display_type'];
+      $this->room_selection_view=$this->_conf_all['room_selection_display_type'];
       // Insert row
       if ($this->_db_insertObj()) {
         $result=true;
