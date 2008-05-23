@@ -142,7 +142,6 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
         // 0000369: A possibility to turn sounds off/on for users
         // http://bugs.pcpin.com/view.php?id=369
         $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."user` ADD `allow_sounds` ENUM( 'y', 'n' ) DEFAULT 'y' NOT NULL");
-        $__pcpin_upgrade['session']->_db_query("TRUNCATE TABLE `".PCPIN_DB_PREFIX."cache`");
 
         // 0000374: "Optimize Database" menu in Administrator area
         // http://bugs.pcpin.com/view.php?id=374
@@ -151,7 +150,6 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
         // 0000382: Store last used room selection view setting
         // http://bugs.pcpin.com/view.php?id=382
         $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."user` ADD `room_selection_view` ENUM( 's', 'a' ) DEFAULT 's' NOT NULL");
-        $__pcpin_upgrade['session']->_db_query("TRUNCATE TABLE `".PCPIN_DB_PREFIX."cache`");
         $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."config` SET `_conf_type` = 'string_choice', `_conf_choices` = 'a={LNG_ADVANCED_VIEW}|s={LNG_SIMPLIFIED_VIEW}' WHERE `_conf_id` = 46 LIMIT 1");
         $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."config` SET `_conf_value` = IF( `_conf_value` = '0', 'a', 's' ) WHERE `_conf_id` = 46 LIMIT 1");
 
@@ -167,9 +165,16 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
         $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."language_expression` ( `language_id`, `code`, `value`, `multi_row` ) SELECT DISTINCT `".PCPIN_DB_PREFIX."language_expression`.`language_id` AS `language_id`, 'email_new_user_activation_notification' AS `code`, 0x48656c6c6f2c0d0a0d0a54686520666f6c6c6f77696e67206163636f756e74206174205b434841545f4e414d455d20686173206265656e206372656174656420616e64206e6565647320746f206265206163746976617465643a0d0a0d0a557365726e616d653a205b555345524e414d455d0d0a452d4d61696c20616464726573733a205b454d41494c5f414444524553535d0d0a52656d6f746520495020616464726573733a205b52454d4f54455f49505d0d0a0d0a0d0a2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d2d0d0a5468616e6b20596f752c0d0a5b53454e4445525d AS `value`, 'y' AS `multi_row` FROM `".PCPIN_DB_PREFIX."language_expression`");
         $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."language_expression` ( `language_id`, `code`, `value`, `multi_row` ) SELECT DISTINCT `".PCPIN_DB_PREFIX."language_expression`.`language_id` AS `language_id`, 'account_will_be_activated_by_admin' AS `code`, 0x596f7572206163636f756e7420686173206265656e206372656174656420616e642073656e7420746f207468652041646d696e6973747261746f7220666f722061637469766174696f6e2e AS `value`, 'n' AS `multi_row` FROM `".PCPIN_DB_PREFIX."language_expression`");
 
+        // 0000333: Automatically display enlarged thumbnail of user's profile image in the userlist on mouseover
+        // http://bugs.pcpin.com/view.php?id=333
+        $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."tmpdata` CHANGE `filename` `filename` char(255) default '' NOT NULL");
+        $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."tmpdata` ADD `source_img_bid` INT DEFAULT '0' NOT NULL , ADD `width` INT DEFAULT '0' NOT NULL , ADD `height` INT DEFAULT '0' NOT NULL , ADD `bg_r` TINYINT UNSIGNED DEFAULT '0' NOT NULL , ADD `bg_g` TINYINT UNSIGNED DEFAULT '0' NOT NULL , ADD `bg_b` TINYINT UNSIGNED DEFAULT '0' NOT NULL");
+
       break;
 
     }
+    // All versions: Clear database table data cache
+    $__pcpin_upgrade['session']->_db_query("TRUNCATE TABLE `".PCPIN_DB_PREFIX."cache`");
     // All versions: Store new version number
     $__pcpin_upgrade['session']->_db_query('DELETE FROM `'.PCPIN_DB_PREFIX.'version`');
     $__pcpin_upgrade['session']->_db_query('INSERT INTO `'.PCPIN_DB_PREFIX.'version` ( `version`, `version_check_key`, `last_version_check` ) VALUES ( "'.$__pcpin_upgrade['session']->_db_escapeStr($__pcpin_upgrade['file_version'], false).'", "-", "'.date('Y-m-d H:i:s').'" )');

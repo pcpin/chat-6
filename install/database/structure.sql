@@ -339,11 +339,11 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$tmpdata` (
   `type` int(11) NOT NULL default '0',
   `user_id` int(11) NOT NULL default '0',
   `binaryfile_id` int(11) NOT NULL default '0',
-  `filename` char(255) NOT NULL,
+  `filename` char(255) NOT NULL default '',
   PRIMARY KEY  (`id`),
   KEY `type` (`type`),
   KEY `user_id` (`user_id`),
-  KEY `binaryfile_id` (`binaryfile_id`)
+  KEY `binaryfile_id` (`binaryfile_id`),
 ) DEFAULT CHARSET=utf8 TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$user`; /* PCPIN6_QUERY_SEPARATOR */
