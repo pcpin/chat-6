@@ -168,7 +168,6 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
         // 0000333: Automatically display enlarged thumbnail of user's profile image in the userlist on mouseover
         // http://bugs.pcpin.com/view.php?id=333
         $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."tmpdata` CHANGE `filename` `filename` char(255) default '' NOT NULL");
-        $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."tmpdata` ADD `source_img_bid` INT DEFAULT '0' NOT NULL , ADD `width` INT DEFAULT '0' NOT NULL , ADD `height` INT DEFAULT '0' NOT NULL , ADD `bg_r` TINYINT UNSIGNED DEFAULT '0' NOT NULL , ADD `bg_g` TINYINT UNSIGNED DEFAULT '0' NOT NULL , ADD `bg_b` TINYINT UNSIGNED DEFAULT '0' NOT NULL");
 
       break;
 
