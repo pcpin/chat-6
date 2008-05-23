@@ -30,6 +30,11 @@ var alertboxCallback='';
  * @param   string    callback      Optional. Callback function to execute after alert box disappears.
  */
 function alert(text, top_offset, left_offset, callback) {
+  if (typeof(text)!='undefined' && typeof(text)!='string') {
+    try {
+      text=text.toString();
+    } catch (e) {}
+  }
   if (typeof(text)=='string') {
     if (typeof(top_offset)!='number') top_offset=0;
     if (typeof(left_offset)!='number') left_offset=0;

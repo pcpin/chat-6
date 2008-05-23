@@ -43,6 +43,11 @@ var promptboxValue='';
  * @param   boolean   password        Optional. If TRUE, then password field will be displayed instead of text field. Default: FALSE.
  */
 function prompt(text, default_value, top_offset, left_offset, callback, password) {
+  if (typeof(text)!='undefined' && typeof(text)!='string') {
+    try {
+      text=text.toString();
+    } catch (e) {}
+  }
   if (typeof(text)=='string') {
     if (typeof(top_offset)!='number') top_offset=0;
     if (typeof(left_offset)!='number') left_offset=0;
