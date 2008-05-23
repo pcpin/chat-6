@@ -452,6 +452,11 @@ if (!empty($ajax) && is_scalar($ajax)) {
       require_once('./inc/ajax/update_settings.inc.php');
     break;
 
+    case 'update_smilie':
+      // Update smilie data
+      require_once('./inc/ajax/update_smilie.inc.php');
+    break;
+
     case 'update_userdata':
       // Update userdata (in "userdata" table)
       if (PCPIN_SLAVE_MODE) {

@@ -68,11 +68,12 @@ class PCPIN_Smilie extends PCPIN_Session {
    * @param   string  $description    Smilie description
    * @return  boolean TRUE on success or FALSE on error
    */
-  function addSmilie($binaryfile_id=0, $code='', $description='') {
+  function addSmilie($binaryfile_id, $code, $description='') {
     $result=false;
     $this->id=0;
-    if (!empty($binaryfile_id)) {
-      $code=trim($code);
+    $code=trim($code);
+    $description=trim($description);
+    if (!empty($binaryfile_id) && $code!='') {
       $this->id=0;
       $this->binaryfile_id=$binaryfile_id;
       $this->code=$code;
@@ -90,9 +91,9 @@ class PCPIN_Smilie extends PCPIN_Session {
    * @param   int   $id     Smilie ID
    * @return  boolean   TRUE on success or FALSE on error
    */
-  function deleteSmilie($id=0) {
+  function deleteSmilie($id) {
     $result=false;
-    if (!empty($id) && $this->_db_getList('binaryfile_id', 'id = '.$id)) {
+    if (!empty($id) && $this->_db_getList('binaryfile_id', 'id =# '.$id, 1)) {
       $result=true;
       $binaryfile_id=$this->_db_list[0]['binaryfile_id'];
       $this->_db_freeList();
@@ -101,6 +102,28 @@ class PCPIN_Smilie extends PCPIN_Session {
       $binaryfile->deleteBinaryFile($binaryfile_id);
       // Delete smilie
       $this->_db_deleteRow($id);
+    }
+    return $result;
+  }
+
+
+  /**
+   * Update smilie
+   * @param   int       $id             Smilie ID
+   * @param   string    $code           New smilie code
+   * @param   string    $description    New smilie description
+   * @return  boolean   TRUE on success or FALSE on error
+   */
+  function updateSmilie($id, $code, $description='') {
+    $result=false;
+    $code=trim($code);
+    $description=trim($description);
+    if (!empty($id) && $code>='' && $this->_db_getList('code,description', 'id =# '.$id, 1)) {
+      $result=true;
+      if ($this->_db_list[0]['code']!=$code || $this->_db_list[0]['description']!=$description) {
+        $this->_db_updateRow($id, 'id', array('code'=>$code, 'description'=>$description));
+      }
+      $this->_db_freeList();
     }
     return $result;
   }

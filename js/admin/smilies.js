@@ -16,6 +16,13 @@
  */
 
 /**
+ * ID of currently opened for edit smilie
+ * @var int
+ */
+var editSmilieID=0;
+
+
+/**
  * Init window
  */
 function initSmiliesForm() {
@@ -75,14 +82,31 @@ function _CALLBACK_getSmilies() {
                     +'<table border="0" cellspacing="0" cellpadding="3">'
                     +'<tr>'
                     +'<td class="tbl_row" width="50%" style="text-align:right"><b>'+htmlspecialchars(getLng('code'))+':</b></td>'
-                    +'<td class="tbl_row">'+htmlspecialchars(smilie_code)+'</td>'
+                    +'<td class="tbl_row">'
+                    +'<input type="hidden" id="original_smilie_code_'+htmlspecialchars(smilie_id)+'" value="'+htmlspecialchars(smilie_code)+'" />'
+                    +'<span id="smilie_code_'+htmlspecialchars(smilie_id)+'">'+htmlspecialchars(smilie_code)+'</span>'
+                    +'<input style="display:none" id="edit_smilie_code_'+htmlspecialchars(smilie_id)+'" type="text" size="6" maxlength="32" value="" title="'+htmlspecialchars(getLng('code'))+'" />'
+                    +'</td>'
                     +'</tr>'
                     +'<tr>'
                     +'<td class="tbl_row" style="text-align:right"><b>'+htmlspecialchars(getLng('description'))+':</b></td>'
-                    +'<td class="tbl_row">'+htmlspecialchars(smilie_description)+'</td>'
+                    +'<td class="tbl_row">'
+                    +'<input type="hidden" id="original_smilie_description_'+htmlspecialchars(smilie_id)+'" value="'+htmlspecialchars(smilie_description)+'" />'
+                    +'<span id="smilie_description_'+htmlspecialchars(smilie_id)+'">'+htmlspecialchars(smilie_description)+'</span>'
+                    +'<input style="display:none" id="edit_smilie_description_'+htmlspecialchars(smilie_id)+'" type="text" size="16" maxlength="255" value="" title="'+htmlspecialchars(getLng('description'))+'" />'
+                    +'</td>'
                     +'</tr>'
                     +'</table>'
+                    +'<span id="smilie_ctl_links_'+htmlspecialchars(smilie_id)+'">'
+                    +'<a href=":" onclick="showEditSmilieForm('+htmlspecialchars(smilie_id)+'); return false;" title="'+htmlspecialchars(getLng('edit'))+'">'+htmlspecialchars(getLng('edit'))+'</a>'
+                    +'&nbsp;&nbsp;&nbsp;'
                     +'<a href=":" onclick="deleteSmilie('+htmlspecialchars(smilie_id)+'); return false;" title="'+htmlspecialchars(getLng('delete'))+'">'+htmlspecialchars(getLng('delete'))+'</a>'
+                    +'</span>'
+                    +'<span id="smilie_edit_ctl_buttons_'+htmlspecialchars(smilie_id)+'" style="display:none">'
+                    +'<button type="button" onclick="saveSmilie()" title="'+htmlspecialchars(getLng('save_changes'))+'">'+htmlspecialchars(getLng('save_changes'))+'</button>'
+                    +'&nbsp;&nbsp;&nbsp;'
+                    +'<button type="button" onclick="hideEditSmilieForm()" title="'+htmlspecialchars(getLng('cancel'))+'">'+htmlspecialchars(getLng('cancel'))+'</button>'
+                    +'</span>'
                     +'<br /><br />';
         setCssClass(td, '.tbl_row');
         td.style.textAlign='center';
@@ -232,5 +256,80 @@ function _CALLBACK_deleteSmilie() {
     alert(actionHandler.message, 0, 0, 'getSmilies()');
   } else {
     alert(actionHandler.message);
+  }
+}
+
+/**
+ * Display smilie edit form
+ * @param   int   smilie_id     Smilie ID
+ */
+function showEditSmilieForm(smilie_id) {
+  hideEditSmilieForm();
+  editSmilieID=smilie_id;
+  $('smilie_ctl_links_'+editSmilieID).style.display='none';
+  $('smilie_code_'+editSmilieID).style.display='none';
+  $('smilie_description_'+editSmilieID).style.display='none';
+  $('smilie_edit_ctl_buttons_'+editSmilieID).style.display='';
+  $('edit_smilie_code_'+editSmilieID).style.display='';
+  $('edit_smilie_description_'+editSmilieID).style.display='';
+  $('edit_smilie_code_'+editSmilieID).value=$('original_smilie_code_'+editSmilieID).value;
+  $('edit_smilie_description_'+editSmilieID).value=$('original_smilie_description_'+editSmilieID).value;
+}
+
+/**
+ * Hide smilie edit form
+ */
+function hideEditSmilieForm() {
+  if (editSmilieID>0) {
+    $('smilie_ctl_links_'+editSmilieID).style.display='';
+    $('smilie_code_'+editSmilieID).style.display='';
+    $('smilie_description_'+editSmilieID).style.display='';
+    $('smilie_edit_ctl_buttons_'+editSmilieID).style.display='none';
+    $('edit_smilie_code_'+editSmilieID).style.display='none';
+    $('edit_smilie_description_'+editSmilieID).style.display='none';
+    editSmilieID=0;
+  }
+}
+
+/**
+ * Save smilie changes
+ */
+function saveSmilie() {
+  if (editSmilieID>0) {
+    var errors=new Array();
+    $('edit_smilie_code_'+editSmilieID).value=trimString($('edit_smilie_code_'+editSmilieID).value);
+    $('edit_smilie_description_'+editSmilieID).value=trimString($('edit_smilie_description_'+editSmilieID).value);
+
+    if ($('edit_smilie_code_'+editSmilieID).value=='') {
+      errors.push(getLng('smilie_code_empty_error'));
+    }
+    if (errors.length>0) {
+      alert(errors.join("\n"));
+    } else {
+      // Send data to server
+      sendData('_CALLBACK_saveSmilie()', formlink, 'POST', 'ajax=update_smilie&s_id='+urlencode(s_id)
+               +'&smilie_id='+urlencode(editSmilieID)
+               +'&code='+urlencode($('edit_smilie_code_'+editSmilieID).value)
+               +'&description='+urlencode($('edit_smilie_description_'+editSmilieID).value)
+               );
+  
+    }
+  }
+  return false;
+}
+function _CALLBACK_saveSmilie() {
+//alert(actionHandler.getResponseString()); return false;
+  toggleProgressBar(false);
+  alert(actionHandler.message);
+  if (actionHandler.status==-1) {
+    // Session is invalid
+    window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
+    return false;
+  } else if (actionHandler.status==0) {
+    $('original_smilie_code_'+editSmilieID).value=$('edit_smilie_code_'+editSmilieID).value;
+    $('original_smilie_description_'+editSmilieID).value=$('edit_smilie_description_'+editSmilieID).value;
+    $('smilie_code_'+editSmilieID).innerHTML=htmlspecialchars($('edit_smilie_code_'+editSmilieID).value);
+    $('smilie_description_'+editSmilieID).innerHTML=htmlspecialchars($('edit_smilie_description_'+editSmilieID).value);
+    hideEditSmilieForm();
   }
 }

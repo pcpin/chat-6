@@ -28,7 +28,9 @@ $_js_files[]='./js/admin/smilies.js';
 // JS language expressions
 $_js_lng[]='code';
 $_js_lng[]='description';
+$_js_lng[]='edit';
 $_js_lng[]='delete';
+$_js_lng[]='save_changes';
 $_js_lng[]='smilie_code_empty_error';
 $_js_lng[]='smilie_image_empty_error';
 $_js_lng[]='confirm_delete_smilie';
