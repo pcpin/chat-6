@@ -16,13 +16,25 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-if (!is_object($session)) {
-  die('Access denied');
+if (!is_object($session)) { die('Access denied'); }
+
+$allowed_schemes=array('aaa',    'aaas',  'about', 'acap',  'aim',  'callto', 'cap',    'cid',  'crid',   'data',
+                       'dav',    'dict',  'dns',   'ed2k',  'fax',  'feed',   'file',   'ftp',  'go',     'gopher',
+                       'http',   'https', 'imap',  'imaps', 'irc',  'ircs',   'lastfm', 'ldap', 'mailto', 'mailto',
+                       'mid',    'mms',   'msnim', 'news',  'nfs',  'nntp',   'pop',    'pop3', 'pop3s',  'pops',
+                       'pres',   'rsync', 'sftp',  'sip',   'sips', 'skype',  'smb',    'snmp', 'ssh',    'tel',
+                       'telnet', 'urn',   'wais',  'xmpp',  'ymsgr' );
+
+if (!isset($external_url)) $external_url='';
+$external_url=urldecode($external_url);
+$url_data=parse_url($external_url);
+if (!isset($url_data['scheme'])) {
+  // No scheme specified. Assuming "http"
+  $external_url='http://'.$external_url;
+  $url_data['scheme']='http';
 }
-if (!isset($external_url)) {
-  $external_url='dummy.html';
-} else {
-  $external_url=urldecode($external_url);
+if (!in_array($url_data['scheme'], $allowed_schemes, true)) {
+  die();
 }
 
 header('Content-Type: text/html; charset=UTF-8');
