@@ -84,6 +84,7 @@ if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
       break;
 
       case 6.10:
+      case 6.11:
         // PCPIN Chat *.* ==> PCPIN Chat 6.20
 
         // 0000367: Wrong encoded characters in database tables
