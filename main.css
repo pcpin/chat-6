@@ -523,3 +523,11 @@ a:hover {
   width: 100%;
   position: absolute;
 }
+
+
+/* Avatar image "onmouseover" thumb */
+.avatar_image_hover_thumb {
+  position: absolute;
+  border: solid 1px #555555;
+  cursor: pointer;
+}

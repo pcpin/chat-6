@@ -1284,3 +1284,41 @@ function processAbuses(abuses) {
     openWindow(formlink+'?s_id='+s_id+'&inc=abuse', 'abuse_'+abuse_data['id'], 600, 450, false, false, false, false, true);
   }
 }
+
+
+/**
+ * Display enlarged avatar image
+ * @param   int   avatar_bid    User avatar image Binaryfile ID
+ */
+function showUserlistAvatarThumb(avatar_bid) {
+  var avatar_hover_thumbnail_img=$('avatar_hover_thumbnail_img');
+  var width=85;
+  var height=120;
+  if (avatar_hover_thumbnail_img) {
+    avatar_hover_thumbnail_img.src=formlink+'?b_x='+height+'&b_y='+width+'&b_id='+urlencode(avatar_bid)+'&s_id='+urlencode(s_id);
+    avatar_hover_thumbnail_img.style.width=width+'px';
+    avatar_hover_thumbnail_img.style.height=height+'px';
+    avatar_hover_thumbnail_img.onload=function() {
+      MouseMoveFuncObj=avatar_hover_thumbnail_img;
+      MouseMoveFunc=function () {
+        MouseMoveFuncObj.style.top=(mouseY+3)+'px';
+        MouseMoveFuncObj.style.left=(mouseX+3)+'px';
+      }
+      this.style.display='';
+      MouseMoveFunc();
+    }
+  }
+}
+
+
+/**
+ * Hide enlarged avatar image
+ */
+function hideUserlistAvatarThumb() {
+  var avatar_hover_thumbnail_img=$('avatar_hover_thumbnail_img');
+  if (avatar_hover_thumbnail_img) {
+    avatar_hover_thumbnail_img.style.display='none';
+    MouseMoveFunc=null;
+    MouseMoveFuncObj=null;
+  }
+}

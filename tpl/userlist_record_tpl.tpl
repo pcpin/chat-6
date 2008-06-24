@@ -6,3 +6,4 @@
   <a href=":" title="{LNG_ADMIN}" _admin_section>{LNG_ADMIN_SHORT}</a>
   <a href=":" title="{LNG_MODERATOR}" _moderator_section>{LNG_MODERATOR_SHORT}</a>
 </div>
+<img id="avatar_hover_thumbnail_img" class="avatar_image_hover_thumb" style="display:none" src="./pic/clearpixel_1x1.gif" title="{LNG_AVATAR}" alt="{LNG_AVATAR}" />
