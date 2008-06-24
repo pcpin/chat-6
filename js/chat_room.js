@@ -1248,7 +1248,7 @@ function redrawUserlist() {
     avatar_bid=records[user_id].getAvatarBID();
     if (userlistAvatar) {
       if (avatar_bid>0) {
-        urec=urec.split('[AVATAR_THUMB]').join('<img style="cursor:pointer" onclick="showUserProfile('+user_id+')" src="'+htmlspecialchars(formlink)+'?b_x='+htmlspecialchars(userlistAvatarHeight)+'&amp;b_y='+htmlspecialchars(userlistAvatarWidth)+'&amp;b_id='+htmlspecialchars(avatar_bid)+'&amp;s_id='+htmlspecialchars(s_id)+'" alt="'+htmlspecialchars(getLng('avatar'))+'" title="'+htmlspecialchars(getLng('avatar'))+'" border="0" />');
+        urec=urec.split('[AVATAR_THUMB]').join('<img style="cursor:pointer" onclick="showUserProfile('+user_id+')" src="'+htmlspecialchars(formlink)+'?b_x='+htmlspecialchars(userlistAvatarHeight)+'&amp;b_y='+htmlspecialchars(userlistAvatarWidth)+'&amp;b_id='+htmlspecialchars(avatar_bid)+'&amp;s_id='+htmlspecialchars(s_id)+'" onmouseover="showUserlistAvatarThumb('+htmlspecialchars(avatar_bid)+')" onmouseout="hideUserlistAvatarThumb()" onclick="hideUserlistAvatarThumb()" alt="'+htmlspecialchars(getLng('avatar'))+'" title="'+htmlspecialchars(getLng('avatar'))+'" border="0" />');
       } else {
         urec=urec.split('[AVATAR_THUMB]').join('<img src="./pic/clearpixel_1x1.gif" width="'+htmlspecialchars(userlistAvatarWidth)+'" height="'+htmlspecialchars(userlistAvatarHeight)+'" alt="" title="" border="0" />');
       }

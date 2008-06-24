@@ -45,6 +45,7 @@ $_body_onload[1000000]='initRoomSelection('.$session->_conf_all['updater_interva
                                            .((!empty($session->_conf_all['userlist_privileged_flags']) && 2==PCPIN_GD_VERSION)? 'true' : 'false')
                                            .')';
 
+$_load_cm_user_options=true;
 
 // Init template
 _pcpin_loadClass('pcpintpl'); $tpl=new PcpinTpl();

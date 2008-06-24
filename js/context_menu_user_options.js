@@ -62,8 +62,8 @@ function showUserOptionsBox(user_id, user_nickname) {
   } else {
     nickname=user_nickname;
   }
-  $('context_menu_cmd_say').style.display='none';
-  $('context_menu_cmd_whisper').style.display='none';
+  if ($('context_menu_cmd_say')) $('context_menu_cmd_say').style.display='none';
+  if ($('context_menu_cmd_whisper')) $('context_menu_cmd_whisper').style.display='none';
   if ($('user_options_box').style.display=='none' && typeof(user_id)!='undefined') {
     disableSelection();
     $('user_options_box').targetUserId=user_id;
