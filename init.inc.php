@@ -123,7 +123,9 @@ _pcpin_loadClass('db'); new PCPIN_DB($__pcpin_init_class, ${$_pcpin_dbcn});
 
 // Finish upgrade, if needed
 if (file_exists('./upgrade.php')) {
-  @include('./upgrade.php');
+  require_once('./upgrade.php');
+  _pcpin_upgrade($__pcpin_init_class);
+  die('<html><body><center><br /><br /><br /><br /><h3>Upgrade completed.</h3><br />Please delete file <b>upgrade.php</b> in order to continue.</center></body></html>');
 }
 
 // Load configuration
