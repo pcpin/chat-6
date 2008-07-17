@@ -57,10 +57,6 @@ class PCPIN_DB {
    * @param   array   $db_conndata    Database connection data
    */
   function PCPIN_DB(&$caller, $db_conndata) {
-    // Query args separator. DO NOT CHANGE!!!
-    if (!defined('PCPIN_SQLQUERY_ARG_SEPARATOR_START')) define('PCPIN_SQLQUERY_ARG_SEPARATOR_START', chr(0).chr(255).PCPIN_Common::randomString(10));
-    // Query args separator. DO NOT CHANGE!!!
-    if (!defined('PCPIN_SQLQUERY_ARG_SEPARATOR_END')) define('PCPIN_SQLQUERY_ARG_SEPARATOR_END', chr(255).chr(0).PCPIN_Common::randomString(10));
     // Connect to database
     $connected=false;
     if (empty($this->_db_conn)) {
@@ -988,6 +984,7 @@ class PCPIN_DB {
   * @return   string  Created query
   */
   function _db_makeQuery($nr) {
+    $query='';
     // Get method arguments
     $argv=func_get_args();
     // First argument is query template number (not needed)
@@ -995,24 +992,12 @@ class PCPIN_DB {
     // Load requested template
     if (pcpin_ctype_digit($nr)) {
       require('./class/dbtpl/'.$nr.'.tpl.php');
-      $query=str_replace('\\_', PCPIN_SQLQUERY_ARG_SEPARATOR_START, str_replace('_\\', PCPIN_SQLQUERY_ARG_SEPARATOR_END, $query));
+      $trans=array();
       foreach ($argv as $key=>$arg) {
-        // Escape dangerous characters from query parameters
-        if (is_scalar($arg)) {
-          // Scalar argument
-          $arg_with_wildcards=$this->_db_escapeStr($arg, false);
-          $arg_no_wildcards=$this->_db_escapeStr($arg);
-          // Pass parameters to query template
-          $query=str_replace(PCPIN_SQLQUERY_ARG_SEPARATOR_START.'ARG'.$key.PCPIN_SQLQUERY_ARG_SEPARATOR_END, $arg_with_wildcards, $query);
-          $query=str_replace(PCPIN_SQLQUERY_ARG_SEPARATOR_START.'arg'.$key.PCPIN_SQLQUERY_ARG_SEPARATOR_END, $arg_no_wildcards, $query);
-        } else {
-          // Invalid argument type. An empty string will be assumed.
-          $query=str_replace(PCPIN_SQLQUERY_ARG_SEPARATOR_START.'ARG'.$key.PCPIN_SQLQUERY_ARG_SEPARATOR_END, '""', $query);
-          $query=str_replace(PCPIN_SQLQUERY_ARG_SEPARATOR_START.'arg'.$key.PCPIN_SQLQUERY_ARG_SEPARATOR_END, '""', $query);
-        }
+        $trans['\\_ARG'.$key.'_\\']=is_scalar($arg)? $this->_db_escapeStr($arg, false) : '';
+        $trans['\\_arg'.$key.'_\\']=is_scalar($arg)? $this->_db_escapeStr($arg) : '';
       }
-    } else {
-      $query='';
+      $query=strtr($query, $trans);
     }
     return $query;
   }
