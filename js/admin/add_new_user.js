@@ -69,6 +69,7 @@ function addNewUser() {
     alert('- '+errors.join("\n- "));
   } else {
     sendData('_CALLBACK_addNewUser()', formlink, 'POST', 'ajax=add_new_user'
+                                                        +'&s_id='+urlencode(s_id)
                                                         +'&login='+urlencode($('new_user_name').value)
                                                         +'&email='+urlencode($('new_user_email').value)
                                                         );
