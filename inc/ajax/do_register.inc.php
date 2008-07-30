@@ -101,14 +101,14 @@ if ($session->_conf_all['allow_user_registration']) {
             if (true!==$l->setLanguage($language_id)) {
               $l->setLanguage($session->_s_language_id);
             }
-            foreach ($emails as $email) {
+            foreach ($emails as $admin_email) {
               $email_body=$l->g('email_new_user_notification');
               $email_body=str_replace('[CHAT_NAME]', $session->_conf_all['chat_name'], $email_body);
               $email_body=str_replace('[EMAIL_ADDRESS]', $email, $email_body);
               $email_body=str_replace('[USERNAME]', $login, $email_body);
               $email_body=str_replace('[REMOTE_IP]', PCPIN_CLIENT_IP, $email_body);
               $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
-              PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $session->_conf_all['chat_name'].': '.$l->g('new_account_created'), null, null, $email_body);
+              PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $admin_email, $session->_conf_all['chat_name'].': '.$l->g('new_account_created'), null, null, $email_body);
             }
           }
           // Restore original language
@@ -154,14 +154,14 @@ if ($session->_conf_all['allow_user_registration']) {
             if (true!==$l->setLanguage($language_id)) {
               $l->setLanguage($session->_s_language_id);
             }
-            foreach ($emails as $email) {
+            foreach ($emails as $admin_email) {
               $email_body=$l->g('email_new_user_activation_notification');
               $email_body=str_replace('[CHAT_NAME]', $session->_conf_all['chat_name'], $email_body);
               $email_body=str_replace('[EMAIL_ADDRESS]', $email, $email_body);
               $email_body=str_replace('[USERNAME]', $login, $email_body);
               $email_body=str_replace('[REMOTE_IP]', PCPIN_CLIENT_IP, $email_body);
               $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
-              PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $session->_conf_all['chat_name'].': '.$l->g('new_account_activation'), null, null, $email_body);
+              PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $admin_email, $session->_conf_all['chat_name'].': '.$l->g('new_account_activation'), null, null, $email_body);
             }
           }
           // Restore original language
