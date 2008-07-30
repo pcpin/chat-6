@@ -177,6 +177,13 @@ function _pcpin_upgrade(&$__pcpin_init_class) {
           // http://bugs.pcpin.com/view.php?id=363
           $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."language_expression` AS `le` LEFT JOIN `".PCPIN_DB_PREFIX."language` AS `la` ON `la`.`id` = `le`.`language_id` SET `le`.`value` = 0x47442d556e7465727374c3bc747a756e6720616b746976696572656e3f WHERE `le`.`code` = '_conf_allow_gd' AND `la`.`iso_name` = 'de'");
 
+          // 0000393: Typo in German language pack
+          // http://bugs.pcpin.com/view.php?id=393
+          $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."language_expression` AS `le` LEFT JOIN `".PCPIN_DB_PREFIX."language` AS `la` ON `la`.`id` = `le`.`language_id` SET `le`.`value` = 'Sie sind bereits eingeloggt' WHERE `le`.`code` = 'you_already_logged_in' AND `la`.`iso_name` = 'de'");
+          $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."language_expression` AS `le` LEFT JOIN `".PCPIN_DB_PREFIX."language` AS `la` ON `la`.`id` = `le`.`language_id` SET `le`.`value` = 'Benutzer [USER] ist zur Zeit nicht eingeloggt' WHERE `le`.`code` = 'user_is_not_logged_in' AND `la`.`iso_name` = 'de'");
+          $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."language_expression` AS `le` LEFT JOIN `".PCPIN_DB_PREFIX."language` AS `la` ON `la`.`id` = `le`.`language_id` SET `le`.`value` = 'Benutzer [USER] ist zur Zeit eingeloggt' WHERE `le`.`code` = 'user_is_logged_in' AND `la`.`iso_name` = 'de'");
+          $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."language_expression` AS `le` LEFT JOIN `".PCPIN_DB_PREFIX."language` AS `la` ON `la`.`id` = `le`.`language_id` SET `le`.`value` = '/exitroom\nDen Raum verlassen, aber eingeloggt bleiben.' WHERE `le`.`code` = 'cmd_help_exitroom' AND `la`.`iso_name` = 'de'");
+
         break;
 
       }
