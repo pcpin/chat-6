@@ -173,6 +173,10 @@ function _pcpin_upgrade(&$__pcpin_init_class) {
           // http://bugs.pcpin.com/view.php?id=333
           $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."tmpdata` CHANGE `filename` `filename` char(255) default '' NOT NULL");
 
+          // 0000363: Typo in German language pack
+          // http://bugs.pcpin.com/view.php?id=363
+          $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."language_expression` AS `le` LEFT JOIN `".PCPIN_DB_PREFIX."language` AS `la` ON `la`.`id` = `le`.`language_id` SET `le`.`value` = 0x47442d556e7465727374c3bc747a756e6720616b746976696572656e3f WHERE `le`.`code` = '_conf_allow_gd' AND `la`.`iso_name` = 'de'");
+
         break;
 
       }
