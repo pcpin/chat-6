@@ -948,31 +948,13 @@ class PCPIN_DB {
 
 
  /**
-  * Check and repair/optimize database tables
+  * Repair/optimize database tables, if needed
   */
   function _db_cure() {
     $tables=$this->_db_listTables();
     foreach ($tables as $table) {
-      // Check table
-      if ($result=$this->_db_query($this->_db_makeQuery(120, $table))) {
-        if ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {
-          if (!isset($data['Msg_text']) || strtolower($data['Msg_text'])!='ok') {
-            // Repair table
-            $this->_db_query($this->_db_makeQuery(125, $table));
-          }
-        }
-        $this->_db_freeResult($result);
-      }
-      // Check overhead
-      if ($result=$this->_db_query($this->_db_makeQuery(121, $table))) {
-        if ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {
-          if (!empty($data['Data_free'])) {
-            // Optimize table
-            $this->_db_query($this->_db_makeQuery(126, $table));
-          }
-        }
-        $this->_db_freeResult($result);
-      }
+      // Optimize table
+      $this->_db_query($this->_db_makeQuery(126, $table));
     }
   }
 
