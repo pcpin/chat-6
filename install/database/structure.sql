@@ -401,19 +401,28 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$user` (
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$userdata`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$userdata` (
-  `user_id` int(11) NOT NULL default '0',
-  `homepage` char(255) NOT NULL default '',
-  `gender` enum('m','f','-') NOT NULL default '-',
-  `age` char(255) NOT NULL default '',
-  `icq` char(255) NOT NULL default '',
-  `msn` char(255) NOT NULL default '',
-  `aim` char(255) NOT NULL default '',
-  `yim` char(255) NOT NULL default '',
-  `location` char(255) NOT NULL default '',
-  `occupation` char(255) NOT NULL default '',
-  `interests` text NOT NULL,
-  PRIMARY KEY  (`user_id`)
+  `user_id` INT NOT NULL DEFAULT '0' ,
+  `field_id` INT UNSIGNED DEFAULT '0' NOT NULL ,
+  `field_value` TEXT NOT NULL ,
+INDEX ( `user_id` ) ,
+INDEX ( `field_id` )
 ) DEFAULT CHARSET=utf8 TYPE=MyISAM PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
+
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$userdata_field`; /* PCPIN6_QUERY_SEPARATOR */
+CREATE TABLE `$$$DB_PREFIX$$$userdata_field` (
+  `id` int(10) unsigned NOT NULL auto_increment,
+  `name` varchar(255) NOT NULL default '',
+  `description` text NOT NULL,
+  `default_value` text NOT NULL,
+  `custom` enum('y','n') default 'y',
+  `type` enum('number','date','string','text','url','email','choice','multichoice') NOT NULL default 'text',
+  `choices` text NOT NULL,
+  `visibility` enum('public','moderator','admin') NOT NULL default 'public',
+  `order` int(10) unsigned NOT NULL,
+  PRIMARY KEY  (`id`),
+  KEY `visibility` (`visibility`),
+  KEY `order` (`order`)
+) DEFAULT CHARSET=utf8 TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$version`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$version` (

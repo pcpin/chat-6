@@ -76,7 +76,7 @@ if (!empty($conn) && @mysql_select_db($database, $conn)) {
       $data=mysql_fetch_array($result, MYSQL_NUM);
       if (!empty($data[0])) {
         // Create userdata
-        mysql_query('INSERT INTO `'.$prefix.'userdata` ( `user_id` ) VALUES ( "'.mysql_real_escape_string($data[0]).'" )', $conn);
+        mysql_query('INSERT INTO `'.$prefix.'userdata` ( `user_id`, `field_id`, `field_value` ) SELECT "'.mysql_real_escape_string($data[0]).'", `id`, `default_value` FROM `'.$prefix.'userdata_field`', $conn);
         // Create nickname
         mysql_query('INSERT INTO `'.$prefix.'nickname` ( `user_id`,
                                                          `nickname`,

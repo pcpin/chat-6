@@ -184,6 +184,24 @@ function _pcpin_upgrade(&$__pcpin_init_class) {
           $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."language_expression` AS `le` LEFT JOIN `".PCPIN_DB_PREFIX."language` AS `la` ON `la`.`id` = `le`.`language_id` SET `le`.`value` = 'Benutzer [USER] ist zur Zeit eingeloggt' WHERE `le`.`code` = 'user_is_logged_in' AND `la`.`iso_name` = 'de'");
           $__pcpin_upgrade['session']->_db_query("UPDATE `".PCPIN_DB_PREFIX."language_expression` AS `le` LEFT JOIN `".PCPIN_DB_PREFIX."language` AS `la` ON `la`.`id` = `le`.`language_id` SET `le`.`value` = '/exitroom\nDen Raum verlassen, aber eingeloggt bleiben.' WHERE `le`.`code` = 'cmd_help_exitroom' AND `la`.`iso_name` = 'de'");
 
+          // Customizable user profile fields
+          // http://bugs.pcpin.com/view.php?id=325
+          $__pcpin_upgrade['session']->_db_query("CREATE TABLE `".PCPIN_DB_PREFIX."userdata_field` ( `id` int(10) unsigned NOT NULL auto_increment, `name` varchar(255) NOT NULL default '', `description` text NOT NULL, `default_value` text NOT NULL, `custom` enum('y','n') default 'y', `type` enum('number','date','string','text','url','email','choice','multichoice') NOT NULL default 'text', `visibility` enum('public','moderator','admin') NOT NULL default 'public', `order` int(10) unsigned NOT NULL, PRIMARY KEY  (`id`), KEY `visibility` (`visibility`), KEY `order` (`order`) ) DEFAULT CHARSET=utf8 TYPE=MyISAM PACK_KEYS=0");
+          $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."userdata_field` (`id`, `name`, `description`, `default_value`, `custom`, `type`, `choices`, `visibility`, `order`) VALUES ('1', 'homepage', '', '', 'n', 'url', '', 'public', '0'), ('2', 'gender', '', '-', 'n', 'choice', '-\nm\nf', 'public', '1'), ('3', 'age', '', '', 'n', 'number', '', 'public', '2'), ('4', 'icq', '', '', 'n', 'string', '', 'public', '3'), ('5', 'msn', '', '', 'n', 'string', '', 'public', '4'), ('6', 'aim', '', '', 'n', 'string', '', 'public', '5'), ('7', 'yim', '', '', 'n', 'string', '', 'public', '6'), ('8', 'location', '', '', 'n', 'string', '', 'public', '7'), ('9', 'occupation', '', '', 'n', 'string', '', 'public', '8'), ('10', 'interests', '', '', 'n', 'text', '', 'public', '9')");
+          $__pcpin_upgrade['session']->_db_query("CREATE TABLE `".PCPIN_DB_PREFIX."userdata_tmp` ( `user_id` INT NOT NULL DEFAULT '0' , `field_id` INT UNSIGNED DEFAULT '0' NOT NULL , `field_value` TEXT NOT NULL , INDEX ( `user_id` ) , INDEX ( `field_id` ) )");
+          $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."userdata_tmp` ( `user_id`, `field_id`, `field_value` ) SELECT `user_id`, '1', `homepage` FROM `".PCPIN_DB_PREFIX."userdata`");
+          $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."userdata_tmp` ( `user_id`, `field_id`, `field_value` ) SELECT `user_id`, '2', `gender` FROM `".PCPIN_DB_PREFIX."userdata`");
+          $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."userdata_tmp` ( `user_id`, `field_id`, `field_value` ) SELECT `user_id`, '3', `age` FROM `".PCPIN_DB_PREFIX."userdata`");
+          $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."userdata_tmp` ( `user_id`, `field_id`, `field_value` ) SELECT `user_id`, '4', `icq` FROM `".PCPIN_DB_PREFIX."userdata`");
+          $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."userdata_tmp` ( `user_id`, `field_id`, `field_value` ) SELECT `user_id`, '5', `msn` FROM `".PCPIN_DB_PREFIX."userdata`");
+          $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."userdata_tmp` ( `user_id`, `field_id`, `field_value` ) SELECT `user_id`, '6', `aim` FROM `".PCPIN_DB_PREFIX."userdata`");
+          $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."userdata_tmp` ( `user_id`, `field_id`, `field_value` ) SELECT `user_id`, '7', `yim` FROM `".PCPIN_DB_PREFIX."userdata`");
+          $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."userdata_tmp` ( `user_id`, `field_id`, `field_value` ) SELECT `user_id`, '8', `location` FROM `".PCPIN_DB_PREFIX."userdata`");
+          $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."userdata_tmp` ( `user_id`, `field_id`, `field_value` ) SELECT `user_id`, '9', `occupation` FROM `".PCPIN_DB_PREFIX."userdata`");
+          $__pcpin_upgrade['session']->_db_query("INSERT INTO `".PCPIN_DB_PREFIX."userdata_tmp` ( `user_id`, `field_id`, `field_value` ) SELECT `user_id`, '10', `interests` FROM `".PCPIN_DB_PREFIX."userdata`");
+          $__pcpin_upgrade['session']->_db_query("DROP TABLE `".PCPIN_DB_PREFIX."userdata`");
+          $__pcpin_upgrade['session']->_db_query("ALTER TABLE `".PCPIN_DB_PREFIX."userdata_tmp` RENAME `".PCPIN_DB_PREFIX."userdata`");
+
         break;
 
       }

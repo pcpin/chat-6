@@ -152,4 +152,18 @@ INSERT INTO `$$$DB_PREFIX$$$smilie` (`id`, `binaryfile_id`, `code`, `description
 (20, 54, ';)', 'Wink'),
 (21, 56, ':quiet:', 'Quiet'); /* PCPIN6_QUERY_SEPARATOR */
 
-INSERT INTO `$$$DB_PREFIX$$$version` (`version`, `version_check_key`, `last_version_check`, `new_version_available`, `new_version_url`) VALUES (6.00, '-blank-', '2007-08-15 22:45:36', 6.00, 'http://www.pcpin.com/?include=300&project=pcpin_chat#pcpin_chat_v6'); /* PCPIN6_QUERY_SEPARATOR */
+INSERT INTO `$$$DB_PREFIX$$$userdata_field`
+(`id`, `name`, `description`, `default_value`, `custom`, `type`, `choices`, `visibility`, `order`)
+VALUES
+('1', 'homepage', '', '', 'n', 'url', '', 'public', '0'),
+('2', 'gender', '', '-', 'n', 'choice', '-\nm\nf', 'public', '1'),
+('3', 'age', '', '', 'n', 'number', '', 'public', '2'),
+('4', 'icq', '', '', 'n', 'string', '', 'public', '3'),
+('5', 'msn', '', '', 'n', 'string', '', 'public', '4'),
+('6', 'aim', '', '', 'n', 'string', '', 'public', '5'),
+('7', 'yim', '', '', 'n', 'string', '', 'public', '6'),
+('8', 'location', '', '', 'n', 'string', '', 'public', '7'),
+('9', 'occupation', '', '', 'n', 'string', '', 'public', '8'),
+('10', 'interests', '', '', 'n', 'text', '', 'public', '9'); /* PCPIN6_QUERY_SEPARATOR */
+
+INSERT INTO `$$$DB_PREFIX$$$version` (`version`, `version_check_key`, `last_version_check`, `new_version_available`, `new_version_url`) VALUES (6.20, '-blank-', NOW(), 6.00, 'http://www.pcpin.com/?include=300&project=pcpin_chat#pcpin_chat_v6'); /* PCPIN6_QUERY_SEPARATOR */
