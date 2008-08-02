@@ -12,7 +12,7 @@
     </tr>
     <tr>
       <td class="text" style="text-align:center">
-        <button type="button" title="{LNG_OK}" onclick="hideAlertBox()">&nbsp;&nbsp;&nbsp;&nbsp;{LNG_OK}&nbsp;&nbsp;&nbsp;&nbsp;</button>
+        <button id="alertbox_btn" type="button" title="{LNG_OK}" onclick="hideAlertBox()">&nbsp;&nbsp;&nbsp;&nbsp;{LNG_OK}&nbsp;&nbsp;&nbsp;&nbsp;</button>
       </td>
   </table>
 </div>

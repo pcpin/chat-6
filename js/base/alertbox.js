@@ -40,6 +40,7 @@ function alert(text, top_offset, left_offset, callback) {
     if (typeof(left_offset)!='number') left_offset=0;
     $('alertbox_text').innerHTML=nl2br(htmlspecialchars(text));
     $('alertbox').style.display='';
+    $('alertbox_btn').focus();
     setTimeout("moveToCenter($('alertbox'), "+top_offset+", "+left_offset+")", 25);
     if (typeof(callback)=='string') {
       alertboxCallback=callback;

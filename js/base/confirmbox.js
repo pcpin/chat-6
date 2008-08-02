@@ -40,6 +40,7 @@ function confirm(text, top_offset, left_offset, callback) {
     if (typeof(left_offset)!='number') left_offset=0;
     $('confirmbox_text').innerHTML=nl2br(htmlspecialchars(text));
     $('confirmbox').style.display='';
+    $('confirmbox_btn_ok').focus();
     setTimeout("moveToCenter($('confirmbox'), "+top_offset+", "+left_offset+")", 25);
     if (typeof(callback)=='string') {
       confirmboxCallback=callback;

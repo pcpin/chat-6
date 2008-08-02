@@ -12,7 +12,7 @@
     </tr>
     <tr>
       <td class="text" style="text-align:center">
-        <button type="button" title="{LNG_OK}" onclick="hideConfirmBox(true)">&nbsp;&nbsp;&nbsp;&nbsp;{LNG_OK}&nbsp;&nbsp;&nbsp;&nbsp;</button>
+        <button type="button" id="confirmbox_btn_ok" title="{LNG_OK}" onclick="hideConfirmBox(true)">&nbsp;&nbsp;&nbsp;&nbsp;{LNG_OK}&nbsp;&nbsp;&nbsp;&nbsp;</button>
         &nbsp;&nbsp;&nbsp;
         <button type="button" title="{LNG_CANCEL}" onclick="hideConfirmBox(false)">&nbsp;{LNG_CANCEL}&nbsp;</button>
       </td>
