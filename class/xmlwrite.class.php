@@ -220,7 +220,9 @@ class PCPIN_XMLWrite {
       return $this->makeXML_XMLWriter();
     } else {
       // Using custom implementation
-      _pcpin_loadClass('xmlwriter_custom');
+      if (function_exists('_pcpin_loadClass')) {
+        _pcpin_loadClass('xmlwriter_custom');
+      }
       $xml=new PCPIN_XMLWriter_Custom();
       return $xml->makeXML($this);
     }
