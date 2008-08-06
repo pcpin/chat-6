@@ -53,9 +53,8 @@ function storeDbData() {
 }
 function _CALLBACK_storeDbData() {
 //debug(actionHandler.getResponseString()); return false;
-
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
+  var message=actionHandler.message;
+  var status=actionHandler.status;
 
   if (status=='0') {
     // Success

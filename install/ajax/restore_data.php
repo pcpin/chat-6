@@ -20,13 +20,6 @@
 define('PCPIN_INSTALL_MODE', true);
 require_once('../install.php');
 
-// Send headers
-header('Content-Type: text/xml; charset=UTF-8');
-header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
-header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-header('Pragma: public');
-header('Pragma: no-cache');
-
 $status=-1;
 $message='Failed to connect to database. Installation aborted.';
 $short_message='FATAL Error';
@@ -78,15 +71,20 @@ if (!empty($conn) && @mysql_select_db($database, $conn)) {
 
 }
 
+$xmlwriter->setHeaderStatus($status);
+$xmlwriter->setHeaderMessage($message);
+$xmlwriter->setData(array('short_message'=>$short_message));
 
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<status>'.htmlspecialchars($status).'</status>
-<message>'.htmlspecialchars($message).'</message>
-<short_message>'.htmlspecialchars($short_message).'</short_message>
-</pcpin_xml>';
+// Send headers
+header('Content-Type: text/xml; charset=UTF-8');
+header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
+header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+header('Pragma: no-cache');
+
+// Send XML
+echo $xmlwriter->makeXML();
+
 die();
-
 
 
 /******************************************************************************
@@ -129,18 +127,34 @@ function restoreUsers5() {
                                                      "'.mysql_real_escape_string(substr($user['color'], -6), $conn).'"
                                                     )', $conn);
         // Create userdata
-        mysql_query('INSERT INTO `'.$prefix.'userdata` ( `user_id`,
-                                                         `gender`,
-                                                         `age`,
-                                                         `location`,
-                                                         `interests`
-                                                       ) VALUES (
-                                                         "'.mysql_real_escape_string($user['id'], $conn).'",
-                                                         "'.(($user['sex']=='m' || $user['sex']=='f')? $user['sex'] : '-').'",
-                                                         "'.mysql_real_escape_string($user['age']>0? $user['age'] : '', $conn).'",
-                                                         "'.mysql_real_escape_string($user['location'], $conn).'",
-                                                         "'.mysql_real_escape_string($user['about'], $conn).'"
-                                                       )', $conn);
+        mysql_query('INSERT INTO `'.$prefix.'userdata` ( `user_id`, `field_id`, `field_value` )
+                          SELECT "'.mysql_real_escape_string($user['id'], $conn).'", 
+                                 `id`,
+                                 "'.(($user['sex']=='m' || $user['sex']=='f')? $user['sex'] : '-').'"
+                            FROM `'.$prefix.'userdata_field`
+                           WHERE `name` = "gender"',
+                    $conn);
+        mysql_query('INSERT INTO `'.$prefix.'userdata` ( `user_id`, `field_id`, `field_value` )
+                          SELECT "'.mysql_real_escape_string($user['id'], $conn).'", 
+                                 `id`,
+                                 "'.mysql_real_escape_string($user['age']>0? $user['age'] : '', $conn).'",
+                            FROM `'.$prefix.'userdata_field`
+                           WHERE `name` = "age"',
+                    $conn);
+        mysql_query('INSERT INTO `'.$prefix.'userdata` ( `user_id`, `field_id`, `field_value` )
+                          SELECT "'.mysql_real_escape_string($user['id'], $conn).'", 
+                                 `id`,
+                                 "'.mysql_real_escape_string($user['location'], $conn).'",
+                            FROM `'.$prefix.'userdata_field`
+                           WHERE `name` = "location"',
+                    $conn);
+        mysql_query('INSERT INTO `'.$prefix.'userdata` ( `user_id`, `field_id`, `field_value` )
+                          SELECT "'.mysql_real_escape_string($user['id'], $conn).'", 
+                                 `id`,
+                                 "'.mysql_real_escape_string($user['about'], $conn).'",
+                            FROM `'.$prefix.'userdata_field`
+                           WHERE `name` = "interests"',
+                    $conn);
         // Create nickname
         mysql_query('INSERT INTO `'.$prefix.'nickname` ( `user_id`,
                                                          `nickname`,
@@ -513,10 +527,5 @@ function restoreIPFilter5() {
     mysql_free_result($result);
   }
 }
-
-
-
-
-
 
 ?>

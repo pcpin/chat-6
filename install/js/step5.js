@@ -41,8 +41,8 @@ function _CALLBACK_checkPreviousInstallation() {
   $('contents_div').style.display='';
 //debug(actionHandler.getResponseString()); return false;
 
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
+  var message=actionHandler.message;
+  var status=actionHandler.status;
   var version_str=actionHandler.getCdata('version');
   var version=stringToNumber(version_str);
 

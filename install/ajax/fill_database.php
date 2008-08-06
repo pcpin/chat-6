@@ -20,14 +20,6 @@
 define('PCPIN_INSTALL_MODE', true);
 require_once('../install.php');
 
-// Send headers
-header('Content-Type: text/xml; charset=UTF-8');
-header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
-header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-header('Pragma: public');
-header('Pragma: no-cache');
-
-
 $status=-1;
 $message='Failed to connect to database. Installation aborted.';
 $short_message='FATAL Error';
@@ -60,17 +52,18 @@ if (!empty($conn) && @mysql_select_db($database, $conn)) {
   $short_message='Done';
 }
 
+$xmlwriter->setHeaderStatus($status);
+$xmlwriter->setHeaderMessage($message);
+$xmlwriter->setData(array('short_message'=>$short_message));
 
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<status>'.htmlspecialchars($status).'</status>
-<message>'.htmlspecialchars($message).'</message>
-<short_message>'.htmlspecialchars($short_message).'</short_message>
-</pcpin_xml>';
+// Send headers
+header('Content-Type: text/xml; charset=UTF-8');
+header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
+header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+header('Pragma: no-cache');
+
+// Send XML
+echo $xmlwriter->makeXML();
+
 die();
-
-
-
-
-
 ?>

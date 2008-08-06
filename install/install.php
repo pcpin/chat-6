@@ -30,9 +30,24 @@ define('PCPIN_REQUIRESMYSQL', '4.0.15');
 define('PCPIN_VERSION', PCPIN_INSTALL_VERSION);
 
 if (file_exists('./funcs.inc.php')) {
-  require('./funcs.inc.php');
+  require_once('./funcs.inc.php');
 } elseif (file_exists('../../funcs.inc.php')) {
   require_once('../../funcs.inc.php');
+}
+if (file_exists('./config/config.inc.php')) {
+  require_once('./config/config.inc.php');
+} elseif (file_exists('../../config/config.inc.php')) {
+  require_once('../../config/config.inc.php');
+}
+if (file_exists('./class/common.class.php')) {
+  require_once('./class/common.class.php');
+} elseif (file_exists('../../class/common.class.php')) {
+  require_once('../../class/common.class.php');
+}
+if (file_exists('./class/xmlwrite.class.php')) {
+  require_once('./class/xmlwrite.class.php');
+} elseif (file_exists('../../class/xmlwrite.class.php')) {
+  require_once('../../class/xmlwrite.class.php');
 }
 
 /**
@@ -72,5 +87,11 @@ function _pcpin_stripSlashesRecursive($target, $magic_quotes_sybase=false) {
   return $target;
 }
 
+// Initiate XML writer object
+$xmlwriter=new PCPIN_XMLWrite(basename(__FILE__));
+
+// Defaults
+$xmlwriter->setHeaderMessage('ACCESS_DENIED');
+$xmlwriter->setHeaderStatus(-1);
 
 ?>

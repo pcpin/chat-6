@@ -310,9 +310,9 @@ function installStep(step) {
   }
 }
 function _CALLBACK_installStep(step) {
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
-  var short_message=actionHandler.getCdata('short_message');
+  var message=actionHandler.message;
+  var status=actionHandler.status;
+  var short_message=typeof(actionHandler.data['short_message'])!='undefined'? actionHandler.data['short_message'][0] : '';
 
   $('step_'+step+'_progress'+RepeatStepCounter).innerHTML=htmlspecialchars(short_message);
 

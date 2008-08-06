@@ -20,14 +20,6 @@
 define('PCPIN_INSTALL_MODE', true);
 require_once('../install.php');
 
-// Send headers
-header('Content-Type: text/xml; charset=UTF-8');
-header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
-header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-header('Pragma: public');
-header('Pragma: no-cache');
-
-
 $status=0;
 $message='';
 
@@ -119,11 +111,17 @@ if (!empty($conn)) {
   $message="Could not connect to MySQL server:\n\n".mysql_error();
 }
 
+$xmlwriter->setHeaderStatus($status);
+$xmlwriter->setHeaderMessage($message);
 
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<message>'.htmlspecialchars($message).'</message>
-<status>'.htmlspecialchars($status).'</status>
-</pcpin_xml>';
+// Send headers
+header('Content-Type: text/xml; charset=UTF-8');
+header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
+header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+header('Pragma: no-cache');
+
+// Send XML
+echo $xmlwriter->makeXML();
+
 die();
 ?>

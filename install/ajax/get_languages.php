@@ -20,14 +20,6 @@
 define('PCPIN_INSTALL_MODE', true);
 require_once('../install.php');
 
-// Send headers
-header('Content-Type: text/xml; charset=UTF-8');
-header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
-header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-header('Pragma: public');
-header('Pragma: no-cache');
-
-
 $status=-1;
 $message='Failed to connect to database. Installation aborted.';
 $short_message='FATAL Error';
@@ -78,34 +70,24 @@ if (!empty($conn) && @mysql_select_db($database, $conn)) {
     $languages_new[$lng['name'].$lng['iso_name']]=$lng;
   }
   ksort($languages_new);
-  $languages=$languages_new;
+  $languages=array_values($languages_new);
   unset($languages_new);
   $status=0;
   $message='OK';
 }
 
+$xmlwriter->setHeaderStatus($status);
+$xmlwriter->setHeaderMessage($message);
+$xmlwriter->setData(array('language'=>$languages));
 
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<pcpin_xml>
-<status>'.htmlspecialchars($status).'</status>
-<message>'.htmlspecialchars($message).'</message>
-<languages>';
-foreach ($languages as $lng) {
-  echo '
-  <language>';
-  foreach ($lng as $key=>$val) {
-    if (is_scalar($val)) {
-      echo '
-    <'.$key.'>'.htmlspecialchars($val).'</'.$key.'>';
-    }
-  }
-  echo '
-  </language>';
-}
-echo '
-</languages>
-</pcpin_xml>';
+// Send headers
+header('Content-Type: text/xml; charset=UTF-8');
+header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
+header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+header('Pragma: no-cache');
+
+// Send XML
+echo $xmlwriter->makeXML();
+
 die();
-
-
 ?>

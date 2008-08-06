@@ -42,10 +42,9 @@ function getLanguages() {
 }
 function _CALLBACK_getLanguages() {
 //debug(actionHandler.getResponseString()); return false;
-  var message=actionHandler.getCdata('message');
-  var status=actionHandler.getCdata('status');
+  var message=actionHandler.message;
+  var status=actionHandler.status;
   var html='';
-  var languages=actionHandler.getElement('languages');
   var language=null;
   var language_nr=0;
   var name='';
@@ -55,16 +54,16 @@ function _CALLBACK_getLanguages() {
   if (status!='0') {
     alert(message);
   } else {
-    if (languages) {
-      while (null!=(language=actionHandler.getElement('language', language_nr, languages))) {
-        iso_name=actionHandler.getCdata('iso_name', 0, language);
-        name=actionHandler.getCdata('name', 0, language);
-        local_name=actionHandler.getCdata('local_name', 0, language);
-        filename=actionHandler.getCdata('filename', 0, language);
+    if (actionHandler.data['language'].length) {
+      for (language_nr=0; language_nr<actionHandler.data['language'].length; language_nr++) {
+        language=actionHandler.data['language'][language_nr];
+        iso_name=language['iso_name'][0];
+        name=language['name'][0];
+        local_name=language['local_name'][0];
+        filename=language['filename'][0];
         html+='<br /><label for="languages_chkbox_'+htmlspecialchars(iso_name)+'" title="'+htmlspecialchars(name+' ('+local_name+')')+'"><input onclick="setLanguage(this)" type="checkbox" id="languages_chkbox_'+htmlspecialchars(iso_name)+'" title="'+htmlspecialchars(name+' ('+local_name+')')+'" /> '+htmlspecialchars(name+' ('+local_name+')')+'</label>';
         window.parent.language_names[iso_name]=name+' ('+local_name+')';
         window.parent.language_files[iso_name]=filename;
-        language_nr++;
       }
     }
   }
