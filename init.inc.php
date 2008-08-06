@@ -149,7 +149,7 @@ _pcpin_loadClass('session'); $_pcpin_init_session=new PCPIN_Session($__pcpin_ini
 unset($__pcpin_init_class);
 
 // Slave mode?
-if (PCPIN_SLAVE_MODE && empty($_GET['b_id']) && empty($_GET['external_url']) && empty($_GET['load_banner']) && !defined('PCPIN_NO_SESSION')) {
+if (PCPIN_SLAVE_MODE && ( !defined('PCPIN_ADMIN_ACCESS') || !PCPIN_ADMIN_ACCESS ) && empty($_GET['b_id']) && empty($_GET['external_url']) && empty($_GET['load_banner']) && !defined('PCPIN_NO_SESSION')) {
   // Check mod file
   $_pcpin_mod_filename='./mods/slave/'.trim($_pcpin_init_session->_conf_all['slave_mode_master']).'/'.trim($_pcpin_init_session->_conf_all['slave_mode_master']).'.php';
   if (!file_exists($_pcpin_mod_filename) || !is_file($_pcpin_mod_filename) || !is_readable($_pcpin_mod_filename)) {

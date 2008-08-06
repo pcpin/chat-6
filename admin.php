@@ -16,6 +16,8 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+define('PCPIN_ADMIN_ACCESS', true);
+
 // Initialize
 require_once('./init.inc.php');
 
