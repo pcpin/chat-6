@@ -155,12 +155,6 @@ var stealthActivated=false;
 var moderatorCallWindow=null;
 
 /**
- * Flag: if TRUE, then gender icons will be displayed in userlist
- * @var boolean
- */
-var userlistGender=false;
-
-/**
  * Flag: if TRUE, then avatar thumbs will be displayed in userlist
  * @var boolean
  */
@@ -407,7 +401,6 @@ var UpdaterGetFullData=false;
  * @param   int       message_length_max      Maximum allowed message length
  * @param   string    date_format             Date format
  * @param   boolean   stealth_activated       Flag: TRUE if user is currently in "stealth" mode
- * @param   boolean   userlist_gender         Flag: if TRUE, then gender icons will be displayed in userlist
  * @param   boolean   userlist_avatar         Flag: if TRUE, then avatar thumbs will be displayed in userlist
  * @param   boolean   userlist_privileged     Flag: if TRUE, then "Admin" and "Moderator" flags will be displayed in userlist
  * @param   boolean   display_time_stamp      Flag: if TRUE, then message timestamp will be also displayed
@@ -432,7 +425,6 @@ function initChatRoom(room_id,
                       default_font_family,
                       default_font_size,
                       stealth_activated,
-                      userlist_gender,
                       userlist_avatar,
                       userlist_privileged,
                       display_time_stamp,
@@ -461,7 +453,6 @@ function initChatRoom(room_id,
     defaultFontFamily=default_font_family;
     defaultFontSize=default_font_size;
     stealthActivated=stealth_activated;
-    userlistGender=userlist_gender;
     userlistAvatar=userlist_avatar;
     userlistPrivileged=userlist_privileged;
     displayTimeStamp=!display_time_stamp; // See below
@@ -593,6 +584,34 @@ function initChatRoom(room_id,
       }
       return true;
     };
+    // Set onkeyup handler for input area (Opera Behaviour)
+    if (isOpera) {
+      MainInputTextArea.onkeyup=function(e) {
+        var kk=0;
+        if(!e) {
+          if(window.event) {
+            e=window.event;
+          }
+        }
+        if (e) {
+          if (typeof(e.keyCode)=='number') {
+            // DOM-compatible
+            kk=e.keyCode;
+          } else if(typeof(e.which)=='number') {
+            // NS4
+            kk=e.which;
+          } else if(typeof(e.charCode)=='number') {
+            // Other NS and Mozilla versions
+            kk=e.charCode;
+          }
+          if (kk==13 && !e.shiftKey) {
+            this.value='';
+            return false;
+          }
+        }
+        return true;
+      };
+    }
     // Set onmouseup handler for input area
     MainInputTextArea.onmouseup=function(e) {
       if (this.value.length>messageLengthMax) {
@@ -1074,7 +1093,6 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
                                      '1'==user['global_muted'][0],
                                      user['global_muted_until'][0],
                                      user['ip_address'][0],
-                                     user['gender'][0],
                                      user['avatar_bid'][0],
                                      '1'==user['is_admin'][0],
                                      '1'==user['is_moderator'][0],
@@ -1235,15 +1253,8 @@ function redrawUserlist() {
     // Create new row
     newRow=document.createElement('TR');
     // Get user data
-    // Gender
-    gender=records[user_id].getGender();
     urec=urec_tpl;
     urec=urec.split('[ID]').join(user_id);
-    if (userlistGender) {
-      urec=urec.split('[GENDER_ICON]').join('<img src="./pic/gender_'+gender+'_10x10.gif" alt="'+htmlspecialchars(getLng('gender')+': '+getLng('gender_'+gender))+'" title="'+htmlspecialchars(getLng('gender')+': '+getLng('gender_'+gender))+'" border="0" />');
-    } else {
-      urec=urec.split('[GENDER_ICON]').join('');
-    }
     // Avatar
     avatar_bid=records[user_id].getAvatarBID();
     if (userlistAvatar) {
