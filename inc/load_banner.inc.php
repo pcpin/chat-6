@@ -40,6 +40,7 @@ if (empty($banner_data)) {
     break;
 
     case 'c':
+      header('Content-Type: text/html; charset=UTF-8');
       header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
       if (PCPIN_CLIENT_AGENT_NAME=='IE') {
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
