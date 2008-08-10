@@ -953,6 +953,8 @@ class PCPIN_DB {
   function _db_cure() {
     $tables=$this->_db_listTables();
     foreach ($tables as $table) {
+      // Repair table
+      $this->_db_query($this->_db_makeQuery(127, $table));
       // Optimize table
       $this->_db_query($this->_db_makeQuery(126, $table));
     }
