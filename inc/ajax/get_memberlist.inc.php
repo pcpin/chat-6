@@ -27,10 +27,13 @@
  * @param   boolean   $moderators_only      Optional. If TRUE, then only moderators will be listed
  * @param   boolean   $admins_only          Optional. If TRUE, then only admins will be listed
  * @param   boolean   $not_activated_only   Optional. If TRUE, then only not activated user accounts will be listed
+ * @param   string    $user_ids             Optional. User IDs separated by comma
+ * @param   int       $load_custom_fields   Optional. If not empty, custom profile fields will be loaded
  */
 
 _pcpin_loadClass('room'); $room=new PCPIN_Room($session);
 _pcpin_loadClass('category'); $category=new PCPIN_Category($session);
+_pcpin_loadClass('userdata'); $userdata=new PCPIN_UserData($session);
 
 if (!isset($nickname) || !is_scalar($nickname)) $nickname='';
 if (!isset($sort_by)  || !pcpin_ctype_digit($sort_by)) $sort_by=0;
@@ -41,6 +44,8 @@ if (!isset($muted_only) || $current_user->is_admin!=='y') $muted_only=false;
 if (!isset($moderators_only) || $current_user->is_admin!=='y') $moderators_only=false;
 if (!isset($admins_only) || $current_user->is_admin!=='y') $admins_only=false;
 if (!isset($not_activated_only) || $current_user->is_admin!=='y') $not_activated_only=false;
+if (!isset($user_ids)) $user_ids='';
+if (!isset($load_custom_fields)) $load_custom_fields=false;
 
 $members_xml=array();
 $total_members_count=0;
@@ -52,7 +57,7 @@ if (is_object($session) && !empty($current_user->id)) {
   $nickname=trim($nickname);
 
   // Get total members (respective search query)
-  $total_members_count=$current_user->getMemberlist(true, 0, 0, 0, 0, $nickname, !empty($banned_only), !empty($muted_only), !empty($moderators_only), !empty($admins_only), !empty($not_activated_only));
+  $total_members_count=$current_user->getMemberlist(true, 0, 0, 0, 0, $nickname, !empty($banned_only), !empty($muted_only), !empty($moderators_only), !empty($admins_only), $user_ids!==''? null : !empty($not_activated_only), $user_ids);
 
   $total_pages=ceil($total_members_count/$session->_conf_all['memberlist_page_records']);
   if (empty($page) || !pcpin_ctype_digit($page)) {
@@ -63,7 +68,8 @@ if (is_object($session) && !empty($current_user->id)) {
 
   // Get memberlist
   $limitstart=$session->_conf_all['memberlist_page_records']*($page-1);
-  $members=$current_user->getMemberlist(false, $limitstart, $session->_conf_all['memberlist_page_records'], $sort_by, $sort_dir, $nickname, !empty($banned_only), !empty($muted_only), !empty($moderators_only), !empty($admins_only), !empty($not_activated_only));
+  $limitlength=$total_members_count>$session->_conf_all['memberlist_page_records']? $session->_conf_all['memberlist_page_records'] : $total_members_count;
+  $members=$current_user->getMemberlist(false, $limitstart, $session->_conf_all['memberlist_page_records'], $sort_by, $sort_dir, $nickname, !empty($banned_only), !empty($muted_only), !empty($moderators_only), !empty($admins_only), $user_ids!==''? null : !empty($not_activated_only), $user_ids);
   $members_count=count($members);
 
   // Create XML
@@ -102,6 +108,9 @@ if (is_object($session) && !empty($current_user->id)) {
     }
     $member['moderated_category']=$moderated_categories;
     $member['moderated_room']=$moderated_rooms;
+    if (!empty($load_custom_fields)) {
+      $member['custom_field']=$userdata->getUserData($member['id']);
+    }
     $members_xml[]=$member;
   }
 }

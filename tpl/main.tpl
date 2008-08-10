@@ -50,6 +50,7 @@
 <PCPIN:TPL name="confirm_tpl" src="confirmbox.tpl" />
 <!-- prompt() box -->
 <PCPIN:TPL name="prompt_tpl" src="promptbox.tpl" />
+<div id="last_element_dummy" style="display:none;margin:0px;padding:0px;border:0px;width:1px;height:1px;"></div>
 <noscript>
   <br /><br /><br /><br /><br />
   <div style="text-align:center;width:100%;">

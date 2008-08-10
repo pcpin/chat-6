@@ -153,6 +153,11 @@
   </PCPIN:TPL>
   <tr>
     <td class="tbl_row">
+      &nbsp;<a href="{FORMLINK}?s_id={S_ID}&amp;ainc=custom_profile_fields" target="main_frame" title="{LNG_USERS} &bull; {LNG_CUSTOM_PROFILE_FIELDS}" onfocus="blur()">{LNG_CUSTOM_PROFILE_FIELDS}</a>
+    </td>
+  </tr>
+  <tr>
+    <td class="tbl_row">
       &nbsp;
     </td>
   </tr>

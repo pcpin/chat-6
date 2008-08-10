@@ -2,6 +2,7 @@
 // Collect full message data for logging
 // Used in: PCPIN_Message_Log->addLogRecord()
 $query='SELECT `me`.*,
+               COALESCE( `src_se`.`_s_ip`, "" ) AS `author_ip`,
                COALESCE( `src_cat`.`id`, 0 ) AS `category_id`,
                COALESCE( `src_cat`.`name`, "" ) AS `category_name`,
                COALESCE( `src_room`.`id`, 0 ) AS `room_id`,

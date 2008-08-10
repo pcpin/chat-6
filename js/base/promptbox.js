@@ -49,6 +49,14 @@ function prompt(text, default_value, top_offset, left_offset, callback, password
     } catch (e) {}
   }
   if (typeof(text)=='string') {
+    document.onkeyup_promptbox=document.onkeyup;
+    document.onkeyup=function(e) {
+      switch (getKC(e)) {
+        case 27:
+          hidePromptBox();
+          break;
+      }
+    };
     if (typeof(top_offset)!='number') top_offset=0;
     if (typeof(left_offset)!='number') left_offset=0;
     if (typeof(default_value)!='string') default_value='';
@@ -79,6 +87,7 @@ function prompt(text, default_value, top_offset, left_offset, callback, password
  @param   boolean   ok    TRUE, if "OK" button was clicked
  */
 function hidePromptBox(ok) {
+  document.onkeyup=document.onkeyup_promptbox;
   $('promptbox').style.display='none';
   if (typeof(ok)=='boolean' && ok) {
     promptboxValue=promptboxInputField.value;

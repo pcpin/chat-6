@@ -18,7 +18,7 @@
 
 _pcpin_loadClass('message'); $msg=new PCPIN_Message($session);
 
-if (empty($profile_user_id) || $current_user->is_admin!=='y') {
+if (empty($profile_user_id) || $profile_user_id!=$current_user->id && $current_user->is_admin!=='y') {
   $profile_user_id=$current_user->id;
 }
 if ($profile_user_id!=$current_user->id) {

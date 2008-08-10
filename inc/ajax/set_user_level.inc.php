@@ -25,7 +25,7 @@ if (!isset($level)) $level='';
 
 
 // Get client session
-if (is_object($session) && !empty($profile_user_id) && !empty($current_user->id) && $current_user->is_admin==='y') {
+if (is_object($session) && !empty($profile_user_id) && $profile_user_id!=$current_user->id && !empty($current_user->id) && $current_user->is_admin==='y') {
   if ($current_user->_db_getList('id', 'id = '.$profile_user_id, 1) && ($level==='g' || $level==='r' || $level==='a')) {
     $current_user->_db_freeList();
     $is_admin=$level==='a'? 'y' : 'n';

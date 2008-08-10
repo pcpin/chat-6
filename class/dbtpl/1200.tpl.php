@@ -12,6 +12,7 @@ $query='SELECT `ca`.`id` AS `category_id`,
                `ro`.`name` AS `room_name`,
                `ro`.`description` AS `room_description`,
                `ro`.`default_message_color`,
+               COALESCE( `ud`.`field_value`, "-" ) AS `gender`,
                IF( `ro`.`password` != "", 1, 0) AS `password_protected`,
                IF( `ro`.`password` = "" OR `curr_us`.`is_admin` = "y" OR `curr_se`.`_s_room_id` = `ro`.`id`, `ro`.`background_image`, 0) AS `background_image`,
                IF( `ro`.`password` = "" OR `curr_us`.`is_admin` = "y" OR `curr_se`.`_s_room_id` = `ro`.`id`, `bf`.`width`, 0) AS `background_image_width`,
@@ -19,7 +20,6 @@ $query='SELECT `ca`.`id` AS `category_id`,
                IF( `curr_us`.`is_admin` = "y" OR FIND_IN_SET( `ro`.`id`, `curr_us`.`moderated_rooms` ), 1, 0) AS `moderated_by_me`,
                `se`.`_s_user_id` AS `user_id`,
                IF( `curr_us`.`is_admin` = "y", `se`.`_s_ip`, "" ) AS `ip_address`,
-               `ud`.`gender` AS `gender`,
                COALESCE( `nn`.`nickname`, `us`.`login` ) AS `nickname`,
                COALESCE( `nn`.`nickname_plain`, `us`.`login` ) AS `nickname_plain`,
                COALESCE( `av`.`binaryfile_id`, `av_def`.`binaryfile_id` ) AS `avatar_bid`,
@@ -42,7 +42,8 @@ $query='SELECT `ca`.`id` AS `category_id`,
                LEFT JOIN `'.PCPIN_DB_PREFIX.'session` `se` ON (`se`.`_s_room_id` = `ro`.`id` AND (`se`.`_s_stealth_mode` = "n" OR `curr_us`.`is_admin` = "y" OR `curr_se`.`_s_room_id` != 0 AND FIND_IN_SET( `se`.`_s_room_id`, `curr_us`.`moderated_rooms` )))
                LEFT JOIN `'.PCPIN_DB_PREFIX.'nickname` `nn` ON (`nn`.`user_id` = `se`.`_s_user_id` AND `nn`.`default` = "y")
                LEFT JOIN `'.PCPIN_DB_PREFIX.'user` `us` ON `us`.`id` = `se`.`_s_user_id`
-               LEFT JOIN `'.PCPIN_DB_PREFIX.'userdata` `ud` ON `ud`.`user_id` = `us`.`id`
+               LEFT JOIN `'.PCPIN_DB_PREFIX.'userdata_field` `udf` ON `udf`.`name` = "gender" AND `udf`.`custom` = "n"
+               LEFT JOIN `'.PCPIN_DB_PREFIX.'userdata` `ud` ON `ud`.`user_id` = `us`.`id` AND `ud`.`field_id` = `udf`.`id`
                LEFT JOIN `'.PCPIN_DB_PREFIX.'avatar` `av` ON `av`.`user_id` = `us`.`id` AND `av`.`primary` = "y"
                LEFT JOIN `'.PCPIN_DB_PREFIX.'avatar` `av_def` ON `av_def`.`user_id` = 0 AND `av_def`.`primary` = "y"
                LEFT JOIN `'.PCPIN_DB_PREFIX.'binaryfile` `bf` ON `bf`.`id` = `ro`.`background_image`

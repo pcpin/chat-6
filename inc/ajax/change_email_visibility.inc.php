@@ -19,6 +19,7 @@
 if (empty($profile_user_id) || $current_user->is_admin!=='y') {
   $profile_user_id=$current_user->id;
 }
+
 if ($profile_user_id!=$current_user->id) {
   $profile_user=new PCPIN_User($session);
   $profile_user->_db_loadObj($profile_user_id);

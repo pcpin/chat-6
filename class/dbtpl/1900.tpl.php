@@ -17,13 +17,17 @@ if (!empty($argv[1])) {
   // Full data
   $select='`us`.`id` AS `id`,
             UNIX_TIMESTAMP( `us`.`joined`) AS `joined`,
+            IF( `us`.`activated` = "y", 1, 0 ) AS `activated`,
             UNIX_TIMESTAMP( `us`.`last_login`) AS `last_login`,
             `us`.`time_online` + IF( `se`.`_s_id` IS NOT NULL, UNIX_TIMESTAMP() - UNIX_TIMESTAMP( `se`.`_s_created` ), 0 ) AS `time_online`,
             IF( `curr_us`.`is_admin` = "y", `se`.`_s_ip`, "" ) AS `ip_address`,
+            IF( `curr_us`.`id` = `us`.`id` OR `curr_us`.`is_admin` = "y", `us`.`login`, "" ) AS `login`,
+            IF( `curr_us`.`id` = `us`.`id` OR `curr_us`.`is_admin` = "y", `us`.`muted_users`, "" ) AS `muted_users`,
             COALESCE( `se`.`_s_online_status`, 0 ) AS `online_status`,
             COALESCE( `se`.`_s_online_status_message`, "" ) AS `online_status_message`,
             COALESCE( `nn`.`nickname`, `us`.`login` ) AS `nickname`,
             COALESCE( `nn`.`nickname_plain`, `us`.`login` ) AS `nickname_plain`,
+            `us`.`hide_email` AS `hide_email`,
             IF( `us`.`hide_email` = "0" OR `curr_us`.`is_admin` = "y", `us`.`email`, "" ) AS `email`,
             IF( `us`.`is_admin` = "y", 1, 0 ) AS `is_admin`,
             IF( `us`.`moderated_rooms` != "" OR `us`.`moderated_categories` != "", 1, 0 ) AS `is_moderator`,
@@ -41,8 +45,8 @@ if (!empty($argv[1])) {
             `us`.`ban_reason` AS `ban_reason`,
             IF( `curr_us`.`is_admin` = "y", `us`.`banned_by`, "" ) AS `banned_by`,
             IF( `curr_us`.`is_admin` = "y", `us`.`banned_by_username`, "" ) AS `banned_by_username`,
-            `ud`.`gender` AS `gender`,
-            IF( `us`.`is_guest` = "y", 1, 0 ) AS `is_guest`
+            IF( `us`.`is_guest` = "y", 1, 0 ) AS `is_guest`,
+            IF( `se`.`_s_backend` = "n" AND `curr_se`.`_s_room_id` != "0" AND `se`.`_s_room_id` != `curr_se`.`_s_room_id`, "1", "0" ) AS `invitable`
             ';
   $groupby=' GROUP BY `us`.`id` ';
 }
@@ -112,21 +116,27 @@ if (isset($argv[11]) && true===$argv[11]) {
   // Moderators only
   $where.=' AND `us`.`is_admin` = "y"';
 }
-if (isset($argv[12]) && true===$argv[12]) {
-  // Not activated only
-  $where.=' AND `us`.`activated` = "n"';
-} else {
-  // Activated only
-  $where.=' AND `us`.`activated` = "y"';
+if (isset($argv[12])) {
+  if (true===$argv[12]) {
+    // Not activated only
+    $where.=' AND `us`.`activated` = "n"';
+  } else {
+    // Activated only
+    $where.=' AND `us`.`activated` = "y"';
+  }
+}
+if (isset($argv[13]) && $argv[13]!='') {
+  $this->_db_prepareList($argv[13]);
+  $where.=' AND `us`.`id` IN( \\_ARG13_\\ )';
 }
 $query='SELECT '.$select.'
           FROM `'.PCPIN_DB_PREFIX.'user` `us`
                LEFT JOIN `'.PCPIN_DB_PREFIX.'nickname` `nn` ON (`nn`.`user_id` = `us`.`id` AND `nn`.`default` = "y")
                LEFT JOIN `'.PCPIN_DB_PREFIX.'user` `curr_us` ON `curr_us`.`id` = BINARY "\\_ARG7_\\"
+               LEFT JOIN `'.PCPIN_DB_PREFIX.'session` `curr_se` ON `curr_se`.`_s_user_id` = `curr_us`.`id`
                LEFT JOIN `'.PCPIN_DB_PREFIX.'session` `se` ON `se`.`_s_user_id` = `us`.`id`
                LEFT JOIN `'.PCPIN_DB_PREFIX.'avatar` `av` ON `av`.`user_id` = `us`.`id` AND `av`.`primary` = "y"
                LEFT JOIN `'.PCPIN_DB_PREFIX.'avatar` `av_def` ON `av_def`.`user_id` = 0 AND `av_def`.`primary` = "y"
-               LEFT JOIN `'.PCPIN_DB_PREFIX.'userdata` `ud` ON `ud`.`user_id` = `us`.`id`
          WHERE 1
                '.$where.'
                '.$groupby.'

@@ -26,7 +26,6 @@ unset($_pcpin_init_session);
 
 
 _pcpin_loadClass('user'); $current_user=new PCPIN_User($session);
-_pcpin_loadClass('userdata'); $current_userdata=new PCPIN_UserData($session);
 
 
 // Slave mode: need login?
@@ -41,7 +40,6 @@ $current_nickname='';
 $current_room_name='';
 if (!empty($session->_s_user_id)) {
   $current_user->_db_loadObj($session->_s_user_id);
-  $current_userdata->_db_loadObj($current_user->id, 'user_id');
   if (!empty($session->_s_room_id) && $current_user->moderated_rooms!='') {
     $_is_moderator=false!==strpos(','.$current_user->moderated_rooms.',', ','.$session->_s_room_id.',');
   }
@@ -229,9 +227,18 @@ if (empty($session->_s_user_id)) {
     break;
 
     case 'profile_main':
-    default :
-      // User profile page
+      // User profile page: frameset
       require_once('./inc/profile_main.inc.php');
+    break;
+
+    case 'profile_main_navigation':
+      // User profile page: navigation frame
+      require_once('./inc/profile_main_navigation.inc.php');
+    break;
+
+    case 'profile_main_contents':
+      // User profile page: contents frame
+      require_once('./inc/profile_main_contents.inc.php');
     break;
 
     case 'profile_public':

@@ -36,12 +36,20 @@ function confirm(text, top_offset, left_offset, callback) {
     } catch (e) {}
   }
   if (typeof(text)=='string') {
+    document.onkeyup_confirmbox=document.onkeyup;
+    document.onkeyup=function(e) {
+      switch (getKC(e)) {
+        case 27:
+          hideConfirmBox(false);
+          break;
+      }
+    };
     if (typeof(top_offset)!='number') top_offset=0;
     if (typeof(left_offset)!='number') left_offset=0;
     $('confirmbox_text').innerHTML=nl2br(htmlspecialchars(text));
     $('confirmbox').style.display='';
     $('confirmbox_btn_ok').focus();
-    setTimeout("moveToCenter($('confirmbox'), "+top_offset+", "+left_offset+")", 25);
+    setTimeout("moveToCenter($('confirmbox'), "+top_offset+", "+left_offset+"); $('confirmbox_btn_ok').focus();", 25);
     if (typeof(callback)=='string') {
       confirmboxCallback=callback;
     } else {
@@ -56,6 +64,7 @@ function confirm(text, top_offset, left_offset, callback) {
  @param   boolean   ok    TRUE, if "OK" button was clicked
  */
 function hideConfirmBox(ok) {
+  document.onkeyup=document.onkeyup_confirmbox;
   $('confirmbox').style.display='none';
   if (typeof(ok)=='boolean' && ok && confirmboxCallback!='') {
     eval('try { '+confirmboxCallback+' } catch(e) {}');

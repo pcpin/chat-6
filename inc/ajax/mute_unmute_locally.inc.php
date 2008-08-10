@@ -19,17 +19,34 @@
 if (!isset($target_user_id) || !is_scalar($target_user_id)) {
   $target_user_id=0;
 }
-
 if (!isset($action)) {
   $action=0;
 }
+if (empty($post_control_message)) {
+  $post_control_message=false;
+}
 
-if (!empty($current_user->id)) {
+if (empty($profile_user_id) || $profile_user_id!=$current_user->id && $current_user->is_admin!=='y') {
+  $profile_user_id=$current_user->id;
+}
+
+if ($profile_user_id!=$current_user->id) {
+  $action_user=new PCPIN_User($session);
+  $action_user->_db_loadObj($profile_user_id);
+} else {
+  $action_user=&$current_user;
+}
+
+if (!empty($action_user->id)) {
   $xmlwriter->setHeaderMessage('OK');
   $xmlwriter->setHeaderStatus(0);
   if (!empty($target_user_id) && ($action==1 || $action==0)) {
-    $current_user->muteUnmuteLocally($target_user_id, $action);
+    $action_user->muteUnmuteLocally($target_user_id, $action);
+    if (!empty($post_control_message)) {
+      _pcpin_loadClass('message'); $message=new PCPIN_Message($session);
+      $message->addMessage(10200, 'n', $current_user->id, $current_nickname, 0, $action_user->id, $action_user->id, '', 1, '');
+    }
   }
 }
-$xmlwriter->setData(array('muted_users'=>$current_user->muted_users));
+$xmlwriter->setData(array('muted_users'=>$action_user->muted_users));
 ?>

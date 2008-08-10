@@ -138,10 +138,11 @@ function getMemberlist(page, sort_by, sort_dir, search) {
                                                          +(($('moderators_only') && $('moderators_only').checked)? '&moderators_only=1' : '')
                                                          +(($('admins_only') && $('admins_only').checked)? '&admins_only=1' : '')
                                                          +(($('not_activated_only') && $('not_activated_only').checked)? '&not_activated_only=1' : '')
+                                                         +'&load_custom_fields=1'
                                                          );
 }
 function _CALLBACK_getMemberlist() {
-//debug(actionHandler.getResponseString());
+//debug(actionHandler.getResponseString()); return false;
   var member_nr=0;
   var members_tbl=null;
   var tr=null;
@@ -167,6 +168,7 @@ function _CALLBACK_getMemberlist() {
   var category_name='';
   var room_nr=0;
   var room_name='';
+  var gender='';
 
   if (actionHandler.status==-1) {
     // Session is invalid
@@ -185,6 +187,12 @@ function _CALLBACK_getMemberlist() {
         online_status=member['online_status'][0];
         online_status_message=member['online_status_message'][0];
         if (online_status_message=='') online_status_message=getLng('online_status_'+online_status);
+        for (var iii=0; iii<member['custom_field'].length; iii++) {
+          if (member['custom_field'][iii]['name'][0]=='gender') {
+            gender=member['custom_field'][iii]['field_value'][0];
+            break;
+          }
+        }
         UserList.addRecord(user_id,
                            member['nickname'][0],
                            online_status,
@@ -193,7 +201,7 @@ function _CALLBACK_getMemberlist() {
                            '1'==member['global_muted'][0],
                            member['global_muted_until'][0],
                            member['ip_address'][0],
-                           member['gender'][0],
+                           gender,
                            member['avatar_bid'][0],
                            '1'==member['is_admin'][0],
                            '1'==member['is_moderator'][0],
@@ -447,6 +455,7 @@ function _CALLBACK_getMemberlist() {
       if (isAdmin && !SlaveMode) {
         urec='<img src="./pic/edit_13x13.gif" alt="'+htmlspecialchars(getLng('edit_profile'))+'" title="'+htmlspecialchars(getLng('edit_profile'))+'" style="cursor:pointer" onclick="openEditProfileWindow('+htmlspecialchars(i)+'); return false;" />'
             +'&nbsp;'
+            +'<img src="./pic/delete_13x13.gif" alt="'+htmlspecialchars(getLng('delete_user'))+'" title="'+htmlspecialchars(getLng('delete_user'))+'" style="cursor:pointer" onclick="deleteUser('+htmlspecialchars(i)+'); return false;" />'
             +urec;
       }
       td.innerHTML=urec;
@@ -554,4 +563,46 @@ function _CALLBACK_getMemberlist() {
     }
   }
   toggleProgressBar(false);
+}
+
+
+/**
+ * Delete user
+ * @param   boolean   confirmed     First confirmation
+ * @param   boolean   confirmed2    Second confirmation
+ */
+function deleteUser(user_id, confirmed, confirmed2) {
+  if (isAdmin && !SlaveMode && typeof(user_id)=='number' && user_id>0 && currentUserId!=user_id) {
+    if (typeof(confirmed)!='boolean' || !confirmed) {
+      confirm(getLng('sure_delete_user'), null, null, 'deleteUser('+user_id+', true)');
+    } else if (typeof(confirmed2)!='boolean' || !confirmed2) {
+      confirm(getLng('really_sure'), null, null, 'deleteUser('+user_id+', true, true)');
+    } else {
+      toggleProgressBar(true);
+      sendData('_CALLBACK_deleteUser()',
+               formlink,
+               'POST',
+               'ajax=delete_user'
+               +'&s_id='+urlencode(s_id)
+               +'&profile_user_id='+urlencode(user_id)
+               );
+    }
+  }
+}
+function _CALLBACK_deleteUser() {
+  toggleProgressBar(false);
+  switch (actionHandler.status) {
+    case  -1:
+      // Session is invalid
+      document.location.href=formlink+'?session_timeout';
+      return false;
+    break;
+    case  0:
+      // User deleted
+      alert(actionHandler.message, null, null, "$('memberlist_search_button').click()");
+    break;
+    default:
+      alert(actionHandler.message);
+    break;
+  }
 }

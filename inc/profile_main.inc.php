@@ -19,39 +19,25 @@
 // Load colorbox
 $_load_colorbox=true;
 
-// Default: Do not context menu user options
-$_load_cm_user_options=true;
+// Default: Do not load context menu user options
+$_load_cm_user_options=false;
 
 if (empty($current_user->id) || $session->_s_user_id!=$current_user->id) {
   header('Location: '.PCPIN_FORMLINK.'?'.md5(microtime()));
   die();
 }
 
-if (empty($profile_user_id) || $current_user->is_admin!=='y') {
-  $profile_user_id=$current_user->id;
-}
-
-_pcpin_loadClass('room'); $room=new PCPIN_Room($session);
-
 // Get available languages
 $languages=array();
-if (!empty($session->_conf_all['allow_language_selection']) && $session->_s_user_id==$profile_user_id) {
+if (!empty($session->_conf_all['allow_language_selection'])) {
   $languages=$l->getLanguages(false);
 }
 
-if (isset($do_edit) && $current_user->is_admin==='y' && $current_user->_db_getList('id = '.$profile_user_id, 1)) {
-  // Load other user's profile
-  $profile_user=new PCPIN_User($session);
-  $profile_user->_db_setObject($current_user->_db_list[0]);
-  $current_user->_db_freeList();
-  $profile_userdata=new PCPIN_UserData($session);
-  $profile_userdata->_db_loadObj($profile_user->id, 'user_id');
-} else {
-  // Own profile
-  $profile_user=&$current_user;
-  $profile_userdata=&$current_userdata;
-  unset($do_edit);
+if (empty($profile_user_id)) $profile_user_id=$current_user->id;
+if ($profile_user_id!=$current_user->id && ($current_user->is_admin!=='y' || !$current_user->_db_getList('login', 'id =# '.$profile_user_id, 1))) {
+  $profile_user_id=$current_user->id;
 }
+
 
 // Display "Avatar gallery" link?
 $show_avatar_gallery_link=false;
@@ -62,32 +48,20 @@ if (!empty($session->_conf_all['avatar_gallery'])) {
       // There are more that one default avatar
       $show_avatar_gallery_link=true;
     }
+    $avatar->_db_freeList();
   }
 }
 
 $_body_onload[1000000]='initProfile('.$session->_conf_all['nickname_length_min'].','
                                      .$session->_conf_all['nickname_length_max'].','
-                                     .'\''.$profile_userdata->homepage.'\','
-                                     .'\''.$profile_userdata->gender.'\','
                                      .'\''.$session->_conf_all['default_nickname_color'].'\','
-                                     .(!empty($current_user->hide_email)? 'true' : 'false').','
                                      .$session->_conf_all['avatars_max_count'].','
                                      .$session->_conf_all['nicknames_max_count'].','
-                                     .((isset($do_edit))? 'true' : 'false').','
                                      .$profile_user_id.','
-                                     .((isset($own_profile))? 'true' : 'false').','
-                                     .($show_avatar_gallery_link? 'true' : 'false')
+                                     .($show_avatar_gallery_link? 'true' : 'false').','
+                                     .($current_user->is_admin!=='y' || $session->_conf_all['allow_language_selection']? 'true' : 'false')
                                      .')';
 
-
-// Calculate time spent online
-$online_seconds=$current_user->calculateOnlineTime($profile_user->id);
-$online_days=floor($online_seconds/86400);
-$online_seconds-=$online_days*86400;
-$online_hours=floor($online_seconds/3600);
-$online_seconds-=$online_hours*3600;
-$online_minutes=floor($online_seconds/60);
-$online_seconds-=$online_minutes*60;
 
 
 // Init template
@@ -97,91 +71,35 @@ $tpl->readTemplatesFromFile('./profile_main.tpl');
 
 // JS files
 $_js_files[]='./js/profile.js';
-$_js_files[]='./js/room_structure.js';
-$_js_files[]='./js/user.js';
+$_js_files[]='./js/context_menu_user_options.js';
 
 // JS language expressions
 $_js_lng[]='users_profile';
-$_js_lng[]='avatar';
-$_js_lng[]='delete_avatar';
-$_js_lng[]='confirm_delete_avatar';
-$_js_lng[]='confirm_delete_nickname';
-$_js_lng[]='enter_new_nickname';
-$_js_lng[]='nickname_empty_error';
-$_js_lng[]='nickname_too_short_error';
-$_js_lng[]='nickname_too_long_error';
-$_js_lng[]='delete_nickname';
-$_js_lng[]='enter_new_email_address';
-$_js_lng[]='email_invalid';
+$_js_lng[]='days';
+$_js_lng[]='hours';
+$_js_lng[]='minutes';
+$_js_lng[]='seconds';
 $_js_lng[]='enter_new_password';
 $_js_lng[]='confirm_password';
+$_js_lng[]='email_invalid';
 $_js_lng[]='passwords_not_ident';
 $_js_lng[]='password_empty';
 $_js_lng[]='password_too_short';
-$_js_lng[]='user_is_admin';
-$_js_lng[]='user_is_moderator';
-$_js_lng[]='gender';
 $_js_lng[]='gender_m';
 $_js_lng[]='gender_f';
 $_js_lng[]='gender_-';
-$_js_lng[]='select_room';
-$_js_lng[]='subcategories';
-$_js_lng[]='category_has_no_rooms';
-$_js_lng[]='chat_rooms';
-$_js_lng[]='chat_room';
-$_js_lng[]='chat_categories';
-$_js_lng[]='chat_category';
-$_js_lng[]='show_online_users';
-$_js_lng[]='hide_online_users';
-$_js_lng[]='user';
-$_js_lng[]='users';
-$_js_lng[]='rooms';
-$_js_lng[]='edit';
-$_js_lng[]='user_invited_you';
-$_js_lng[]='enter_reason';
-$_js_lng[]='optional';
-$_js_lng[]='enter_duration';
-$_js_lng[]='canceled_duration_invalid';
-$_js_lng[]='ban_canceled_ip_equals';
-$_js_lng[]='muted_locally';
-$_js_lng[]='permanently_globalmuted';
-$_js_lng[]='globalmuted_until';
-$_js_lng[]='yes';
-$_js_lng[]='no';
-$_js_lng[]='enter_your_homepage';
-$_js_lng[]='enter_your_age';
-$_js_lng[]='enter_your_icq';
-$_js_lng[]='enter_your_msn';
-$_js_lng[]='enter_your_aim';
-$_js_lng[]='enter_your_yim';
-$_js_lng[]='enter_your_location';
-$_js_lng[]='enter_your_occupation';
-$_js_lng[]='enter_your_interests';
-$_js_lng[]='create_new_room';
-$_js_lng[]='room_is_password_protected';
+$_js_lng[]='delete_avatar';
+$_js_lng[]='confirm_delete_avatar';
+$_js_lng[]='primary';
 $_js_lng[]='active';
-$_js_lng[]='your_profile';
-$_js_lng[]='profile';
-$_js_lng[]='your_nicknames';
-$_js_lng[]='nicknames';
-$_js_lng[]='your_avatars';
-$_js_lng[]='avatars';
-$_js_lng[]='guest';
-$_js_lng[]='registered';
-$_js_lng[]='admin';
+$_js_lng[]='delete_nickname';
+$_js_lng[]='edit';
+$_js_lng[]='confirm_delete_nickname';
+$_js_lng[]='sure_activate_account';
+$_js_lng[]='change_own_level_error';
 $_js_lng[]='sure_change_user_level';
 $_js_lng[]='really_sure';
-$_js_lng[]='change_own_level_error';
-$_js_lng[]='select_new_level_or_cancel';
-$_js_lng[]='delete_yourself_error';
-$_js_lng[]='sure_delete_user';
-$_js_lng[]='primary';
-$_js_lng[]='room_password';
-$_js_lng[]='sure_activate_account';
-$_js_lng[]='online_status_0';
-$_js_lng[]='online_status_1';
-$_js_lng[]='online_status_2';
-$_js_lng[]='online_status_3';
+$_js_lng[]='delete';
 
 
 // Add global vars to template
@@ -197,36 +115,8 @@ foreach ($tpl->tpl_vars_plain as $var) {
   }
 }
 
-// Add other vars
-$tpl->addVars('main', array('welcome_message'=>htmlspecialchars(str_replace('[USER]', $current_user->login, $l->g('welcome_user'))),
-                            'registration_date'=>htmlspecialchars($current_user->makeDate(PCPIN_Common::datetimeToTimestamp($profile_user->joined))),
-                            'email_address'=>htmlspecialchars($profile_user->email),
-                            'homepage'=>htmlspecialchars($profile_userdata->homepage),
-                            'homepage_urlencoded'=>urlencode($profile_userdata->homepage),
-                            'age'=>htmlspecialchars($profile_userdata->age),
-                            'icq'=>htmlspecialchars($profile_userdata->icq),
-                            'msn'=>htmlspecialchars($profile_userdata->msn),
-                            'aim'=>htmlspecialchars($profile_userdata->aim),
-                            'yim'=>htmlspecialchars($profile_userdata->yim),
-                            'location'=>htmlspecialchars($profile_userdata->location),
-                            'occupation'=>htmlspecialchars($profile_userdata->occupation),
-                            'interests'=>htmlspecialchars($profile_userdata->interests),
-                            'hide_email'=>htmlspecialchars(!empty($profile_user->hide_email)? $l->g('yes') : $l->g('no')),
-                            'online_seconds'=>htmlspecialchars($online_seconds),
-                            'profile_username_hidden'=>htmlspecialchars($profile_user->login)
-                            ));
-
-if ($current_user->is_guest=='n') {
-  $tpl->addVar('last_login', 'last_login', htmlspecialchars($profile_user->previous_login>'0000-00-00 00:00:00'? $current_user->makeDate(PCPIN_Common::datetimeToTimestamp($profile_user->previous_login)) : $l->g('never')));
-}
-
-// Show total online time
-$tpl->addVar('online_days', 'days', htmlspecialchars($online_days));
-$tpl->addVar('online_hours', 'hours', htmlspecialchars($online_hours));
-$tpl->addVar('online_minutes', 'minutes', htmlspecialchars($online_minutes));
-
-// Language selection
-if (!empty($session->_conf_all['allow_language_selection']) && $session->_s_user_id==$profile_user_id) {
+// Display language selection
+if (!empty($session->_conf_all['allow_language_selection'])) {
   $tpl->addVar('language_selection', 'display', true);
   foreach ($languages as $data) {
     $tpl->addVars('language_selection_option', array('id'=>htmlspecialchars($data['id']),
@@ -237,9 +127,4 @@ if (!empty($session->_conf_all['allow_language_selection']) && $session->_s_user
   }
 }
 
-// Display "Change password" link
-$tpl->addVar('change_password', 'display', $current_user->is_guest=='n');
-
-$template->addVar('moderator_user_options', 'display', $current_user->moderated_rooms!='' || $current_user->is_admin==='y');
-$template->addVar('admin_user_options', 'display', $current_user->is_admin==='y');
 ?>

@@ -18,7 +18,7 @@
 
 _pcpin_loadClass('avatar'); $avatar=new PCPIN_Avatar($session);
 
-if (empty($profile_user_id) || $current_user->is_admin!=='y') {
+if (empty($profile_user_id) || $profile_user_id!=$current_user->id && $current_user->is_admin!=='y') {
   $profile_user_id=$current_user->id;
 }
 if (empty($avatar_id) || !is_scalar($avatar_id)) {

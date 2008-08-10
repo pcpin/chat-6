@@ -30,7 +30,7 @@ $moderated_categories=array();
 
 // Get client session
 if (is_object($session) && !empty($profile_user_id) && !empty($current_user->id) && $current_user->is_admin==='y') {
-  if ($current_user->_db_getList('id = '.$profile_user_id, 1)) {
+  if ($current_user->_db_getList('moderated_categories,moderated_rooms', 'id = '.$profile_user_id, 1)) {
     $xmlwriter->setHeaderMessage('OK');
     $xmlwriter->setHeaderStatus(0);
     $member=$current_user->_db_list[0];
@@ -63,11 +63,6 @@ if (is_object($session) && !empty($profile_user_id) && !empty($current_user->id)
       }
       $room->_db_freeList();
     }
-    $member_xml=array('login'=>$member['login'],
-                      'is_registered'=>$member['is_guest']==='n'? 1 : 0,
-                      'is_admin'=>$member['is_admin']==='y'? 1 : 0,
-                      'activated'=>$member['activated']==='y'? 1 : 0,
-                      );
     if (!empty($moderated_categories)) {
       $member_xml['moderated_category']=$moderated_categories;
     }
@@ -79,5 +74,5 @@ if (is_object($session) && !empty($profile_user_id) && !empty($current_user->id)
     $xmlwriter->setHeaderStatus(1);
   }
 }
-$xmlwriter->setData(array('member_data'=>$member_xml));
+$xmlwriter->setData(array('moderator_data'=>$member_xml));
 ?>

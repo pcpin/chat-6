@@ -104,6 +104,12 @@ class PCPIN_Message_Log extends PCPIN_Session {
   var $author_id=0;
 
   /**
+   * Author IP. Empty value: message was created by system.
+   * @var   string
+   */
+  var $author_ip='';
+
+  /**
    * Author nickname. Empty value: message was created by system.
    * @var   string
    */
@@ -176,6 +182,7 @@ class PCPIN_Message_Log extends PCPIN_Session {
             $this->target_room_id=$data['target_room_id'];
             $this->target_room_name=$data['target_room_name'];
             $this->author_id=$data['author_id'];
+            $this->author_ip=$data['author_ip'];
             $this->author_nickname=$data['author_nickname'];
             $this->target_user_id=$data['target_user_id'];
             $this->target_user_nickname=$data['target_user_nickname'];

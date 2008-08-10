@@ -145,16 +145,32 @@ function getLeftPos(tgt_element) {
 
 /**
  * Resize window to fit the document
- * @param   int       add       Optional. If not empty, then this value will be added to window width
+ * @param   int       add           Optional. If not empty, then this value will be added to window width
+ * @param   boolean   allow_reduce  Optional. If not TRUE window height will be reduced, if needed
  */
-function resizeForDocumentHeight(add) {
-  if (typeof(add)!='number') {
-    add=0;
-  }
+function resizeForDocumentHeight(add, allow_reduce) {
+  if (typeof(add)!='number') add=0;
+  if (typeof(allow_reduce)!='boolean') allow_reduce=true;
   var used_height=getUsedHeight(document.body);
+  var resize_by=0;
   if (used_height>0) {
-    window.resizeBy(0, document.body.scrollHeight-getUsedHeight(document.body)+add+5);
+    if (allow_reduce|| used_height>getWinHeight()) {
+      resize_by=used_height-getWinHeight()+add;
+    }
   } else {
-    window.resizeBy(0, document.body.scrollHeight-winHeight+add);
+    $('last_element_dummy').style.display='';
+    used_height=getTopPos($('last_element_dummy'));
+    $('last_element_dummy').style.display='none';
+    if (allow_reduce || used_height>getWinHeight()) {
+      resize_by=used_height-getWinHeight()+add;
+    }
+  }
+  try {
+    if (resize_by+getWinHeight()>window.opener.getWinHeight()-10) {
+      resize_by=window.opener.getWinHeight()-getWinHeight()-10;
+    }
+  } catch (e) {}
+  if (resize_by>0) {
+    window.resizeBy(0, resize_by);
   }
 }

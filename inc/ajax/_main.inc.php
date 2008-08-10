@@ -26,16 +26,6 @@ $xmlwriter->setHeaderStatus(-1);
 if (!empty($ajax) && is_scalar($ajax)) {
   // AJAX request
 
-  // Send headers
-  header('Content-Type: text/xml; charset=UTF-8');
-  header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
-  if (PCPIN_CLIENT_AGENT_NAME=='IE') {
-    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-    header('Pragma: public');
-  } else {
-    header('Pragma: no-cache');
-  }
-
   switch ($ajax) {
 
     case 'add_avatar_gallery':
@@ -124,6 +114,11 @@ if (!empty($ajax) && is_scalar($ajax)) {
       require_once('./inc/ajax/create_category.inc.php');
     break;
 
+    case 'create_custom_profile_field':
+      // Create new custom profile field
+      require_once('./inc/ajax/create_custom_profile_field.inc.php');
+    break;
+
     case 'create_room':
       // Create new chat room
       require_once('./inc/ajax/create_room.inc.php');
@@ -162,6 +157,11 @@ if (!empty($ajax) && is_scalar($ajax)) {
     case 'delete_category':
       // Delete chat category
       require_once('./inc/ajax/delete_category.inc.php');
+    break;
+
+    case 'delete_custom_profile_field':
+      // Delete custom profile field
+      require_once('./inc/ajax/delete_custom_profile_field.inc.php');
     break;
 
     case 'delete_filtered_word':
@@ -262,6 +262,11 @@ if (!empty($ajax) && is_scalar($ajax)) {
       require_once('./inc/ajax/get_client_info.inc.php');
     break;
 
+    case 'get_custom_profile_fields':
+      // Get custom user profile fields
+      require_once('./inc/ajax/get_custom_profile_fields.inc.php');
+    break;
+
     case 'get_disallowed_names':
       // Get disallowed names
       require_once('./inc/ajax/get_disallowed_names.inc.php');
@@ -282,24 +287,19 @@ if (!empty($ajax) && is_scalar($ajax)) {
       require_once('./inc/ajax/get_languages.inc.php');
     break;
 
-    case 'get_member_data':
-      // Get member data
-      require_once('./inc/ajax/get_member_data.inc.php');
-    break;
-
     case 'get_memberlist':
       // Get memberlist
       require_once('./inc/ajax/get_memberlist.inc.php');
     break;
 
+    case 'get_moderator_data':
+      // Get moderator data
+      require_once('./inc/ajax/get_moderator_data.inc.php');
+    break;
+
     case 'get_nicknames':
       // Get nicknames list
       require_once('./inc/ajax/get_nicknames.inc.php');
-    break;
-
-    case 'get_public_profile_data':
-      // Get public profile information
-      require_once('./inc/ajax/get_public_profile_data.inc.php');
     break;
 
     case 'get_ping':
@@ -407,6 +407,11 @@ if (!empty($ajax) && is_scalar($ajax)) {
       require_once('./inc/ajax/set_room_selection_view.inc.php');
     break;
 
+    case 'set_user_language':
+      // Set new user language
+      require_once('./inc/ajax/set_user_language.inc.php');
+    break;
+
     case 'set_user_level':
       // Set new user level
       require_once('./inc/ajax/set_user_level.inc.php');
@@ -425,6 +430,11 @@ if (!empty($ajax) && is_scalar($ajax)) {
     case 'update_category':
       // Update category data
       require_once('./inc/ajax/update_category.inc.php');
+    break;
+
+    case 'update_custom_profile_field':
+      // Update custom profile field
+      require_once('./inc/ajax/update_custom_profile_field.inc.php');
     break;
 
     case 'update_language':
@@ -485,6 +495,12 @@ if (PCPIN_DEBUGMODE && PCPIN_LOG_TIMER) {
                                    'db'=>number_format($mysql_usage, 3, '.', '')
                                    ));
 }
+
+// Send headers
+header('Content-Type: text/xml; charset=UTF-8');
+header('Expires: '.gmdate('D, d M Y H:i:s').' GMT');
+header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+header('Pragma: no-cache');
 
 // Send XML
 echo $xmlwriter->makeXML();

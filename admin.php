@@ -209,6 +209,11 @@ if (empty($session->_s_user_id)) {
         require_once('./inc/admin/banners.inc.php');
       break;
 
+      case 'custom_profile_fields':
+        // Manage custom profile fields
+        require_once('./inc/admin/custom_profile_fields.inc.php');
+      break;
+
       case 'db_backup':
         // Backup database
         require_once('./inc/admin/db_backup.inc.php');

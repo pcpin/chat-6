@@ -16,24 +16,33 @@
  *    along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-_pcpin_loadClass('avatar'); $avatar=new PCPIN_Avatar($session);
+if (empty($set_language_id) || !is_scalar($set_language_id)) {
+  $set_language_id=$session->_s_language_id;
+}
 
 if (empty($profile_user_id) || $profile_user_id!=$current_user->id && $current_user->is_admin!=='y') {
   $profile_user_id=$current_user->id;
 }
-if (empty($avatar_id) || !is_scalar($avatar_id)) {
-  $avatar_id=0;
+
+if ($profile_user_id!=$current_user->id) {
+  $profile_user=new PCPIN_User($session);
+  $profile_user->_db_loadObj($profile_user_id);
+} else {
+  $profile_user=&$current_user;
 }
 
-if (!empty($avatar_id) && $avatar->_db_getList('id,primary', 'id = '.$avatar_id, 'user_id = '.$profile_user_id, 1)) {
-  // Avatar exists and belongs to user
+if (is_object($session) && !empty($profile_user->id)) {
   $xmlwriter->setHeaderMessage('OK');
   $xmlwriter->setHeaderStatus(0);
-  if ($avatar->_db_list[0]['primary']!='y') {
-    $avatar->setPrimaryAvatar($profile_user_id, $avatar_id);
-    _pcpin_loadClass('message'); $msg=new PCPIN_Message($session);
-    $msg->addMessage(1010, 'n', 0, '', $session->_s_room_id, 0, $profile_user_id);
+  if (!empty($session->_conf_all['allow_language_selection'])) {
+    _pcpin_loadClass('language'); $profile_language=new PCPIN_Language($session);
+    if ($set_language_id==$profile_language->checkLanguage($set_language_id)) {
+      $profile_user->language_id=$set_language_id;
+      $profile_user->_db_updateObj($profile_user->id, 'id');
+      if ($profile_user_id==$session->_s_user_id) {
+        $session->_s_updateSession($session->_s_id, true, true, $set_language_id);
+      }
+    }
   }
-  $avatar->_db_freeList();
 }
 ?>

@@ -17,27 +17,15 @@
  */
 
 
-/**
- * Delete avatar
- * @param   int   $avatar_id      Avatar ID
- */
+_pcpin_loadClass('userdata_field'); $userdata_field=new PCPIN_UserData_Field($session);
 
-if (empty($avatar_id) || !pcpin_ctype_digit($avatar_id)) {
-  $avatar_id=0;
-}
+if (!isset($field_id)) $field_id=0;
 
-if (empty($profile_user_id) || $profile_user_id!=$current_user->id && $current_user->is_admin!=='y') {
-  $profile_user_id=$current_user->id;
-}
-
-_pcpin_loadClass('avatar'); $avatar=new PCPIN_Avatar($session);
-_pcpin_loadClass('message'); $msg=new PCPIN_Message($session);
-
-if (!empty($profile_user_id) && !empty($avatar_id)) {
-  // Delete avatar
-  $avatar->deleteAvatar($profile_user_id, $avatar_id);
-  $xmlwriter->setHeaderMessage($l->g('avatar_deleted'));
+if (is_object($session) && !empty($current_user->id) && $session->_s_user_id==$current_user->id && $current_user->is_admin==='y') {
+  if (!empty($field_id)) {
+    $userdata_field->deleteField($field_id);
+  }
+  $xmlwriter->setHeaderMessage($l->g('field_deleted'));
   $xmlwriter->setHeaderStatus(0);
-  $msg->addMessage(1010, 'n', 0, '', $session->_s_room_id, 0, $profile_user_id);
 }
 ?>

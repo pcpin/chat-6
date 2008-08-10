@@ -24,7 +24,7 @@ _pcpin_loadClass('disallowed_name'); $disallowed_name=new PCPIN_Disallowed_Name(
 $nicknames_xml=array();
 $new_nickname_id=0;
 
-if (empty($profile_user_id) || $current_user->is_admin!=='y') {
+if (empty($profile_user_id) || $profile_user_id!=$current_user->id && $current_user->is_admin!=='y') {
   $profile_user_id=$current_user->id;
 }
 if (!isset($nickname_id) || !is_scalar($nickname_id)) $nickname_id=0;

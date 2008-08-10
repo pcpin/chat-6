@@ -320,10 +320,6 @@ class PCPIN_User extends PCPIN_Session {
         $result=true;
         $this->id=$this->_db_lastInsertID();
         $this_id=$this->id;
-        // Create new userdata record
-        _pcpin_loadClass('userdata'); $userdata=new PCPIN_UserData($this);
-        $userdata->user_id=$this_id;
-        $userdata->_db_insertObj();
         // Add new nickname
         _pcpin_loadClass('nickname'); $nickname=new PCPIN_Nickname($this);
         if (!$nickname->_db_getList('id', 'nickname_plain = '.$login, 1)) {
@@ -364,7 +360,7 @@ class PCPIN_User extends PCPIN_Session {
         }
         // Delete userdata
         _pcpin_loadClass('userdata'); $userdata=new PCPIN_UserData($this);
-        $userdata->_db_deleteRow($user_id, 'user_id');
+        $userdata->deleteUserData($user_id);
         // Update all users who ignored deleted user
         if ($res=$this->_db_query($this->_db_makeQuery(2050, $user_id))) {
           $this->_db_freeResult($res);
@@ -529,6 +525,7 @@ class PCPIN_User extends PCPIN_Session {
   /**
    * Start/stop ignoring user
    * @param   int       $target_user_id   User to mute/unmute
+   * @param   int       $action           1: mute or 0: unmute
    * @return  boolean   TRUE on success or FALSE on error
    */
   function muteUnmuteLocally($target_user_id, $action=-1) {
@@ -589,12 +586,42 @@ class PCPIN_User extends PCPIN_Session {
    * @param   boolean   $muted_only           Optional. If TRUE, then only muted users will be returned
    * @param   boolean   $moderators_only      Optional. If TRUE, then only moderators will be returned
    * @param   boolean   $admins_only          Optional. If TRUE, then only admins will be returned
-   * @param   boolean   $not_activated_only   Optional. If TRUE, then only not activated user accounts will be returned
+   * @param   boolean   $not_activated_only   Optional. If TRUE, then only not activated user accounts will be returned.
+   *                                                    If FALSE: only activated user accounts will be returned.
+   *                                                    If NULL: filter will be ignored.
+   * @param   string    $user_ids             Optional. User IDs, separated by comma
    * @return  mixed
    */
-  function getMemberlist($count_only=false, $limitstart=0, $limitlength=0, $sort_by=0, $sort_dir=0, $nickname='', $banned_only=false, $muted_only=false, $moderators_only=false, $admins_only=false, $not_activated_only=false) {
+  function getMemberlist(
+                         $count_only=false,
+                         $limitstart=0,
+                         $limitlength=0,
+                         $sort_by=0,
+                         $sort_dir=0,
+                         $nickname='',
+                         $banned_only=false,
+                         $muted_only=false,
+                         $moderators_only=false,
+                         $admins_only=false,
+                         $not_activated_only=false,
+                         $user_ids=''
+                         ) {
     $users=array();
-    $query=$this->_db_makeQuery(1900, $count_only, $limitstart, $limitlength, $sort_by, $sort_dir, $nickname, $this->_s_user_id, $banned_only==true, $muted_only==true, $moderators_only==true, $admins_only==true, $not_activated_only==true);
+    $query=$this->_db_makeQuery(1900, // 0
+                                $count_only, // 1
+                                $limitstart, // 2
+                                $limitlength, // 3
+                                $sort_by, // 4
+                                $sort_dir, // 5
+                                $nickname, // 6
+                                $this->_s_user_id, // 7
+                                $banned_only==true, // 8
+                                $muted_only==true, // 9
+                                $moderators_only==true, // 10
+                                $admins_only==true, // 11
+                                $not_activated_only, // 12
+                                $user_ids // 13
+                                );
     if ($result=$this->_db_query($query)) {
       if (true===$count_only) {
         $data=$this->_db_fetch($result);

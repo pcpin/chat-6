@@ -45,17 +45,24 @@ var roomSelectionDisplayType="s";
  */
 var enterChatRoomTimeOut=0;
 
+/**
+ * Flag: if TRUE, then gender icons will be displayed in userlist
+ * @var boolean
+ */
+var userlistGender=false;
+
 
 
 /**
  * Initialize room list page
  * @param   boolean   updater_interval              Updater interval in seconds
  * @param   string    room_selection_display_type   Room selection area default display type ("a": Tree, "s": Simplified)
- * @param   boolean   userlist_gender               Flag: if TRUE, then gender icons will be displayed in userlist
  * @param   boolean   userlist_avatar               Flag: if TRUE, then avatar thumbs will be displayed in userlist
  * @param   boolean   userlist_privileged           Flag: if TRUE, then "Admin" and "Moderator" flags will be displayed in userlist
+ * @param   boolean   userlist_gender               Flag: if TRUE, then "Admin" and "Moderator" flags will be displayed in userlist
  */
-function initRoomSelection(updater_interval, room_selection_display_type, userlist_gender, userlist_avatar, userlist_privileged) {
+function initRoomSelection(updater_interval, room_selection_display_type, userlist_avatar, userlist_privileged, userlist_gender) {
+  userlistGender=userlist_gender;
   // Set "onunload" handler
   window.onunload=function() {
     // Send "Page unloaded" signal to server
@@ -77,7 +84,6 @@ function initRoomSelection(updater_interval, room_selection_display_type, userli
   }
   updaterInterval=updater_interval;
   roomSelectionDisplayType=room_selection_display_type;
-  userlistGender=userlist_gender;
   userlistAvatar=userlist_avatar;
   userlistPrivileged=userlist_privileged;
   // Start updater

@@ -44,16 +44,16 @@ INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`
 (2, 'server', '{LNG_GENERAL}', 'chat_name', 'PCPIN Chat 6', 'string_255', '', '{LNG__CONF_CHAT_NAME}'),
 (3, 'security', '{LNG_EMAIL_ADDRESS}', 'email_validation_level', '1', 'int_choice', '0={LNG_NONE}|1={LNG_STANDARD}|2={LNG_STRONG}|3={LNG_PARANOID}', '{LNG__CONF_EMAIL_VALIDATION_LEVEL}'),
 (4, 'server', '{LNG_LANGUAGES}', 'default_language', '1', 'int_choice', '<languages>', '{LNG__CONF_DEFAULT_LANGUAGE}'),
-(5, 'account', '{LNG_AVATARS}', 'avatar_max_width', '100', 'int_range', '1|*', '{LNG__CONF_AVATAR_MAX_WIDTH}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
-(6, 'account', '{LNG_AVATARS}', 'avatar_max_height', '120', 'int_range', '1|*', '{LNG__CONF_AVATAR_MAX_HEIGHT}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
-(7, 'account', '{LNG_AVATARS}', 'avatar_max_filesize', '100000', 'int_range', '1|*', '{LNG__CONF_AVATAR_MAX_FILESIZE}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
+(5, 'account', '{LNG_AVATARS}', 'avatar_max_width', '100', 'int_range', '1|*', '{LNG__CONF_AVATAR_MAX_WIDTH}'),
+(6, 'account', '{LNG_AVATARS}', 'avatar_max_height', '120', 'int_range', '1|*', '{LNG__CONF_AVATAR_MAX_HEIGHT}'),
+(7, 'account', '{LNG_AVATARS}', 'avatar_max_filesize', '100000', 'int_range', '1|*', '{LNG__CONF_AVATAR_MAX_FILESIZE}'),
 (8, 'security', '{LNG_IMAGES}', 'avatar_image_types', 'image/bmp|image/gif|image/jpeg|image/pjpeg|image/png', 'string_multichoice', 'image/bmp=bmp|image/gif=gif|image/jpeg,image/pjpeg=jpeg|image/png=png', '{LNG__CONF_AVATAR_IMAGE_TYPES}'),
-(9, 'account', '{LNG_AVATARS}', 'avatars_max_count', '4', 'int_range', '0|*', '{LNG__CONF_AVATARS_MAX_COUNT}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
-(10, 'security', '{LNG_USERNAME}', 'login_length_min', '3', 'int_range', '3|30', '{LNG__CONF_LOGIN_LENGTH_MIN}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
-(11, 'security', '{LNG_USERNAME}', 'login_length_max', '12', 'int_range', '3|30', '{LNG__CONF_LOGIN_LENGTH_MAX}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
-(12, 'account', '{LNG_NICKNAMES}', 'nickname_length_min', '3', 'int_range', '3|30', '{LNG__CONF_NICKNAME_LENGTH_MIN}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
-(13, 'account', '{LNG_NICKNAMES}', 'nickname_length_max', '30', 'int_range', '3|30', '{LNG__CONF_NICKNAME_LENGTH_MAX}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
-(14, 'account', '{LNG_NICKNAMES}', 'nicknames_max_count', '5', 'int_range', '0|*', '{LNG__CONF_NICKNAMES_MAX_COUNT}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
+(9, 'account', '{LNG_AVATARS}', 'avatars_max_count', '4', 'int_range', '0|*', '{LNG__CONF_AVATARS_MAX_COUNT}'),
+(10, 'security', '{LNG_USERNAME}', 'login_length_min', '3', 'int_range', '3|30', '{LNG__CONF_LOGIN_LENGTH_MIN}'),
+(11, 'security', '{LNG_USERNAME}', 'login_length_max', '12', 'int_range', '3|30', '{LNG__CONF_LOGIN_LENGTH_MAX}'),
+(12, 'account', '{LNG_NICKNAMES}', 'nickname_length_min', '3', 'int_range', '3|30', '{LNG__CONF_NICKNAME_LENGTH_MIN}'),
+(13, 'account', '{LNG_NICKNAMES}', 'nickname_length_max', '30', 'int_range', '3|30', '{LNG__CONF_NICKNAME_LENGTH_MAX}'),
+(14, 'account', '{LNG_NICKNAMES}', 'nicknames_max_count', '5', 'int_range', '0|*', '{LNG__CONF_NICKNAMES_MAX_COUNT}'),
 (15, 'server', '{LNG_GENERAL}', 'chat_email_sender_address', 'noreply@yoursite.com', 'string_255', '<email>', '{LNG__CONF_CHAT_EMAIL_SENDER_ADDRESS}'),
 (16, 'server', '{LNG_GENERAL}', 'chat_email_sender_name', 'Chat Administrator', 'string_255', '', '{LNG__CONF_CHAT_EMAIL_SENDER_NAME}'),
 (17, 'server', '{LNG_GENERAL}', 'base_url', 'http://www.yoursite.com/index.php', 'string_255', '<url>', '{LNG__CONF_BASE_URL}'),
@@ -79,8 +79,8 @@ INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`
 (38, 'design', '{LNG_COLORS}', 'default_message_color', '330066', 'string_6', '<color>', '{LNG__CONF_DEFAULT_MESSAGE_COLOR}'),
 (39, 'chat', '{LNG_CHAT_ROOMS}', 'empty_userroom_lifetime', '300', 'int_range', '1|*', '{LNG__CONF_EMPTY_USERROOM_LIFETIME}'),
 (40, 'server', '{LNG_GENERAL}', 'date_format', 'd.m.Y H:i:s', 'string_255', '', '{LNG__CONF_DATE_FORMAT}'),
-(41, 'account', '{LNG_EMAIL_ADDRESS}', 'activate_new_emails', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ACTIVATE_NEW_EMAILS}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
-(42, 'account', '{LNG_EMAIL_ADDRESS}', 'new_email_activation_timeout', '24', 'int_range', '1|*', '{LNG__CONF_NEW_EMAIL_ACTIVATION_TIMEOUT}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
+(41, 'account', '{LNG_EMAIL_ADDRESS}', 'activate_new_emails', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ACTIVATE_NEW_EMAILS}'),
+(42, 'account', '{LNG_EMAIL_ADDRESS}', 'new_email_activation_timeout', '24', 'int_range', '1|*', '{LNG__CONF_NEW_EMAIL_ACTIVATION_TIMEOUT}'),
 (43, 'design', '{LNG_CHAT_ROOM}', 'userlist_gender_icon', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_USERLIST_GENDER_ICON}'),
 (44, 'design', '{LNG_CHAT_ROOM}', 'userlist_avatar_thumb', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_USERLIST_AVATAR_THUMB}'),
 (45, 'chat', '{LNG_FILTER}', 'bad_language_mute', '2', 'int_range', '0|*', '{LNG__CONF_BAD_LANGUAGE_MUTE}'),
@@ -89,8 +89,8 @@ INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`
 (48, 'chat', '{LNG_ATTACHMENTS}', 'msg_attachments_limit', '2', 'int_range', '0|*', '{LNG__CONF_MSG_ATTACHMENTS_LIMIT}'),
 (49, 'chat', '{LNG_ATTACHMENTS}', 'msg_attachments_maxsize', '64', 'int_range', '1|*', '{LNG__CONF_MSG_ATTACHMENTS_MAXSIZE}'),
 (50, 'account', '{LNG_USERS}', 'allow_guests', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_GUESTS}'),
-(51, 'account', '{LNG_USERS}', 'activate_new_accounts', '1', 'int_choice', '0={LNG_NO}|1={LNG_YES}: {LNG_ACTIVATION_EMAIL}|2={LNG_YES}: {LNG_ACTIVATION_BY_ADMIN}', '{LNG__CONF_ACTIVATE_NEW_ACCOUNTS}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
-(52, 'account', '{LNG_USERS}', 'new_account_activation_timeout', '24', 'int_range', '1|*', '{LNG__CONF_NEW_ACCOUNT_ACTIVATION_TIMEOUT}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
+(51, 'account', '{LNG_USERS}', 'activate_new_accounts', '1', 'int_choice', '0={LNG_NO}|1={LNG_YES}: {LNG_ACTIVATION_EMAIL}|2={LNG_YES}: {LNG_ACTIVATION_BY_ADMIN}', '{LNG__CONF_ACTIVATE_NEW_ACCOUNTS}'),
+(52, 'account', '{LNG_USERS}', 'new_account_activation_timeout', '24', 'int_range', '1|*', '{LNG__CONF_NEW_ACCOUNT_ACTIVATION_TIMEOUT}'),
 (56, 'banners', '', 'top_banner_height', '90', 'int_range', '1|*', '{LNG__CONF_TOP_BANNER_HEIGHT}'),
 (57, 'banners', '', 'bottom_banner_height', '90', 'int_range', '1|*', '{LNG__CONF_BOTTOM_BANNER_HEIGHT}'),
 (58, 'banners', '', 'banner_refresh_rate', '120', 'int_range', '1|*', '{LNG__CONF_BANNER_REFRESH_RATE}'),
@@ -103,10 +103,10 @@ INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`
 (65, 'server', '{LNG_GENERAL}', 'exit_close', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_EXIT_CLOSE}'),
 (66, 'design', '{LNG_COLORS}', 'default_room_background_color', 'ffffff', 'string_6', '<color>', '{LNG__CONF_DEFAULT_ROOM_BACKGROUND_COLOR}'),
 (67, 'chat', '{LNG_CHAT_ROOMS}', 'default_room', '0', 'int_range', '<room>', '{LNG__CONF_DEFAULT_ROOM}'),
-(68, 'account', '{LNG_USERS}', 'account_pruning', '365', 'int_range', '0|*', '{LNG__CONF_ACCOUNT_PRUNING}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
-(69, 'account', '{LNG_AVATARS}', 'avatar_gallery', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_AVATAR_GALLERY}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
+(68, 'account', '{LNG_USERS}', 'account_pruning', '365', 'int_range', '0|*', '{LNG__CONF_ACCOUNT_PRUNING}'),
+(69, 'account', '{LNG_AVATARS}', 'avatar_gallery', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_AVATAR_GALLERY}'),
 (70, 'design', '{LNG_AVATAR_GALLERY}', 'gallery_avatars_per_row', '6', 'int_range', '1|*', '{LNG__CONF_GALLERY_AVATARS_PER_ROW}'),
-(71, 'account', '{LNG_USERS}', 'new_user_notification', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_NEW_USER_NOTIFICATION}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'),
+(71, 'account', '{LNG_USERS}', 'new_user_notification', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_NEW_USER_NOTIFICATION}'),
 (72, 'server', '{LNG_SUMMARY}', 'display_startup_summary', '0', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_DISPLAY_STARTUP_SUMMARY}'),
 (73, 'server', '{LNG_SUMMARY}', 'startup_summary_height', '350', 'int_range', '10|*', '{LNG__CONF_STARTUP_SUMMARY_HEIGHT}'),
 (74, 'slave', '', 'slave_mode', '0', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ACTIVATE_SLAVE_MODE}'),
@@ -119,7 +119,7 @@ INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`
 (81, 'security', '{LNG_LOG_IN}', 'ip_failed_login_limit', '10', 'int_range', '0|*', '{LNG__CONF_IP_FAILED_LOGIN_LIMIT}'),
 (82, 'security', '{LNG_LOG_IN}', 'ip_failed_login_ban', '10', 'int_range', '1|*', '{LNG__CONF_IP_FAILED_LOGIN_BAN}'),
 (83, 'chat', '{LNG_SOUNDS}', 'allow_sounds', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_SOUNDS}',
-(84, 'account', '{LNG_USERS}', 'allow_user_registration', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_USER_REGISTRATION}\r\n{LNG_SETTING_IGNORED_IN_SLAVE_MODE}'); /* PCPIN6_QUERY_SEPARATOR */
+(84, 'account', '{LNG_USERS}', 'allow_user_registration', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_USER_REGISTRATION}'); /* PCPIN6_QUERY_SEPARATOR */
 
 INSERT INTO `$$$DB_PREFIX$$$disallowed_name` (`id`, `name`) VALUES (1, 'admin'); /* PCPIN6_QUERY_SEPARATOR */
 
@@ -153,17 +153,17 @@ INSERT INTO `$$$DB_PREFIX$$$smilie` (`id`, `binaryfile_id`, `code`, `description
 (21, 56, ':quiet:', 'Quiet'); /* PCPIN6_QUERY_SEPARATOR */
 
 INSERT INTO `$$$DB_PREFIX$$$userdata_field`
-(`id`, `name`, `description`, `default_value`, `custom`, `type`, `choices`, `visibility`, `order`)
+(`id`, `name`, `default_value`, `custom`, `type`, `choices`, `visibility`, `order`)
 VALUES
-('1', 'homepage', '', '', 'n', 'url', '', 'public', '0'),
-('2', 'gender', '', '-', 'n', 'choice', '-\nm\nf', 'public', '1'),
-('3', 'age', '', '', 'n', 'number', '', 'public', '2'),
-('4', 'icq', '', '', 'n', 'string', '', 'public', '3'),
-('5', 'msn', '', '', 'n', 'string', '', 'public', '4'),
-('6', 'aim', '', '', 'n', 'string', '', 'public', '5'),
-('7', 'yim', '', '', 'n', 'string', '', 'public', '6'),
-('8', 'location', '', '', 'n', 'string', '', 'public', '7'),
-('9', 'occupation', '', '', 'n', 'string', '', 'public', '8'),
-('10', 'interests', '', '', 'n', 'text', '', 'public', '9'); /* PCPIN6_QUERY_SEPARATOR */
+('1', 'homepage', '', 'n', 'url', '', 'public', '0'),
+('2', 'gender', '-', 'n', 'choice', '-\nm\nf', 'public', '1'),
+('3', 'age', '', 'n', 'number', '', 'public', '2'),
+('4', 'messenger_icq', '', 'n', 'string', '', 'public', '3'),
+('5', 'messenger_msn', '', 'n', 'string', '', 'public', '4'),
+('6', 'messenger_aim', '', 'n', 'string', '', 'public', '5'),
+('7', 'messenger_yim', '', 'n', 'string', '', 'public', '6'),
+('8', 'location', '', 'n', 'string', '', 'public', '7'),
+('9', 'occupation', '', 'n', 'string', '', 'public', '8'),
+('10', 'interests', '', 'n', 'text', '', 'public', '9'); /* PCPIN6_QUERY_SEPARATOR */
 
 INSERT INTO `$$$DB_PREFIX$$$version` (`version`, `version_check_key`, `last_version_check`, `new_version_available`, `new_version_url`) VALUES (6.20, '-blank-', NOW(), 6.00, 'http://www.pcpin.com/?include=300&project=pcpin_chat#pcpin_chat_v6'); /* PCPIN6_QUERY_SEPARATOR */

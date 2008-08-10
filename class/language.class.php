@@ -187,7 +187,7 @@ class PCPIN_Language extends PCPIN_Session {
    * @param   mixed     $language_id    Language ID or ISO name
    * @return  int   Language ID, if language is available or 0, if not
    */
-  function checkLanguage($id=0) {
+  function checkLanguage($id) {
     $available_id=0;
     if (!empty($id)) {
       if (   !pcpin_ctype_digit($id) && $this->_db_getList('id', 'iso_name = '.$id, 'active = y', 1)

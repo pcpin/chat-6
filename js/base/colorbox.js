@@ -63,8 +63,11 @@ var colorbox_callback_func=null;
  *                                    Opener object MUST have an ID in this case!
  * @param   boolean   show_input      Optional. If TRUE: Text input field will be also displayed in color box. Default: FALSE.
  * @param   string    initial_color   Optional. Default value for text input field
+ * @param   boolean   show_header     Optional. If TRUE: Colorbox header row will be also displayed
+ * @param   int       top             Optional. If center!=TRUE: top color box position. NULL: ignore
+ * @param   int       left            Optional. If center!=TRUE: left color box position. NULL: ignore
  */
-function openColorBox(tgt_obj_id, css_attr, openerObj, tgt_var, center, opener_css, show_input, initial_color) {
+function openColorBox(tgt_obj_id, css_attr, openerObj, tgt_var, center, opener_css, show_input, initial_color, colors_header_row, top, left) {
   var openerTop=getTopPos(openerObj);
   var openerLeft=getLeftPos(openerObj);
   var color_selection_box=$('color_selection_box');
@@ -82,6 +85,9 @@ function openColorBox(tgt_obj_id, css_attr, openerObj, tgt_var, center, opener_c
   if (typeof(center)!='boolean') {
     center=false;
   }
+  if (typeof(colors_header_row)!='boolean') {
+    colors_header_row=true;
+  }
   if (typeof(colorbox_areas)=='object' && colorbox_areas) {
     for (var i=0; i<colorbox_areas.length; i++) {
       name_=colorbox_areas[i].getAttribute('name');
@@ -94,6 +100,9 @@ function openColorBox(tgt_obj_id, css_attr, openerObj, tgt_var, center, opener_c
     color_selection_box.style.display='';
     if (center==true) {
       moveToCenter(color_selection_box);
+    } else if (typeof(top)=='number' && top>=0 && typeof(left)=='number' && left>=0) {
+      color_selection_box.style.top=top+'px';
+      color_selection_box.style.left=left+'px';
     } else {
       color_selection_box.style.top=(openerTop-color_selection_box.scrollHeight-1)+'px';
       color_selection_box.style.left=(openerLeft+1)+'px';
@@ -116,6 +125,7 @@ function openColorBox(tgt_obj_id, css_attr, openerObj, tgt_var, center, opener_c
     } else {
       $('colorbox_selected_color_input_row').style.display='none';
     }
+    $('colors_header_row').style.display=colors_header_row? '' : 'none';
     color_selection_box.style.display='none';
     setTimeout("$('color_selection_box').style.display=''", 10);
   }
@@ -135,6 +145,7 @@ function closeColorBox(color_code, keep_open) {
     }
   }
   if (clicked_color!='') {
+    colorClicked(clicked_color);
     if ($('colorbox_selected_color_input').value!=clicked_color) {
       $('colorbox_selected_color_input').value=clicked_color;
     }

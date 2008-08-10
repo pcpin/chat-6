@@ -588,9 +588,7 @@ function initChatRoom(room_id,
           return false;
         }
       }
-      if (this.value.length>messageLengthMax) {
-        this.value=this.value.substring(0, messageLengthMax);
-      }
+      this.value=this.value.substring(0, messageLengthMax);
       return true;
     };
     // Set onkeyup handler for input area (Opera Behaviour)
@@ -1263,10 +1261,10 @@ function redrawUserlist() {
     // Create new row
     newRow=document.createElement('TR');
     // Get user data
-    // Gender
     gender=records[user_id].getGender();
     urec=urec_tpl;
     urec=urec.split('[ID]').join(user_id);
+    // Gender icon
     if (userlistGender) {
       urec=urec.split('[GENDER_ICON]').join('<img src="./pic/gender_'+gender+'_10x10.gif" alt="'+htmlspecialchars(getLng('gender')+': '+getLng('gender_'+gender))+'" title="'+htmlspecialchars(getLng('gender')+': '+getLng('gender_'+gender))+'" border="0" />');
     } else {
@@ -1607,6 +1605,10 @@ function processMessage(id, type, offline, date, author_id, author_nickname, tar
           }
           redrawUserlist();
         }
+      break;
+
+      case  10200: // Reload userlist
+        UpdaterGetFullData=true;
       break;
 
     }

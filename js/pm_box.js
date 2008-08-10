@@ -100,12 +100,12 @@ function initPMBox(user_id, controls_height) {
     windowResizeTimeoutHandler=setTimeout('setAreas()', 200);
     MainInputTextArea.click();
   };
-
   // Set message history handler
   MainInputTextArea.msgHistorie=new Array();
   MainInputTextArea.msgHistoriePtr=0;
-  MainInputTextArea.addMsgHistorie=function(msg) {
-    msg=trimString(msg);
+  MainInputTextArea.gotFromHistory=false;
+  MainInputTextArea.addMsgHistorie=function() {
+    var msg=trimString(this.value);
     if (msg!='') {
       this.msgHistoriePtr=0;
       if (this.msgHistorie.length==0 || this.msgHistorie[this.msgHistorie.length-1]!=msg) {
@@ -124,12 +124,11 @@ function initPMBox(user_id, controls_height) {
       } else if (direction==-1 && this.msgHistoriePtr<0) {
         this.msgHistoriePtr=this.msgHistorie.length-1;
       }
-      return this.msgHistorie[this.msgHistoriePtr];
-    } else {
-      return this.value;
+      this.value=this.msgHistorie[this.msgHistoriePtr];
+      this.gotFromHistory=true;
     }
   }
-  // Set onkeyup handler for input area
+  // Set onkeydown handler for input area
   MainInputTextArea.onkeydown=function(e) {
     var kk=0;
     if(!e) {
@@ -143,35 +142,72 @@ function initPMBox(user_id, controls_height) {
         kk=e.keyCode;
       } else if(typeof(e.which)=='number') {
         // NS4
-        kk=e.keyCode;
+        kk=e.which;
       } else if(typeof(e.charCode)=='number') {
         // Other NS and Mozilla versions
-        kk=e.keyCode;
+        kk=e.charCode;
       }
-      if (kk==13) {
+      if (kk==13 && !e.shiftKey) {
+        // [Enter] sends a message, [Shift]+[Enter] inserts a line break
         $('mainSendMessageButton').click();
         return false;
-      } else if (kk==38) {
-        // Arrow up
-        this.value=this.fromMsgHistorie(-1);
-      } else if (kk==40) {
-        // Arrow down
-        this.value=this.fromMsgHistorie(1);
+      } else if (kk==38 && e.shiftKey) {
+        // [Shift]+[CursorUp]
+        if (trimString(this.value)!='' && !this.gotFromHistory) {
+          // Store not sent text, if non-empty and not stored yet
+          this.addMsgHistorie();
+          this.fromMsgHistorie(-1);
+        }
+        // Get value from history
+        this.fromMsgHistorie(-1);
+        return false;
+      } else if (kk==40 && e.shiftKey) {
+        // [Shift]+[CursorDown]
+        if (trimString(this.value)!='' && !this.gotFromHistory) {
+          // Store not sent text, if non-empty and not stored yet
+          this.addMsgHistorie();
+        }
+        // Get value from history
+        this.fromMsgHistorie(1);
+        return false;
       }
     }
-    if (this.value.length>opener.messageLengthMax) {
-      this.value=this.value.substring(0, opener.messageLengthMax);
-    }
+    this.value=this.value.substring(0, window.opener.messageLengthMax);
     return true;
   };
+  // Set onkeyup handler for input area (Opera Behaviour)
+  if (isOpera) {
+    MainInputTextArea.onkeyup=function(e) {
+      var kk=0;
+      if(!e) {
+        if(window.event) {
+          e=window.event;
+        }
+      }
+      if (e) {
+        if (typeof(e.keyCode)=='number') {
+          // DOM-compatible
+          kk=e.keyCode;
+        } else if(typeof(e.which)=='number') {
+          // NS4
+          kk=e.which;
+        } else if(typeof(e.charCode)=='number') {
+          // Other NS and Mozilla versions
+          kk=e.charCode;
+        }
+        if (kk==13 && !e.shiftKey) {
+          this.value='';
+          return false;
+        }
+      }
+      return true;
+    };
+  }
   // Set onmouseup handler for input area
   MainInputTextArea.onmouseup=function(e) {
-    if (this.value.length>opener.messageLengthMax) {
-      this.value=this.value.substring(0, opener.messageLengthMax);
-    }
+    this.value=this.value.substring(0, messageLengthMax);
     return false;
   }
-
   // Display fonts selection
   var fonts_list_span=$('available_fonts_list', opener.document);
   var sel=$('message_font_select');
@@ -298,37 +334,38 @@ function setAreas() {
  */
 function getUserDataPM(user_id) {
   if (typeof(user_id)=='number' && user_id>0) {
-    sendData('_CALLBACK_getUserDataPM('+user_id+')', formlink, 'POST', 'ajax=get_public_profile_data&s_id='+urlencode(s_id)+'&user_id='+urlencode(user_id));
+    sendData('_CALLBACK_getUserDataPM('+user_id+')', formlink, 'POST', 'ajax=get_memberlist&s_id='+urlencode(s_id)+'&user_ids='+urlencode(user_id)+'&load_custom_fields=1');
   }
 }
 function _CALLBACK_getUserDataPM(user_id) {
 //debug(actionHandler.getResponseString()); return false;
-  var profile_data=actionHandler.data['profile_data'][0];
-  var nickname='';
-  var avatar=null;
-  var avatar_bid=0;
-
   if (actionHandler.status==-1) {
     // Session is invalid
     window.close();
     opener.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
     return false;
   } else {
-    if (actionHandler.message=='OK') {
-      if (typeof(profile_data['avatar'])!='undefined') {
-        avatar_bid=stringToNumber(profile_data['avatar'][0]['binaryfile_id'][0]);
+    if (actionHandler.data['member'].length==0) {
+      window.close();
+    } else {
+      var profile_data=actionHandler.data['member'][0];
+      var gender='-';
+      for (var iii=0; iii<profile_data['custom_field'].length; iii++) {
+        if (profile_data['custom_field'][iii]['name'][0]=='gender') {
+          gender=profile_data['custom_field'][iii]['field_value'][0];
+          break;
+        }
       }
-      nickname=profile_data['nickname'][0];
       UserList.addRecord(user_id,
-                         nickname,
+                         profile_data['nickname'][0],
                          profile_data['online_status'][0],
                          profile_data['online_status_message'][0],
                          '1'==profile_data['muted_locally'][0],
                          '1'==profile_data['global_muted'][0],
                          profile_data['global_muted_until'][0],
                          profile_data['ip_address'][0],
-                         profile_data['gender'][0],
-                         avatar_bid
+                         gender,
+                         parseInt(profile_data['avatar_bid'][0])
                          );
     }
   }

@@ -31,64 +31,16 @@ class PCPIN_UserData extends PCPIN_Session {
   var $user_id=0;
 
   /**
-   * Homepage URL
-   * @var   string
+   * Field ID
+   * @var   int
    */
-  var $homepage='';
+  var $field_id=0;
 
   /**
-   * Gender ("m"/"f"/"-")
+   * Field value
    * @var   string
    */
-  var $gender='-';
-
-  /**
-   * Age
-   * @var   string
-   */
-  var $age='';
-
-  /**
-   * ICQ number
-   * @var   string
-   */
-  var $icq='';
-
-  /**
-   * MSN number
-   * @var   string
-   */
-  var $msn='';
-
-  /**
-   * AIM number
-   * @var   string
-   */
-  var $aim='';
-
-  /**
-   * YIM number
-   * @var   string
-   */
-  var $yim='';
-
-  /**
-   * Location
-   * @var   string
-   */
-  var $location='';
-
-  /**
-   * Occupation
-   * @var   string
-   */
-  var $occupation='';
-
-  /**
-   * Interests
-   * @var   string
-   */
-  var $interests='';
+  var $field_value='';
 
 
 
@@ -103,66 +55,68 @@ class PCPIN_UserData extends PCPIN_Session {
 
 
   /**
-   * Update userdata object and/or database row
-   * @param   int       $user_id          User ID
-   * @param   boolean   $obj              If TRUE, then object properties will be updated
-   * @param   boolean   $db               If TRUE, then database table will be updated
-   * @param   string    $gender           Gender. NULL: do not change.
-   * @param   string    $age              Age. NULL: do not change.
-   * @param   string    $icq              ICQ. NULL: do not change.
-   * @param   string    $msn              MSN. NULL: do not change.
-   * @param   string    $aim              AIM. NULL: do not change.
-   * @param   string    $yim              YIM. NULL: do not change.
-   * @param   string    $location         Location. NULL: do not change.
-   * @param   string    $occupation       Occupation. NULL: do not change.
-   * @param   string    $interests        Interests. NULL: do not change.
-   * @param   string    $homepage         Home page. NULL: do not change.
-   * @return  boolean TRUE on success or FALSE on error
+   * Add new userdata record
+   * @param   int     $user_id    User ID
+   * @param   array   $fields     Associative array with field ID as KEY and field value as VAL
    */
-  function updateUserData($user_id, $obj=false, $db=false,
-                          $gender=null,
-                          $age=null,
-                          $icq=null,
-                          $msn=null,
-                          $aim=null,
-                          $yim=null,
-                          $location=null,
-                          $occupation=null,
-                          $interests=null,
-                          $homepage=null
-                          ) {
-    $result=false;
-    if (!empty($user_id)) {
-      if (true===$obj) {
-        $result=true;
-        if (!is_null($gender)) $this->gender=$gender;
-        if (!is_null($age)) $this->age=$age;
-        if (!is_null($icq)) $this->icq=$icq;
-        if (!is_null($msn)) $this->msn=$msn;
-        if (!is_null($aim)) $this->aim=$aim;
-        if (!is_null($yim)) $this->yim=$yim;
-        if (!is_null($location)) $this->location=$location;
-        if (!is_null($occupation)) $this->occupation=$occupation;
-        if (!is_null($interests)) $this->interests=$interests;
-        if (!is_null($homepage)) $this->homepage=$homepage;
-      }
-      if (true===$db) {
-        $param=array();
-        if (!is_null($gender)) $param['gender']=$gender;
-        if (!is_null($age)) $param['age']=$age;
-        if (!is_null($icq)) $param['icq']=$icq;
-        if (!is_null($msn)) $param['msn']=$msn;
-        if (!is_null($aim)) $param['aim']=$aim;
-        if (!is_null($yim)) $param['yim']=$yim;
-        if (!is_null($location)) $param['location']=$location;
-        if (!is_null($occupation)) $param['occupation']=$occupation;
-        if (!is_null($interests)) $param['interests']=$interests;
-        if (!is_null($homepage)) $param['homepage']=$homepage;
-        $result=$this->_db_updateRow($user_id, 'user_id', $param);
+  function addNewUserData($user_id, $fields=array()) {
+    // Get available userdata fields
+    _pcpin_loadClass('userdata_field'); $userdata_field=new PCPIN_UserData_Field($this);
+    $userdata_field->_db_getList('id,default_value');
+    $list=$userdata_field->_db_list;
+    $userdata_field->_db_freeList();
+    $fields_new=array();
+    foreach ($list as $data) {
+      if (isset($fields[$data['id']])) {
+        $fields_new[$data['id']]=$fields[$data['id']];
+      } else {
+        $fields_new[$data['id']]=$data['default_value'];
       }
     }
-    return $result;
+    // Insert data rows
+    $this->user_id=$user_id;
+    foreach ($fields_new as $key=>$val) {
+      $this->field_id=$key;
+      $this->field_value=$val;
+      $this->_db_insertObj();
+    }
   }
+
+
+  /**
+   * Update userdata record
+   * @param   int       $user_id          User ID
+   */
+  function deleteUserData($user_id) {
+    if (!empty($user_id)) {
+      $this->_db_deleteRow($user_id, 'user_id', true);
+    }
+  }
+
+
+  /**
+   * Get userdata fields for specified user
+   * @param   int       $user_id          User ID
+   * @return array
+   */
+  function getUserData($user_id) {
+    $return=array();
+    if (!empty($user_id)) {
+      $query=$this->_db_makeQuery(2130, // 0
+                                  $user_id, // 1
+                                  $this->_s_language_id, // 2
+                                  $this->_s_user_id // 3
+                                  );
+      if ($result=$this->_db_query($query)) {
+        while ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {
+          $return[]=$data;
+        }
+        $this->_db_freeResult($result);
+      }
+    }
+    return $return;
+  }
+
 
 }
 ?>

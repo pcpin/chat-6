@@ -227,6 +227,7 @@ CREATE TABLE IF NOT EXISTS `$$$DB_PREFIX$$$message_log` (
   `target_room_id` int(11) NOT NULL,
   `target_room_name` char(255) NOT NULL,
   `author_id` int(11) NOT NULL,
+  `author_ip` VARCHAR( 15 ) NOT NULL default '',
   `author_nickname` char(255) NOT NULL,
   `target_user_id` int(11) NOT NULL,
   `target_user_nickname` char(255) NOT NULL,
@@ -412,16 +413,19 @@ DROP TABLE IF EXISTS `$$$DB_PREFIX$$$userdata_field`; /* PCPIN6_QUERY_SEPARATOR 
 CREATE TABLE `$$$DB_PREFIX$$$userdata_field` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
-  `description` text NOT NULL,
   `default_value` text NOT NULL,
   `custom` enum('y','n') default 'y',
-  `type` enum('number','date','string','text','url','email','choice','multichoice') NOT NULL default 'text',
+  `type` enum('string','text','url','email','choice','multichoice') NOT NULL default 'text',
   `choices` text NOT NULL,
-  `visibility` enum('public','moderator','admin') NOT NULL default 'public',
+  `visibility` enum('public','registered','moderator','admin') NOT NULL default 'public',
+  `writeable` enum('user','admin') NOT NULL default 'user',
   `order` int(10) unsigned NOT NULL,
+  `disabled` enum('n','y') NOT NULL default 'n',
   PRIMARY KEY  (`id`),
+  KEY `name` (`name`),
   KEY `visibility` (`visibility`),
-  KEY `order` (`order`)
+  KEY `order` (`order`),
+  KEY `disabled` (`disabled`)
 ) DEFAULT CHARSET=utf8 TYPE=MyISAM PACK_KEYS=0 ; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$version`; /* PCPIN6_QUERY_SEPARATOR */

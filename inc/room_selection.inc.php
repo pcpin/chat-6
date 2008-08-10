@@ -40,9 +40,9 @@ if (!empty($session->_s_room_id)) {
 
 $_body_onload[1000000]='initRoomSelection('.$session->_conf_all['updater_interval'].','
                                            .'\''.$current_user->room_selection_view.'\','
-                                           .(!empty($session->_conf_all['userlist_gender_icon'])? 'true' : 'false').','
                                            .((!empty($session->_conf_all['userlist_avatar_thumb']) && 2==PCPIN_GD_VERSION)? 'true' : 'false').','
-                                           .((!empty($session->_conf_all['userlist_privileged_flags']) && 2==PCPIN_GD_VERSION)? 'true' : 'false')
+                                           .((!empty($session->_conf_all['userlist_privileged_flags']) && 2==PCPIN_GD_VERSION)? 'true' : 'false').','
+                                           .(!empty($session->_conf_all['userlist_gender_icon'])? 'true' : 'false')
                                            .')';
 
 $_load_cm_user_options=true;

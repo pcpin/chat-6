@@ -1,4 +1,4 @@
-<table class="tbl" style="border: solid 1px #999999;" cellspacing="0" cellpadding="0">
+<table class="tbl" style="border: solid 1px #999999;width:100%;" cellspacing="0" cellpadding="0">
   <tr id="colors_header_row">
     <td style="padding:0px;margin:0px">
       <table border="0" cellspacing="0" cellpadding="0" width="100%">

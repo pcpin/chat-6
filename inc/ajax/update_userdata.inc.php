@@ -18,87 +18,54 @@
 
 /**
  * Update user data. Following variables will be used (if set)
- * @param   string    $gender       Gender
- * @param   string    $homepage     Homepage
- * @param   string    $age          Age
- * @param   string    $icq          ICQ
- * @param   string    $msn          MSN
- * @param   string    $aim          AIM
- * @param   string    $yim          YIM
- * @param   string    $location     Location
- * @param   string    $occupation   Occupation
- * @param   string    $interests    Interests
+ * @param   array     $fields       Array with field id as KEY and field value as VAL
  */
-if (empty($profile_user_id) || $current_user->is_admin!=='y') {
+if (empty($profile_user_id) || $profile_user_id!=$current_user->id && $current_user->is_admin!=='y') {
   $profile_user_id=$current_user->id;
 }
-if ($profile_user_id!=$current_user->id) {
-  $profile_userdata=new PCPIN_UserData($session);
-  $profile_userdata->_db_loadObj($profile_user_id, 'user_id');
+
+if (!empty($profile_user_id) && $current_user->_db_getList('id', 'id =# '.$profile_user_id, 1) && !empty($custom_fields) && is_array($custom_fields)) {
+  $current_user->_db_freeList();
+  _pcpin_loadClass('userdata'); $userdata=new PCPIN_UserData($session);
+  // Get current userdata
+  $userdata_current=$userdata->getUserData($profile_user_id);
+  $new_fields=array();
+  foreach ($userdata_current as $val) {
+    if (($val['writeable']=='user' || $current_user->is_admin==='y') && array_key_exists($val['id'], $custom_fields)) {
+      if ($val['type']=='multichoice') {
+        // Check values for multichoice field
+        $choices_allowed="\n".$val['choices']."\n";
+        $choices_new=$custom_fields[$val['id']]!=''? explode("\n", $custom_fields[$val['id']]) : array();
+        $choices_checked=array();
+        foreach ($choices_new as $choice) {
+          if (false!==strpos($choices_allowed, "\n".$choice."\n")) {
+            $choices_checked[]=$choice;
+          }
+        }
+        $custom_fields[$val['id']]=!empty($choices_checked)? implode("\n", $choices_checked) : '';
+      } elseif ($val['type']=='choice') {
+        // Check value for choice field
+        if (false===strpos("\n".$val['choices']."\n", "\n".$custom_fields[$val['id']]."\n")) {
+          $custom_fields[$val['id']]='';
+        }
+      } else {
+        $custom_fields[$val['id']]=trim($custom_fields[$val['id']]);
+      }
+      $new_fields[$val['id']]=$custom_fields[$val['id']];
+    } else {
+      $new_fields[$val['id']]=$val['field_value'];
+    }
+  }
+  if (!empty($new_fields)) {
+    // Delete old userdata fields
+    $userdata->deleteUserData($profile_user_id);
+    // Insert new fields
+    $userdata->addNewUserData($profile_user_id, $new_fields);
+  }
+  $xmlwriter->setHeaderMessage($l->g('changes_saved'));
+  $xmlwriter->setHeaderStatus(0);
 } else {
-  $profile_userdata=&$current_userdata;
+  $xmlwriter->setHeaderMessage($l->g('error'));
+  $xmlwriter->setHeaderStatus(1);
 }
-
-if (!empty($profile_user_id)) {
-  if (isset($gender) && is_scalar($gender)) {
-    $profile_userdata->gender=trim($gender);
-  }
-  if (isset($homepage) && is_scalar($homepage)) {
-    $profile_userdata->homepage=trim($homepage);
-  }
-  if (isset($age) && is_scalar($age)) {
-    $profile_userdata->age=trim($age);
-  }
-  if (isset($icq) && is_scalar($icq)) {
-    $profile_userdata->icq=trim($icq);
-  }
-  if (isset($msn) && is_scalar($msn)) {
-    $profile_userdata->msn=trim($msn);
-  }
-  if (isset($aim) && is_scalar($aim)) {
-    $profile_userdata->aim=trim($aim);
-  }
-  if (isset($yim) && is_scalar($yim)) {
-    $profile_userdata->yim=trim($yim);
-  }
-  if (isset($location) && is_scalar($location)) {
-    $profile_userdata->location=trim($location);
-  }
-  if (isset($occupation) && is_scalar($occupation)) {
-    $profile_userdata->occupation=trim($occupation);
-  }
-  if (isset($interests) && is_scalar($interests)) {
-    $profile_userdata->interests=trim($interests);
-  }
-  if ($profile_userdata->updateUserData($profile_user_id, true, true,
-                                        $profile_userdata->gender,
-                                        $profile_userdata->age,
-                                        $profile_userdata->icq,
-                                        $profile_userdata->msn,
-                                        $profile_userdata->aim,
-                                        $profile_userdata->yim,
-                                        $profile_userdata->location,
-                                        $profile_userdata->occupation,
-                                        $profile_userdata->interests,
-                                        $profile_userdata->homepage
-                                        )) {
-    $xmlwriter->setHeaderMessage($l->g('changes_saved'));
-    $xmlwriter->setHeaderStatus(0);
-  } else {
-    $xmlwriter->setHeaderMessage($l->g('error'));
-    $xmlwriter->setHeaderStatus(1);
-  }
-}
-$xmlwriter->setData(array('gender'=>$profile_userdata->gender,
-                          'age'=>$profile_userdata->age,
-                          'homepage'=>$profile_userdata->homepage,
-                          'icq'=>$profile_userdata->icq,
-                          'msn'=>$profile_userdata->msn,
-                          'aim'=>$profile_userdata->aim,
-                          'yim'=>$profile_userdata->yim,
-                          'location'=>$profile_userdata->location,
-                          'occupation'=>$profile_userdata->occupation,
-                          'interests'=>$profile_userdata->interests,
-                          ));
-
 ?>
