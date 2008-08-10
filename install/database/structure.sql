@@ -22,7 +22,7 @@ DROP TABLE IF EXISTS `$$$DB_PREFIX$$$version`; /* PCPIN6_QUERY_SEPARATOR */
 
 /* NEW PCPIN CHAT 6 TABLES */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$attachment`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$attachment`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$attachment` (
   `id` int(11) NOT NULL auto_increment,
   `message_id` int(11) NOT NULL default '0',
@@ -32,7 +32,7 @@ CREATE TABLE `$$$DB_PREFIX$$$attachment` (
   KEY `message_id` (`message_id`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$avatar`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$avatar`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$avatar` (
   `id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL default '0',
@@ -43,7 +43,7 @@ CREATE TABLE `$$$DB_PREFIX$$$avatar` (
   KEY `binaryfile_id` (`binaryfile_id`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$badword`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$badword`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$badword` (
   `id` int(11) NOT NULL auto_increment,
   `word` varchar(255) NOT NULL default '',
@@ -52,7 +52,7 @@ CREATE TABLE `$$$DB_PREFIX$$$badword` (
   UNIQUE KEY `word` (`word`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$banner`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$banner`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$banner` (
   `id` int(11) NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
@@ -75,7 +75,7 @@ CREATE TABLE `$$$DB_PREFIX$$$banner` (
   KEY `max_views` (`max_views`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$binaryfile`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$binaryfile`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$binaryfile` (
   `id` int(11) NOT NULL auto_increment,
   `body` longblob NOT NULL,
@@ -89,14 +89,14 @@ CREATE TABLE `$$$DB_PREFIX$$$binaryfile` (
   KEY `protected` (`protected`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$cache`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$cache`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$cache` (
   `id` char(255) NOT NULL default '',
   `contents` longblob NOT NULL,
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$category`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$category`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$category` (
   `id` int(11) NOT NULL auto_increment,
   `parent_id` int(11) NOT NULL default '0',
@@ -110,7 +110,7 @@ CREATE TABLE `$$$DB_PREFIX$$$category` (
   KEY `listpos` (`listpos`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$config`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$config`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$config` (
   `_conf_id` int(11) NOT NULL auto_increment,
   `_conf_group` enum('server','security','account','chat','design','banners','slave') NOT NULL default 'chat',
@@ -125,21 +125,21 @@ CREATE TABLE `$$$DB_PREFIX$$$config` (
   KEY `_conf_group` (`_conf_group`,`_conf_subgroup`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$disallowed_name`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$disallowed_name`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$disallowed_name` (
   `id` int(11) NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
   PRIMARY KEY  (`id`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$failed_login`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$failed_login`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$failed_login` (
   `ip` varchar(15) NOT NULL,
   `count` int(11) NOT NULL default '0',
   PRIMARY KEY  (`ip`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$invitation`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$invitation`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$invitation` (
   `id` int(11) NOT NULL auto_increment,
   `author_id` int(11) NOT NULL default '0',
@@ -153,7 +153,7 @@ CREATE TABLE `$$$DB_PREFIX$$$invitation` (
   KEY `room_id` (`room_id`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$ipfilter`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$ipfilter`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$ipfilter` (
   `id` int(11) NOT NULL auto_increment,
   `address` char(15) NOT NULL default '',
@@ -169,7 +169,7 @@ CREATE TABLE `$$$DB_PREFIX$$$ipfilter` (
   KEY `action` (`action`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$language`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$language`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$language` (
   `id` int(11) NOT NULL auto_increment,
   `iso_name` char(2) NOT NULL default '',
@@ -181,7 +181,7 @@ CREATE TABLE `$$$DB_PREFIX$$$language` (
   KEY `active` (`active`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$language_expression`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$language_expression`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$language_expression` (
   `language_id` int(11) NOT NULL default '0',
   `code` varchar(255) NOT NULL default '',
@@ -191,7 +191,7 @@ CREATE TABLE `$$$DB_PREFIX$$$language_expression` (
   KEY `code` (`code`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$message`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$message`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$message` (
   `id` int(11) NOT NULL auto_increment,
   `type` int(11) NOT NULL default '0',
@@ -213,7 +213,7 @@ CREATE TABLE `$$$DB_PREFIX$$$message` (
   KEY `target_user_id` (`target_user_id`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$message_log`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$message_log`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$message_log` (
   `message_id` int(11) NOT NULL,
   `type` int(11) NOT NULL,
@@ -247,7 +247,7 @@ CREATE TABLE `$$$DB_PREFIX$$$message_log` (
   KEY `author_ip` (`author_ip`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$message_log_attachment`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$message_log_attachment`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$message_log_attachment` (
   `message_id` int(11) NOT NULL,
   `filename` varchar(255) NOT NULL default '',
@@ -257,7 +257,7 @@ CREATE TABLE `$$$DB_PREFIX$$$message_log_attachment` (
   KEY `message_id` (`message_id`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$nickname`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$nickname`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$nickname` (
   `id` int(11) NOT NULL auto_increment,
   `user_id` int(11) NOT NULL default '0',
@@ -271,7 +271,7 @@ CREATE TABLE `$$$DB_PREFIX$$$nickname` (
   KEY `default` (`default`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$room`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$room`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$room` (
   `id` int(11) NOT NULL auto_increment,
   `type` enum('p','u') NOT NULL default 'p',
@@ -292,7 +292,7 @@ CREATE TABLE `$$$DB_PREFIX$$$room` (
   KEY `listpos` (`listpos`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$session`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$session`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$session` (
   `_s_id` char(32) NOT NULL default '',
   `_s_ip` char(15) NOT NULL default '',
@@ -326,7 +326,7 @@ CREATE TABLE `$$$DB_PREFIX$$$session` (
   KEY `_s_backend` (`_s_backend`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$smilie`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$smilie`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$smilie` (
   `id` int(11) NOT NULL auto_increment,
   `binaryfile_id` int(11) NOT NULL default '0',
@@ -336,7 +336,7 @@ CREATE TABLE `$$$DB_PREFIX$$$smilie` (
   KEY `text` (`code`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$tmpdata`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$tmpdata`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$tmpdata` (
   `id` int(11) NOT NULL auto_increment,
   `type` int(11) NOT NULL default '0',
@@ -349,7 +349,7 @@ CREATE TABLE `$$$DB_PREFIX$$$tmpdata` (
   KEY `binaryfile_id` (`binaryfile_id`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$user`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$user`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$user` (
   `id` int(11) NOT NULL auto_increment,
   `login` varchar(30) NOT NULL default '',
@@ -402,7 +402,7 @@ CREATE TABLE `$$$DB_PREFIX$$$user` (
   KEY `global_muted` (`global_muted_until`,`global_muted_permanently`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$userdata`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$userdata`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$userdata` (
   `user_id` int(11) NOT NULL default '0',
   `field_id` int(10) unsigned NOT NULL default '0',
@@ -411,7 +411,7 @@ CREATE TABLE `$$$DB_PREFIX$$$userdata` (
   KEY `field_id` (`field_id`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$userdata_field`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$userdata_field`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$userdata_field` (
   `id` int(10) unsigned NOT NULL auto_increment,
   `name` varchar(255) NOT NULL default '',
@@ -430,7 +430,7 @@ CREATE TABLE `$$$DB_PREFIX$$$userdata_field` (
   KEY `disabled` (`disabled`)
 ) TYPE=MyISAM DEFAULT CHARSET=utf8 PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
-DROP TABLE IF EXISTS `$$$DB_PREFIX$$$version`;
+DROP TABLE IF EXISTS `$$$DB_PREFIX$$$version`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$version` (
   `version` decimal(3,2) NOT NULL default '0.00',
   `version_check_key` char(32) NOT NULL default '',
