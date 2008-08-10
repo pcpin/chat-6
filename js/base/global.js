@@ -1288,21 +1288,40 @@ function processAbuses(abuses) {
 
 /**
  * Display enlarged avatar image
- * @param   int   avatar_bid    User avatar image Binaryfile ID
+ * @param   object    src_obj       Event source object
+ * @param   int       avatar_bid    User avatar image Binaryfile ID
  */
-function showUserlistAvatarThumb(avatar_bid) {
+function showUserlistAvatarThumb(src_obj, avatar_bid) {
   var avatar_hover_thumbnail_img=$('avatar_hover_thumbnail_img');
   var width=85;
   var height=120;
-  if (avatar_hover_thumbnail_img) {
+  var src_top=0;
+  var src_bottom=0;
+  var src_left=0;
+  var src_right=0;
+  var tolerance=10;
+  if (src_obj && avatar_hover_thumbnail_img) {
+    src_top=getTopPos(src_obj);
+    src_bottom=src_top+src_obj.height;
+    src_left=getLeftPos(src_obj);
+    src_right=src_left+src_obj.width;
     avatar_hover_thumbnail_img.src=formlink+'?b_x='+height+'&b_y='+width+'&b_id='+urlencode(avatar_bid)+'&s_id='+urlencode(s_id);
     avatar_hover_thumbnail_img.style.width=width+'px';
     avatar_hover_thumbnail_img.style.height=height+'px';
+    avatar_hover_thumbnail_img.min_top=src_top-tolerance;
+    avatar_hover_thumbnail_img.max_top=src_bottom+tolerance;
+    avatar_hover_thumbnail_img.min_left=src_left-tolerance;
+    avatar_hover_thumbnail_img.max_left=src_right+tolerance;
     avatar_hover_thumbnail_img.onload=function() {
       MouseMoveFuncObj=avatar_hover_thumbnail_img;
       MouseMoveFunc=function () {
-        MouseMoveFuncObj.style.top=(mouseY+3)+'px';
-        MouseMoveFuncObj.style.left=(mouseX+3)+'px';
+        if (   mouseX>=MouseMoveFuncObj.min_left && mouseX<=MouseMoveFuncObj.max_left
+            && mouseY>=MouseMoveFuncObj.min_top && mouseY<=MouseMoveFuncObj.max_top) {
+          MouseMoveFuncObj.style.top=(mouseY+3)+'px';
+          MouseMoveFuncObj.style.left=(mouseX+3)+'px';
+        } else {
+          hideUserlistAvatarThumb();
+        }
       }
       this.style.display='';
       MouseMoveFunc();
