@@ -251,6 +251,7 @@ function stringToNumber(str) {
   if (typeof(str)=='string') {
     var result=0;
     var reg=new RegExp(/^[+-]*([0-9]+(\.)?[0-9]*)|([0-9]*(\.)?[0-9]+)$/);
+    str=trimString(str);
     if (null!=str.match(reg)) {
       try {
         eval('result='+str+';');
@@ -262,6 +263,8 @@ function stringToNumber(str) {
   } else if (typeof(str)=='number') {
     // It is number
     return !isNaN(str)? str : 0;
+  } else {
+    return 0;
   }
 }
 
