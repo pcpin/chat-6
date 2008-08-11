@@ -110,6 +110,24 @@ class PCPIN_Session extends PCPIN_Config {
   var $_s_last_message_id=0;
 
   /**
+   * Time of last message sent by session owner (MySQL DATETIME)
+   * @var   string
+   */
+  var $_s_last_sent_message_time='';
+
+  /**
+   * MD5 hash of last message sent by session owner
+   * @var   string
+   */
+  var $_s_last_sent_message_hash='';
+
+  /**
+   * If last message sent by session owner was repeated: repeats count
+   * @var   int
+   */
+  var $_s_last_sent_message_repeats_count=0;
+
+  /**
    * Flag: 'y' if session owner was kicked, 'n' otherwise
    * @var   string
    */
@@ -404,6 +422,9 @@ class PCPIN_Session extends PCPIN_Config {
         $this->_s_room_id=0;
         $this->_s_room_date='';
         $this->_s_last_message_id=$last_message_id;
+        $this->_s_last_sent_message_time='0000-00-00 00:00:00';
+        $this->_s_last_sent_message_hash='';
+        $this->_s_last_sent_message_repeats_count=0;
         $this->_s_online_status=1;
         $this->_s_online_status_message='';
         $this->_s_kicked='n';
@@ -440,6 +461,8 @@ class PCPIN_Session extends PCPIN_Config {
    * @param   string    $online_status_message    Online status message. NULL: do not change.
    * @param   string    $stealth_mode             "Stealth" flag. NULL: do not change.
    * @param   string    $page_unloaded            "Page unloaded" flag. NULL: do not change.
+   * @param   string    $last_sent_message_time   Time of the last message sent by session owner in MySQL DATETIME format. NULL: do not change.
+   * @param   string    $last_sent_message_hash   MD5 hash of the last message sent by session owner. NULL: do not change.
    * @return  boolean TRUE on success or FALSE on error
    */
   function _s_updateSession($s_id, $obj=false, $db=false,
@@ -455,7 +478,10 @@ class PCPIN_Session extends PCPIN_Config {
                             $online_status=null,
                             $online_status_message=null,
                             $stealth_mode=null,
-                            $page_unloaded=null
+                            $page_unloaded=null,
+                            $last_sent_message_time=null,
+                            $last_sent_message_hash=null,
+                            $last_sent_message_repeats_count=null
                             ) {
     $result=false;
     if ($s_id!='') {
@@ -474,6 +500,9 @@ class PCPIN_Session extends PCPIN_Config {
         if (!is_null($online_status_message)) $this->_s_online_status_message=$online_status_message;
         if (!is_null($stealth_mode)) $this->_s_stealth_mode=$stealth_mode;
         if (!is_null($page_unloaded)) $this->_s_page_unloaded=$page_unloaded;
+        if (!is_null($last_sent_message_time)) $this->_s_last_sent_message_time=$last_sent_message_time;
+        if (!is_null($last_sent_message_hash)) $this->_s_last_sent_message_hash=$last_sent_message_hash;
+        if (!is_null($last_sent_message_repeats_count)) $this->_s_last_sent_message_repeats_count=$last_sent_message_repeats_count;
       }
       if (true===$db) {
         $param=array();
@@ -490,6 +519,9 @@ class PCPIN_Session extends PCPIN_Config {
         if (!is_null($online_status_message)) $param['_s_online_status_message']=$online_status_message;
         if (!is_null($stealth_mode)) $param['_s_stealth_mode']=$stealth_mode;
         if (!is_null($page_unloaded)) $param['_s_page_unloaded']=$page_unloaded;
+        if (!is_null($last_sent_message_time)) $param['_s_last_sent_message_time']=$last_sent_message_time;
+        if (!is_null($last_sent_message_hash)) $param['_s_last_sent_message_hash']=$last_sent_message_hash;
+        if (!is_null($last_sent_message_repeats_count)) $param['_s_last_sent_message_repeats_count']=$last_sent_message_repeats_count;
         $result=$this->_db_updateRow($s_id, '_s_id', $param);
       }
     }

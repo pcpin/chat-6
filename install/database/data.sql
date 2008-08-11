@@ -39,11 +39,10 @@ INSERT INTO `$$$DB_PREFIX$$$category` (`id`, `parent_id`, `name`, `description`,
 (2, 0, 'Computing', 'Computer related chats', 'n', 0),
 (16, 0, 'User rooms', 'Everybody can create own room in this category!', 'g', 2); /* PCPIN6_QUERY_SEPARATOR */
 
-INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`, `_conf_name`, `_conf_value`, `_conf_type`, `_conf_choices`, `_conf_description`) VALUES
-(1, 'security', '{LNG_SESSION}', 'session_timeout', '30', 'int_range', '10|120', '{LNG__CONF_SESSION_TIMEOUT}'),
+INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`, `_conf_name`, `_conf_value`, `_conf_type`, `_conf_choices`, `_conf_description`) VALUES (1, 'security', '{LNG_SESSION}', 'session_timeout', '30', 'int_range', '10|120', '{LNG__CONF_SESSION_TIMEOUT}'),
 (2, 'server', '{LNG_GENERAL}', 'chat_name', 'PCPIN Chat 6', 'string_255', '', '{LNG__CONF_CHAT_NAME}'),
 (3, 'security', '{LNG_EMAIL_ADDRESS}', 'email_validation_level', '1', 'int_choice', '0={LNG_NONE}|1={LNG_STANDARD}|2={LNG_STRONG}|3={LNG_PARANOID}', '{LNG__CONF_EMAIL_VALIDATION_LEVEL}'),
-(4, 'server', '{LNG_LANGUAGES}', 'default_language', '1', 'int_choice', '<languages>', '{LNG__CONF_DEFAULT_LANGUAGE}'),
+(4, 'server', '{LNG_LANGUAGES}', 'default_language', '4', 'int_choice', '<languages>', '{LNG__CONF_DEFAULT_LANGUAGE}'),
 (5, 'account', '{LNG_AVATARS}', 'avatar_max_width', '100', 'int_range', '1|*', '{LNG__CONF_AVATAR_MAX_WIDTH}'),
 (6, 'account', '{LNG_AVATARS}', 'avatar_max_height', '120', 'int_range', '1|*', '{LNG__CONF_AVATAR_MAX_HEIGHT}'),
 (7, 'account', '{LNG_AVATARS}', 'avatar_max_filesize', '100000', 'int_range', '1|*', '{LNG__CONF_AVATAR_MAX_FILESIZE}'),
@@ -56,7 +55,7 @@ INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`
 (14, 'account', '{LNG_NICKNAMES}', 'nicknames_max_count', '5', 'int_range', '0|*', '{LNG__CONF_NICKNAMES_MAX_COUNT}'),
 (15, 'server', '{LNG_GENERAL}', 'chat_email_sender_address', 'noreply@yoursite.com', 'string_255', '<email>', '{LNG__CONF_CHAT_EMAIL_SENDER_ADDRESS}'),
 (16, 'server', '{LNG_GENERAL}', 'chat_email_sender_name', 'Chat Administrator', 'string_255', '', '{LNG__CONF_CHAT_EMAIL_SENDER_NAME}'),
-(17, 'server', '{LNG_GENERAL}', 'base_url', 'http://www.yoursite.com/index.php', 'string_255', '<url>', '{LNG__CONF_BASE_URL}'),
+(17, 'server', '{LNG_GENERAL}', 'base_url', 'http://localhost/pcpin_chat_v611/index.php', 'string_255', '<url>', '{LNG__CONF_BASE_URL}'),
 (19, 'design', '{LNG_CHAT_ROOM}', 'userlist_width', '220', 'int_range', '100|*', '{LNG__CONF_USERLIST_WIDTH}'),
 (20, 'design', '{LNG_CHAT_ROOM}', 'userlist_position', '1', 'int_choice', '-1={LNG_LEFT}|0={LNG_HIDDEN}|1={LNG_RIGHT}', '{LNG__CONF_USERLIST_POSITION}'),
 (21, 'design', '{LNG_CHAT_ROOM}', 'roomlist_height', '30', 'int_range', '30|*', '{LNG__CONF_ROOMLIST_HEIGHT}'),
@@ -118,8 +117,11 @@ INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`
 (80, 'design', '{LNG_COLORS}', 'thumb_background', 'ffffff', 'string_6', '<color>', '{LNG__CONF_THUMB_BACKGROUND}'),
 (81, 'security', '{LNG_LOG_IN}', 'ip_failed_login_limit', '10', 'int_range', '0|*', '{LNG__CONF_IP_FAILED_LOGIN_LIMIT}'),
 (82, 'security', '{LNG_LOG_IN}', 'ip_failed_login_ban', '10', 'int_range', '1|*', '{LNG__CONF_IP_FAILED_LOGIN_BAN}'),
-(83, 'chat', '{LNG_SOUNDS}', 'allow_sounds', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_SOUNDS}',
-(84, 'account', '{LNG_USERS}', 'allow_user_registration', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_USER_REGISTRATION}'); /* PCPIN6_QUERY_SEPARATOR */
+(83, 'chat', '{LNG_SOUNDS}', 'allow_sounds', '0', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_SOUNDS}'),
+(84, 'account', '{LNG_USERS}', 'allow_user_registration', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_USER_REGISTRATION}'),
+(85, 'chat', '{LNG_MESSAGES}', 'flood_protection_max_messages', '5', 'int_range', '3|*', '{LNG_FLOOD_PROTECTION_MAX_MESSAGES}'),
+(86, 'chat', '{LNG_MESSAGES}', 'flood_protection_mute_time', '60', 'int_range', '1|*', '{LNG_FLOOD_PROTECTION_MUTE_TIME}'),
+(87, 'chat', '{LNG_MESSAGES}', 'flood_protection_message_delay', '1', 'int_range', '0|*', '{LNG_FLOOD_PROTECTION_MESSAGE_DELAY}'); /* PCPIN6_QUERY_SEPARATOR */
 
 INSERT INTO `$$$DB_PREFIX$$$disallowed_name` (`id`, `name`) VALUES (1, 'admin'); /* PCPIN6_QUERY_SEPARATOR */
 

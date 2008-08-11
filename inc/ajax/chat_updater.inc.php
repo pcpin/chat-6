@@ -39,6 +39,11 @@ _pcpin_loadClass('banner'); $banner=new PCPIN_Banner($session);
 
 $default_nicknames=array(); // cached nicknames
 
+$last_sent_message_time=$session->_s_last_sent_message_time<='0000-00-00 00:00:00'? 0 : PCPIN_Common::datetimeToTimestamp($session->_s_last_sent_message_time);
+$last_sent_message_hash=$session->_s_last_sent_message_hash;
+$last_sent_message_repeats_count=$session->_s_last_sent_message_repeats_count;
+$last_message_id=$session->_s_last_message_id;
+
 if (!isset($room_id) || !is_scalar($room_id)) $room_id=0;
 
 if (!empty($first_request)) {
@@ -168,28 +173,45 @@ if (!empty($room_id) && !empty($current_user->id)) {
 
             }
 
-            if (true===$message_ok) {
-              // Add message to database
-              $msg->addMessage($type,
-                               $offline,
-                               $current_user->id,
-                               $current_nickname,
-                               $target_room_id,
-                               $target_user_id,
-                               $body,
-                               date('Y-m-d H:i:s'),
-                               $privacy,
-                               $css_properties);
-              // Attachments?
-              _pcpin_loadClass('attachment'); $attachment=new PCPIN_Attachment($session);
-              _pcpin_loadClass('message_log_attachment'); $message_log_attachment=new PCPIN_Message_Log_Attachment($session);
-              _pcpin_loadClass('binaryfile'); $binaryfile=new PCPIN_BinaryFile($session);
-              if (!empty($tmpdata_list)) {
-                foreach ($tmpdata_list as $tmpdata_data) {
-                  $attachment->addAttachment($msg->id, $tmpdata_data['binaryfile_id'], $tmpdata_data['filename']);
-                  if (!empty($session->_conf_all['logging_period']) && $binaryfile->_db_getList('body,size,mime_type', 'id = '.$tmpdata_data['binaryfile_id'], 1)) {
-                    $message_log_attachment->addLogRecord($msg->id, $tmpdata_data['filename'], $binaryfile->_db_list[0]['body'], $binaryfile->_db_list[0]['size'], $binaryfile->_db_list[0]['mime_type']);
-                    $binaryfile->_db_freeList();
+            if (true===$message_ok && (empty($session->_conf_all['flood_protection_message_delay']) || $session->_conf_all['flood_protection_message_delay']<=time()-$last_sent_message_time)) {
+              // Check flooding
+              if ($last_sent_message_hash==md5($body)) {
+                $last_sent_message_repeats_count++;
+              } else {
+                $last_sent_message_hash=md5($body);
+                $last_sent_message_repeats_count=0;
+              }
+              if (!empty($session->_conf_all['flood_protection_max_messages']) && !empty($session->_conf_all['flood_protection_mute_time']) && $current_user->is_admin!=='y' && $last_sent_message_repeats_count>=$session->_conf_all['flood_protection_max_messages']) {
+                // Message was flooded. Mute author.
+                $current_user->globalMuteUnmute($current_user->id, 1, $session->_conf_all['flood_protection_mute_time']/60, $l->g('flooding'));
+                $msg->addMessage(10110, 'n', 0, $l->g('server'), $session->_s_room_id, 0, $current_user->id.'/0/'.($session->_conf_all['flood_protection_mute_time']/60).'/'.$l->g('flooding'), date('Y-m-d H:i:s'), 0, '');
+                $last_sent_message_repeats_count=0;
+                $last_sent_message_hash='';
+                break; // Ignore further messages
+              } else {
+                // Add message to database
+                $last_sent_message_time=time();
+                $msg->addMessage($type,
+                                 $offline,
+                                 $current_user->id,
+                                 $current_nickname,
+                                 $target_room_id,
+                                 $target_user_id,
+                                 $body,
+                                 date('Y-m-d H:i:s'),
+                                 $privacy,
+                                 $css_properties);
+                // Attachments?
+                _pcpin_loadClass('attachment'); $attachment=new PCPIN_Attachment($session);
+                _pcpin_loadClass('message_log_attachment'); $message_log_attachment=new PCPIN_Message_Log_Attachment($session);
+                _pcpin_loadClass('binaryfile'); $binaryfile=new PCPIN_BinaryFile($session);
+                if (!empty($tmpdata_list)) {
+                  foreach ($tmpdata_list as $tmpdata_data) {
+                    $attachment->addAttachment($msg->id, $tmpdata_data['binaryfile_id'], $tmpdata_data['filename']);
+                    if (!empty($session->_conf_all['logging_period']) && $binaryfile->_db_getList('body,size,mime_type', 'id = '.$tmpdata_data['binaryfile_id'], 1)) {
+                      $message_log_attachment->addLogRecord($msg->id, $tmpdata_data['filename'], $binaryfile->_db_list[0]['body'], $binaryfile->_db_list[0]['size'], $binaryfile->_db_list[0]['mime_type']);
+                      $binaryfile->_db_freeList();
+                    }
                   }
                 }
               }
@@ -210,7 +232,6 @@ if (!empty($room_id) && !empty($current_user->id)) {
     }
     if (!empty($messages)) {
       $msg_array=array();
-      $last_message_id=$session->_s_last_message_id;
       foreach ($messages as $message_data) {
         $last_message_id=($last_message_id<$message_data['id'])? $message_data['id'] : $last_message_id;
         $msg_parts=explode('/', $message_data['body']);
@@ -331,17 +352,6 @@ if (!empty($room_id) && !empty($current_user->id)) {
         $xml_data['chat_message']=$msg_array;
       }
       unset($msg_array);
-      if ($last_message_id>$session->_s_last_message_id) {
-        // Update session
-        $session->_s_updateSession($session->_s_id, true, true,
-                                   null,
-                                   null,
-                                   null,
-                                   null,
-                                   null,
-                                   null,
-                                   $last_message_id);
-      }
     }
     if (!empty($full_request)) {
       // Collect full data
@@ -382,6 +392,32 @@ if (!empty($room_id) && !empty($current_user->id)) {
     $xml_data['banner_display_position']=$banner_display_positions;
   }
   unset($banner_display_positions);
+
+  if (   $last_message_id>$session->_s_last_message_id
+      || $last_sent_message_time>PCPIN_Common::datetimeToTimestamp($session->_s_last_sent_message_time)
+      || $last_sent_message_hash!=$session->_s_last_sent_message_hash
+      || $last_sent_message_repeats_count!=$session->_s_last_sent_message_repeats_count
+      ) {
+    // Update session
+    $session->_s_updateSession($session->_s_id, true, true,
+                               null,
+                               null,
+                               null,
+                               null,
+                               null,
+                               null,
+                               $last_message_id>$session->_s_last_message_id? $last_message_id : null,
+                               null,
+                               null,
+                               null,
+                               null,
+                               null,
+                               null,
+                               $last_sent_message_time>PCPIN_Common::datetimeToTimestamp($session->_s_last_sent_message_time)? date('Y-m-d H:i:s', $last_sent_message_time) : null,
+                               $last_sent_message_hash!=$session->_s_last_sent_message_hash? $last_sent_message_hash : null,
+                               $last_sent_message_repeats_count!=$session->_s_last_sent_message_repeats_count? $last_sent_message_repeats_count : null
+                               );
+  }
 }
 
 $xmlwriter->setData($xml_data);

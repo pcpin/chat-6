@@ -139,7 +139,8 @@ $_body_onload[]='initChatRoom('.$session->_s_room_id.', '
                                .$session->_conf_all['popup_banner_period'].', '
                                .$session->_conf_all['msg_banner_period'].', '
                                .$session->_conf_all['smilies_position'].', '
-                               .$session->_conf_all['smilies_row_height']
+                               .$session->_conf_all['smilies_row_height'].', '
+                               .$session->_conf_all['flood_protection_message_delay']
                                .')';
 
 // Init template

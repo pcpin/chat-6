@@ -394,6 +394,18 @@ var UpdaterSkipDelay=false;
  */
 var UpdaterGetFullData=false;
 
+/**
+ * Minimum time period in seconds between two messages sent by the same user
+ * @var int
+ */
+var MessageDelay=0;
+
+/**
+ * Time of the last posted message
+ * @var int
+ */
+var lastPostedMessageTime=0;
+
 
 
 
@@ -422,6 +434,7 @@ var UpdaterGetFullData=false;
  * @param   int       msg_banner_period       Message banner display period
  * @param   int       smilies_position        Smilie list position (0=Toolbar area, 1=Separate window)
  * @param   int       smilies_row_height      If smilies_position==0: Smilies area height in pixel
+ * @param   int       msg_delay               Minimum time period in seconds between two messages sent by the same user
  */
 function initChatRoom(room_id,
                       updater_interval,
@@ -446,7 +459,8 @@ function initChatRoom(room_id,
                       popup_banner_period,
                       msg_banner_period,
                       smilies_position,
-                      smilies_row_height
+                      smilies_row_height,
+                      msg_delay
                       ) {
   if (   typeof(room_id)=='number' && room_id>0
       && typeof(updater_interval)=='number' && updater_interval>0
@@ -476,6 +490,7 @@ function initChatRoom(room_id,
     MsgBannerPeriod=msg_banner_period;
     SmiliesPosition=smilies_position;
     SmiliesRowHeight=SmiliesPosition==0? smilies_row_height : 0;
+    MessageDelay=msg_delay;
     controlsHeight=controls_height+SmiliesRowHeight;
     controlsHeightInit=controlsHeight;
     ChatroomMessages=$('chatroom_messages');
@@ -1117,6 +1132,9 @@ function _CALLBACK_sendUpdaterRequest(show_progressbar) {
                                      null,
                                      '1'==user['is_guest'][0]
                                      );
+                  if (stringToNumber(user['id'][0])==currentUserId && '1'==user['global_muted'][0]) {
+                    gotGlobalUnMuted(true);
+                  }
                 }
 
                 i=ajaxUpdater.data['category'].length;
@@ -1244,7 +1262,6 @@ function redrawUserlist() {
   var status_img='';
   var status_title='';
   var muted_until=0;
-  var muted_until_str='';
   var gender='-';
   var avatar_bid=0;
   var ignored_img_suffix='';
@@ -1301,10 +1318,11 @@ function redrawUserlist() {
     }
     if (true==records[user_id].getGlobalMuted()) {
       status_img='./pic/online_status_muted_'+ignored_img_suffix+'10x10.gif';
+      muted_until=records[user_id].getGlobalMutedUntil();
       if (muted_until==0) {
         status_title=getLng('permanently_globalmuted')+(ignored_img_suffix!=''? (' + '+getLng('ignored')) : '');
       } else {
-        status_title=getLng('globalmuted_until').split('[EXPIRATION_DATE]').join(muted_until_str)+(ignored_img_suffix!=''? (' + '+getLng('ignored')) : '');
+        status_title=getLng('globalmuted_until').split('[EXPIRATION_DATE]').join(date(dateFormat, muted_until))+(ignored_img_suffix!=''? (' + '+getLng('ignored')) : '');
       }
     } else {
       status_img='./pic/online_status_'+records[user_id].getOnlineStatus()+'_'+ignored_img_suffix+'10x10.gif';
@@ -1908,6 +1926,11 @@ function displayMessage(author, message, css_properties, show_date, timestamp, t
  * @param   boolean   no_focus          If TRUE, then message input element will not become a focus. Default: FALSE
  */
 function postChatMessage(inputElement, type, offline, target_user_id, target_room_id, privacy, no_focus) {
+  // Check flood protection
+  if (MessageDelay>0 && unixTimeStamp()-lastPostedMessageTime<MessageDelay) {
+    return false;
+  }
+  lastPostedMessageTime=unixTimeStamp();
   if (typeof(inputElement)=='object' && inputElement && typeof(inputElement.value)=='string') {
     var msg_body=trimString(inputElement.value);
     var tmp=null;

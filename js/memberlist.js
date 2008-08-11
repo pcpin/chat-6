@@ -169,6 +169,7 @@ function _CALLBACK_getMemberlist() {
   var room_nr=0;
   var room_name='';
   var gender='';
+  var muted_until=0;
 
   if (actionHandler.status==-1) {
     // Session is invalid
@@ -404,11 +405,12 @@ function _CALLBACK_getMemberlist() {
         }
       } else {
         if (true==members[i].GlobalMuted) {
+          muted_until=members[i].getGlobalMutedUntil();
           status_img='./pic/online_status_muted_'+ignored_img_suffix+'10x10.gif';
-          if (members[i].GlobalMutedUntil==0) {
+          if (muted_until==0) {
             status_title=getLng('permanently_globalmuted')+(ignored_img_suffix!=''? (' + '+getLng('ignored')) : '');
           } else {
-            status_title=getLng('globalmuted_until').split('[EXPIRATION_DATE]').join(date(dateFormat, members[i].GlobalMutedUntil))+(ignored_img_suffix!=''? (' + '+getLng('ignored')) : '');
+            status_title=getLng('globalmuted_until').split('[EXPIRATION_DATE]').join(date(dateFormat, muted_until))+(ignored_img_suffix!=''? (' + '+getLng('ignored')) : '');
           }
         } else {
           status_img='./pic/online_status_'+members[i].OnlineStatus+'_'+ignored_img_suffix+'10x10.gif';

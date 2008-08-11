@@ -147,7 +147,8 @@ class PCPIN_Room extends PCPIN_Session {
             $message->addMessage(111, 'n', 0, '', $target_room_id, 0, $user_id.'/'.$target_room_id);
           }
         }
-        $session->_s_updateSession($session->_db_list[0]['_s_id'], false, true, null, null, $target_room_id, null, null, null, null, (!empty($target_room_id)? date('Y-m-d H:i:s') : ''), null, null, null, $stealth_mode);
+        // Update session
+        $session->_s_updateSession($session->_db_list[0]['_s_id'], false, true, null, null, $target_room_id, null, null, null, null, (!empty($target_room_id)? date('Y-m-d H:i:s') : ''), null, null, null, $stealth_mode, null, null, '0000-00-00 00:00:00', '');
         if ($session->_db_list[0]['_s_online_status']!=1) {
           $session->_db_setObject($session->_db_list[0]);
           $session->_s_setOnlineStatus(1);

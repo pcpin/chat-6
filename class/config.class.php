@@ -94,7 +94,7 @@ class PCPIN_Config extends PCPIN_DB {
     // Get parent properties
     $this->_db_pass_vars($caller, $this);
     // Load dynamic configuration.
-    if ($this->_db_getList()) {
+    if ($this->_db_getList('_conf_group ASC', '_conf_subgroup ASC', '_conf_id ASC')) {
       foreach ($this->_db_list as $conf) {
         // Set appropriate value type
         $type=substr($conf['_conf_type'], 0, strpos($conf['_conf_type'], '_'));
