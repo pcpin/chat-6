@@ -55,6 +55,7 @@ function alert(text, top_offset, left_offset, callback) {
     } else {
       alertboxCallback='';
     }
+    setTimeout("$('alertbox').style.display='none'; $('alertbox').style.display='';", 200);
   }
 }
 

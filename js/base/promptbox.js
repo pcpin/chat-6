@@ -78,6 +78,7 @@ function prompt(text, default_value, top_offset, left_offset, callback, password
     } else {
       promptboxCallback='';
     }
+    setTimeout("$('promptbox').style.display='none'; $('promptbox').style.display='';", 200);
   }
 }
 

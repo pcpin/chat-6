@@ -55,6 +55,7 @@ function confirm(text, top_offset, left_offset, callback) {
     } else {
       confirmboxCallback='';
     }
+    setTimeout("$('confirmbox').style.display='none'; $('confirmbox').style.display='';", 200);
   }
 }
 
