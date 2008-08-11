@@ -157,7 +157,7 @@ INSERT INTO `$$$DB_PREFIX$$$userdata_field`
 VALUES
 ('1', 'homepage', '', 'n', 'url', '', 'public', '0'),
 ('2', 'gender', '-', 'n', 'choice', '-\nm\nf', 'public', '1'),
-('3', 'age', '', 'n', 'number', '', 'public', '2'),
+('3', 'age', '', 'n', 'string', '', 'public', '2'),
 ('4', 'messenger_icq', '', 'n', 'string', '', 'public', '3'),
 ('5', 'messenger_msn', '', 'n', 'string', '', 'public', '4'),
 ('6', 'messenger_aim', '', 'n', 'string', '', 'public', '5'),
