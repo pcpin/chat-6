@@ -228,63 +228,6 @@ function isDigitString(str) {
 
 
 /**
- * Check wether string is a number or not
- * The string will be recognized as number if it has following format:
- *      (+|-)*(digit)*[.](digit)*
- * @param   string    str       Input string
- * @param   string    decComma  Decimal comma. Default: '.'
- * @return  boolean
- */
-function isNumber(str, decComma) {
-  var result=false;
-  var tmp=null;
-  var digits='0123456789';
-  if (typeof(decComma)!='string' || decComma=='') {
-    decComma='.';
-  }
-  if (typeof(str)=='string') {
-    str=trimString(str);
-    if (str!='') {
-      tmp=str.split(decComma);
-      result=tmp.length<=2;
-      if (result) {
-        // Check first part
-        while (tmp[0].charAt(0)=='+' || tmp[0].charAt(0)=='-') {
-          tmp[0]=tmp[0].substring(1);
-        }
-        if (tmp[0].length==0 && (!tmp[1] || tmp[1].length==0)) {
-          // Invalid number format
-          result=false;
-        } else {
-          for (var i=0; result && i<tmp[0].length; i++) {
-            if (-1==digits.indexOf(tmp[0].charAt(i))) {
-              // Invalid character
-              result=false;
-              break;
-            }
-          }
-          if (result && tmp[1] && tmp[1].length) {
-            // Check second part
-            for (var i=0; result && i<tmp[1].length; i++) {
-              if (-1==digits.indexOf(tmp[1].charAt(i))) {
-                // Invalid character
-                result=false;
-                break;
-              }
-            }
-          }
-        }
-      }
-    }
-  } else if (typeof(str)=='number') {
-    // It is a number
-    result=true;
-  }
-  return result;
-}
-
-
-/**
  * Check wether string contains alphanumeric characters only
  * @param   string    str       Input string
  * @return  boolean
@@ -302,36 +245,24 @@ function isAlphaNumString(str) {
  * If string has an incorrect format, then 0 will be returned.
  *
  * @param   string    str       Input string
- * @param   string    decComma  Decimal comma. Default: '.'
  * @return  number
  */
-function stringToNumber(str, decComma) {
-  var result=0;
-  var tmp=null;
-  var frac=0;
-  var sign=1;
-  var pow=0;
-  if (typeof(decComma)!='string' || decComma=='') {
-    decComma='.';
-  }
+function stringToNumber(str) {
   if (typeof(str)=='string') {
-    str=trimString(str);
-    // Check string
-    if (isNumber(str, decComma)) {
-      while (str.charAt(0)=='+' || str.charAt(0)=='-') {
-        if (str.charAt(0)=='-') {
-          sign*=-1;
-        }
-        str=str.substring(1);
+    var result=0;
+    var reg=new RegExp(/^[+-]*([0-9]+(\.)?[0-9]*)|([0-9]*(\.)?[0-9]+)$/);
+    if (null!=str.match(reg)) {
+      try {
+        eval('result='+str+';');
+      } catch (e) {
+        result=0;
       }
-      str=str.split(decComma).join('.');
-      result=parseFloat(str, 10)*sign;
     }
+    return result;
   } else if (typeof(str)=='number') {
     // It is number
-    result=str;
+    return !isNaN(str)? str : 0;
   }
-  return result;
 }
 
 
