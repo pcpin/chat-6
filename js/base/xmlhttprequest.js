@@ -439,15 +439,15 @@ function PCPIN_XmlHttpRequest(http_user, http_pass) {
         if (header.length) {
           header=header[0];
           service=header.getElementsByTagName('service');
-          if (service.length) this.service=this.getCdata(service[0], false);
+          if (service.length) this.service=this.getCdata(service[0]);
           status=header.getElementsByTagName('status');
-          if (status.length) this.status=stringToNumber(this.getCdata(status[0], false));
+          if (status.length) this.status=stringToNumber(this.getCdata(status[0]));
           message=header.getElementsByTagName('message');
-          if (message.length) this.message=this.getCdata(message[0], false);
+          if (message.length) this.message=this.getCdata(message[0]);
         }
         // <data>
         data=root.getElementsByTagName('data');
-        if (data.length) this.data=this.parseXMLToArray(data[0], 0);
+        if (data.length) this.data=this.parseXMLToArray(data[0]);
       }
       return true;
     } else {
@@ -461,11 +461,11 @@ function PCPIN_XmlHttpRequest(http_user, http_pass) {
    * @param   object    node    DOM node
    * @return  array
    */
-  this.parseXMLToArray=function(node, level) {
+  this.parseXMLToArray=function(node) {
     var out=new Array();
     var child=null;
-    var has_cdata=null;
     var cdata=null;
+    var cdata_node_nr=-1;
     var use=false;
     var tmp=null;
     try {
@@ -473,9 +473,8 @@ function PCPIN_XmlHttpRequest(http_user, http_pass) {
         for (var i=0; i<node.childNodes.length; i++) {
           child=node.childNodes[i];
           if (child.nodeType==1) {
-            has_cdata=false;
-            level++;
-            tmp=this.parseXMLToArray(child, level);
+            cdata_node_nr=false;
+            tmp=this.parseXMLToArray(child);
             if (typeof(out[child.nodeName])=='undefined') {
               out[child.nodeName]=new Array();
             }
@@ -489,12 +488,11 @@ function PCPIN_XmlHttpRequest(http_user, http_pass) {
             if (use) {
               out[child.nodeName].push(tmp);
             }
-            level--;
-          } else if (has_cdata==null && child.nodeType==4) {
-            has_cdata=true;
+          } else if (child.nodeType==4 && cdata_node_nr==-1) {
+            cdata_node_nr=i;
           }
         }
-        if (has_cdata==true && null!=(cdata=this.getCdata(node))) {
+        if (cdata_node_nr>=0 && null!=(cdata=this.getCdata(node, cdata_node_nr))) {
           out=cdata;
         }
       }
@@ -506,18 +504,23 @@ function PCPIN_XmlHttpRequest(http_user, http_pass) {
   /**
    * Parse CDATA contents
    * @param     object    node        Node
+   * @param     int       child_nr    Optional. Number of Child containing CDATA.
    * @return string
    */
-  this.getCdata=function(node) {
+  this.getCdata=function(node, child_nr) {
     var cdata=null;
     try {
       var cdata_replaces_count=0;
       var cdata_replaced_from=0;
       var cdata_replaced_to=0;
-      for (var i=0; i<node.childNodes.length; i++) {
-        if (node.childNodes[i].nodeType==4) {
-          cdata=node.childNodes[i].nodeValue;
-          break;
+      if (typeof(child_nr)=='number' && node.childNodes[child_nr].nodeType==4) {
+        cdata=node.childNodes[child_nr].nodeValue;
+      } else {
+        for (var i=0; i<node.childNodes.length; i++) {
+          if (node.childNodes[i].nodeType==4) {
+            cdata=node.childNodes[i].nodeValue;
+            break;
+          }
         }
       }
       if (cdata!=null && cdata.length>0) {
