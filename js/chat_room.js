@@ -1883,7 +1883,9 @@ function displayMessage(author, message, css_properties, show_date, timestamp, t
                   if (typeof(sp)!='undefined' && sp) {
                     sp.style.fontSize=pair[1];
                   }
-                  date_span.style.fontSize=pair[1];
+                  if (date_span && typeof(date_span.style)=='object' && date_span.style) {
+                    date_span.style.fontSize=pair[1];
+                  }
                 }
               }
             }

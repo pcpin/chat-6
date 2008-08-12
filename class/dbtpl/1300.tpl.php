@@ -22,7 +22,7 @@ if (!empty($argv[3])) {
 $query='SELECT `me`.`id`,
                `me`.`type`,
                `me`.`offline`,
-               UNIX_TIMESTAMP( `me`.`date` + `curr_us`.`time_zone_offset` - '.date('Z').' ) AS `date`,
+               UNIX_TIMESTAMP( `me`.`date` ) + `curr_us`.`time_zone_offset` - '.date('Z').' AS `date`,
                `me`.`author_id`,
                `me`.`author_nickname`,
                `me`.`target_room_id`,
