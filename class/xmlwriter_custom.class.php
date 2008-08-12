@@ -178,7 +178,7 @@ class PCPIN_XMLWriter_Custom {
       while (false!==($offset=strpos($cdata, ']]>', $offset))) {
         $count++;
       }
-      if (count>0) {
+      if ($count>0) {
         $cdata=str_replace(']]>', $this->cdata_escape_sequence, $cdata);
       }
     }
