@@ -129,7 +129,7 @@ var receivedAbuses=new Array();
  * Flag: TRUE if client does not need to send "page unloaded" event to server
  * @var boolean
  */
-var SkipPageUnloadedMsg=false;
+var SkipPageUnloadedMsg=isMozilla;
 
 /**
  * Current room ID
