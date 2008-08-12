@@ -168,8 +168,20 @@ class PCPIN_XMLWriter_Custom {
 
 
  function write_cdata_safe($cdata) {
-    $count=-1;
-    $cdata=str_replace(']]>', $this->cdata_escape_sequence, $cdata, $count);
+    $count=0;
+    if (substr(phpversion(), 0, 1)>=5) {
+      // We have PHP 5
+      $cdata=str_replace(']]>', $this->cdata_escape_sequence, $cdata, $count);
+    } else {
+      // PHP 4
+      $offset=0;
+      while (false!==($offset=strpos($cdata, ']]>', $offset))) {
+        $count++;
+      }
+      if (count>0) {
+        $cdata=str_replace(']]>', $this->cdata_escape_sequence, $cdata);
+      }
+    }
     if ($count>0) {
       $this->write_attribute('cdata_replaces_count', $count);
       $this->write_attribute('cdata_replaced_from', ']]>');
