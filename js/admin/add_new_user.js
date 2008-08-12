@@ -41,6 +41,8 @@ function initNewUserForm(login_length_min, login_length_max) {
   if (typeof(login_length_max)=='number' && login_length_max>0) LoginLengthMax=login_length_max;
   $('new_user_name').value='';
   $('new_user_email').value='';
+  $('new_user_password0').value='';
+  $('new_user_password1').value='';
   $('new_user_name').maxLength=LoginLengthMax;
   $('new_user_name').focus();
 }
@@ -65,6 +67,14 @@ function addNewUser() {
     errors.push(getLng('email_invalid'));
   }
 
+  if ($('new_user_password0').value=='') {
+    errors.push(getLng('password_empty'));
+  } else if ($('new_user_password0').value.length<3) {
+    errors.push(getLng('password_too_short'));
+  } else if ($('new_user_password0').value != $('new_user_password1').value) {
+    errors.push(getLng('passwords_not_ident'));
+  }
+
   if (errors.length>0) {
     alert('- '+errors.join("\n- "));
   } else {
@@ -72,6 +82,7 @@ function addNewUser() {
                                                         +'&s_id='+urlencode(s_id)
                                                         +'&login='+urlencode($('new_user_name').value)
                                                         +'&email='+urlencode($('new_user_email').value)
+                                                        +'&password='+urlencode($('new_user_password0').value)
                                                         );
   }
   return false;

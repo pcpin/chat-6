@@ -11,7 +11,7 @@
           <b>{LNG_USERNAME}:</b>
         </td>
         <td class="tbl_row">
-          <input id="new_user_name" title="{LNG_USERNAME}" size="32" maxlength="30" />
+          <input type="text" id="new_user_name" title="{LNG_USERNAME}" size="36" maxlength="30" />
         </td>
       </tr>
       <tr>
@@ -19,7 +19,23 @@
           <b>{LNG_EMAIL_ADDRESS}:</b>
         </td>
         <td class="tbl_row">
-          <input id="new_user_email" title="{LNG_EMAIL_ADDRESS}" size="40" maxlength="255" />
+          <input type="text" id="new_user_email" title="{LNG_EMAIL_ADDRESS}" size="36" maxlength="255" />
+        </td>
+      </tr>
+      <tr>
+        <td class="tbl_row">
+          <b>{LNG_PASSWORD}:</b>
+        </td>
+        <td class="tbl_row">
+          <input type="password" id="new_user_password0" title="{LNG_PASSWORD}" size="20" maxlength="255" />
+        </td>
+      </tr>
+      <tr>
+        <td class="tbl_row">
+          <b>{LNG_CONFIRM_PASSWORD}:</b>
+        </td>
+        <td class="tbl_row">
+          <input type="password" id="new_user_password1" title="{LNG_CONFIRM_PASSWORD}" size="20" maxlength="255" />
         </td>
       </tr>
       <tr>

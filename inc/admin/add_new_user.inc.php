@@ -30,6 +30,9 @@ $_js_files[]='./js/admin/add_new_user.js';
 $_js_lng[]='username_empty';
 $_js_lng[]='username_length_error';
 $_js_lng[]='email_invalid';
+$_js_lng[]='password_too_short';
+$_js_lng[]='password_empty';
+$_js_lng[]='passwords_not_ident';
 
 $_body_onload[]='initNewUserForm('.htmlspecialchars($session->_conf_all['login_length_min']).', '
                                   .htmlspecialchars($session->_conf_all['login_length_max'])

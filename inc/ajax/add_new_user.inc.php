@@ -21,6 +21,7 @@
  * @param     int       $language_id      Default language for the user
  * @param     string    $login            Username
  * @param     string    $email            Email address
+ * @param     string    $password         New password
  */
 
 _pcpin_loadClass('badword'); $badword=new PCPIN_Badword($session);
@@ -31,17 +32,13 @@ if (is_object($session) && !empty($current_user->id) && $current_user->is_admin=
 
   if (!isset($login) || !is_scalar($login)) $login='';
   if (!isset($email) || !is_scalar($email)) $email='';
+  if (!isset($password) || !is_scalar($password)) $password='';
 
-  // Load language
   if (empty($language_id) || !is_scalar($language_id)) {
     $language_id=$session->_conf_all['default_language'];
   }
-  if ($language_id!=$l->id) {
-    $old_language_id=$l->id;
-    if (true!==$l->setLanguage($language_id)) {
-      $l->setLanguage($old_language_id);
-    }
-  }
+  $old_language_id=$l->id;
+
   $errortext=array();
 
   $login=trim($login);
@@ -61,13 +58,22 @@ if (is_object($session) && !empty($current_user->id) && $current_user->is_admin=
   } elseif (!$current_user->checkEmailUnique(0, $email)) {
     $errortext[]=$l->g('email_already_taken');
   }
+  if (_pcpin_strlen($password)==0) {
+    $errortext[]=$l->g('password_empty');
+  } elseif (_pcpin_strlen($password)<3) {
+    $errortext[]=$l->g('password_too_short');
+  }
 
   if (!empty($errortext)) {
     $xmlwriter->setHeaderStatus(1);
     $xmlwriter->setHeaderMessage('- '.implode("\n- ", $errortext));
   } else {
-    // Generate new password
-    $password=$password_new=PCPIN_Common::randomString(mt_rand(6, 8), 'abcdefghijklmnopqrstuvwxyz0123456789');
+    if ($language_id!=$l->id) {
+      // Load language
+      if (true!==$l->setLanguage($language_id)) {
+        $l->setLanguage($old_language_id);
+      }
+    }
     // Create user
     $current_user->newUser($login, $password, $email, 1, 'n', '', $l->id);
     // No account activation required. Send "welcome" email.
@@ -79,6 +85,7 @@ if (is_object($session) && !empty($current_user->id) && $current_user->is_admin=
     $email_body=str_replace('[URL]', str_replace(' ', '%20', $session->_conf_all['base_url']), $email_body);
     $email_body=str_replace('[SENDER]', $session->_conf_all['chat_email_sender_name'], $email_body);
     PCPIN_Email::send('"'.$session->_conf_all['chat_email_sender_name'].'"'.' <'.$session->_conf_all['chat_email_sender_address'].'>', $email, $l->g('new_account_created'), null, null, $email_body);
+    $l->setLanguage($old_language_id);
     $xmlwriter->setHeaderStatus(0);
     $xmlwriter->setHeaderMessage($l->g('new_user_added'));
     if (!empty($session->_conf_all['new_user_notification'])) {
@@ -97,7 +104,7 @@ if (is_object($session) && !empty($current_user->id) && $current_user->is_admin=
         unset($users);
         foreach ($language_emails as $language_id=>$emails) {
           if (true!==$l->setLanguage($language_id)) {
-            $l->setLanguage($session->_s_language_id);
+            $l->setLanguage($old_language_id);
           }
           foreach ($emails as $email) {
             $email_body=$l->g('email_new_user_notification');
