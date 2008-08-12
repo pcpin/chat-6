@@ -259,13 +259,14 @@ class PCPIN_Message extends PCPIN_Session {
 
   /**
    * Get new online messages for user
-   * @param   int   $user_id            User ID
+   * @param   int   $user_id      User ID
+   * @param   int   $type         Optional. Message type. If not empty, only messages of this type will be returned
    * @return  array
    */
-  function getNewMessages($user_id) {
+  function getNewMessages($user_id, $type=0) {
     $messages=array();
     if (!empty($user_id)) {
-      $query=$this->_db_makeQuery(1300, $user_id);
+      $query=$this->_db_makeQuery(1300, $user_id, $type);
       if ($result=$this->_db_query($query)) {
         _pcpin_loadClass('attachment'); $attachment=new PCPIN_Attachment($this);
         while ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {
