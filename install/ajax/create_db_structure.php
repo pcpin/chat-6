@@ -44,8 +44,8 @@ if (!empty($conn) && @mysql_select_db($database, $conn)) {
     $query=trim($query);
     if ($query!='') {
       $query=str_replace('$$$DB_PREFIX$$$', $prefix, $query);
+      mysql_query($query, $conn);
     }
-    mysql_query($query, $conn);
   }
   $status=0;
   $message='OK';

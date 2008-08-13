@@ -61,10 +61,18 @@ function _CALLBACK_getLanguages() {
         name=language['name'][0];
         local_name=language['local_name'][0];
         filename=language['filename'][0];
-        html+='<br /><label for="languages_chkbox_'+htmlspecialchars(iso_name)+'" title="'+htmlspecialchars(name+' ('+local_name+')')+'"><input onclick="setLanguage(this)" type="checkbox" id="languages_chkbox_'+htmlspecialchars(iso_name)+'" title="'+htmlspecialchars(name+' ('+local_name+')')+'" /> '+htmlspecialchars(name+' ('+local_name+')')+'</label>';
+        html+='<br />'
+            +'<label for="languages_chkbox_'+htmlspecialchars(iso_name)+'" title="'+htmlspecialchars(name+' ('+local_name+')')+'">'
+            +'<input onclick="setLanguage(this)" type="checkbox" id="languages_chkbox_'+htmlspecialchars(iso_name)+'" title="'+htmlspecialchars(name+' ('+local_name+')')+'" /> '
+            +htmlspecialchars(name+' ('+local_name+')')
+            +'</label>'
+        ;
         window.parent.language_names[iso_name]=name+' ('+local_name+')';
         window.parent.language_files[iso_name]=filename;
       }
+      html+='<br /><br />'
+           +'<a href="#" onclick="selectAllLanguages(); return false">Select all languages</a>'
+           ;
     }
   }
   if (language_nr==0) {
@@ -90,6 +98,17 @@ function _CALLBACK_getLanguages() {
   }
   $('contents_div').style.display='';
   toggleProgressBar(false);
+}
+
+function selectAllLanguages() {
+  for (var iso_name in window.parent.language_names) {
+    iso_name=(iso_name.split(' '))[0];
+    try {
+      if ($('languages_chkbox_'+iso_name).checked==false) {
+        $('languages_chkbox_'+iso_name).click();
+      }
+    } catch (e) {}
+  }
 }
 
 function setLanguage(obj) {
