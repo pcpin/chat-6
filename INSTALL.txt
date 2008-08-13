@@ -12,7 +12,7 @@
 
 Absolutely required:
 
- - PHP 4.3 or newer.
+ - PHP 4.3 or newer (PHP 5 is recommended).
  - MySQL 4.0.15 or newer.
 
 
@@ -83,11 +83,13 @@ Not required, but recommended:
 
    2.4.	Edit file /config/db.inc.php end enter there your database connection data.
 
-   2.5. Log in using administrator account and check all settings.
+   2.5. Point your browser to the file upgrade.php (located in the chat main directory).
 
    2.6. Delete file /upgrade.php.
 
-   2.7.	Upgrade is finished now.
+   2.7. Log in using administrator account and check all settings.
+
+   2.8.	Upgrade is finished now.
 
 
 
