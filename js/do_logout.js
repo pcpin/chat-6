@@ -17,12 +17,9 @@
 
 function executeLogOut(close_when_done) {
   window.focus();
-  sendData('_CALLBACK_executeLogOut('+(close_when_done? 'true' : 'false')+')', formlink, 'POST', 'ajax=do_logout&s_id='+urlencode(s_id), true, true);
   window.onblur=function() {
     window.focus();
   }
-}
-function _CALLBACK_executeLogOut(close_when_done) {
   try {
     if (typeof(window.opener.adminArea_)=='boolean') {
       // Called from Admin area
@@ -48,6 +45,5 @@ function _CALLBACK_executeLogOut(close_when_done) {
       } catch (e) {}
     }
   } catch (e) {}
-  SkipPageUnloadedMsg=true;
-  window.close();
+  sendData('SkipPageUnloadedMsg=true; window.close();', formlink, 'POST', 'ajax=do_logout&s_id='+urlencode(s_id), true, true);
 }
