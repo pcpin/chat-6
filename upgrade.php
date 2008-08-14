@@ -33,24 +33,8 @@ $__pcpin_upgrade['init_class']->_conf_all=array(1); // just a dummy
 $__pcpin_upgrade['session']=new PCPIN_Session($__pcpin_upgrade['init_class'], '', true);
 $__pcpin_upgrade['user']=new PCPIN_User($__pcpin_upgrade['session']);
 
-$auth_ok=false;
-if (   isset($_SERVER['PHP_AUTH_USER']) && is_scalar($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!=''
-    && isset($_SERVER['PHP_AUTH_PW']) && is_scalar($_SERVER['PHP_AUTH_PW'])
-    && $__pcpin_upgrade['user']->_db_getList('id', 'login =# '.$_SERVER['PHP_AUTH_USER'], 'password = '.md5($_SERVER['PHP_AUTH_PW']), 1)
-    ) {
-  $__pcpin_upgrade['user']->_db_freeList();
-  $auth_ok=true;
-}
-
-if (!$auth_ok) {
-  header('WWW-Authenticate: Basic realm="Enter administrator username and password"');
-  header('HTTP/1.0 401 Unauthorized');
-  header('status: 401 Unauthorized');
-  die('<a href="./index.php"><h1>Enter administrator username and password</h1></a>');
-}
-
-
 if (isset($_POST['_pcpin_update_query'])) {
+  _pcpin_upgrade_check_auth();
   $query=trim(base64_decode($_POST['_pcpin_update_query']));
   $query=trim($query, ';');
   $query=trim($query);
@@ -71,6 +55,8 @@ if (isset($_POST['_pcpin_update_query'])) {
   if (PCPIN_UPGRADE_INSTALLED_VERSION>=PCPIN_UPGRADE_NEW_VERSION) {
     die('Installed PCPIN Chat version is already up to date. Please delete file <b>upgrade.php</b> now!');
   }
+
+  _pcpin_upgrade_check_auth();
 
   $queries=_pcpin_get_upgrade_queries();
 
@@ -177,7 +163,6 @@ if (isset($_POST['_pcpin_update_query'])) {
 }
 
 function _pcpin_get_installed_version() {
-  global $__pcpin_init_class;
   global $__pcpin_upgrade;
   $__pcpin_upgrade['version']=new PCPIN_Version($__pcpin_upgrade['session']);
   if ($__pcpin_upgrade['version']->_db_getList('version', 'version DESC', 1)) {
@@ -185,6 +170,25 @@ function _pcpin_get_installed_version() {
     $__pcpin_upgrade['version']->_db_freeList();
   } else {
     $__pcpin_upgrade['db_version']=0;
+  }
+}
+
+
+function _pcpin_upgrade_check_auth() {
+  global $__pcpin_upgrade;
+  $auth_ok=false;
+  if (   isset($_SERVER['PHP_AUTH_USER']) && is_scalar($_SERVER['PHP_AUTH_USER']) && $_SERVER['PHP_AUTH_USER']!=''
+      && isset($_SERVER['PHP_AUTH_PW']) && is_scalar($_SERVER['PHP_AUTH_PW'])
+      && $__pcpin_upgrade['user']->_db_getList('id', 'login =# '.$_SERVER['PHP_AUTH_USER'], 'password = '.md5($_SERVER['PHP_AUTH_PW']), 1)
+      ) {
+    $__pcpin_upgrade['user']->_db_freeList();
+    $auth_ok=true;
+  }
+  if(!$auth_ok) {
+    header('WWW-Authenticate: Basic realm="Enter administrator username and password"');
+    header('HTTP/1.0 401 Unauthorized');
+    header('status: 401 Unauthorized');
+    die('<a href="./index.php"><h1>Enter administrator username and password</h1></a>');
   }
 }
 
