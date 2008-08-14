@@ -170,6 +170,8 @@ $body_onload[]='initFinalCheckTables()';
       In case of any questions or problems regarding this software please visit our
       <a href="http://community.pcpin.com/" title="PCPIN Community Forums" target="_blank">Community Forums</a>.
       <br /><br /><br />
+      <b>Please note, that some new features in this version are not translated into all languages yet. <a href="http://community.pcpin.com/viewtopic.php?t=6919">Read more.</a></b>
+      <br /><br /><br />
       Thank you for choosing PCPIN Chat!
       <br /><br />
     </td>
