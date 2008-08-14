@@ -124,7 +124,7 @@ if (!empty($session->_conf_all['allow_sounds'])) {
 }
 
 // JavaScript language expressions
-$_js_lng=array('password');
+$_js_lng=array('password', 'ok', 'cancel');
 
 // CSS files
 $_css_files=array('./main.css');
