@@ -159,7 +159,7 @@ if (isset($_POST['_pcpin_update_query'])) {
 <form id="update_step_form" method="post" target="_updater_frame" action="#">
 <input type="hidden" name="_pcpin_update_query" id="_pcpin_update_query" value="" />
 </form>
-<iframe src="./dummy.html" name="_updater_frame" width="800" height="400" frameborder="0" scrolling="No" style="border:0px"></iframe>
+<iframe src="./dummy.html" name="_updater_frame" width="1" height="1" frameborder="0" scrolling="No" style="border:0px"></iframe>
 </body></html>
 <?php
 }
