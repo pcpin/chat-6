@@ -161,7 +161,7 @@ $body_onload[]='initFinalCheckTables()';
     <td class="tbl_row" colspan="2" style="text-align:center">
       <br />
       <h2 style="color:#008800"><b>Installation complete!</b></h2>
-      <span style="color:#880000"><b>Delete directory &quot;install&quot; before you continue!</b></span>
+      <span style="color:#880000"><b>Delete directory &quot;install&quot;<?php echo file_exists('./upgrade.php')? ' and file &quot;upgrade.php&quot;' : ''; ?> before you continue!</b></span>
       <br /><br />
       Please log into Admin Panel and configure your chat now:
       &nbsp;

@@ -53,7 +53,7 @@ if (isset($_POST['_pcpin_update_query'])) {
     die('Fatal error: Your installation is broken. Reinstall needed!');
   }
   if (PCPIN_UPGRADE_INSTALLED_VERSION>=PCPIN_UPGRADE_NEW_VERSION) {
-    die('Installed PCPIN Chat version is already up to date. Please delete file <b>upgrade.php</b> now!');
+    die('Installed PCPIN Chat version is already up to date. Delete file <b>upgrade.php</b> now!');
   }
 
   _pcpin_upgrade_check_auth();
