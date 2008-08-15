@@ -33,8 +33,6 @@ form {
 textarea {
   overflow: auto;
   font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-  background-color: #ffffff;
-  color: #000000;
 }
 
 button {
@@ -65,8 +63,6 @@ input {
   padding: 0px;
   padding-top: 1px;
   font-family: "Trebuchet MS", Verdana, Arial, Helvetica, sans-serif;
-  background-color: #ffffff;
-  color: #000000;
 }
 
 button:hover {
