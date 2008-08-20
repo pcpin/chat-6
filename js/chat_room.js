@@ -603,7 +603,9 @@ function initChatRoom(room_id,
           return false;
         }
       }
-      this.value=this.value.substring(0, messageLengthMax);
+      if (this.value.length>messageLengthMax) {
+        this.value=this.value.substring(0, messageLengthMax);
+      }
       return true;
     };
     // Set onkeyup handler for input area (Opera Behaviour)

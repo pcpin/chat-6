@@ -172,7 +172,9 @@ function initPMBox(user_id, controls_height) {
         return false;
       }
     }
-    this.value=this.value.substring(0, window.opener.messageLengthMax);
+    if (this.value.length>window.opener.messageLengthMax) {
+      this.value=this.value.substring(0, window.opener.messageLengthMax);
+    }
     return true;
   };
   // Set onkeyup handler for input area (Opera Behaviour)
