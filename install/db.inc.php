@@ -17,9 +17,7 @@
  */
 
 
-
 define('PCPIN_INSTALL_MODE', true);
-require_once('./install.php');
 
 // Send headers
 header('Content-type: application/octet-stream');
@@ -28,18 +26,18 @@ header('Content-Disposition: attachment; filename="db.inc.php"');
 header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 header('Pragma: public');
 
-if (!isset($host)) $host='';
-if (!isset($user)) $user='';
-if (!isset($password)) $password='';
-if (!isset($database)) $database='';
-if (!isset($prefix)) $prefix='';
+if (!isset($_POST['host'])) $_POST['host']='';
+if (!isset($_POST['user'])) $_POST['user']='';
+if (!isset($_POST['password'])) $_POST['password']='';
+if (!isset($_POST['database'])) $_POST['database']='';
+if (!isset($_POST['prefix'])) $_POST['prefix']='';
 
 if ($src=file_get_contents('./database/db.inc.php_')) {
-  $src=str_replace('{{HOST}}', str_replace("'", '\\\'', $host), $src);
-  $src=str_replace('{{USER}}', str_replace("'", '\\\'', $user), $src);
-  $src=str_replace('{{PASSWORD}}', str_replace("'", '\\\'', $password), $src);
-  $src=str_replace('{{DATABASE}}', str_replace("'", '\\\'', $database), $src);
-  $src=str_replace('{{PREFIX}}', str_replace("'", '\\\'', $prefix), $src);
+  $src=str_replace('{{HOST}}', str_replace("'", '\\\'', $_POST['host']), $src);
+  $src=str_replace('{{USER}}', str_replace("'", '\\\'', $_POST['user']), $src);
+  $src=str_replace('{{PASSWORD}}', str_replace("'", '\\\'', $_POST['password']), $src);
+  $src=str_replace('{{DATABASE}}', str_replace("'", '\\\'', $_POST['database']), $src);
+  $src=str_replace('{{PREFIX}}', str_replace("'", '\\\'', $_POST['prefix']), $src);
   echo $src;
 }
 die();

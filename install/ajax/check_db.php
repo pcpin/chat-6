@@ -75,8 +75,8 @@ if (!empty($conn)) {
               && ${$_pcpin_dbcn}['database']===$database
               && ${$_pcpin_dbcn}['tbl_prefix']===$prefix) {
             // File already contains correct data
-#            $status=0;
-#            $message='OK';
+            $status=0;
+            $message='OK';
           }
         }
       }
@@ -90,8 +90,8 @@ if (!empty($conn)) {
           $src=str_replace('{{PREFIX}}', str_replace("'", '\\\'', $prefix), $src);
           if ($out=fopen('../../config/db.inc.php', 'wb')) {
             if (fwrite($out, $src)) {
-#              $status=0;
-#              $message='OK';
+              $status=0;
+              $message='OK';
             }
             $src='';
             fclose($out);
