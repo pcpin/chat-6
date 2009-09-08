@@ -273,7 +273,7 @@ if (!empty($room_id) && !empty($current_user->id)) {
               $xml_data['abuses']=array('abuse'=>array());
             }
             $xml_data['abuses']['abuse'][]=array('id'=>$message_data['id'],
-                                                 'date'=>$message_data['id'],
+                                                 'date'=>$current_user->makeDate($message_data['date']),
                                                  'author_id'=>$message_data['author_id'],
                                                  'author_nickname'=>$message_data['author_nickname'],
                                                  'category'=>$abuse_category,

@@ -1278,7 +1278,7 @@ function processAbuses(abuses) {
     abuse_data['category']=abuses[abuse_nr]['category'][0];
     abuse_data['room_id']=stringToNumber(abuses[abuse_nr]['room_id'][0]);
     abuse_data['room_name']=abuses[abuse_nr]['room_name'][0];
-    abuse_data['abuser_nickname']=abuses[abuse_nr]['author_nickname'][0];
+    abuse_data['abuser_nickname']=abuses[abuse_nr]['abuser_nickname'][0];
     abuse_data['description']=abuses[abuse_nr]['description'][0];
     receivedAbuses[abuse_data['id']]=abuse_data;
     openWindow(formlink+'?s_id='+s_id+'&inc=abuse', 'abuse_'+abuse_data['id'], 600, 450, false, false, false, false, true);

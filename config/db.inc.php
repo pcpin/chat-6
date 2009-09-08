@@ -31,7 +31,7 @@ $_pcpin_db_user = 'root';
 $_pcpin_db_password = '';
 
 // Database name
-$_pcpin_db_database = 'chat';
+$_pcpin_db_database = 'test';
 
 // Prefix for all chat table names
 $_pcpin_db_tbl_prefix = 'pcpin_';
