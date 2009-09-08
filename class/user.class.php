@@ -295,10 +295,14 @@ class PCPIN_User extends PCPIN_Session {
       $this->activation_code=$activation_code;
       $this->last_login='';
       $this->previous_login='';
+      $this->time_online=0;
+      $this->date_format=$this->_conf_all['date_format'];
       $this->last_message_id=0;
       $this->moderated_rooms='';
       $this->moderated_categories='';
       $this->is_admin='n';
+      $this->banned_by=0;
+      $this->banned_by_username='';
       $this->banned_until='';
       $this->banned_permanently='n';
       $this->ban_reason='';

@@ -471,9 +471,17 @@ function _pcpin_get_upgrade_queries() {
     break;
 
   }
-  // All versions: Clear database table data cache
+
+  // All versions
+
+  // 0000431: Invalid online time counter by manually created user accounts
+  // http://bugs.pcpin.com/view.php?id=431
+  $queries[]="UPDATE `".PCPIN_DB_PREFIX."user` AS `us` SET `us`.`time_online` = 0 WHERE `us`.`last_login` = '0000-00-00 00:00:00'";
+
+  // Clear database table data cache
   $queries[]="TRUNCATE TABLE `".PCPIN_DB_PREFIX."cache`";
-  // All versions: Store new version number
+
+  // Store new version number
   $queries[]='DELETE FROM `'.PCPIN_DB_PREFIX.'version`';
   $queries[]='INSERT INTO `'.PCPIN_DB_PREFIX.'version` ( `version`, `version_check_key`, `last_version_check` ) VALUES ( "'.mysql_real_escape_string(PCPIN_UPGRADE_NEW_VERSION).'", "-", "0000-00-00 00:00:00" )';
 
