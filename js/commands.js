@@ -184,9 +184,9 @@ function _cmd_ban(args) {
     }
     if (urec==null) {
       var nickname_plain=args.shift();
-      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
         if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+          urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
         }
       }
     }
@@ -300,9 +300,9 @@ function _cmd_mute(args) {
     }
     if (urec==null) {
       var nickname_plain=args.shift();
-      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
         if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+          urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
         }
       }
     }
@@ -361,9 +361,9 @@ function _cmd_unmute(args) {
     }
     if (urec==null) {
       var nickname_plain=args.shift();
-      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
         if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+          urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
         }
       }
     }
@@ -416,9 +416,9 @@ function _cmd_ipban(args) {
     }
     if (urec==null) {
       var nickname_plain=args.shift();
-      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
         if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+          urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
         }
       }
     }
@@ -508,9 +508,9 @@ function _cmd_kick(args) {
     }
     if (urec==null) {
       var nickname_plain=args.shift();
-      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
         if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+          urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
         }
       }
     }
@@ -569,9 +569,9 @@ function _cmd_ignore(args) {
     }
     if (urec==null) {
       var nickname_plain=args.shift();
-      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
         if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+          urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
         }
       }
     }
@@ -631,9 +631,9 @@ function _cmd_say(args) {
     }
     if (urec==null) {
       var nickname_plain=args.shift();
-      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
         if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+          urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
         }
       }
     }
@@ -709,9 +709,9 @@ function _cmd_unignore(args) {
     }
     if (urec==null) {
       var nickname_plain=args.shift();
-      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
         if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+          urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
         }
       }
     }
@@ -764,9 +764,9 @@ function _cmd_whisper(args) {
     }
     if (urec==null) {
       var nickname_plain=args.shift();
-      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, false))) { // Strict username search
+      if (null==(urec=UserList.findRecordByNickname(nickname_plain, false, true))) { // Strict username search
         if (!isDigitString(nickname_plain) || null==(urec=UserList.getRecord(nickname_plain))) { // ID search
-          urec=UserList.findRecordByNickname(nickname_plain, false, true); // Transitional username search
+          urec=UserList.findRecordByNickname(nickname_plain, false, false); // Transitional username search
         }
       }
     }
