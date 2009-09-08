@@ -391,7 +391,7 @@ function makeSettingInput(id, val, type, choices, description) {
 /**
  * Validate form and save data
  */
-function updateSettings() {
+function updateSettingsACP() {
   var inputs=$$('INPUT');
   var selects=$$('SELECT');
   var errors=new Array();
