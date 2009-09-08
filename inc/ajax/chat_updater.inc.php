@@ -158,7 +158,7 @@ if (!empty($room_id) && !empty($current_user->id)) {
                   }
                 } else {
                   // "/clear <room>"
-                  $message_ok=$current_user->is_admin==='y' || false!==strpos(','.$target_room_id.',', ','.$current_user->moderated_rooms.',');
+                  $message_ok=$current_user->is_admin==='y' || false!==strpos(','.$current_user->moderated_rooms.',', ','.$target_room_id.',');
                   if ($message_ok) {
                     // Delete all messages
                     $msg->deleteMessages(null, time(), $target_room_id);
