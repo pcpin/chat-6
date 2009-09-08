@@ -114,7 +114,7 @@ if (!empty($room_id) && !empty($current_user->id)) {
                 // A message to another room
                 if (   $privacy==2 && $target_user_id>0 // PM can be sent from/to any room
                     && $current_user->is_admin!=='y' // Admin can send msgs to any room
-                    && false===strpos(','.$target_room_id.',', ','.$current_user->moderated_rooms.',') // Mod can sent msgs to any room that he moderates
+                    && false===strpos(','.$current_user->moderated_rooms.',', ','.$target_room_id.',') // Mod can sent msgs to any room that he moderates
                     ) {
                   // TODO (ignoring...)
                   $message_ok=false;
