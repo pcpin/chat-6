@@ -430,27 +430,34 @@ function PCPIN_XmlHttpRequest(http_user, http_pass) {
     var status=null;
     var message=null;
     var data=null;
-    if (xml) {
-      root=xml.getElementsByTagName(rootXmlElementName);
-      if (root.length==1) {
-        root=root[0];
-        // <header>
-        header=root.getElementsByTagName('header');
-        if (header.length) {
-          header=header[0];
-          service=header.getElementsByTagName('service');
-          if (service.length) this.service=this.getCdata(service[0]);
-          status=header.getElementsByTagName('status');
-          if (status.length) this.status=stringToNumber(this.getCdata(status[0]));
-          message=header.getElementsByTagName('message');
-          if (message.length) this.message=this.getCdata(message[0]);
+    try {
+      if (xml) {
+        root=xml.getElementsByTagName(rootXmlElementName);
+        if (root.length==1) {
+          root=root[0];
+          // <header>
+          header=root.getElementsByTagName('header');
+          if (header.length) {
+            header=header[0];
+            service=header.getElementsByTagName('service');
+            if (service.length) this.service=this.getCdata(service[0]);
+            status=header.getElementsByTagName('status');
+            if (status.length) this.status=stringToNumber(this.getCdata(status[0]));
+            message=header.getElementsByTagName('message');
+            if (message.length) this.message=this.getCdata(message[0]);
+          }
+          // <data>
+          data=root.getElementsByTagName('data');
+          if (data.length) this.data=this.parseXMLToArray(data[0]);
+        } else {
+          throw(1);
         }
-        // <data>
-        data=root.getElementsByTagName('data');
-        if (data.length) this.data=this.parseXMLToArray(data[0]);
+        return true;
+      } else {
+        throw(1);
       }
-      return true;
-    } else {
+    } catch (e) {
+      this.message+='\n'+this.getResponseString();
       return false;
     }
   }
