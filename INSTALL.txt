@@ -84,7 +84,7 @@ Not required, but recommended:
    2.4.	Edit file /config/db.inc.php end enter there your database connection data.
 
    2.5. Point your browser to the file upgrade.php (located in the chat main directory) and follow
-        onscreen instructions. Please not that you will need valid administrator access data in order
+        onscreen instructions. Please note that you will need valid administrator access data in order
         to execute upgrade script.
 
    2.6. Delete file /upgrade.php.

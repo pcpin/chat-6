@@ -47,7 +47,7 @@ if (isset($_POST['_pcpin_update_query'])) {
   die();
 } else {
   _pcpin_get_installed_version();
-  define('PCPIN_UPGRADE_NEW_VERSION', 6.20);
+  define('PCPIN_UPGRADE_NEW_VERSION', 6.21);
   define('PCPIN_UPGRADE_INSTALLED_VERSION', $__pcpin_upgrade['db_version']);
   if (PCPIN_UPGRADE_INSTALLED_VERSION==0) {
     die('Fatal error: Your installation is broken. Reinstall needed!');
