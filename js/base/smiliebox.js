@@ -173,7 +173,7 @@ var SmilieList=new function() {
 function initSmilieList(opener_top, opener_left) {
   var smiliebox_smilies=$$('img', $('smilie_selection_box'));
   var added_smilies=new Array();
-  if (typeof(smiliebox_smilies)=='object' && smiliebox_smilies && smiliebox_smilies.length) {
+  if ((typeof(smiliebox_smilies)=='object' || typeof(smiliebox_smilies)=='function') && smiliebox_smilies && smiliebox_smilies.length) {
     SmilieList.reset(opener_top, opener_left);
     for (var i=0; i<smiliebox_smilies.length; i++) {
       if (typeof(smiliebox_smilies[i].id)=='string' && smiliebox_smilies[i].id.length>13 && 0==smiliebox_smilies[i].id.indexOf('smilie_image_')) {

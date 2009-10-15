@@ -88,7 +88,7 @@ function openColorBox(tgt_obj_id, css_attr, openerObj, tgt_var, center, opener_c
   if (typeof(colors_header_row)!='boolean') {
     colors_header_row=true;
   }
-  if (typeof(colorbox_areas)=='object' && colorbox_areas) {
+  if ((typeof(colorbox_areas)=='object' || typeof(colorbox_areas)=='function') && colorbox_areas) {
     for (var i=0; i<colorbox_areas.length; i++) {
       name_=colorbox_areas[i].getAttribute('name');
       if (name_ && 0==name_.indexOf('colorbox_code_')) {
