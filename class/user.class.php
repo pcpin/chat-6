@@ -315,7 +315,7 @@ class PCPIN_User extends PCPIN_Session {
       $this->time_zone_offset=0;
       $this->is_guest=$guest;
       $this->show_message_time='';
-      $this->outgoing_message_color=$this->_conf_all['default_message_color'];
+      $this->outgoing_message_color='';
       $this->language_id=!empty($language_id)? $language_id : $this->_s_language_id;
       $this->allow_sounds='';
       $this->room_selection_view=$this->_conf_all['room_selection_display_type'];
