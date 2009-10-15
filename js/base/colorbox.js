@@ -120,7 +120,10 @@ function openColorBox(tgt_obj_id, css_attr, openerObj, tgt_var, center, opener_c
     if (typeof(show_input)=='boolean' && show_input) {
       $('colorbox_selected_color_input_row').style.display='';
       if (typeof(initial_color)=='string') {
-        $('colorbox_selected_color_input').value=initial_color.substring(0, 6);
+        initial_color=colorRgbToHex(initial_color, null);
+        if (initial_color!='') {
+          $('colorbox_selected_color_input').value=initial_color.substring(0, 6);
+        }
       }
     } else {
       $('colorbox_selected_color_input_row').style.display='none';

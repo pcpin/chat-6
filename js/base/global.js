@@ -1362,7 +1362,7 @@ function colorRgbToHex(rgb_color, prefix) {
       rgb_color=rgb_color.substring(4);
       rgb_color=rgb_color.substring(0, rgb_color.length-1);
       rgb=rgb_color.split(',');
-      ret=prefix+parseInt(rgb[0], 16).toString()+parseInt(rgb[1], 16).toString()+parseInt(rgb[2], 16).toString();
+      ret=prefix+decHex(rgb[0], 2)+decHex(rgb[1], 2)+decHex(rgb[2], 2);
     } else if (rgb_color.substring(0, 1)=='#') {
       ret=prefix+rgb_color.substring(1, rgb_color.length);
     }
