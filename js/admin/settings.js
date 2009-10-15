@@ -45,6 +45,18 @@ var RoomListSettingID=0;
  */
 var SlaveModeMasters=new Array();
 
+/**
+ * Settings array
+ * @var array
+ */
+var SettingObjects=Array();
+
+/**
+ * Settings array, indexed by setting ID
+ * @var array
+ */
+var SettingObjectsByID=Array();
+
 
 
 /**
@@ -104,7 +116,8 @@ function _CALLBACK_getSlaveMasters() {
  * Get settings
  */
 function getSettings() {
-  SettingObjects=new Array();
+  SettingObjects=Array();
+  SettingObjectsByID=Array();
   if (typeof(CurrentSettingsGroup)=='string' && CurrentSettingsGroup!='') {
     sendData('_CALLBACK_getSettings()', formlink, 'POST', 'ajax=get_settings&group='+htmlspecialchars(CurrentSettingsGroup)+'&s_id='+urlencode(s_id));
   }
@@ -120,6 +133,7 @@ function _CALLBACK_getSettings() {
   var td=null;
   var last_subgroup='';
   var inputs_data=null;
+  var setting_object=null;
   if (actionHandler.status==-1) {
     // Session is invalid
     window.parent.document.location.href=formlink+'?session_timeout&ts='+unixTimeStamp();
@@ -134,16 +148,19 @@ function _CALLBACK_getSettings() {
       for (setting_nr=0; setting_nr<actionHandler.data['setting'].length; setting_nr++) {
         setting=actionHandler.data['setting'][setting_nr];
         setting_id=stringToNumber(setting['id'][0]);
-        SettingObjects[setting_id]=new Setting(setting_id,
-                                               setting_nr,
-                                               setting['type'][0],
-                                               setting['name'][0],
-                                               setting['value'][0],
-                                               setting['choices'][0],
-                                               setting['description'][0],
-                                               setting['group'][0],
-                                               setting['subgroup'][0]
-                                               );
+        SettingObjects.push(
+                            new Setting(setting_id,
+                                                   setting_nr,
+                                                   setting['type'][0],
+                                                   setting['name'][0],
+                                                   setting['value'][0],
+                                                   setting['choices'][0],
+                                                   setting['description'][0],
+                                                   setting['group'][0],
+                                                   setting['subgroup'][0]
+                                                   )
+                            );
+        SettingObjectsByID[setting_id]=SettingObjects[SettingObjects.length-1];
       }
     } else {
       alert(actionHandler.message);
@@ -151,9 +168,10 @@ function _CALLBACK_getSettings() {
   }
   // Display settings table
   last_subgroup='';
-  for (var i in SettingObjects) {
-    if (SettingObjects[i].Subgroup!=last_subgroup) {
-      last_subgroup=SettingObjects[i].Subgroup;
+  for (var i=0; i<SettingObjects.length; i++) {
+    setting_object=SettingObjects[i];
+    if (setting_object.Subgroup!=last_subgroup) {
+      last_subgroup=setting_object.Subgroup;
 
       // Display subgroup row
       tr=settings_tbl.insertRow(settings_tbl.rows.length-1);
@@ -168,17 +186,17 @@ function _CALLBACK_getSettings() {
     tr=settings_tbl.insertRow(settings_tbl.rows.length-1);
 
     td=tr.insertCell(-1);
-    td.innerHTML=htmlspecialchars(SettingObjects[i].Nr+'.');
+    td.innerHTML=htmlspecialchars(setting_object.Nr+'.');
     setCssClass(td, 'tbl_row');
     td.style.verticalAlign='top';
     td.style.textAlign='right';
 
     td=tr.insertCell(-1);
-    td.innerHTML=nl2br(htmlspecialchars(SettingObjects[i].Description));
+    td.innerHTML=nl2br(htmlspecialchars(setting_object.Description));
     setCssClass(td, 'tbl_row');
     td.style.verticalAlign='top';
 
-    inputs_data=makeSettingInput(SettingObjects[i].ID, SettingObjects[i].Value, SettingObjects[i].Type, SettingObjects[i].Choices, SettingObjects[i].Description);
+    inputs_data=makeSettingInput(setting_object.ID, setting_object.Value, setting_object.Type, setting_object.Choices, setting_object.Description);
     td=tr.insertCell(-1);
     td.innerHTML=inputs_data[0];
     setCssClass(td, 'tbl_row');
@@ -187,8 +205,8 @@ function _CALLBACK_getSettings() {
 
     // Assign events
     for (var ii in inputs_data[1]) {
-      $(ii).element_nr=SettingObjects[i].Nr;
-      $(ii).choices=SettingObjects[i].Choices;
+      $(ii).element_nr=setting_object.Nr;
+      $(ii).choices=setting_object.Choices;
       // "onkeydown" for text fields
       if ($(ii).type=='text') {
         if (inputs_data[1][ii]=='int') {
@@ -209,7 +227,7 @@ function _CALLBACK_getSettings() {
           }
         } else {
           // String field
-          switch (SettingObjects[i].Choices) {
+          switch (setting_object.Choices) {
 
             case '<email>':
               // String must contain email address
@@ -438,8 +456,8 @@ function updateSettingsACP() {
       }
     }
     for (var i in values_array) {
-      SettingObjects[i].Value=values_array[i].join('|');
-      post_settings.push('settings['+SettingObjects[i].Name+']='+urlencode(SettingObjects[i].Value));
+      SettingObjectsByID[i].Value=values_array[i].join('|');
+      post_settings.push('settings['+SettingObjectsByID[i].Name+']='+urlencode(SettingObjectsByID[i].Value));
     }
     // Send new settings to server
     sendData('_CALLBACK_updateSettings()', formlink, 'POST', 'ajax=update_settings&s_id='+urlencode(s_id)+'&'+post_settings.join('&'));
@@ -495,7 +513,7 @@ function _CALLBACK_getRoomList() {
           s_room.password_protect='1'==room['password_protected'][0];
           s_room.innerHTML=(s_room.password_protect? '* ' : '')+htmlspecialchars(room['name'][0]);
           s_cat.appendChild(s_room);
-          if (stringToNumber(s_room.value)==stringToNumber(SettingObjects[RoomListSettingID].Value)) {
+          if (stringToNumber(s_room.value)==stringToNumber(SettingObjectsByID[RoomListSettingID].Value)) {
             s_room.selected=true;
           }
         }
