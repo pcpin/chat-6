@@ -19,26 +19,26 @@
  * Nicknames returned by last search, keyed by user ID
  * @var object
  */
-var Users=new Array();
+var Users=Array();
 
 /**
  * Moderated categories (keyed by user ID)
  * @var object
  */
-var ModeratedCategories=new Array();
+var ModeratedCategories=Array();
 
 /**
  * Moderated rooms (keyed by user ID)
  * @var object
  */
-var ModeratedRooms=new Array();
+var ModeratedRooms=Array();
 
 /**
  * Categories as an Array with first element is tree structure
  * and other elements as references to categories in tree structure.
  * @var object
  */
-var CategoryTree=new Array();
+var CategoryTree=Array();
 
 /**
  * Categories indexed by category ID
@@ -77,7 +77,7 @@ function initEditModeratorWindow(is_popup) {
  * Get chat rooms list grouped in categories and sorted by name
  */
 function getRoomStructure() {
-  CategoryTree=new Array();
+  CategoryTree=Array();
   $('categories_and_rooms').innerHTML='&nbsp;';
   sendData('_CALLBACK_getRoomStructure()', formlink, 'POST', 'ajax=get_room_structure&s_id='+urlencode(s_id), true);
 }
@@ -129,14 +129,10 @@ function makeCategoryTree(cats) {
                             child_ids: Array(),
                             name: cat['name'][0],
                             description: cat['description'][0],
-                            creatable_rooms: cat['creatable_rooms'][0]=='1',
                             children: Array(),
                             children_by_id: Array(),
                             rooms: Array(),
-                            rooms_by_id: Array(),
-                            rooms_local: 0,
-                            rooms_total: 0,
-                            users_total: 0
+                            rooms_by_id: Array()
                           }
                         );
       curr_cat=CategoryTree[CategoryTree.length-1];
@@ -157,27 +153,16 @@ function makeCategoryTree(cats) {
         curr_cat['rooms'].push(
                                 {
                                   id: room_id,
-                                  password_protected: '0'!=room['password_protected'][0],
                                   name: room['name'][0],
-                                  description: room['description'][0],
-                                  moderated_by_me: '1'==room['moderated_by_me'][0],
-                                  users: Array(),
-                                  users_by_id: Array(),
-                                  users_total: 0
+                                  description: room['description'][0]
                                 }
                                );
         curr_cat['rooms_by_id'][room_id]=curr_cat['rooms'][curr_cat['rooms'].length-1];
-        curr_cat['rooms_local']++;
-        curr_cat['rooms_total']++;
       }
       // Save child categories' IDs and rooms/users counters
       for (var i=0; i<curr_cat['children'].length; i++) {
-        curr_cat['rooms_total']+=curr_cat['children'][i]['rooms_total'];
-        curr_cat['users_total']+=curr_cat['children'][i]['users_total'];
         if (curr_cat['parent_id']!=-1) {
           CategoryTreeByID[curr_cat['parent_id']]['child_ids'].push(curr_cat['children'][i]['id']);
-          curr_cat['parent_id']['rooms_total']+=curr_cat['rooms_total'];
-          curr_cat['parent_id']['users_total']+=curr_cat['users_total'];
         }
       }
     }
@@ -293,7 +278,7 @@ function hideUserSearchForm() {
  */
 function moderatorSearchUser(resize) {
   autoShowSingleUserForm=true;
-  Users=new Array();
+  Users=Array();
   $('nickname_search').value=trimString($('nickname_search').value);
   sendData('_CALLBACK_getMemberlist('+(typeof(resize)=='boolean' && resize ? 'true' : 'false')+')', formlink, 'POST', 'ajax=get_memberlist'
                                                                                                                      +'&s_id='+urlencode(s_id)
@@ -353,7 +338,7 @@ function showSearchResults() {
   var col_length_max=0;
   var col_nr=0;
   var col_html='';
-  var cols_html=new Array();
+  var cols_html=Array();
   var last_user_id=0;
   for (var i in Users) {
     users_count++;
@@ -456,10 +441,10 @@ function saveModerator(cats, cat_ids, room_ids, level) {
     cats=CategoryTree[0]['children'];
   }
   if (typeof(cat_ids)=='undefined') {
-    cat_ids=new Array();
+    cat_ids=Array();
   }
   if (typeof(room_ids)=='undefined') {
-    room_ids=new Array();
+    room_ids=Array();
   }
   if (typeof(level)=='undefined') {
     level=0;

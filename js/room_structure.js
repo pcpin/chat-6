@@ -20,13 +20,25 @@
  * and other elements as references to categories in tree structure.
  * @var object
  */
-var CategoryTree=new Array();
+var CategoryTree=Array();
 
 /**
  * Previous state of CategoryTree array
  * @var object
  */
-var CategoryTree_previous=new Array();
+var CategoryTree_previous=Array();
+
+/**
+ * Categories indexed by category ID
+ * @var object
+ */
+var CategoryTreeByID=Array();
+
+/**
+ * Previous state of CategoryTreeByID array
+ * @var object
+ */
+var CategoryTreeByID_previous=Array();
 
 /**
  * Currently active category ID
@@ -89,7 +101,9 @@ var userlistPrivileged=false;
  */
 function resetRoomStructure() {
   CategoryTree_previous=CategoryTree;
-  CategoryTree=new Array();
+  CategoryTreeByID_previous=CategoryTreeByID;
+  CategoryTree=Array();
+  CategoryTreeByID=Array();
   setActiveCategoryId(0);
   setActiveRoomId(0);
   setCssClass($('chat_rooms_list'), '.div_selection_scrollable');
@@ -169,6 +183,7 @@ function _CALLBACK_getRoomStructure(callback2) {
  * @return  array
  */
 function makeCategoryTree(cats) {
+  var cat=null;
   var cat_id=0;
   var cat_parent_id=0;
   var room=null;
@@ -177,63 +192,82 @@ function makeCategoryTree(cats) {
   var user_nr=0;
   var user=null;
   var user_id=0;
+  var curr_cat=null;
   if (cats) {
     for (var cat_nr=0; cat_nr<cats.length; cat_nr++) {
-      cat_id=stringToNumber(cats[cat_nr]['id'][0]);
-      cat_parent_id=stringToNumber(cats[cat_nr]['parent_id'][0]);
-      // Add category to the global array
+      cat=cats[cat_nr];
+      cat_id=stringToNumber(cat['id'][0]);
+      cat_parent_id=stringToNumber(cat['parent_id'][0]);
       if (ActiveCategoryId_previous==cat_id) {
         setActiveCategoryId(cat_id);
       }
-      CategoryTree[cat_id]=new Array();
-      CategoryTree[cat_id]['id']=cat_id;
-      CategoryTree[cat_id]['parent_id']=cat_parent_id;
-      CategoryTree[cat_id]['name']=cats[cat_nr]['name'][0];
-      CategoryTree[cat_id]['description']=cats[cat_nr]['description'][0];
-      CategoryTree[cat_id]['creatable_rooms']=cats[cat_nr]['creatable_rooms'][0]=='1';
-      CategoryTree[cat_id]['children']=new Array();
-      CategoryTree[cat_id]['child_ids']=new Array();
-      CategoryTree[cat_id]['rooms']=new Array();
-      CategoryTree[cat_id]['opened']=typeof(CategoryTree_previous[cat_id])!='undefined' && CategoryTree_previous[cat_id]['opened'];
-      CategoryTree[cat_id]['rooms_local']=0;
-      CategoryTree[cat_id]['rooms_total']=0;
-      CategoryTree[cat_id]['users_total']=0;
+      // Add category to the global array
+      CategoryTree.push(
+                          {
+                            id: cat_id,
+                            parent_id: cat_parent_id,
+                            child_ids: Array(),
+                            name: cat['name'][0],
+                            description: cat['description'][0],
+                            creatable_rooms: cat['creatable_rooms'][0]=='1',
+                            children: Array(),
+                            children_by_id: Array(),
+                            rooms: Array(),
+                            rooms_by_id: Array(),
+                            opened: typeof(CategoryTreeByID_previous[cat_id])!='undefined' && CategoryTreeByID_previous[cat_id]['opened'],
+                            rooms_local: 0,
+                            rooms_total: 0,
+                            users_total: 0
+                          }
+                        );
+      curr_cat=CategoryTree[CategoryTree.length-1];
+      CategoryTreeByID[cat_id]=curr_cat;
       if (cat_parent_id!=-1) {
         // Make a reference
-        CategoryTree[cat_parent_id]['children'][cat_id]=CategoryTree[cat_id];
+        CategoryTreeByID[cat_parent_id]['children'].push(curr_cat);
+        CategoryTreeByID[cat_parent_id]['children_by_id'][cat_id]=CategoryTreeByID[cat_parent_id]['children'][CategoryTreeByID[cat_parent_id]['children'].length-1];
       }
       // Get child categories
-      if (cats[cat_nr]['category'].length) {
-        makeCategoryTree(cats[cat_nr]['category']);
+      if (cat['category'].length) {
+        makeCategoryTree(cat['category']);
       }
       // Get rooms
-      for (room_nr=0; room_nr<cats[cat_nr]['room'].length; room_nr++) {
-        room=cats[cat_nr]['room'][room_nr];
+      for (room_nr=0; room_nr<cat['room'].length; room_nr++) {
+        room=cat['room'][room_nr];
         room_id=stringToNumber(room['id'][0]);
         if (ActiveRoomId_previous==room_id) {
           setActiveRoomId(room_id);
         }
-        CategoryTree[cat_id]['rooms'][room_id]=new Array();
-        CategoryTree[cat_id]['rooms'][room_id]['id']=room_id;
-        CategoryTree[cat_id]['rooms'][room_id]['password_protected']='0'!=room['password_protected'][0];
-        CategoryTree[cat_id]['rooms'][room_id]['name']=room['name'][0];
-        CategoryTree[cat_id]['rooms'][room_id]['description']=room['description'][0];
-        CategoryTree[cat_id]['rooms'][room_id]['opened']=typeof(CategoryTree_previous[cat_id])!='undefined' && typeof(CategoryTree_previous[cat_id]['rooms'][room_id])!='undefined' && CategoryTree_previous[cat_id]['rooms'][room_id]['opened'];
-        CategoryTree[cat_id]['rooms'][room_id]['moderated_by_me']='1'==room['moderated_by_me'][0];
-        CategoryTree[cat_id]['rooms'][room_id]['users']=new Array();
-        CategoryTree[cat_id]['rooms'][room_id]['users_total']=0;
-        CategoryTree[cat_id]['rooms_local']++;
-        CategoryTree[cat_id]['rooms_total']++;
+        curr_cat['rooms'].push(
+                                {
+                                  id: room_id,
+                                  password_protected: '0'!=room['password_protected'][0],
+                                  name: room['name'][0],
+                                  description: room['description'][0],
+                                  opened: typeof(CategoryTree_previous[cat_id])!='undefined' && typeof(CategoryTreeByID_previous[cat_id]['rooms_by_id'][room_id])!='undefined' && CategoryTreeByID_previous[cat_id]['rooms_by_id'][room_id]['opened'],
+                                  moderated_by_me: '1'==room['moderated_by_me'][0],
+                                  users: Array(),
+                                  users_by_id: Array(),
+                                  users_total: 0
+                                }
+                               );
+        curr_cat['rooms_by_id'][room_id]=curr_cat['rooms'][curr_cat['rooms'].length-1];
+        curr_cat['rooms_local']++;
+        curr_cat['rooms_total']++;
         // Get users
         for (user_nr=0; user_nr<room['user'].length; user_nr++) {
           user=room['user'][user_nr];
           user_id=stringToNumber(user['id'][0]);
-          CategoryTree[cat_id]['rooms'][room_id]['users'][user_id]=new Array();
-          CategoryTree[cat_id]['rooms'][room_id]['users'][user_id]['id']=user_id;
-          CategoryTree[cat_id]['rooms'][room_id]['users'][user_id]['nickname']=user['nickname'][0];
-          CategoryTree[cat_id]['rooms'][room_id]['users'][user_id]['nickname_plain']=user['nickname_plain'][0];
-          CategoryTree[cat_id]['rooms'][room_id]['users_total']++;
-          CategoryTree[cat_id]['users_total']++;
+          curr_cat['rooms_by_id'][room_id]['users'].push(
+                                                         {
+                                                           user_id: user_id,
+                                                           nickname: user['nickname'][0],
+                                                           nickname_plain: user['nickname_plain'][0]
+                                                         }
+                                                        );
+          curr_cat['rooms_by_id'][room_id]['users_by_id'][user_id]=curr_cat['rooms_by_id'][room_id]['users'][curr_cat['rooms_by_id'][room_id]['users'].length-1];
+          curr_cat['rooms_by_id'][room_id]['users_total']++;
+          curr_cat['users_total']++;
           UserList.addRecord(user_id,
                              user['nickname'][0],
                              user['online_status'][0],
@@ -250,14 +284,13 @@ function makeCategoryTree(cats) {
         }
       }
       // Save child categories' IDs and rooms/users counters
-      for (var i in CategoryTree[cat_id]['children']) {
-        CategoryTree[cat_id]['child_ids'][CategoryTree[cat_id]['child_ids'].length]=i;
-        CategoryTree[cat_id]['rooms_total']+=CategoryTree[cat_id]['children'][i]['rooms_total'];
-        CategoryTree[cat_id]['users_total']+=CategoryTree[cat_id]['children'][i]['users_total'];
-        if (CategoryTree[cat_id]['parent_id']!=-1) {
-          CategoryTree[CategoryTree[cat_id]['parent_id']]['child_ids'][CategoryTree[CategoryTree[cat_id]['parent_id']]['child_ids'].length]=i;
-          CategoryTree[cat_id]['parent_id']['rooms_total']+=CategoryTree[cat_id]['rooms_total'];
-          CategoryTree[cat_id]['parent_id']['users_total']+=CategoryTree[cat_id]['users_total'];
+      for (var i=0; i<curr_cat['children'].length; i++) {
+        curr_cat['rooms_total']+=curr_cat['children'][i]['rooms_total'];
+        curr_cat['users_total']+=curr_cat['children'][i]['users_total'];
+        if (curr_cat['parent_id']!=-1) {
+          CategoryTreeByID[curr_cat['parent_id']]['child_ids'].push(curr_cat['children'][i]['id']);
+          curr_cat['parent_id']['rooms_total']+=curr_cat['rooms_total'];
+          curr_cat['parent_id']['users_total']+=curr_cat['users_total'];
         }
       }
     }
@@ -303,17 +336,17 @@ function makeCategoryTreeHtml(cats, depth) {
     if (depth==0) {
       html='<b>'+htmlspecialchars(getLng('chat_categories'))+'</b><br />';
     }
-    for (var i in cats) {
+    for (var i=0; i<cats.length; i++) {
       if (depth>0) {
         html+='<img src="./pic/clearpixel_1x1.gif" border="0" width="'+(depth*15)+'" height="1" />';
       }
       if (cats[i]['children'].length) {
         if (cats[i]['opened']) {
-          html+='<a href="#" title="'+htmlspecialchars(getLng('chat_category')+': '+cats[i]['name']+"\n"+cats[i]['description'])+'" onclick="setActiveRoomId(0); showStealthSwitch(false); closeCategoryFolder('+i+'); showCategoryRooms(); return false;">'
+          html+='<a href="#" title="'+htmlspecialchars(getLng('chat_category')+': '+cats[i]['name']+"\n "+cats[i]['description'])+'" onclick="setActiveRoomId(0); showStealthSwitch(false); closeCategoryFolder('+cats[i]['id']+'); showCategoryRooms(); return false;">'
               + '<img src="./pic/minus_box_15x12.gif" border="0" />'
               + '</a>';
         } else {
-          html+='<a href="#" title="'+htmlspecialchars(getLng('chat_category')+': '+cats[i]['name']+"\n"+cats[i]['description'])+'" onclick="setActiveRoomId(0); showStealthSwitch(false); openCategoryFolder('+i+'); return false;">'
+          html+='<a href="#" title="'+htmlspecialchars(getLng('chat_category')+': '+cats[i]['name']+"\n "+cats[i]['description'])+'" onclick="setActiveRoomId(0); showStealthSwitch(false); openCategoryFolder('+cats[i]['id']+'); return false;">'
               + '<img src="./pic/plus_box_15x12.gif" border="0" />'
               + '</a>';
         }
@@ -321,10 +354,10 @@ function makeCategoryTreeHtml(cats, depth) {
         html+='<img src="./pic/clearpixel_1x1.gif" border="0" width="15" height="1" />';
       }
       html+='<img src="./pic/clearpixel_1x1.gif" border="0" width="3" height="1" />'
-          + '<a title="'+htmlspecialchars(getLng('chat_category')+': '+cats[i]['name']+' ['+cats[i]['rooms_total']+' '+getLng('rooms')+' / '+cats[i]['users_total']+' '+getLng('users')+']'+"\n"+cats[i]['description'])+'" class="div_selection_scrollable_link" href="#" onclick="setActiveRoomId(0); showStealthSwitch(false); setActiveCategoryId('+i+'); openCategoryFolder('+i+'); showCategoryRooms('+i+'); return false;">'
-          + '<img src="./pic/'+(i==ActiveCategoryId? 'folder_opened_15x12.gif' : 'folder_closed_15x12.gif')+'" border="0" />'
+          + '<a title="'+htmlspecialchars(getLng('chat_category')+': '+cats[i]['name']+' ['+cats[i]['rooms_total']+' '+getLng('rooms')+' / '+cats[i]['users_total']+' '+getLng('users')+']'+"\n "+cats[i]['description'])+'" class="div_selection_scrollable_link" href="#" onclick="setActiveRoomId(0); showStealthSwitch(false); setActiveCategoryId('+cats[i]['id']+'); openCategoryFolder('+cats[i]['id']+'); showCategoryRooms('+cats[i]['id']+'); return false;">'
+          + '<img src="./pic/'+(cats[i]['id']==ActiveCategoryId? 'folder_opened_15x12.gif' : 'folder_closed_15x12.gif')+'" border="0" />'
           + '<img src="./pic/clearpixel_1x1.gif" border="0" width="5" height="12" />'
-          + '<span class="'+(i==ActiveCategoryId? 'div_selection_scrollable_active' : 'div_selection_scrollable_inactive')+'">'
+          + '<span class="'+(cats[i]['id']==ActiveCategoryId? 'div_selection_scrollable_active' : 'div_selection_scrollable_inactive')+'">'
           + htmlspecialchars(cats[i]['name'])
           + ' ['+cats[i]['rooms_total']+'/'+cats[i]['users_total']+']'
           + '</span>'
@@ -408,22 +441,27 @@ function makeCategoryRoomsHTML(category_id) {
   var ignored_img_suffix='';
   var status_img='';
   var status_title='';
+  var cat=null;
+  var child_cat=null;
+  var room=null;
 
   if (category_id>0) {
-    html='<b>'+getLng('chat_category')+' &quot;'+htmlspecialchars(CategoryTree[category_id]['name'])+'&quot;</b><br />';
-    if (CategoryTree[category_id]['description']!='') {
-      html+=nl2br(htmlspecialchars(CategoryTree[category_id]['description']))+'<br />';
+    cat=CategoryTreeByID[category_id];
+    html='<b>'+getLng('chat_category')+' &quot;'+htmlspecialchars(cat['name'])+'&quot;</b><br />';
+    if (cat['description']!='') {
+      html+=nl2br(htmlspecialchars(cat['description']))+'<br />';
     }
-    if (CategoryTree[category_id]['children'].length) {
+    if (cat['children'].length) {
       // Display subcategories
       html+='<br /><u>'+getLng('subcategories')+':</u><br />';
-      for (var ii in CategoryTree[category_id]['children']) {
-        html+='<a onclick="setActiveCategoryId('+ii+'); openCategoryFolder('+ii+'); showCategoryRooms(); return false;" title="'+htmlspecialchars(getLng('chat_category')+': '+CategoryTree[category_id]['children'][ii]['name']+' ['+CategoryTree[category_id]['rooms_total']+' '+getLng('rooms')+' / '+CategoryTree[category_id]['users_total']+' '+getLng('users')+']'+"\n"+CategoryTree[category_id]['children'][ii]['description'])+'" href="#" class="div_selection_scrollable_link">'
+      for (var ii=0; ii<cat['children'].length; ii++) {
+        child_cat=cat['children'][ii];
+        html+='<a onclick="setActiveCategoryId('+child_cat['id']+'); openCategoryFolder('+child_cat['id']+'); showCategoryRooms(); return false;" title="'+htmlspecialchars(getLng('chat_category')+': '+child_cat['name']+' ['+cat['rooms_total']+' '+getLng('rooms')+' / '+cat['users_total']+' '+getLng('users')+']'+"\n "+child_cat['description'])+'" href="#" class="div_selection_scrollable_link">'
             + '<img src="./pic/folder_closed_15x12.gif" border="0" />'
             + '<img src="./pic/clearpixel_1x1.gif" border="0" width="5" height="1" />'
             + '<span class="div_selection_scrollable_inactive">'
-            + htmlspecialchars(CategoryTree[category_id]['children'][ii]['name'])
-            + htmlspecialchars(' ['+CategoryTree[category_id]['children'][ii]['rooms_total']+'/'+CategoryTree[category_id]['children'][ii]['users_total']+']')
+            + htmlspecialchars(child_cat['name'])
+            + htmlspecialchars(' ['+child_cat['rooms_total']+'/'+child_cat['users_total']+']')
             + '</span>'
             + '</a>'
             + '<br />';
@@ -431,18 +469,19 @@ function makeCategoryRoomsHTML(category_id) {
     }
     html+='<hr width="100%" />';
     // Display rooms
-    if (CategoryTree[category_id]['rooms'].length) {
+    if (cat['rooms'].length) {
       html+='<u>'+getLng('chat_rooms')+':</u><br />';
-      for (var ii in CategoryTree[category_id]['rooms']) {
-        if (CategoryTree[category_id]['rooms'][ii]['users'].length) {
+      for (var ii=0; ii<cat['rooms'].length; ii++) {
+        room=cat['rooms'][ii];
+        if (room['users'].length) {
           // There are users in room
-          if (CategoryTree[category_id]['rooms'][ii]['opened']) {
-            html+='<a href="#" title="'+htmlspecialchars(getLng('hide_online_users'))+'" onclick="openCloseRoom('+ii+', '+category_id+', false); showCategoryRooms('+category_id+'); return false;">'
+          if (room['opened']) {
+            html+='<a href="#" title="'+htmlspecialchars(getLng('hide_online_users'))+'" onclick="openCloseRoom('+room['id']+', '+category_id+', false); showCategoryRooms('+category_id+'); return false;">'
                 + '<img src="./pic/minus_box_15x12.gif" border="0" />'
                 + '</a>'
                 ;
           } else {
-            html+='<a href="#" title="'+htmlspecialchars(getLng('show_online_users'))+'" onclick="openCloseRoom('+ii+', '+category_id+', true); showCategoryRooms('+category_id+'); return false;">'
+            html+='<a href="#" title="'+htmlspecialchars(getLng('show_online_users'))+'" onclick="openCloseRoom('+room['id']+', '+category_id+', true); showCategoryRooms('+category_id+'); return false;">'
                 + '<img src="./pic/plus_box_15x12.gif" border="0" />'
                 + '</a>';
           }
@@ -450,31 +489,31 @@ function makeCategoryRoomsHTML(category_id) {
           // There are no users in room
           html+='<img src="./pic/clearpixel_1x1.gif" border="0" width="15" height="1" />';
         }
-        room_title=getLng('chat_room')+': '+CategoryTree[category_id]['rooms'][ii]['name']+' ['+CategoryTree[category_id]['rooms'][ii]['users_total']+' '+getLng('users')+']'+"\n"+CategoryTree[category_id]['rooms'][ii]['description'];
-        if (CategoryTree[category_id]['rooms'][ii]['password_protected']) {
+        room_title=getLng('chat_room')+': '+room['name']+' ['+room['users_total']+' '+getLng('users')+']'+"\n "+room['description'];
+        if (room['password_protected']) {
           room_pic='room_locked_15x12.gif';
-          room_title+="\n*"+getLng('room_is_password_protected');
+          room_title+="\n *"+getLng('room_is_password_protected');
         } else {
           room_pic='members_15x15.gif';
         }
-        html+='<a onclick="setActiveRoomId('+ii+'); openCloseRoom('+ii+', '+category_id+', true); showCategoryRooms('+category_id+'); showStealthSwitch('+(CategoryTree[category_id]['rooms'][ii]['moderated_by_me']? 'true' : 'false')+'); $(\'enterChatRoom_btn\').focus(); return false;" href="#" title="'+htmlspecialchars(room_title)+'" class="div_selection_scrollable_link">'
+        html+='<a onclick="setActiveRoomId('+room['id']+'); openCloseRoom('+room['id']+', '+category_id+', true); showCategoryRooms('+category_id+'); showStealthSwitch('+(room['moderated_by_me']? 'true' : 'false')+'); $(\'enterChatRoom_btn\').focus(); return false;" href="#" title="'+htmlspecialchars(room_title)+'" class="div_selection_scrollable_link">'
             + '<img src="./pic/'+room_pic+'" border="0" alt="" />'
             + '</a>'
             + '<img src="./pic/clearpixel_1x1.gif" border="0" width="8" height="12" />'
-            + '<a onclick="setActiveRoomId('+ii+'); enterChatRoom(); return false;" style="cursor:pointer" title="'+htmlspecialchars(room_title)+'">'
-            + '<span class="'+(ii==ActiveRoomId? 'div_selection_scrollable_active' : 'div_selection_scrollable_inactive')+'">'
-            + htmlspecialchars(CategoryTree[category_id]['rooms'][ii]['name'])
-            + htmlspecialchars(' ['+CategoryTree[category_id]['rooms'][ii]['users_total']+']')
+            + '<a onclick="setActiveRoomId('+room['id']+'); enterChatRoom(); return false;" style="cursor:pointer" title="'+htmlspecialchars(room_title)+'">'
+            + '<span class="'+(room['id']==ActiveRoomId? 'div_selection_scrollable_active' : 'div_selection_scrollable_inactive')+'">'
+            + htmlspecialchars(room['name'])
+            + htmlspecialchars(' ['+room['users_total']+']')
             + '</span>'
             + '</a>'
             + '<br />';
-        if (CategoryTree[category_id]['rooms'][ii]['opened']) {
+        if (room['opened']) {
           // Show users
-          if (CategoryTree[category_id]['rooms'][ii]['users_total']>0) {
-            for (var iii in CategoryTree[category_id]['rooms'][ii]['users']) {
-              usr=UserList.getRecord(iii);
+          if (room['users_total']>0) {
+            for (var iii=0; iii<room['users'].length; iii++) {
+              usr=UserList.getRecord(room['users'][iii]['user_id']);
               urec=urec_tpl;
-              urec=urec.split('[ID]').join(iii);
+              urec=urec.split('[ID]').join(usr.ID);
               // Online status
               if (true==usr.MutedLocally) {
                 ignored_img_suffix='ignored_';
@@ -493,7 +532,7 @@ function makeCategoryRoomsHTML(category_id) {
                 status_title=usr.OnlineStatusMessage+(ignored_img_suffix!=''? (' + '+getLng('ignored')) : '');
               }
               status_title=htmlspecialchars(status_title);
-              urec=urec.split('[ONLINE_STATUS_ICON]').join('<img id="user_status_image_'+iii+'" src="'+status_img+'" alt="'+status_title+'" title="'+status_title+'" />');
+              urec=urec.split('[ONLINE_STATUS_ICON]').join('<img id="user_status_image_'+usr.ID+'" src="'+status_img+'" alt="'+status_title+'" title="'+status_title+'" />');
               // Gender
               if (userlistGender) {
                 urec=urec.split('[GENDER_ICON]').join('<img src="./pic/gender_'+usr.Gender+'_10x10.gif" alt="'+htmlspecialchars(getLng('gender')+': '+getLng('gender_'+usr.Gender))+'" title="'+htmlspecialchars(getLng('gender')+': '+getLng('gender_'+usr.Gender))+'" border="0" />');
@@ -503,7 +542,7 @@ function makeCategoryRoomsHTML(category_id) {
               // Avatar
               if (userlistAvatar) {
                 if (usr.AvatarBID>0) {
-                  urec=urec.split('[AVATAR_THUMB]').join('<img style="cursor:pointer" onclick="showUserProfile('+iii+')" src="'+htmlspecialchars(formlink)+'?b_x='+htmlspecialchars(userlistAvatarHeight)+'&amp;b_y='+htmlspecialchars(userlistAvatarWidth)+'&amp;b_id='+htmlspecialchars(usr.AvatarBID)+'&amp;s_id='+htmlspecialchars(s_id)+'" onmouseover="showUserlistAvatarThumb(this, '+htmlspecialchars(usr.AvatarBID)+')" onmouseout="hideUserlistAvatarThumb()" onclick="hideUserlistAvatarThumb()" alt="'+htmlspecialchars(getLng('avatar'))+'" title="'+htmlspecialchars(getLng('avatar'))+'" border="0" />');
+                  urec=urec.split('[AVATAR_THUMB]').join('<img style="cursor:pointer" onclick="showUserProfile('+usr.ID+')" src="'+htmlspecialchars(formlink)+'?b_x='+htmlspecialchars(userlistAvatarHeight)+'&amp;b_y='+htmlspecialchars(userlistAvatarWidth)+'&amp;b_id='+htmlspecialchars(usr.AvatarBID)+'&amp;s_id='+htmlspecialchars(s_id)+'" onmouseover="showUserlistAvatarThumb(this, '+htmlspecialchars(usr.AvatarBID)+')" onmouseout="hideUserlistAvatarThumb()" onclick="hideUserlistAvatarThumb()" alt="'+htmlspecialchars(getLng('avatar'))+'" title="'+htmlspecialchars(getLng('avatar'))+'" border="0" />');
                 } else {
                   urec=urec.split('[AVATAR_THUMB]').join('<img src="./pic/clearpixel_1x1.gif" width="'+htmlspecialchars(userlistAvatarWidth)+'" height="'+htmlspecialchars(userlistAvatarHeight)+'" alt="" title="" border="0" />');
                 }
@@ -530,14 +569,14 @@ function makeCategoryRoomsHTML(category_id) {
                    +'<br />';
             }
           } else {
-            CategoryTree[category_id]['rooms'][ii]['opened']=false;
+            room['opened']=false;
           }
         }
       }
     } else {
       html+=getLng('category_has_no_rooms');
     }
-    if (CategoryTree[category_id]['creatable_rooms']) {
+    if (cat['creatable_rooms']) {
       html+='<br />'
            +'<a href="#" onclick="showNewRoomBox('+category_id+')" title="'+htmlspecialchars(getLng('create_new_room'))+'">'
            +'<img src="./pic/plus_13x13.gif" name="img_hover" alt="'+htmlspecialchars(getLng('create_new_room'))+'" title="'+htmlspecialchars(getLng('create_new_room'))+'" />'
@@ -557,7 +596,7 @@ function makeCategoryRoomsHTML(category_id) {
  */
 function openCloseRoom(room_id, category_id, open) {
   try {
-    CategoryTree[category_id]['rooms'][room_id]['opened']=open;
+    CategoryTreeByID[category_id]['rooms_by_id'][room_id]['opened']=open;
   } catch (e) {}
 }
 
@@ -598,10 +637,10 @@ function makeSimpleCategoryTreeHtml(cats) {
   var status_title='';
   var html='';
   if (cats.length) {
-    for (var i in cats) {
+    for (var i=0; i<cats.length; i++) {
       if (cats[i]['rooms_local']>0 || cats[i]['creatable_rooms']) {
         html+='<img src="./pic/clearpixel_1x1.gif" border="0" width="3" height="1" />'
-            + '<span title="'+htmlspecialchars(getLng('chat_category')+': '+cats[i]['name']+' ['+cats[i]['rooms_local']+' '+getLng('rooms')+' / '+cats[i]['users_total']+' '+getLng('users')+']'+"\n"+cats[i]['description'])+'" class="div_selection_scrollable_link">'
+            + '<span title="'+htmlspecialchars(getLng('chat_category')+': '+cats[i]['name']+' ['+cats[i]['rooms_local']+' '+getLng('rooms')+' / '+cats[i]['users_total']+' '+getLng('users')+']'+"\n "+cats[i]['description'])+'" class="div_selection_scrollable_link" style="cursor:default">'
             + '<img src="./pic/clearpixel_1x1.gif" border="0" width="5" height="12" />'
             + '<b>'+htmlspecialchars(cats[i]['name'])+'</b>'
             + ' ['+cats[i]['rooms_total']+'/'+cats[i]['users_total']+']'
@@ -609,22 +648,22 @@ function makeSimpleCategoryTreeHtml(cats) {
         if (cats[i]['creatable_rooms']) {
           html+='<br />'
                +'<img src="./pic/clearpixel_1x1.gif" border="0" width="10" height="1" />'
-               +'<a href="#" onclick="showNewRoomBox('+i+')" title="'+htmlspecialchars(getLng('create_new_room'))+'">'
+               +'<a href="#" onclick="showNewRoomBox('+cats[i]['id']+')" title="'+htmlspecialchars(getLng('create_new_room'))+'">'
                +'<img src="./pic/clearpixel_1x1.gif" border="0" width="5" height="1" />'
                +htmlspecialchars(getLng('create_new_room'))
                +'</a>';
         }
         html+='<br />';
         // Rooms
-        for (var ii in cats[i]['rooms']) {
+        for (var ii=0; ii<cats[i]['rooms'].length; ii++) {
           if (cats[i]['rooms'][ii]['users'].length) {
             // There are users in room
             if (cats[i]['rooms'][ii]['opened']) {
-              html+='<a href="#" title="'+htmlspecialchars(getLng('hide_online_users'))+'" onclick="openCloseRoom('+ii+', '+i+', false); displaySimpleCategoryTree(); return false;">'
+              html+='<a href="#" title="'+htmlspecialchars(getLng('hide_online_users'))+'" onclick="openCloseRoom('+cats[i]['rooms'][ii]['id']+', '+cats[i]['id']+', false); displaySimpleCategoryTree(); return false;">'
                   + '<img src="./pic/minus_box_15x12.gif" border="0" />'
                   + '</a>';
             } else {
-              html+='<a href="#" title="'+htmlspecialchars(getLng('show_online_users'))+'" onclick="openCloseRoom('+ii+', '+i+', true); displaySimpleCategoryTree('+i+'); return false;">'
+              html+='<a href="#" title="'+htmlspecialchars(getLng('show_online_users'))+'" onclick="openCloseRoom('+cats[i]['rooms'][ii]['id']+', '+cats[i]['id']+', true); displaySimpleCategoryTree('+cats[i]['id']+'); return false;">'
                   + '<img src="./pic/plus_box_15x12.gif" border="0" />'
                   + '</a>';
             }
@@ -632,17 +671,17 @@ function makeSimpleCategoryTreeHtml(cats) {
             // There are no users in room
             html+='<img src="./pic/clearpixel_1x1.gif" border="0" width="15" height="1" />';
           }
-          room_title=getLng('chat_room')+': '+cats[i]['rooms'][ii]['name']+' ['+cats[i]['rooms'][ii]['users_total']+' '+getLng('users')+']'+"\n"+cats[i]['rooms'][ii]['description'];
+          room_title=getLng('chat_room')+': '+cats[i]['rooms'][ii]['name']+' ['+cats[i]['rooms'][ii]['users_total']+' '+getLng('users')+']'+"\n "+cats[i]['rooms'][ii]['description'];
           if (cats[i]['rooms'][ii]['password_protected']) {
             room_pic='room_locked_15x12.gif';
-            room_title+="\n*"+getLng('room_is_password_protected');
+            room_title+="\n *"+getLng('room_is_password_protected');
           } else {
             room_pic='members_15x15.gif';
           }
-          html+='<span onclick="setActiveRoomId('+ii+'); openCloseRoom('+ii+', '+i+', true); displaySimpleCategoryTree('+i+'); showStealthSwitch('+(cats[i]['rooms'][ii]['moderated_by_me']? 'true' : 'false')+'); $(\'enterChatRoom_btn\').focus(); return false;" style="cursor:pointer" title="'+htmlspecialchars(room_title)+'" class="div_selection_scrollable_link">'
+          html+='<span onclick="setActiveRoomId('+cats[i]['rooms'][ii]['id']+'); openCloseRoom('+cats[i]['rooms'][ii]['id']+', '+cats[i]['id']+', true); displaySimpleCategoryTree('+cats[i]['id']+'); showStealthSwitch('+(cats[i]['rooms'][ii]['moderated_by_me']? 'true' : 'false')+'); $(\'enterChatRoom_btn\').focus(); return false;" style="cursor:pointer" title="'+htmlspecialchars(room_title)+'" class="div_selection_scrollable_link">'
               + '<img src="./pic/'+room_pic+'" border="0" alt="" />'
               + '<img src="./pic/clearpixel_1x1.gif" border="0" width="5" height="12" />'
-              + '<span class="'+(ii==ActiveRoomId? 'div_selection_scrollable_active' : 'div_selection_scrollable_inactive')+'"  onclick="setActiveRoomId('+ii+'); setActiveCategoryId('+i+'); enterChatRoom(); return false;" style="cursor:pointer">'
+              + '<span class="'+(cats[i]['rooms'][ii]['id']==ActiveRoomId? 'div_selection_scrollable_active' : 'div_selection_scrollable_inactive')+'"  onclick="setActiveRoomId('+cats[i]['rooms'][ii]['id']+'); setActiveCategoryId('+cats[i]['id']+'); enterChatRoom(); return false;" style="cursor:pointer">'
               + htmlspecialchars(cats[i]['rooms'][ii]['name'])
               + htmlspecialchars(' ['+cats[i]['rooms'][ii]['users_total']+']')
               + '</span>'
@@ -651,10 +690,10 @@ function makeSimpleCategoryTreeHtml(cats) {
           if (cats[i]['rooms'][ii]['opened']) {
             // Show users
             if (cats[i]['rooms'][ii]['users_total']>0) {
-              for (var iii in cats[i]['rooms'][ii]['users']) {
-                usr=UserList.getRecord(iii);
+              for (var iii=0; iii<cats[i]['rooms'][ii]['users'].length; iii++) {
+                usr=UserList.getRecord(cats[i]['rooms'][ii]['users'][iii]['user_id']);
                 urec=urec_tpl;
-                urec=urec.split('[ID]').join(iii);
+                urec=urec.split('[ID]').join(usr.ID);
                 // Online status
                 if (true==usr.MutedLocally) {
                   ignored_img_suffix='ignored_';
@@ -673,7 +712,7 @@ function makeSimpleCategoryTreeHtml(cats) {
                   status_title=usr.OnlineStatusMessage+(ignored_img_suffix!=''? (' + '+getLng('ignored')) : '');
                 }
                 status_title=htmlspecialchars(status_title);
-                urec=urec.split('[ONLINE_STATUS_ICON]').join('<img id="user_status_image_'+iii+'" src="'+status_img+'" alt="'+status_title+'" title="'+status_title+'" />');
+                urec=urec.split('[ONLINE_STATUS_ICON]').join('<img id="user_status_image_'+usr.ID+'" src="'+status_img+'" alt="'+status_title+'" title="'+status_title+'" />');
                 // Gender
                 if (userlistGender) {
                   urec=urec.split('[GENDER_ICON]').join('<img src="./pic/gender_'+usr.Gender+'_10x10.gif" alt="'+htmlspecialchars(getLng('gender')+': '+getLng('gender_'+usr.Gender))+'" title="'+htmlspecialchars(getLng('gender')+': '+getLng('gender_'+usr.Gender))+'" border="0" />');
@@ -683,7 +722,7 @@ function makeSimpleCategoryTreeHtml(cats) {
                 // Avatar
                 if (userlistAvatar) {
                   if (usr.AvatarBID>0) {
-                    urec=urec.split('[AVATAR_THUMB]').join('<img style="cursor:pointer" onclick="showUserProfile('+iii+')" src="'+htmlspecialchars(formlink)+'?b_x='+htmlspecialchars(userlistAvatarHeight)+'&amp;b_y='+htmlspecialchars(userlistAvatarWidth)+'&amp;b_id='+htmlspecialchars(usr.AvatarBID)+'&amp;s_id='+htmlspecialchars(s_id)+'" onmouseover="showUserlistAvatarThumb(this, '+htmlspecialchars(usr.AvatarBID)+')" onmouseout="hideUserlistAvatarThumb()" onclick="hideUserlistAvatarThumb()" alt="'+htmlspecialchars(getLng('avatar'))+'" title="'+htmlspecialchars(getLng('avatar'))+'" border="0" />');
+                    urec=urec.split('[AVATAR_THUMB]').join('<img style="cursor:pointer" onclick="showUserProfile('+usr.ID+')" src="'+htmlspecialchars(formlink)+'?b_x='+htmlspecialchars(userlistAvatarHeight)+'&amp;b_y='+htmlspecialchars(userlistAvatarWidth)+'&amp;b_id='+htmlspecialchars(usr.AvatarBID)+'&amp;s_id='+htmlspecialchars(s_id)+'" onmouseover="showUserlistAvatarThumb(this, '+htmlspecialchars(usr.AvatarBID)+')" onmouseout="hideUserlistAvatarThumb()" onclick="hideUserlistAvatarThumb()" alt="'+htmlspecialchars(getLng('avatar'))+'" title="'+htmlspecialchars(getLng('avatar'))+'" border="0" />');
                   } else {
                     urec=urec.split('[AVATAR_THUMB]').join('<img src="./pic/clearpixel_1x1.gif" width="'+htmlspecialchars(userlistAvatarWidth)+'" height="'+htmlspecialchars(userlistAvatarHeight)+'" alt="" title="" border="0" />');
                   }
