@@ -1341,3 +1341,31 @@ function hideUserlistAvatarThumb() {
     MouseMoveFuncObj=null;
   }
 }
+
+
+/**
+ * Convert *color style property value from format "rgb(x,y,z)" into format "#XXYYZZ"
+ * @param   string    rgb_color   Color in format "rgb(x,y,z)"
+ * @param   string    prefix      A string to prepend to the return value. Default is '#'
+ * @return string
+ */
+function colorRgbToHex(rgb_color, prefix) {
+  var ret=rgb_color;
+  var rgb=Array();
+  if (typeof(prefix)=='undefined') prefix='#';
+  if (typeof(prefix)!='string') {
+    prefix='';
+  }
+  if (typeof(rgb_color)=='string') {
+    rgb_color=rgb_color.split(' ').join('');
+    if (rgb_color.substring(0, 4)=='rgb(') {
+      rgb_color=rgb_color.substring(4);
+      rgb_color=rgb_color.substring(0, rgb_color.length-1);
+      rgb=rgb_color.split(',');
+      ret=prefix+parseInt(rgb[0], 16).toString()+parseInt(rgb[1], 16).toString()+parseInt(rgb[2], 16).toString();
+    } else if (rgb_color.substring(0, 1)=='#') {
+      ret=prefix+rgb_color.substring(1, rgb_color.length);
+    }
+  }
+  return ret;
+}
