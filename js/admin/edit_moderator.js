@@ -41,6 +41,12 @@ var ModeratedRooms=new Array();
 var CategoryTree=new Array();
 
 /**
+ * Categories indexed by category ID
+ * @var object
+ */
+var CategoryTreeByID=Array();
+
+/**
  * Flag: if TRUE, then "Edit moderator" form will be displayed
  * automatically. if only one user will be found
  * @var boolean
@@ -100,6 +106,7 @@ function _CALLBACK_getRoomStructure() {
  * @return  array
  */
 function makeCategoryTree(cats) {
+  var cat=null;
   var cat_id=0;
   var cat_parent_id=0;
   var room=null;
@@ -108,55 +115,69 @@ function makeCategoryTree(cats) {
   var user_nr=0;
   var user=null;
   var user_id=0;
+  var curr_cat=null;
   if (cats) {
     for (var cat_nr=0; cat_nr<cats.length; cat_nr++) {
-      cat_id=stringToNumber(cats[cat_nr]['id'][0]);
-      cat_parent_id=stringToNumber(cats[cat_nr]['parent_id'][0]);
+      cat=cats[cat_nr];
+      cat_id=stringToNumber(cat['id'][0]);
+      cat_parent_id=stringToNumber(cat['parent_id'][0]);
       // Add category to the global array
-      CategoryTree[cat_id]=new Array();
-      CategoryTree[cat_id]['id']=cat_id;
-      CategoryTree[cat_id]['parent_id']=cat_parent_id;
-      CategoryTree[cat_id]['name']=cats[cat_nr]['name'][0];
-      CategoryTree[cat_id]['description']=cats[cat_nr]['description'][0];
-      CategoryTree[cat_id]['creatable_rooms']=cats[cat_nr]['creatable_rooms'][0]=='1';
-      CategoryTree[cat_id]['children']=new Array();
-      CategoryTree[cat_id]['child_ids']=new Array();
-      CategoryTree[cat_id]['rooms']=new Array();
-      CategoryTree[cat_id]['rooms_local']=0;
-      CategoryTree[cat_id]['rooms_total']=0;
-      CategoryTree[cat_id]['users_total']=0;
+      CategoryTree.push(
+                          {
+                            id: cat_id,
+                            parent_id: cat_parent_id,
+                            child_ids: Array(),
+                            name: cat['name'][0],
+                            description: cat['description'][0],
+                            creatable_rooms: cat['creatable_rooms'][0]=='1',
+                            children: Array(),
+                            children_by_id: Array(),
+                            rooms: Array(),
+                            rooms_by_id: Array(),
+                            rooms_local: 0,
+                            rooms_total: 0,
+                            users_total: 0
+                          }
+                        );
+      curr_cat=CategoryTree[CategoryTree.length-1];
+      CategoryTreeByID[cat_id]=curr_cat;
       if (cat_parent_id!=-1) {
         // Make a reference
-        CategoryTree[cat_parent_id]['children'][cat_id]=CategoryTree[cat_id];
+        CategoryTreeByID[cat_parent_id]['children'].push(curr_cat);
+        CategoryTreeByID[cat_parent_id]['children_by_id'][cat_id]=CategoryTreeByID[cat_parent_id]['children'][CategoryTreeByID[cat_parent_id]['children'].length-1];
       }
       // Get child categories
-      if (cats[cat_nr]['category'].length) {
-        makeCategoryTree(cats[cat_nr]['category']);
+      if (cat['category'].length) {
+        makeCategoryTree(cat['category']);
       }
       // Get rooms
-      for (room_nr=0; room_nr<cats[cat_nr]['room'].length; room_nr++) {
-        room=cats[cat_nr]['room'][room_nr];
+      for (room_nr=0; room_nr<cat['room'].length; room_nr++) {
+        room=cat['room'][room_nr];
         room_id=stringToNumber(room['id'][0]);
-        CategoryTree[cat_id]['rooms'][room_id]=new Array();
-        CategoryTree[cat_id]['rooms'][room_id]['id']=room_id;
-        CategoryTree[cat_id]['rooms'][room_id]['password_protected']='0'!=room['password_protected'][0];
-        CategoryTree[cat_id]['rooms'][room_id]['name']=room['name'][0];
-        CategoryTree[cat_id]['rooms'][room_id]['description']=room['description'][0];
-        CategoryTree[cat_id]['rooms'][room_id]['moderated_by_me']='1'==room['moderated_by_me'][0];
-        CategoryTree[cat_id]['rooms'][room_id]['users']=new Array();
-        CategoryTree[cat_id]['rooms'][room_id]['users_total']=0;
-        CategoryTree[cat_id]['rooms_local']++;
-        CategoryTree[cat_id]['rooms_total']++;
+        curr_cat['rooms'].push(
+                                {
+                                  id: room_id,
+                                  password_protected: '0'!=room['password_protected'][0],
+                                  name: room['name'][0],
+                                  description: room['description'][0],
+                                  moderated_by_me: '1'==room['moderated_by_me'][0],
+                                  users: Array(),
+                                  users_by_id: Array(),
+                                  users_total: 0
+                                }
+                               );
+        curr_cat['rooms_by_id'][room_id]=curr_cat['rooms'][curr_cat['rooms'].length-1];
+        curr_cat['rooms_local']++;
+        curr_cat['rooms_total']++;
       }
       // Save child categories' IDs and rooms/users counters
-      for (var i in CategoryTree[cat_id]['children']) {
-        CategoryTree[cat_id]['child_ids'][CategoryTree[cat_id]['child_ids'].length]=i;
-        CategoryTree[cat_id]['rooms_total']+=CategoryTree[cat_id]['children'][i]['rooms_total'];
-        CategoryTree[cat_id]['users_total']+=CategoryTree[cat_id]['children'][i]['users_total'];
-        if (CategoryTree[cat_id]['parent_id']!=-1) {
-          CategoryTree[CategoryTree[cat_id]['parent_id']]['child_ids'][CategoryTree[CategoryTree[cat_id]['parent_id']]['child_ids'].length]=i;
-          CategoryTree[cat_id]['parent_id']['rooms_total']+=CategoryTree[cat_id]['rooms_total'];
-          CategoryTree[cat_id]['parent_id']['users_total']+=CategoryTree[cat_id]['users_total'];
+      for (var i=0; i<curr_cat['children'].length; i++) {
+        curr_cat['rooms_total']+=curr_cat['children'][i]['rooms_total'];
+        curr_cat['users_total']+=curr_cat['children'][i]['users_total'];
+        if (curr_cat['parent_id']!=-1) {
+          CategoryTreeByID[curr_cat['parent_id']]['child_ids'].push(curr_cat['children'][i]['id']);
+          curr_cat['parent_id']['rooms_total']+=curr_cat['rooms_total'];
+          curr_cat['parent_id']['users_total']+=curr_cat['users_total'];
         }
       }
     }
@@ -173,32 +194,36 @@ function makeSimpleCategoryTreeHtml(cats) {
   var user_id=stringToNumber($('moderator_user_id').value);
   var cat_chkbox=false;
   var room_chkbox=false;
+  var cat=null;
+  var room=null;
   if (cats.length) {
-    for (var i in cats) {
+    for (var i=0; i<cats.length; i++) {
       // Categories
-      cat_chkbox=-1!=(','+ModeratedCategories[user_id]+',').indexOf(','+i+',');
-      html+='<label for="category_selector_'+htmlspecialchars(i)+'">'
+      cat=cats[i];
+      cat_chkbox=-1!=(','+ModeratedCategories[user_id]+',').indexOf(','+cat['id']+',');
+      html+='<label for="category_selector_'+htmlspecialchars(cat['id'])+'">'
           + '<img src="./pic/clearpixel_1x1.gif" border="0" width="3" height="1" />'
-          + '<input type="checkbox" '+(cat_chkbox? 'checked="checked"' : '')+' onclick="categorySelector('+htmlspecialchars(i)+', this.checked);" id="category_selector_'+htmlspecialchars(i)+'" />'
+          + '<input type="checkbox" '+(cat_chkbox? 'checked="checked"' : '')+' onclick="categorySelector('+htmlspecialchars(cat['id'])+', this.checked);" id="category_selector_'+htmlspecialchars(cat['id'])+'" />'
           + '<img src="./pic/clearpixel_1x1.gif" border="0" width="3" height="1" />'
-          + '<span title="'+htmlspecialchars(getLng('chat_category')+': '+cats[i]['name']+"\n"+cats[i]['description'])+'" class="div_selection_scrollable_link">'
+          + '<span title="'+htmlspecialchars(getLng('chat_category')+': '+cat['name']+"\n"+cat['description'])+'" class="div_selection_scrollable_link">'
           + '<img src="./pic/clearpixel_1x1.gif" border="0" width="5" height="12" />'
-          + '<b>'+htmlspecialchars(cats[i]['name'])+'</b>'
+          + '<b>'+htmlspecialchars(cat['name'])+'</b>'
           + '</span>'
           + '</label>'
           + '<br />';
       // Rooms
-      if (cats[i]['rooms'].length) {
-        for (var ii in cats[i]['rooms']) {
-          room_chkbox=cat_chkbox || (-1!=(','+ModeratedRooms[user_id]+',').indexOf(','+ii+','));
-          room_title=getLng('chat_room')+': '+cats[i]['rooms'][ii]['name']+"\n"+cats[i]['rooms'][ii]['description'];
-          html+='<label for="room_selector_'+htmlspecialchars(ii)+'">'
+      if (cat['rooms'].length) {
+        for (var ii=0; ii<cat['rooms'].length; ii++) {
+          room=cat['rooms'][ii];
+          room_chkbox=cat_chkbox || (-1!=(','+ModeratedRooms[user_id]+',').indexOf(','+room['id']+','));
+          room_title=getLng('chat_room')+': '+room['name']+"\n"+room['description'];
+          html+='<label for="room_selector_'+htmlspecialchars(room['id'])+'">'
               + '<span title="'+htmlspecialchars(room_title)+'">'
               + '<img src="./pic/clearpixel_1x1.gif" border="0" width="25" height="12" />'
-              + '<input type="checkbox" '+(room_chkbox? 'checked="checked"' : '')+' onclick="roomSelector('+htmlspecialchars(i)+');" id="room_selector_'+htmlspecialchars(ii)+'" />'
+              + '<input type="checkbox" '+(room_chkbox? 'checked="checked"' : '')+' onclick="roomSelector('+htmlspecialchars(cat['id'])+');" id="room_selector_'+htmlspecialchars(room['id'])+'" />'
               + '<img src="./pic/clearpixel_1x1.gif" border="0" width="5" height="12" />'
               + '<span class="div_selection_scrollable_inactive">'
-              + htmlspecialchars(cats[i]['rooms'][ii]['name'])
+              + htmlspecialchars(room['name'])
               + '</span>'
               + '</span>'
               + '</label>'
@@ -209,8 +234,8 @@ function makeSimpleCategoryTreeHtml(cats) {
             + getLng('category_has_no_rooms')
             + '<br />';
       }
-      if (cats[i]['children'].length) {
-        html+=makeSimpleCategoryTreeHtml(cats[i]['children']);
+      if (cat['children'].length) {
+        html+=makeSimpleCategoryTreeHtml(cat['children']);
       }
     }
   }
@@ -224,8 +249,8 @@ function makeSimpleCategoryTreeHtml(cats) {
  */
 function categorySelector(category_id, selector_active) {
   if (selector_active) {
-    for (var i in CategoryTree[category_id]['rooms']) {
-      $('room_selector_'+i).checked=true;
+    for (var i in CategoryTreeByID[category_id]['rooms']) {
+      $('room_selector_'+CategoryTreeByID[category_id]['rooms'][i]['id']).checked=true;
     }
   }
 }
@@ -428,24 +453,24 @@ function hideModeratorForm() {
  */
 function saveModerator(cats, cat_ids, room_ids, level) {
   if (typeof(cats)=='undefined') {
-    var cats=CategoryTree[0]['children'];
+    cats=CategoryTree[0]['children'];
   }
   if (typeof(cat_ids)=='undefined') {
-    var cat_ids=new Array();
+    cat_ids=new Array();
   }
   if (typeof(room_ids)=='undefined') {
-    var room_ids=new Array();
+    room_ids=new Array();
   }
   if (typeof(level)=='undefined') {
-    var level=0;
+    level=0;
   }
   for (var i in cats) {
-    if ($('category_selector_'+i).checked) {
+    if ($('category_selector_'+cats[i]['id']).checked) {
       // Category is selected
-      cat_ids.push(i);
+      cat_ids.push(cats[i]['id']);
     } else {
       // Check rooms
-      for (var ii in cats[i]['rooms']) {
+      for (var ii in cats[i]['rooms_by_id']) {
         if ($('room_selector_'+ii).checked) {
           // Room is selected
           room_ids.push(ii);
