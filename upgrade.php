@@ -151,8 +151,6 @@ if (isset($_POST['_pcpin_update_query'])) {
     <br /><br />
     <h3>Upgrade completed.</h3>
     <br /><br />
-    <b>Please note, that some new features in this version are not translated into all languages yet. <a href="http://community.pcpin.com/viewtopic.php?t=8312">Read more.</a></b>
-    <br /><br />
     Please delete file <b>upgrade.php</b> now.
   </div>
 </div>
