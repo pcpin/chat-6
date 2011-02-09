@@ -54,12 +54,24 @@ if (PCPIN_DEBUGMODE && PCPIN_LOG_TIMER) {
 if (PCPIN_DEBUGMODE) {
   @ini_set('display_errors', 'on');
   if (PCPIN_DEBUGMODE_STRICT && defined('E_STRICT')) {
-    error_reporting(E_ALL|E_STRICT);
+    if (defined('E_DEPRECATED')) {
+      error_reporting((E_ALL|E_STRICT) & ~E_DEPRECATED);
+    } else {
+      error_reporting(E_ALL|E_STRICT);
+    }
   } else {
     if (defined('E_STRICT')) {
-      error_reporting(E_ALL & ~E_STRICT);
+      if (defined('E_DEPRECATED')) {
+        error_reporting(E_ALL & ~E_STRICT);
+      } else {
+        error_reporting((E_ALL & ~E_STRICT) & ~E_DEPRECATED);
+      }
     } else {
-      error_reporting(E_ALL);
+      if (defined('E_DEPRECATED')) {
+        error_reporting(E_ALL & ~E_DEPRECATED);
+      } else {
+        error_reporting(E_ALL);
+      }
     }
   }
   if (PCPIN_ERRORLOG!='') {

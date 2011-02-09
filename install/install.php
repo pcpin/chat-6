@@ -21,8 +21,8 @@ if (!defined('PCPIN_INSTALL_MODE') || true!==PCPIN_INSTALL_MODE) {
   die();
 }
 
-@error_reporting(E_ALL);
-@ini_set('display_errors', 'on');
+@error_reporting(0);
+@ini_set('display_errors', 'off');
 @ini_set('html_errors', 'off');
 
 define('PCPIN_INSTALL_VERSION', '6.21');
