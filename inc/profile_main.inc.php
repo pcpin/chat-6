@@ -59,7 +59,8 @@ $_body_onload[1000000]='initProfile('.$session->_conf_all['nickname_length_min']
                                      .$session->_conf_all['nicknames_max_count'].','
                                      .$profile_user_id.','
                                      .($show_avatar_gallery_link? 'true' : 'false').','
-                                     .($session->_conf_all['allow_language_selection']? 'true' : 'false')
+                                     .($session->_conf_all['allow_language_selection']? 'true' : 'false').','
+                                     .(($session->_conf_all['allow_account_unsubscribe'] && $profile_user_id==$current_user->id)? 'true' : 'false')
                                      .')';
 
 

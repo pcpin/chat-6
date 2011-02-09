@@ -64,6 +64,12 @@ var avatarGalleryAllowed=false;
 var allowLanguageSelection=false;
 
 /**
+ * Flag: if TRUE, then users are allowed to delete own account
+ * @var boolean
+ */
+var allowDeleteOwnAccount=false;
+
+/**
  * Userdata
  * @var array
  */
@@ -123,6 +129,7 @@ var nicknamesCount=0;
  * @param   boolean   profile_user_id               User ID
  * @param   boolean   avatar_gallery_allowed        Flag: if TRUE, then avatar gallery is allowed
  * @param   boolean   allow_language_selection      Flag: if TRUE, then language selecton is allowed
+ * @param   boolean   allow_delete_own_account      Flag: if TRUE, then users are allowed to delete their account
  */
 function initProfile(
                      nickname_length_min_,
@@ -132,7 +139,8 @@ function initProfile(
                      nicknames_max_count,
                      profile_user_id,
                      avatar_gallery_allowed,
-                     allow_language_selection
+                     allow_language_selection,
+                     allow_delete_own_account
                      ) {
   profileUserId=profile_user_id;
   nickname_length_min=nickname_length_min_;
@@ -142,6 +150,7 @@ function initProfile(
   nicknamesMaxCount=nicknames_max_count;
   avatarGalleryAllowed=avatar_gallery_allowed;
   allowLanguageSelection=allow_language_selection;
+  allowDeleteOwnAccount=allow_delete_own_account;
   profileUserLanguageId=allowLanguageSelection? parseInt($('contents_profile_data_language_id').value) : 0;
   // Set "onunload" handler
   window.onunload=function() {
@@ -349,7 +358,7 @@ function showProfileContents_profile() {
       custom_field_tr.style.display='';
     }
   }
-  if (UserData['is_guest']=='0') {
+  if (allowDeleteOwnAccount && UserData['is_guest']=='0') {
     $('contents_profile_data_delete_own_account_row').style.display='';
   }
   setTimeout('resizeForDocumentHeight(10, false)', 200);
