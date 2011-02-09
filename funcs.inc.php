@@ -85,7 +85,7 @@ if (!function_exists('_pcpin_loadClass')) {
    * @param   string    $class      Class name
    */
   function _pcpin_loadClass($class) {
-    require_once('./class/'.strtolower(trim($class)).'.class.php');
+    require_once(PCPIN_CHAT_ROOT_DIR.'/class/'.strtolower(trim($class)).'.class.php');
   }
 }
 

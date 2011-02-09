@@ -21,6 +21,9 @@ if (!file_exists('./install/install.php')) {
   die();
 }
 
+// Chat root directory
+if (!defined('PCPIN_CHAT_ROOT_DIR')) define('PCPIN_CHAT_ROOT_DIR', str_replace('\\', '/', realpath(dirname(__FILE__))));
+
 define('PCPIN_INSTALL_MODE', true);
 require_once('./install/install.php');
 

@@ -31,26 +31,13 @@ define('PCPIN_REQUIRESMYSQL', '4.0.15');
 
 define('PCPIN_VERSION', PCPIN_INSTALL_VERSION);
 
-if (file_exists('./funcs.inc.php')) {
-  require_once('./funcs.inc.php');
-} elseif (file_exists('../../funcs.inc.php')) {
-  require_once('../../funcs.inc.php');
-}
-if (file_exists('./config/config.inc.php')) {
-  require_once('./config/config.inc.php');
-} elseif (file_exists('../../config/config.inc.php')) {
-  require_once('../../config/config.inc.php');
-}
-if (file_exists('./class/common.class.php')) {
-  require_once('./class/common.class.php');
-} elseif (file_exists('../../class/common.class.php')) {
-  require_once('../../class/common.class.php');
-}
-if (file_exists('./class/xmlwrite.class.php')) {
-  require_once('./class/xmlwrite.class.php');
-} elseif (file_exists('../../class/xmlwrite.class.php')) {
-  require_once('../../class/xmlwrite.class.php');
-}
+// Chat root directory
+if (!defined('PCPIN_CHAT_ROOT_DIR')) define('PCPIN_CHAT_ROOT_DIR', realpath(str_replace('\\', '/', realpath(dirname(__FILE__))).'/..'));
+
+require_once(PCPIN_CHAT_ROOT_DIR.'/funcs.inc.php');
+require_once(PCPIN_CHAT_ROOT_DIR.'/config/config.inc.php');
+require_once(PCPIN_CHAT_ROOT_DIR.'/class/common.class.php');
+require_once(PCPIN_CHAT_ROOT_DIR.'/class/xmlwrite.class.php');
 
 /**
  * Yes, we extract superglobals. We know, how to handle them.
@@ -88,6 +75,8 @@ function _pcpin_stripSlashesRecursive($target, $magic_quotes_sybase=false) {
   }
   return $target;
 }
+
+_pcpin_loadClass('xmlwrite');
 
 // Initiate XML writer object
 $xmlwriter=new PCPIN_XMLWrite(basename(__FILE__));

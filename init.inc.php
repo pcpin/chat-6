@@ -35,6 +35,8 @@ $_pcpin_php_version=(defined('PHP_VERSION') && PHP_VERSION!='')? PHP_VERSION : p
 define('PCPIN_PHP_VERSION', substr($_pcpin_php_version, 0, strpos($_pcpin_php_version, '.')));
 unset($_pcpin_php_version);
 
+// Chat root directory
+define('PCPIN_CHAT_ROOT_DIR', str_replace('\\', '/', realpath(dirname(__FILE__))));
 
 // Load functons
 require_once('./funcs.inc.php');
@@ -53,6 +55,7 @@ if (PCPIN_DEBUGMODE && PCPIN_LOG_TIMER) {
 // Activate debugging
 if (PCPIN_DEBUGMODE) {
   @ini_set('display_errors', 'on');
+  @ini_set('html_errors', 'off');
   if (PCPIN_DEBUGMODE_STRICT && defined('E_STRICT')) {
     if (defined('E_DEPRECATED')) {
       error_reporting((E_ALL|E_STRICT) & ~E_DEPRECATED);
@@ -83,6 +86,7 @@ if (PCPIN_DEBUGMODE) {
 } else {
   // No errors will be displayed
   error_reporting(0);
+  @ini_set('display_errors', 'off');
 }
 
 
