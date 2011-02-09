@@ -47,7 +47,7 @@ if (isset($_POST['_pcpin_update_query'])) {
   die();
 } else {
   _pcpin_get_installed_version();
-  define('PCPIN_UPGRADE_NEW_VERSION', 6.21);
+  define('PCPIN_UPGRADE_NEW_VERSION', 6.22);
   define('PCPIN_UPGRADE_INSTALLED_VERSION', $__pcpin_upgrade['db_version']);
   if (PCPIN_UPGRADE_INSTALLED_VERSION==0) {
     die('Fatal error: Your installation is broken. Reinstall needed!');
@@ -467,6 +467,16 @@ function _pcpin_get_upgrade_queries() {
       $queries[]="UPDATE `".PCPIN_DB_PREFIX."language` AS `la` LEFT JOIN `".PCPIN_DB_PREFIX."language_expression` AS `le` ON `le`.`language_id` = `la`.`id` SET `le`.`value` = 0xd09dd0b020d181d0bad0bed0bbd18cd0bad0be20d181d0b5d0bad183d0bdd0b420d0b7d0b0d0b3d0bbd183d188d0b0d182d18c20d184d0bbd183d0b4d18fd189d0b8d18520d0bfd0bed0bbd18cd0b7d0bed0b2d0b0d182d0b5d0bbd0b5d0b93f WHERE `le`.`code` = 'flood_protection_mute_time' AND `la`.`iso_name` = 'ru'";
       $queries[]="UPDATE `".PCPIN_DB_PREFIX."language` AS `la` LEFT JOIN `".PCPIN_DB_PREFIX."language_expression` AS `le` ON `le`.`language_id` = `la`.`id` SET `le`.`value` = 0xd09cd0b8d0bdd0b8d0bcd0b0d0bbd18cd0bdd18bd0b920d0bfd0b5d180d0b8d0bed0b420d0b2d180d0b5d0bcd0b5d0bdd0b820d0b220d181d0b5d0bad183d0bdd0b4d0b0d18520d0bcd0b5d0b6d0b4d18320d0b4d0b2d183d0bcd18f20d181d0bed0bed0b1d189d0b5d0bdd0b8d18fd0bcd0b820d0bed18220d182d0bed0b3d0be20d0b6d0b520d181d0b0d0bcd0bed0b3d0be20d0bfd0bed0bbd18cd0b7d0bed0b2d0b0d182d0b5d0bbd18f2e WHERE `le`.`code` = 'flood_protection_message_delay' AND `la`.`iso_name` = 'ru'";
       $queries[]="UPDATE `".PCPIN_DB_PREFIX."language` AS `la` LEFT JOIN `".PCPIN_DB_PREFIX."language_expression` AS `le` ON `le`.`language_id` = `la`.`id` SET `le`.`value` = 0xd0a4d0bbd183d0b4 WHERE `le`.`code` = 'flooding' AND `la`.`iso_name` = 'ru'";
+
+    case 6.20:
+    case 6.21:
+      $queries[]="INSERT INTO `".PCPIN_DB_PREFIX."config` ( `_conf_id` , `_conf_group` , `_conf_subgroup` , `_conf_name` , `_conf_value` , `_conf_type` , `_conf_choices` , `_conf_description` )  VALUES ( '88', 'account', '{LNG_USERS}', 'allow_account_unsubscribe', '0', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_ACCOUNT_UNSUBSCRIBE}' )";
+      $queries[]="INSERT INTO `".PCPIN_DB_PREFIX."language_expression` ( `language_id`, `code`, `value`, `multi_row` ) SELECT DISTINCT `".PCPIN_DB_PREFIX."language_expression`.`language_id` AS `language_id`, '_conf_allow_account_unsubscribe' AS `code`, 0x416c6c6f7720757365727320746f2064656c657465206f776e206163636f756e743f AS `value`, 'n' AS `multi_row` FROM `".PCPIN_DB_PREFIX."language_expression`";
+      $queries[]="INSERT INTO `".PCPIN_DB_PREFIX."language_expression` ( `language_id`, `code`, `value`, `multi_row` ) SELECT DISTINCT `".PCPIN_DB_PREFIX."language_expression`.`language_id` AS `language_id`, 'delete_my_account' AS `code`, 0x44656c657465206d79206163636f756e74 AS `value`, 'n' AS `multi_row` FROM `".PCPIN_DB_PREFIX."language_expression`";
+      $queries[]="INSERT INTO `".PCPIN_DB_PREFIX."language_expression` ( `language_id`, `code`, `value`, `multi_row` ) SELECT DISTINCT `".PCPIN_DB_PREFIX."language_expression`.`language_id` AS `language_id`, 'delete_my_account_confirmation' AS `code`, 0x5761726e696e672120596f75206172652061626f757420746f2064656c65746520796f7572206f776e2075736572206163636f756e742e20546869732063616e277420626520756e646f6e652e0d0a41726520796f75207375726520796f752077616e7420746f2064656c65746520796f7572206163636f756e743f AS `value`, 'n' AS `multi_row` FROM `".PCPIN_DB_PREFIX."language_expression`";
+      $queries[]="UPDATE `".PCPIN_DB_PREFIX."language` AS `la` LEFT JOIN `".PCPIN_DB_PREFIX."language_expression` AS `le` ON `le`.`language_id` = `la`.`id` SET `le`.`value` = 0x44656e2042656e75747a65726e2065726c617562656e2c20656967656e65732042656e75747a65726b6f6e746f207a75206cc3b6736368656e3f WHERE `le`.`code` = '_conf_allow_account_unsubscribe' AND `la`.`iso_name` = 'de'";
+      $queries[]="UPDATE `".PCPIN_DB_PREFIX."language` AS `la` LEFT JOIN `".PCPIN_DB_PREFIX."language_expression` AS `le` ON `le`.`language_id` = `la`.`id` SET `le`.`value` = 0x4d65696e2042656e75747a65726b6f6e746f206cc3b6736368656e WHERE `le`.`code` = 'delete_my_account' AND `la`.`iso_name` = 'de'";
+      $queries[]="UPDATE `".PCPIN_DB_PREFIX."language` AS `la` LEFT JOIN `".PCPIN_DB_PREFIX."language_expression` AS `le` ON `le`.`language_id` = `la`.`id` SET `le`.`value` = 0x41636874756e6721205369652073696e6420696d20426567726966662c204968722042656e75747a65726b6f6e746f207a75206cc3b6736368656e2e20446965736520416b74696f6e206b616e6e206e696368742072c3bc636b67c3a46e6769672067656d616368742077657264656e2e0d0a576f6c6c656e20536965204968722042656e75747a65726b6f6e746f207769726b6c696368206cc3b6736368656e3f WHERE `le`.`code` = 'delete_my_account_confirmation' AND `la`.`iso_name` = 'de'";
 
     break;
 
