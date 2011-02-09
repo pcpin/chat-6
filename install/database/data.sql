@@ -121,8 +121,8 @@ INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`
 (84, 'account', '{LNG_USERS}', 'allow_user_registration', '1', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_USER_REGISTRATION}'),
 (85, 'chat', '{LNG_MESSAGES}', 'flood_protection_max_messages', '5', 'int_range', '3|*', '{LNG_FLOOD_PROTECTION_MAX_MESSAGES}'),
 (86, 'chat', '{LNG_MESSAGES}', 'flood_protection_mute_time', '60', 'int_range', '1|*', '{LNG_FLOOD_PROTECTION_MUTE_TIME}'),
-(41, 'account', '{LNG_USERS}', 'allow_account_unsubscribe', '0', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_ACCOUNT_UNSUBSCRIBE}'),
-(87, 'chat', '{LNG_MESSAGES}', 'flood_protection_message_delay', '1', 'int_range', '0|*', '{LNG_FLOOD_PROTECTION_MESSAGE_DELAY}'); /* PCPIN6_QUERY_SEPARATOR */
+(87, 'chat', '{LNG_MESSAGES}', 'flood_protection_message_delay', '1', 'int_range', '0|*', '{LNG_FLOOD_PROTECTION_MESSAGE_DELAY}'),
+(88, 'account', '{LNG_USERS}', 'allow_account_unsubscribe', '0', 'boolean_choice', '1={LNG_YES}|0={LNG_NO}', '{LNG__CONF_ALLOW_ACCOUNT_UNSUBSCRIBE}'); /* PCPIN6_QUERY_SEPARATOR */
 
 INSERT INTO `$$$DB_PREFIX$$$disallowed_name` (`id`, `name`) VALUES (1, 'admin'); /* PCPIN6_QUERY_SEPARATOR */
 
