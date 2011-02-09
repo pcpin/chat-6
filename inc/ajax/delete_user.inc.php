@@ -23,7 +23,7 @@
 if (!isset($profile_user_id)) $profile_user_id=0;
 
 // Get client session
-if (is_object($session) && !empty($profile_user_id) && !empty($current_user->id) && $current_user->is_admin==='y') {
+if (is_object($session) && !empty($profile_user_id) && !empty($current_user->id) && ($current_user->is_admin==='y' || $current_user->id==$profile_user_id)) {
   if ($current_user->_db_getList('id', 'id = '.$profile_user_id, 1)) {
     $current_user->_db_freeList();
     $current_user->deleteUser($profile_user_id);

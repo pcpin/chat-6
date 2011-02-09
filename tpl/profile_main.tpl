@@ -108,7 +108,12 @@
                   </td>
                 </tr>
               </PCPIN:TPL>
-              <tr id="profile_fields_tbl_last_row">
+              <tr id="contents_profile_data_delete_own_account_row" style="display:none">
+                <td class="tbl_row" colspan="2">
+                  <a href="#" onclick="return deleteOwnAccount()" title="{LNG_DELETE_MY_ACCOUNT}">{LNG_DELETE_MY_ACCOUNT}</a>
+                </td>
+              </tr>
+              <tr>
                 <td class="tbl_row" colspan="2" style="text-align:center">
                   <button type="button" style="margin:3px" onclick="saveProfileChanges()" title="{LNG_SAVE_CHANGES}">{LNG_SAVE_CHANGES}</button>
                   <button type="button" style="margin:3px" onclick="showProfileContents('profile')" title="{LNG_RESET_FORM}">{LNG_RESET_FORM}</button>

@@ -100,6 +100,7 @@ $_js_lng[]='change_own_level_error';
 $_js_lng[]='sure_change_user_level';
 $_js_lng[]='really_sure';
 $_js_lng[]='delete';
+$_js_lng[]='delete_my_account_confirmation';
 
 
 // Add global vars to template

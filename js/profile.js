@@ -304,7 +304,6 @@ function showProfileContents_profile() {
   var profile_fields_tbl=$('profile_fields_tbl').tBodies[0];;
   var custom_field_tr_tpl=$('contents_profile_data_custom_field_tr_tpl');
   var custom_field_tr=null;
-  var profile_fields_tbl_last_row=$('profile_fields_tbl_last_row');
 
   // Calculate time spent online
   online_seconds=parseInt(UserData['time_online']);
@@ -344,11 +343,14 @@ function showProfileContents_profile() {
     for (var i in UserData['custom_field']) {
       custom_field_tr=custom_field_tr_tpl.cloneNode(true);
       custom_field_tr.id='custom_field_'+i;
-      profile_fields_tbl.insertBefore(custom_field_tr, profile_fields_tbl_last_row);
+      profile_fields_tbl.insertBefore(custom_field_tr, $('contents_profile_data_delete_own_account_row'));
       custom_field_tr.cells[0].innerHTML=htmlspecialchars(UserData['custom_field'][i]['name_translated'])+': ';
       custom_field_tr.cells[1].innerHTML=makeCustomDataFieldHTML(UserData['custom_field'][i]);
       custom_field_tr.style.display='';
     }
+  }
+  if (UserData['is_guest']=='0') {
+    $('contents_profile_data_delete_own_account_row').style.display='';
   }
   setTimeout('resizeForDocumentHeight(10, false)', 200);
 }
@@ -1427,4 +1429,28 @@ function _CALLBACK_setEmailVisibility() {
     break;
   }
   executeProfileChangesTask();
+}
+
+
+/**
+ * Delete own account
+ * @var   boolean   confirmed
+ */
+function deleteOwnAccount(confirmed) {
+  if (typeof(confirmed)!='boolean' || !confirmed) {
+    confirm(getLng('delete_my_account_confirmation'), null, null, 'deleteOwnAccount(true)');
+  } else {
+    toggleProgressBar(true);
+    sendData('_CALLBACK_deleteOwnAccount()',
+             formlink,
+             'POST',
+             'ajax=delete_user'
+             +'&s_id='+urlencode(s_id)
+             +'&profile_user_id='+urlencode(profileUserId)
+             );
+  }
+}
+function _CALLBACK_deleteOwnAccount() {
+  window.opener.location.href=window.opener.location.href+'?';
+  window.close();
 }
