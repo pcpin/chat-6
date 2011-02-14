@@ -170,7 +170,7 @@ function enterChatRoom(password, room_id) {
       alert(getLng('select_room'));
     } else {
       if (typeof(password)=='undefined' || null==password) {
-        if (!isAdmin && CategoryTree[ActiveCategoryId]['rooms'][ActiveRoomId] && CategoryTree[ActiveCategoryId]['rooms'][ActiveRoomId]['password_protected'] && !CategoryTree[ActiveCategoryId]['rooms'][ActiveRoomId]['moderated_by_me']) {
+        if (!isAdmin && CategoryTreeByID[ActiveCategoryId]['rooms_by_id'][ActiveRoomId] && CategoryTreeByID[ActiveCategoryId]['rooms_by_id'][ActiveRoomId]['password_protected'] && !CategoryTreeByID[ActiveCategoryId]['rooms_by_id'][ActiveRoomId]['moderated_by_me']) {
           prompt(getLng('room_password'), '', 0, 0, 'enterChatRoom(promptboxValue, '+room_id+')', true);
           return false;
         } else {
