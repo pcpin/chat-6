@@ -326,6 +326,7 @@ function PCPIN_XmlHttpRequest(http_user, http_pass) {
   this.readyStateHandler=function(index, useState) {
     var rh=XmlHttpRequestObjects[index];
     var prh=null;
+    var parser=null;
     if (useState) {
       prh=PCPIN_XmlHttpRequestObjects[index];
     }
@@ -353,29 +354,42 @@ function PCPIN_XmlHttpRequest(http_user, http_pass) {
                   prh.ResponseText=rh.responseText;
                   // Is there already parsed DOMXML object?
                   try {
-                    if (rh.responseXML.firstChild==null) {
+                    if (rh.responseXML.childNodes.length==0) {
                       // XML object is not created or not parsed
                       // Throw an exception
                       throw(1);
                     } else {
+                      // Check for parser errors
+                      for (var i=0; i<rh.responseXML.childNodes.length; i++) {
+                        if (typeof(rh.responseXML.childNodes[i].tagName)=='string' && rh.responseXML.childNodes[i].tagName=='parsererror') {
+                          // There is an error
+                          prh.message+='\n'+rh.responseXML.childNodes[i].textContent;
+                          throw(1);
+                        }
+                      }
                       // Success
                       prh.ResponseXML=rh.responseXML;
                     }
                   } catch (e) {
                     try {
-                      // Trying to create "MSXML2.DOMDocument" ActiveX object
-                      prh.ResponseXML=new ActiveXObject('MSXML2.DOMDocument');
-                      prh.ResponseXML.async='false';
-                      prh.ResponseXML.loadXML(prh.ResponseText);
+                      parser=new DOMParser();
+                      prh.ResponseXML=parser.parseFromString(trimString(prh.ResponseText), 'text/xml');
                     } catch (e) {
                       try {
-                        // Trying "Microsoft.XMLDOM" ActiveX object
-                        prh.ResponseXML=new ActiveXObject('Microsoft.XMLDOM');
+                        // Trying to create "MSXML2.DOMDocument" ActiveX object
+                        prh.ResponseXML=new ActiveXObject('MSXML2.DOMDocument');
                         prh.ResponseXML.async='false';
-                        prh.ResponseXML.loadXML(prh.ResponseText);
+                        prh.ResponseXML.loadXML(trimString(prh.ResponseText));
                       } catch (e) {
-                        // Failed to initialize DOMXML object
-                        prh.ResponseXML=null;
+                        try {
+                          // Trying "Microsoft.XMLDOM" ActiveX object
+                          prh.ResponseXML=new ActiveXObject('Microsoft.XMLDOM');
+                          prh.ResponseXML.async='false';
+                          prh.ResponseXML.loadXML(trimString(prh.ResponseText));
+                        } catch (e) {
+                          // Failed to initialize DOMXML object
+                          prh.ResponseXML=null;
+                        }
                       }
                     }
                   }
