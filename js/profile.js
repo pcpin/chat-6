@@ -346,7 +346,7 @@ function showProfileContents_profile() {
       profile_fields_tbl.original_rows_count=profile_fields_tbl.rows.length;
     } else {
       while (profile_fields_tbl.rows.length>profile_fields_tbl.original_rows_count) {
-        profile_fields_tbl.deleteRow(profile_fields_tbl.rows.length-2);
+        profile_fields_tbl.deleteRow(profile_fields_tbl.rows.length-3);
       }
     }
     for (var i in UserData['custom_field']) {
