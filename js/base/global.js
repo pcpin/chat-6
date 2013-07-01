@@ -609,6 +609,11 @@ function setCssClass(targetElement, cssName, skipCache) {
                 }
               }
               css_rules_array=setCss_cache[cssName];
+              if (isIE) {
+                for (var iii = 0; iii < setCss_cache[cssName].length; iii ++) {
+                  setCss_cache[cssName][iii] = setCss_cache[cssName][iii].split('\\"').join('"');
+                }
+              }
               css_found=true;
               break;
             }
