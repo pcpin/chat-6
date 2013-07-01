@@ -31,6 +31,12 @@ class PCPIN_IPFilter extends PCPIN_Session {
   var $id=0;
 
   /**
+   * IP address type (IPv4 or IPv6)
+   * @var   string
+   */
+  var $type = 'IPv4';
+
+  /**
    * IP address mask. IP address mask can contain digits and/or wildcard characters '*' or '?' only, delimitered by '.' character.
    * Following wildcards are allowed:
    *    *   Matches any number of characters, even zero characters
@@ -82,25 +88,31 @@ class PCPIN_IPFilter extends PCPIN_Session {
   /**
    * Validate IP address mask.
    * IP address mask can contain digits and/or wildcard characters '*' or '?' only, delimitered by '.' character.
+   * @param   string    $type     IP address type (IPv4 or IPv6)
    * @param   string    $ipmask   IP address mask in format 'XXX.XXX.XXX.XXX'
    * @return  boolean   TRUE if IP address mask is valid or FALSE if not
    */
-  function checkIPMask($ipmask='') {
-    $ok=(bool)ereg('^([0-9\*\?]{1,3}\.)+([0-9\*\?]{1,3}\.)+([0-9\*\?]{1,3}\.)+([0-9\*\?]{1,3})$', $ipmask);
-    return $ok;
+  function checkIPMask($type = '', $ipmask='') {
+    if ($type === 'IPv6') {
+      return (bool) preg_match('/^[0-9A-F\?\*\:]{1,45}$/i', $ipmask); // Incomplete and really primitive - allows more than needed, just as quick-and-dirty workaround.
+    } else {
+      return (bool) preg_match('/^([0-9\*\?]{1,3}\.)+([0-9\*\?]{1,3}\.)+([0-9\*\?]{1,3}\.)+([0-9\*\?]{1,3})$/', $ipmask);
+    }
   }
 
 
   /**
    * Add new IP address into the database
+   * @param   string    $type         IP address type (IPv4 or IPv6)
    * @param   string    $ip           IP address
    * @param   string    $expires      Expiration date (MySQL DATETIME). Empty value means no expiration.
    * @param   string    $description  Description
    * @param   string    $action       Record type (allow/deny)
    * @return  boolean   TRUE on success or FALSE on error
    */
-  function addAddress($ip='', $expires='', $description='', $action='d') {
+  function addAddress($type = '', $ip='', $expires='', $description='', $action='d') {
     $this->id=0;
+    $this->type = $type;
     $this->address=$ip;
     $this->added_on=date('Y-m-d H:i:s');
     $this->expires=($expires=='')? '0000-00-00 00:00:00' : $expires;
@@ -140,7 +152,7 @@ class PCPIN_IPFilter extends PCPIN_Session {
     $ip=trim($ip);
     if ($ip!='') {
       // Is IP address blocked?
-      $query=$this->_db_makeQuery(1400, $ip, $skip_record, date('Y-m-d H:i:s'));
+      $query=$this->_db_makeQuery(1400, $ip, $skip_record, date('Y-m-d H:i:s'), false !== strpos($ip, ':')? 'IPv6' : 'IPv4');
       $result=$this->_db_query($query);
       $allowed=false;
       while ($data=$this->_db_fetch($result, MYSQL_ASSOC)) {

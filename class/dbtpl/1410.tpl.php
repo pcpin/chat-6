@@ -13,37 +13,21 @@ if (!isset($argv[1])) {
 }
 switch($argv[1]) {
   default   :
-  case  0   :   $orderby= '  `ip_part1` '.$orderdir
-                         .', `ip_part2` '.$orderdir
-                         .', `ip_part3` '.$orderdir
-                         .', `ip_part4` '.$orderdir;
+  case  0   :   $orderby= '  INET_ATON( `address` ) '.$orderdir;
                 break;
-  case  1   :   $orderby= '  `action` '.$orderdir
-                         .', `ip_part1` '.$orderdir
-                         .', `ip_part2` '.$orderdir
-                         .', `ip_part3` '.$orderdir
-                         .', `ip_part4` '.$orderdir;
+  case  1   :   $orderby= '  `action` '.$orderdir.', INET_ATON( `address` ) '.$orderdir;
                 break;
-  case  2   :   $orderby= '  `expires` '.$orderdir
-                         .', `ip_part1` '.$orderdir
-                         .', `ip_part2` '.$orderdir
-                         .', `ip_part3` '.$orderdir
-                         .', `ip_part4` '.$orderdir;
+  case  2   :   $orderby= '  `expires` '.$orderdir.', INET_ATON( `address` ) '.$orderdir;
                 break;
-  case  3   :   $orderby= '  `description` '.$orderdir
-                         .', `ip_part1` '.$orderdir
-                         .', `ip_part2` '.$orderdir
-                         .', `ip_part3` '.$orderdir
-                         .', `ip_part4` '.$orderdir;
+  case  3   :   $orderby= '  `description` '.$orderdir.', INET_ATON( `address` ) '.$orderdir;
                 break;
-  case  4   :   $orderby= '  `added_on` '.$orderdir
-                         .', `ip_part1` '.$orderdir
-                         .', `ip_part2` '.$orderdir
-                         .', `ip_part3` '.$orderdir
-                         .', `ip_part4` '.$orderdir;
-
+  case  4   :   $orderby= '  `added_on` '.$orderdir.', INET_ATON( `address` ) '.$orderdir;
+                break;
+  case  5   :   $orderby= '  `type` '.$orderdir.', INET_ATON( `address` ) '.$orderdir;
+                break;
 }
 $query='SELECT *,
+               `address` AS `address`,
                CONVERT( SUBSTRING_INDEX( `address`, ".", 1 ), UNSIGNED ) AS `ip_part1`,
                CONVERT( SUBSTRING_INDEX( SUBSTRING_INDEX( `address`, ".", 2), ".", -1 ), UNSIGNED ) AS `ip_part2`,
                CONVERT( SUBSTRING_INDEX( SUBSTRING_INDEX( `address`, ".", -2), ".", 1 ), UNSIGNED ) AS `ip_part3`,

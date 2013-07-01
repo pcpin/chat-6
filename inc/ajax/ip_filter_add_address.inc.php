@@ -27,6 +27,7 @@
  * @param  int       $expires_never    If not empty, then IP address will never expire
  * @param  string    $description      Additional information
  * @param  string    $action           Filter action ("a": allow or "d": deny)
+ * @param  string    $type             IP address type (IPv4 or IPv6)
  */
 
 _pcpin_loadClass('ipfilter'); $ipfilter=new PCPIN_IPFilter($session);
@@ -56,12 +57,14 @@ if (is_object($session) && !empty($current_user->id) && $current_user->is_admin=
   }
 
   // Check mask
-  if (!$ipfilter->checkIPMask($mask)) {
+  if ($type !== 'IPv4' && $type !== 'IPv6') {
+    $errortext[] = $l->g('ip_address_type_invalid');
+  } elseif (!$ipfilter->checkIPMask($type, $mask)) {
     $errortext[]=$l->g('ip_mask_invalid');
   }
 
   if (empty($errortext)) {
-    if ($ipfilter->addAddress($mask, empty($expires_never)? ("$expires_year-$expires_month-$expires_day $expires_hour:$expires_minute:00") : '', $description, $action)) {
+    if ($ipfilter->addAddress($type, $mask, empty($expires_never)? ("$expires_year-$expires_month-$expires_day $expires_hour:$expires_minute:00") : '', $description, $action)) {
       $xmlwriter->setHeaderMessage($l->g('ip_address_added'));
       // Ensure, that current user can access the software with new record
       if ($ipfilter->isBlocked(PCPIN_CLIENT_IP)) {

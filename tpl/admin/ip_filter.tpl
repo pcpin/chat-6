@@ -1,12 +1,17 @@
 <PCPIN:TPL name="main">
   <table id="ip_table" class="tbl" border="0" cellspacing="1" cellpadding="0" width="100%">
     <tr>
-      <td colspan="6" class="tbl_header_main">
+      <td colspan="7" class="tbl_header_main">
         <b>{LNG_IP_FILTER}</b>
       </td>
     </tr>
     <tr id="ip_list_header">
       <td class="tbl_header_sub" width="1%">&nbsp;</td>
+      <td class="tbl_header_sub">
+        {LNG_TYPE}
+        <img onclick="sort_by=5; sort_dir=0; getFilteredIPAddresses();" src="./pic/arrow_up_13x9.gif" name="img_hover" style="cursor:pointer" alt="{LNG_SORT_ASCENDING}" title="{LNG_SORT_ASCENDING}" border="0" />
+        <img onclick="sort_by=5; sort_dir=1; getFilteredIPAddresses();" src="./pic/arrow_down_13x9.gif" name="img_hover" style="cursor:pointer" alt="{LNG_SORT_DESCENDING}" title="{LNG_SORT_DESCENDING}" border="0" />
+      </td>
       <td class="tbl_header_sub">
         {LNG_ADDRESS_MASK}
         <img onclick="sort_by=0; sort_dir=0; getFilteredIPAddresses();" src="./pic/arrow_up_13x9.gif" name="img_hover" style="cursor:pointer" alt="{LNG_SORT_ASCENDING}" title="{LNG_SORT_ASCENDING}" border="0" />
@@ -46,6 +51,17 @@
     </tr>
     <tr>
       <td class="tbl_row">
+        <b>{LNG_TYPE}:</b>
+      </td>
+      <td class="tbl_row">
+        <select id="new_ip_type" title="{LNG_TYPE}" onchange="setIpMaskVisiblility(this.value)">
+          <option value="IPv4">IPv4</option>
+          <option value="IPv6">IPv6</option>
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td class="tbl_row">
         <b>{LNG_ACTION}:</b>
       </td>
       <td class="tbl_row">
@@ -58,17 +74,23 @@
     <tr>
       <td class="tbl_row">
         <b>{LNG_ADDRESS_MASK}:</b>
-        <br />
-        {LNG_IP_MASK_RULES}
+        <div id="ipv4_mask_rules">
+          {LNG_IP_MASK_RULES}
+        </div>
       </td>
       <td class="tbl_row">
-        <input id="new_ip_mask_0" title="{LNG_ADDRESS_MASK}" size="2" maxlength="3" />
-        .
-        <input id="new_ip_mask_1" title="{LNG_ADDRESS_MASK}" size="2" maxlength="3" />
-        .
-        <input id="new_ip_mask_2" title="{LNG_ADDRESS_MASK}" size="2" maxlength="3" />
-        .
-        <input id="new_ip_mask_3" title="{LNG_ADDRESS_MASK}" size="2" maxlength="3" />
+        <span id="new_ip_mask_ipv4">
+          <input id="new_ip_mask_0" title="{LNG_ADDRESS_MASK}" size="2" maxlength="3" />
+          .
+          <input id="new_ip_mask_1" title="{LNG_ADDRESS_MASK}" size="2" maxlength="3" />
+          .
+          <input id="new_ip_mask_2" title="{LNG_ADDRESS_MASK}" size="2" maxlength="3" />
+          .
+          <input id="new_ip_mask_3" title="{LNG_ADDRESS_MASK}" size="2" maxlength="3" />
+        </span>
+        <span id="new_ip_mask_ipv6" style="display:none">
+          <input id="new_ip_mask_ipv6_0" title="{LNG_ADDRESS_MASK}" size="30" maxlength="45" />
+        </span>
       </td>
     </tr>
     <tr>

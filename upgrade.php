@@ -47,7 +47,7 @@ if (isset($_POST['_pcpin_update_query'])) {
   die();
 } else {
   _pcpin_get_installed_version();
-  define('PCPIN_UPGRADE_NEW_VERSION', 6.22);
+  define('PCPIN_UPGRADE_NEW_VERSION', 6.23);
   define('PCPIN_UPGRADE_INSTALLED_VERSION', $__pcpin_upgrade['db_version']);
   if (PCPIN_UPGRADE_INSTALLED_VERSION==0) {
     die('Fatal error: Your installation is broken. Reinstall needed!');
@@ -476,6 +476,13 @@ function _pcpin_get_upgrade_queries() {
       $queries[]="UPDATE `".PCPIN_DB_PREFIX."language` AS `la` LEFT JOIN `".PCPIN_DB_PREFIX."language_expression` AS `le` ON `le`.`language_id` = `la`.`id` SET `le`.`value` = 0x4d65696e2042656e75747a65726b6f6e746f206cc3b6736368656e WHERE `le`.`code` = 'delete_my_account' AND `la`.`iso_name` = 'de'";
       $queries[]="UPDATE `".PCPIN_DB_PREFIX."language` AS `la` LEFT JOIN `".PCPIN_DB_PREFIX."language_expression` AS `le` ON `le`.`language_id` = `la`.`id` SET `le`.`value` = 0x41636874756e6721205369652073696e6420696d20426567726966662c204968722042656e75747a65726b6f6e746f207a75206cc3b6736368656e2e20446965736520416b74696f6e206b616e6e206e696368742072c3bc636b67c3a46e6769672067656d616368742077657264656e2e0d0a576f6c6c656e20536965204968722042656e75747a65726b6f6e746f207769726b6c696368206cc3b6736368656e3f WHERE `le`.`code` = 'delete_my_account_confirmation' AND `la`.`iso_name` = 'de'";
 
+    break;
+
+    case 6.22:
+      $queries[]="ALTER TABLE `".PCPIN_DB_PREFIX."ipfilter` ADD `type` ENUM( 'IPv4', 'IPv6' ) CHARACTER SET ascii COLLATE ascii_bin DEFAULT 'IPv4' NOT NULL, ADD INDEX ( `type` ), CHANGE `address` `address` VARCHAR( 45 ) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT ''";
+      $queries[]="ALTER TABLE `".PCPIN_DB_PREFIX."session` CHANGE `_s_ip` `_s_ip` VARCHAR( 45 ) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT ''";
+      $queries[]="UPDATE `".PCPIN_DB_PREFIX."ipfilter` SET `description` = 'This rule allows all IPv4 addresses' WHERE `description` = 'This rule allows all IP addresses' LIMIT 1";
+      $queries[]="INSERT INTO `".PCPIN_DB_PREFIX."ipfilter` ( `address`, `added_on`, `expires`, `description`, `action`, `type` ) VALUES ( '*', NOW(), '0000-00-00 00:00:00', 'This rule allows all IPv6 addresses', 'a', 'IPv6' )";
     break;
 
   }

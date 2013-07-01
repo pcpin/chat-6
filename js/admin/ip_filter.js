@@ -80,9 +80,13 @@ function _CALLBACK_getFilteredIPAddresses() {
         setCssClass(td, '.tbl_row');
 
         td=tr.insertCell(-1);
-        td.innerHTML=htmlspecialchars(address['mask'][0]);
+        td.innerHTML=htmlspecialchars(address['type'][0]);
         setCssClass(td, '.tbl_row');
 
+        td=tr.insertCell(-1);
+        td.innerHTML=htmlspecialchars(address['mask'][0]);
+        setCssClass(td, '.tbl_row');
+        
         td=tr.insertCell(-1);
         td.innerHTML=htmlspecialchars(address['action'][0]=='a'? getLng('allow') : getLng('deny'));
         setCssClass(td, '.tbl_row');
@@ -159,12 +163,7 @@ function addIPAddress() {
   $('new_ip_mask_1').value=trimString($('new_ip_mask_1').value);
   $('new_ip_mask_2').value=trimString($('new_ip_mask_2').value);
   $('new_ip_mask_3').value=trimString($('new_ip_mask_3').value);
-  if (   $('new_ip_mask_0').value.length==0
-      || $('new_ip_mask_1').value.length==0
-      || $('new_ip_mask_2').value.length==0
-      || $('new_ip_mask_3').value.length==0) {
-    errors.push(getLng('ip_mask_invalid'));
-  }
+  $('new_ip_mask_ipv6_0').value = trimString($('new_ip_mask_ipv6_0').value);
   $('new_ip_description').value=trimString($('new_ip_description').value);
 
   if (errors.length>0) {
@@ -172,7 +171,8 @@ function addIPAddress() {
   } else {
     // Send data to server
     sendData('_CALLBACK_addIPAddress()', formlink, 'POST', 'ajax=ip_filter_add_address&s_id='+urlencode(s_id)
-             +'&mask='+urlencode($('new_ip_mask_0').value+'.'+$('new_ip_mask_1').value+'.'+$('new_ip_mask_2').value+'.'+$('new_ip_mask_3').value)
+             +'&type='+urlencode($('new_ip_type').value)
+             +'&mask='+urlencode($('new_ip_type').value === 'IPv6'? $('new_ip_mask_ipv6_0').value : ($('new_ip_mask_0').value+'.'+$('new_ip_mask_1').value+'.'+$('new_ip_mask_2').value+'.'+$('new_ip_mask_3').value))
              +'&expires_year='+urlencode($('new_ip_expires_year').value)
              +'&expires_month='+urlencode($('new_ip_expires_month').value)
              +'&expires_day='+urlencode($('new_ip_expires_day').value)
@@ -219,4 +219,17 @@ function _CALLBACK_deleteSelectedAddresses() {
 //alert(actionHandler.getResponseString()); return false;
   toggleProgressBar(false);
   alert(actionHandler.message, null, null, 'getFilteredIPAddresses()');
+}
+
+
+function setIpMaskVisiblility(address_type) {
+  if (address_type === 'IPv4') {
+    $('ipv4_mask_rules').style.visibility='visible';
+    $('new_ip_mask_ipv4').style.display='';
+    $('new_ip_mask_ipv6').style.display='none';
+  } else {
+    $('ipv4_mask_rules').style.visibility='hidden';
+    $('new_ip_mask_ipv4').style.display='none';
+    $('new_ip_mask_ipv6').style.display='';
+  }
 }

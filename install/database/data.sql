@@ -126,7 +126,7 @@ INSERT INTO `$$$DB_PREFIX$$$config` (`_conf_id`, `_conf_group`, `_conf_subgroup`
 
 INSERT INTO `$$$DB_PREFIX$$$disallowed_name` (`id`, `name`) VALUES (1, 'admin'); /* PCPIN6_QUERY_SEPARATOR */
 
-INSERT INTO `$$$DB_PREFIX$$$ipfilter` (`id`, `address`, `added_on`, `expires`, `description`, `action`) VALUES (1, '*.*.*.*', '2007-06-23 01:49:01', '0000-00-00 00:00:00', 'This rule allows all IP addresses', 'a'); /* PCPIN6_QUERY_SEPARATOR */
+INSERT INTO `$$$DB_PREFIX$$$ipfilter` (`id`, `address`, `added_on`, `expires`, `description`, `action`, `type`) VALUES (1, '*.*.*.*', NOW(), '0000-00-00 00:00:00', 'This rule allows all IPv4 addresses', 'a', 'IPv4'), (2, '*', NOW(), '0000-00-00 00:00:00', 'This rule allows all IPv6 addresses', 'a', 'IPv6'); /* PCPIN6_QUERY_SEPARATOR */
 
 INSERT INTO `$$$DB_PREFIX$$$room` (`id`, `type`, `date_created`, `name`, `category_id`, `description`, `users_count`, `default_message_color`, `password`, `background_image`, `last_ping`, `listpos`) VALUES (1, 'p', '0000-00-00 00:00:00', 'Soccer', 1, 'Soccer chat room', 0, '000088', '', 0, '2007-08-20 23:45:45', 3),
 (3, 'p', '0000-00-00 00:00:00', 'Ice Hockey', 1, 'Ice Hockey chat', 0, '000088', '', 0, '2007-08-27 02:28:08', 1),

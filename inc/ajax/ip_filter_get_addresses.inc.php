@@ -36,6 +36,7 @@ if (is_object($session) && !empty($current_user->id) && $current_user->is_admin=
   $addresses=$ipfilter->readAddresses($sort_by, $sort_dir);
   foreach ($addresses as $address_data) {
     $ip_addresses[]=array('id'=>$address_data['id'],
+                          'type'=>$address_data['type'],
                           'mask'=>$address_data['address'],
                           'added_on'=>$current_user->makeDate(PCPIN_Common::datetimeToTimestamp($address_data['added_on'])),
                           'expires'=>($address_data['expires']>'0000-00-00 00:00:00')? $current_user->makeDate(PCPIN_Common::datetimeToTimestamp($address_data['expires'])) : $l->g('never'),

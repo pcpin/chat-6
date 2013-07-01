@@ -73,7 +73,7 @@ if (!empty($current_user->id) && $current_user->is_admin==='y' && $session->_s_u
         if (!empty($ip_ban)) {
           // IP ban
           _pcpin_loadClass('ipfilter'); $ipfilter=new PCPIN_IPFilter($session);
-          $ipfilter->addAddress($tgt_session_ip, !empty($duration)? date('Y-m-d H:i:s', time()+$duration*60) : '', $reason, 'd');
+          $ipfilter->addAddress(false === strpos($tgt_session_ip, ':')? 'IPv4' : 'IPv6', $tgt_session_ip, !empty($duration)? date('Y-m-d H:i:s', time()+$duration*60) : '', $reason, 'd');
         }
       }
       // Ban user

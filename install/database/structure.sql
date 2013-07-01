@@ -156,17 +156,19 @@ CREATE TABLE `$$$DB_PREFIX$$$invitation` (
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$ipfilter`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$ipfilter` (
   `id` int(11) NOT NULL auto_increment,
-  `address` char(15) NOT NULL default '',
+  `address` VARCHAR( 45 ) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `added_on` datetime NOT NULL default '0000-00-00 00:00:00',
   `expires` datetime NOT NULL default '0000-00-00 00:00:00',
   `description` text NOT NULL,
   `action` enum('d','a') NOT NULL default 'd',
+  `type` ENUM( 'IPv4', 'IPv6' ) CHARACTER SET ascii COLLATE ascii_bin DEFAULT 'IPv4' NOT NULL,
   PRIMARY KEY  (`id`),
   UNIQUE KEY `address_2` (`address`,`action`),
   KEY `address` (`address`),
   KEY `added_on` (`added_on`),
   KEY `expires` (`expires`),
-  KEY `action` (`action`)
+  KEY `action` (`action`),
+  KEY `type` ( `type` )
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci PACK_KEYS=0; /* PCPIN6_QUERY_SEPARATOR */
 
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$language`; /* PCPIN6_QUERY_SEPARATOR */
@@ -295,7 +297,7 @@ CREATE TABLE `$$$DB_PREFIX$$$room` (
 DROP TABLE IF EXISTS `$$$DB_PREFIX$$$session`; /* PCPIN6_QUERY_SEPARATOR */
 CREATE TABLE `$$$DB_PREFIX$$$session` (
   `_s_id` char(32) NOT NULL default '',
-  `_s_ip` char(15) NOT NULL default '',
+  `_s_ip` VARCHAR( 45 ) CHARACTER SET ascii COLLATE ascii_general_ci NOT NULL DEFAULT '',
   `_s_created` datetime NOT NULL default '0000-00-00 00:00:00',
   `_s_last_ping` datetime NOT NULL default '0000-00-00 00:00:00',
   `_s_language_id` int(11) NOT NULL default '0',
