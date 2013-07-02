@@ -5,11 +5,11 @@
         <td style="padding:0px;margin:0px" colspan="{HEADER_ROW_COLSPAN}">
           <table border="0" cellspacing="0" cellpadding="0" width="100%">
             <tr>
-              <td class="tbl_header_main" style="text-align:left;width:1%;padding-right:0px;">
-                <button type="button" style="width:13px;height:13px;background-image:url(./pic/close_13x13.gif);padding:0px;margin:0px;" title="{LNG_CLOSE_WINDOW}" onclick="closeSmilieBox()"></button>
-              </td>
-              <td class="tbl_header_main" onmousedown="startDragNDrop('smilie_selection_box')" onmouseup="stopDragNDrop('smilie_selection_box')" style="cursor:move;padding-left:7px;">
+              <td class="tbl_header_main" onmousedown="startDragNDrop('smilie_selection_box')" onmouseup="stopDragNDrop('smilie_selection_box')" style="cursor:move">
                 {LNG_SMILIES}
+              </td>
+              <td class="tbl_header_main" style="text-align:left;width:1%;padding-left:0px;">
+                <button type="button" style="width:13px;height:13px;background-image:url(./pic/close_13x13.gif);padding:0px;margin:0px;" title="{LNG_CLOSE_WINDOW}" onclick="closeSmilieBox()"></button>
               </td>
             </tr>
           </table>
