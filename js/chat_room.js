@@ -2454,7 +2454,7 @@ function closeHelpBox(selected_help) {
     if (selected_help==0) {
       // About
       alert( "PCPIN Chat\n"
-            +"Copyright "+base64decode('qQ==')+" 2007 Kantantin Reznichak\n"
+            +"Copyright "+base64decode('qQ==')+" 2007 - 2013 Kanstantin Reznichak\n"
             +"http://www.pcpin.com");
     } else if (selected_help==1) {
       // Chat commands
