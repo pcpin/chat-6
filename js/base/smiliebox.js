@@ -126,8 +126,13 @@ var SmilieList=new function() {
    * @param   string    source    Image source HREF
    */
   this.addSmilie=function(id, code, source) {
+    var smilie_img;
     this.SmilieList[code]=new Smilie(id, code, source);
     this.SmilieListLength++;
+    smilie_img = document.createElement('IMG');
+    smilie_img.src = source;
+    smilie_img.style.display = 'none';
+    $('body_contents').appendChild(smilie_img);
   }
 
 
@@ -317,17 +322,23 @@ function setSmilieBoxSizes() {
  * @param   string    smilie_code     Code of clicked smilie
  */
 function setSmilieCode(smilie_code) {
-  if (typeof(smilie_code)!='string' || smilie_code.length==0) {
-    smilie_code='';
-  } else {
-    smilie_code=' '+smilie_code+' ';
-  }
-  if (smiliebox_tgt_obj_id!='') {
-    eval('try { $(\''+smiliebox_tgt_obj_id+'\').focus(); } catch (e) {}');
-    insertAtCaret($(smiliebox_tgt_obj_id), smilie_code.split('\'').join('\\\''));
-  }
-  if (smiliebox_tgt_tgt_var!='') {
-    eval('try { '+smiliebox_tgt_tgt_var+'=\''+smilie_code.split('\'').join('\\\'')+'\'; } catch (e) {}');
+  var smiliebox_tgt_obj;
+  if (typeof(smilie_code) === 'string' && smilie_code !== '' && smiliebox_tgt_obj_id !== '') {
+    if (null !== (smiliebox_tgt_obj = $(smiliebox_tgt_obj_id))) {
+      try {
+        smiliebox_tgt_obj.focus();
+      } catch (e) {}
+      try {
+        insertAtCaret(smiliebox_tgt_obj, ' ' + smilie_code + ' ');
+      } catch (e) {
+        try {
+          smiliebox_tgt_obj.value += ' ' + smilie_code + ' ';
+        } catch (e) {}
+      }
+    }
+    if (smiliebox_tgt_tgt_var !== '') {
+      smiliebox_tgt_tgt_var = smilie_code;
+    }
   }
 }
 

@@ -64,22 +64,11 @@ if (!empty($b_id) && is_scalar($b_id) && $binaryfile->_db_getList('protected, mi
     }
   }
   header('Expires: '.gmdate('D, d M Y H:i:s', time()+$cache_expires).' GMT');
-  if ($cache_expires>0) {
-    // Cache allowed
-    if (PCPIN_CLIENT_AGENT_NAME=='IE') {
-      header('Cache-Control: Public');
-      header('Pragma: Public');
-    } else {
-      header('Pragma: Public');
-    }
+  if (PCPIN_CLIENT_AGENT_NAME=='IE') {
+    header('Cache-Control: Public');
+    header('Pragma: Public');
   } else {
-    // Cache not allowed
-    if (PCPIN_CLIENT_AGENT_NAME=='IE') {
-      header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-      header('Pragma: No-cache');
-    } else {
-      header('Pragma: no-cache');
-    }
+    header('Pragma: Public');
   }
   $thumb_loaded=false;
   if (   true===$session->_conf_all['allow_gd']
@@ -109,8 +98,13 @@ if (!empty($b_id) && is_scalar($b_id) && $binaryfile->_db_getList('protected, mi
       ) {
       $thumb_loaded=true;
       header('Content-type: image/jpeg');
-      header('Content-Length: '.strlen($thumb_img));
-      echo $thumb_img;
+      $etag = md5($thumb_img);
+      header('Etag: '.$etag);
+      if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] === $etag) {
+        header('HTTP/1.1 304 Not Modified');
+      } else {
+        echo $thumb_img;
+      }
     }
   }
   if (!$thumb_loaded) {
@@ -118,8 +112,13 @@ if (!empty($b_id) && is_scalar($b_id) && $binaryfile->_db_getList('protected, mi
       header('Content-Disposition: inline; filename="'.$filename.'"');
     }
     header('Content-type: '.$binaryfile->_db_list[0]['mime_type']);
-    header('Content-Length: '.$binaryfile->_db_list[0]['size']);
-    echo $binaryfile->_db_list[0]['body'];
+    $etag = md5($binaryfile->_db_list[0]['body']);
+    header('Etag: '.$etag);
+    if (isset($_SERVER['HTTP_IF_NONE_MATCH']) && $_SERVER['HTTP_IF_NONE_MATCH'] === $etag) {
+      header('HTTP/1.1 304 Not Modified');
+    } else {
+      echo $binaryfile->_db_list[0]['body'];
+    }
   }
 }
 // No HTML output allowed!
