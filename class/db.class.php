@@ -48,6 +48,18 @@ class PCPIN_DB {
    */
   var $_db_client_server_charsets=null;
 
+  /**
+   * Cache for field types
+   * @var array
+   */
+  var $_db_field_types_cache = array();
+
+  /**
+   * Resources for field types cache
+   * @var array
+   */
+  var $_db_field_types_cache_resources = array();
+
 
 
   /**
@@ -129,12 +141,13 @@ class PCPIN_DB {
 
   /**
    * Free result memory
-   * @param   resource    &$result    Result identifier
+   * @param   resource    $result    Result identifier
    */
-  function _db_freeResult(&$result) {
+  function _db_freeResult($result) {
     if (is_resource($result)) {
       mysql_free_result($result);
     }
+    unset($this->_db_field_types_cache[$result], $this->_db_field_types_cache_resources[$result]);
   }
 
 
@@ -146,6 +159,8 @@ class PCPIN_DB {
       mysql_close($this->_db_conn);
     }
     $this->_db_conn=null;
+    $this->_db_field_types_cache = array();
+    $this->_db_field_types_cache_resources = array();
   }
 
 
@@ -242,50 +257,57 @@ class PCPIN_DB {
   function _db_fetch($result, $result_type=MYSQL_ASSOC) {
     $data=false;
     if (is_resource($result)) {
-      // Determine field types
-      $field_types=array();
-      $i=0;
-      $num_fields=mysql_num_fields($result);
-      while ($i<$num_fields) {
-        $meta=mysql_fetch_field($result, $i);
-        $name=$meta->name;
-        $type=strtolower($meta->type);
-        // Map data types
-        if ($type=='string') {
-          $type='';
-        } elseif (false!==strpos($type, 'int')) {
-          $type='int';
-        } elseif (   false!==strpos($type, 'dec')
-                  || false!==strpos($type, 'float')
-                  || false!==strpos($type, 'real')
-                  || false!==strpos($type, 'double')) {
-          $type='float';
-        } else {
-          $type='';
+      $result_id = (int) $result;
+      if (isset($this->_db_field_types_cache[$result_id])) {
+        $field_types = $this->_db_field_types_cache[$result_id];
+      } else {
+        // Determine field types
+        $field_types = array();
+        $field_nr = mysql_num_fields($result);
+        while ($field_nr > 0) {
+          $field_nr --;
+          if ($result_type !== MYSQL_NUM) {
+            $field_name = mysql_field_name($result, $field_nr);
+          } else {
+            $field_name = $field_nr;
+          }
+          if (!array_key_exists($field_name, $field_types) || $result_type===MYSQL_BOTH) {
+            // Map data types
+            $type = strtolower(mysql_field_type($result, $field_nr));
+            if (false !== strpos($type, 'int')) {
+              $type = 'int';
+            } elseif (   false !== strpos($type, 'dec')
+                      || false !== strpos($type, 'numeric')
+                      || false !== strpos($type, 'float')
+                      || false !== strpos($type, 'real')
+                      || false !== strpos($type, 'double')
+                      ) {
+              $type = 'float';
+            } else {
+              $type = null;
+            }
+            if ($result_type !== MYSQL_BOTH) {
+              $field_types[$field_name] = $type;
+            } else {
+              $field_types[$field_nr] = $type;
+              if (!array_key_exists($field_name, $field_types)) {
+                $field_types[$field_name] = $type;
+              }
+            }
+          }
         }
-        switch($result_type) {
-          case MYSQL_ASSOC  :
-          default           :   $field_types[$name]=$type;
-                                break;
-          case MYSQL_NUM    :   $field_types[$i]=$type;
-                                break;
-          case MYSQL_BOTH   :   $field_types[$name]=$type;
-                                $field_types[$i]=$type;
-                                break;
-        }
-        $i++;
+        $this->_db_field_types_cache[$result_id] = $field_types;
+        $this->_db_field_types_cache_resources[$result_id] = $result;
       }
-      $magic_quotes_runtime=get_magic_quotes_runtime();
-      // Disable magic_quotes_runtime
-      set_magic_quotes_runtime(0);
-      $data=mysql_fetch_array($result, $result_type);
-      // Restore an original magic_quotes_runtime setting
-      set_magic_quotes_runtime($magic_quotes_runtime);
-      // Cast types
-      foreach ($field_types as $key=>$val) {
-        if (!is_null($data[$key]) && $val!='') {
-          settype($data[$key], $val);
+      if (false !== ($data = mysql_fetch_array($result, $result_type))) {
+        // Cast types
+        foreach ($field_types as $key => $val) {
+          if (!is_null($data[$key]) && $val !== '' && $val !== null) {
+            settype($data[$key], $val);
+          }
         }
+      } else {
+        unset($this->_db_field_types_cache[$result_id], $this->_db_field_types_cache_resources[$result_id]);
       }
     }
     return $data;

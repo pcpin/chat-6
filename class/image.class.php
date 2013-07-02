@@ -47,15 +47,17 @@ class PCPIN_Image {
    * @return  int   0: Server does not supports GD, 1: Server supports GD1 only, 2: Server supports GD2
    */
   function whichGD() {
-    $result=0;
+    if (defined('GD_MAJOR_VERSION')) {
+      return GD_MAJOR_VERSION;
+    }
     if (function_exists('gd_info')) {
       $gd_info=gd_info();
       if (!empty($gd_info['GD Version'])) {
-        $version=explode('.', ereg_replace('[[:alpha:][:space:]()]+', '', $gd_info['GD Version']));
-        $result=$version[0];
+        $version = explode('.', preg_replace('/[^0-9\.]/', '', $gd_info['GD Version']));
+        return $version[0];
       }
     }
-    return $result;
+    return 0;
   }
 
 
